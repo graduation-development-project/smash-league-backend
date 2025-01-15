@@ -1,6 +1,9 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 
-@Controller()
+@Controller('api/v1/application')
 export class ApplicationController {
-
+	@Get('api-version')
+	getVersioningAPI() {
+		return '1.0.0';
+	}
 }
