@@ -1,0 +1,30 @@
+services:
+  api:
+    container_name: smash-league-api
+    ports:
+      - 5000:5000
+    env_file:
+      - .env
+    build: .
+    volumes:
+      - .:/usr/src/app
+    command: npm run start:dev
+    depends_on:
+      - db 
+    networks:
+      - smash-league
+  db:
+    container_name: postgres-smash-league
+    image: postgres:17.2
+    restart: unless-stopped
+    ports: 
+      - "5001:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: smashleague
+    networks:
+      - smash-league
+
+networks:
+  smash-league: 
