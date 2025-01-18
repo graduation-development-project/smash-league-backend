@@ -1,10 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
+
 
 declare const module: any;
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+  const prefix = configService.get<string>('PREFIX');
+  app.setGlobalPrefix(prefix);
 	await app.listen(5000);
 
 	if (module.hot) {

@@ -1,9 +1,13 @@
 import { Controller, Get } from "@nestjs/common";
+import { ApplicationFunction } from "src/application/usecases/application.function";
 
-@Controller('api/v1/application')
+@Controller('/application')
 export class ApplicationController {
+	constructor(private applicationFunction: ApplicationFunction) {
+
+	}
 	@Get('api-version')
 	getVersioningAPI() {
-		return '1.0.0';
+		return this.applicationFunction.getApiVersion();
 	}
 }
