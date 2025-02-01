@@ -1,30 +1,36 @@
 services:
   api:
-    container_name: smash-league-api
+    container_name: smash_league_api
     ports:
       - 5000:5000
     env_file:
       - .env
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && echo 'Migration resolved' && node dist/main.js"
+    # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && node dist/main.js"
     volumes:
       - .:/usr/src/app
-    command: npm run start:dev
     depends_on:
-      - db 
+      - db
     networks:
-      - smash-league
+      - smashleague
   db:
-    container_name: postgres-smash-league
     image: postgres:17.2
-    restart: unless-stopped
+    restart: always
     ports: 
       - "5001:5432"
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: smashleague
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - smash-league
+      - smashleague
 
 networks:
-  smash-league: 
+  smashleague: 
+volumes:
+  postgres_data: 
