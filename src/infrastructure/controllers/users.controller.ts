@@ -1,20 +1,20 @@
-import {
-	Controller,
-	Get,
-	Param,
-	ParseIntPipe,
-	UseGuards,
-} from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe, UseGuards } from "@nestjs/common";
 import { GetUserByIdUseCase } from "../../application/usecases/users/get-user-by-id.usecase";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
+import { Roles } from "../decorators/roles.decorator";
+import { RolesGuard } from "../guards/auth/role.guard";
+import { RoleMap } from "../enums/role.enum";
 
 @Controller("/users")
 export class UsersController {
-	constructor(private getUserByIdUseCase: GetUserByIdUseCase) {}
+	constructor(private getUserByIdUseCase: GetUserByIdUseCase) {
+	}
 
-	@UseGuards(JwtAccessTokenGuard)
 	@Get("/id/:id")
-	getUserById(@Param("id", ParseIntPipe) userID: string) {
+	@Roles(RoleMap.Admin.id, RoleMap.Athlete.id)
+	@UseGuards(RolesGuard)
+	@UseGuards(JwtAccessTokenGuard)
+	getUserById(@Param("id") userID: string) {
 		return this.getUserByIdUseCase.execute(userID);
 	}
 }
