@@ -8,7 +8,7 @@ export class GetUserWithRefreshTokenUseCase {
 		@Inject("UserRepository") private userRepository: UsersRepositoryPort,
 	) {}
 
-	async execute(userID: number, refreshToken: string): Promise<User> {
+	async execute(userID: string, refreshToken: string): Promise<User> {
 		return await this.userRepository.getUserWithRefreshToken(
 			userID,
 			refreshToken,

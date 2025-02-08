@@ -43,7 +43,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 	}
 
 
-	async storeRefreshToken(userID: number, token: string): Promise<void> {
+	async storeRefreshToken(userID: string, token: string): Promise<void> {
 		try {
 			const hashed_token = await bcrypt.hash(token, this.SALT_ROUND);
 			await this.prisma.user.update({
@@ -56,7 +56,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 	}
 
 	//* Use refresh token to generate new access token
-	refreshAccessToken(userID: number): string {
+	refreshAccessToken(userID: string): string {
 		try {
 			return this.generateAccessToken({ userID });
 		} catch (e) {
@@ -64,7 +64,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 		}
 	}
 
-	async signIn(userID: number): Promise<ISignInResponse> {
+	async signIn(userID: string): Promise<ISignInResponse> {
 		try {
 			const accessToken = this.generateAccessToken({
 				userID,

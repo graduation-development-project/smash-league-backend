@@ -9,7 +9,7 @@ export class GetUserByIdUseCase {
 		private readonly userRepository: UsersRepositoryPort,
 	) {}
 
-	async execute(userID: number): Promise<User> {
+	async execute(userID: string): Promise<User> {
 		return await this.userRepository.findUserById(userID);
 	}
 }

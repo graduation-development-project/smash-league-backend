@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,12 +8,105 @@ datasource db {
 }
 
 model User {
-  id                  Int     @id @default(autoincrement())
-  email               String  @unique
+  id                  String       @id @default(uuid())
+  email               String       @unique
   password            String
   firstName           String
   lastName            String
-  phoneNumber         String  @unique
+  phoneNumber         String       @unique
   avatarURL           String?
   currentRefreshToken String?
+  CreditsRemain       Int
+  teamId              String?
+  team                Team?        @relation("FK_User_UserTeam")
+  tournaments         Tournament[] @relation("FK_Tournament_UserTournament")
+  userRoles           UserRole[]   @relation("FK_User_UserRole")
+  userTeams           UserTeam[]   @relation("FK_User_UserTeam")
+}
+
+model Role {
+  id              String           @id @default(uuid())
+  roleName        String
+  rolePermissions RolePermission[] @relation("FK_Role_RolePermission")
+  userRoles       UserRole[]       @relation("FK_Role_UserRole")
+}
+
+model UserRole {
+  userId String
+  roleId String
+  role   Role   @relation("FK_Role_UserRole", fields: [roleId], references: [id])
+  user   User   @relation("FK_User_UserRole", fields: [userId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model Permission {
+  id              String           @id @default(uuid())
+  name            String
+  rolePermissions RolePermission[] @relation("FK_Permission_RolePermission")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  permission   Permission @relation("FK_Permission_RolePermission", fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation("FK_Role_RolePermission", fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model Team {
+  id           String     @id @default(uuid())
+  teamName     String
+  teamLeaderId String     @unique
+  teamLeader   User       @relation("FK_User_UserTeam", fields: [teamLeaderId], references: [id], onDelete: Cascade)
+  userTeams    UserTeam[] @relation("FK_Team_UserTeam")
+}
+
+model UserTeam {
+  userId String
+  teamId String
+  team   Team   @relation("FK_Team_UserTeam", fields: [teamId], references: [id], onDelete: Cascade)
+  user   User   @relation("FK_User_UserTeam", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, teamId])
+}
+
+model NotificationType {
+  id                 String         @id @default(uuid())
+  typeOfNotification String
+  notifications      Notification[] @relation("FK_Notification_NotificationType")
+}
+
+model Notification {
+  id      String           @id @default(uuid())
+  title   String
+  message String
+  typeId  String
+  type    NotificationType @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
+}
+
+model Tournament {
+  id              String           @id @default(uuid())
+  organizerId     String
+  tournamentRules Json
+  organizer       User             @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
+  tournamentPosts TournamentPost[] @relation("FK_TournamentPost_TournamentPostTournament")
+}
+
+model TournamentPost {
+  id            String         @id @default(uuid())
+  tournamentId  String
+  createdAt     DateTime
+  updatedAt     DateTime
+  content       String
+  contentImages ContentImage[] @relation("FK_ContentImage_TournamentPostContentImage")
+  tournament    Tournament     @relation("FK_TournamentPost_TournamentPostTournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+}
+
+model ContentImage {
+  id          String         @id @default(uuid())
+  imageUrl    String
+  contentId   String
+  postContent TournamentPost @relation("FK_ContentImage_TournamentPostContentImage", fields: [contentId], references: [id], onDelete: Cascade)
 }

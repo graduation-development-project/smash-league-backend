@@ -8,7 +8,7 @@ export class SignInUseCase {
 		@Inject("AuthRepository") private authRepository: AuthRepositoryPort,
 	) {}
 
-	async execute(userID: number): Promise<ISignInResponse> {
+	async execute(userID: string): Promise<ISignInResponse> {
 		return this.authRepository.signIn(userID);
 	}
 }

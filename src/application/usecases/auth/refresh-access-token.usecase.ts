@@ -7,7 +7,7 @@ export class RefreshAccessTokenUseCase {
 		@Inject("AuthRepository") private authRepository: AuthRepositoryPort,
 	) {}
 
-	execute(userID: number): string {
+	execute(userID: string): string {
 		return this.authRepository.refreshAccessToken(userID);
 	}
 }
