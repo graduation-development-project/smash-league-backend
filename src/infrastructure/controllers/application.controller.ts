@@ -4,7 +4,6 @@ import { ApplicationFunction } from "src/application/usecases/application.functi
 @Controller('/application')
 export class ApplicationController {
 	constructor(private applicationFunction: ApplicationFunction) {
-
 	}
 	@Get('api-version')
 	getVersioningAPI() {

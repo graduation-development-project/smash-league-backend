@@ -14,7 +14,7 @@ export class UsersController {
 
 	@UseGuards(JwtAccessTokenGuard)
 	@Get("/id/:id")
-	getUserById(@Param("id", ParseIntPipe) userID: number) {
+	getUserById(@Param("id", ParseIntPipe) userID: string) {
 		return this.getUserByIdUseCase.execute(userID);
 	}
 }

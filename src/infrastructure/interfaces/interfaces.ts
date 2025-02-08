@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 
 export interface IPayload {
-	userID: number;
+	userID: string;
 }
 
 export interface ISignInResponse {

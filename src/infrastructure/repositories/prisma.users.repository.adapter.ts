@@ -13,7 +13,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {
 	}
 
-	async findUserById(userID: number): Promise<User> {
+	async findUserById(userID: string): Promise<User> {
 
 		try {
 			// console.log("userID", userID)
@@ -59,7 +59,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	}
 
 	async getUserWithRefreshToken(
-		userID: number,
+		userID: string,
 		refreshToken: string,
 	): Promise<User> {
 		try {
@@ -91,6 +91,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 					createUserDTO.avatarURL ||
 					"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
 				currentRefreshToken: createUserDTO.currentRefreshToken || null,
+				CreditsRemain: 0
 			};
 
 			return await this.prisma.user.create({ data: userData });

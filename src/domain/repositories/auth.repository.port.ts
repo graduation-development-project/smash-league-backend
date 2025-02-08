@@ -7,9 +7,9 @@ import {
 } from "../../infrastructure/interfaces/interfaces";
 
 export interface AuthRepositoryPort {
-	signIn(userID: number): Promise<ISignInResponse>;
+	signIn(userID: string): Promise<ISignInResponse>;
 
 	signUp(signUpDTO: SignUpDTO): Promise<ISignUpResponse>;
 
-	refreshAccessToken(userID: number): string;
+	refreshAccessToken(userID: string): string;
 }

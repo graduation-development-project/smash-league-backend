@@ -22,7 +22,15 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
             passReqToCallback: true,
         });
     }
-
+    /**
+     * function signIn() {
+     *      const dto = {usename}
+     *      await authenRepo.signIn(interface ({usename, password}))
+     * }
+     * @param request 
+     * @param payload 
+     * @returns 
+     */
     async validate(request: Request, payload: IPayload) {
         return await this.getUserWithRefreshTokenUseCase.execute(
             payload.userID,
