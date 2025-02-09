@@ -1,8 +1,9 @@
 import { User } from "@prisma/client";
 import { CreateUserDTO } from "../../infrastructure/dto/users/create-user.dto";
+import { TUserWithRole } from "../../infrastructure/types/users.type";
 
 export interface UsersRepositoryPort {
-	findUserById(userID: string): Promise<User>;
+	findUserById(userID: string): Promise<TUserWithRole>;
 
 	getAuthenticatedUser(email: string, password: string): Promise<User>;
 

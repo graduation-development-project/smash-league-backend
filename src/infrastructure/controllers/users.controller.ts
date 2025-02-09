@@ -4,6 +4,7 @@ import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { RoleMap } from "../enums/role.enum";
+import { TUserWithRole } from "../types/users.type";
 
 @Controller("/users")
 export class UsersController {
@@ -14,7 +15,7 @@ export class UsersController {
 	@Roles(RoleMap.Admin.id, RoleMap.Athlete.id)
 	@UseGuards(RolesGuard)
 	@UseGuards(JwtAccessTokenGuard)
-	getUserById(@Param("id") userID: string) {
+	getUserById(@Param("id") userID: string): Promise<TUserWithRole> {
 		return this.getUserByIdUseCase.execute(userID);
 	}
 }
