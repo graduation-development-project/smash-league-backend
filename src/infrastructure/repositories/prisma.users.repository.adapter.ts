@@ -4,6 +4,7 @@ import { PrismaClient, User } from "@prisma/client";
 import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
 import { CreateUserDTO } from "../dto/users/create-user.dto";
 import { TUserWithRole } from "../types/users.type";
+import { EditUserDTO } from "../dto/users/edit-user.dto";
 
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
@@ -21,7 +22,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			return {
 				...user,
 				// @ts-ignore
-				userRoles: user.userRoles.map((role: { roleId: string; }) => role.roleId),
+				userRoles: user?.userRoles?.map((role: { roleId: string; }) => role.roleId),
 			};
 
 		} catch (e) {
@@ -109,4 +110,36 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			throw new BadRequestException("Create user failed");
 		}
 	}
+
+	async editUserProfile(userID: string, editUserDTO: EditUserDTO): Promise<TUserWithRole> {
+		try {
+
+			// console.log(editUserDTO);
+
+			const updatedUser: User = await this.prisma.user.update({
+				where: {
+					id: userID,
+				},
+				data: {
+					...editUserDTO,
+				},
+
+				include: { userRoles: { select: { roleId: true } } },
+
+			});
+
+
+			return {
+				...updatedUser,
+				// @ts-ignore
+				userRoles: updatedUser?.userRoles.length > 0 ? updatedUser?.userRoles?.map((role: {
+					roleId: string;
+				}) => role.roleId) : [],
+			};
+
+		} catch (e) {
+			throw new BadRequestException("Edit user failed");
+		}
+	}
+
 }

@@ -12,6 +12,7 @@ import { SignUpUseCase } from "./usecases/auth/sign-up.usecase";
 import { PrismaAuthRepositoryAdapter } from "../infrastructure/repositories/prisma.auth.repository.adapter";
 import { JwtModule } from "@nestjs/jwt";
 import { RefreshAccessTokenUseCase } from "./usecases/auth/refresh-access-token.usecase";
+import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.usecase";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -41,6 +42,7 @@ import { RefreshAccessTokenUseCase } from "./usecases/auth/refresh-access-token.
 		SignInUseCase,
 		SignUpUseCase,
 		RefreshAccessTokenUseCase,
+		EditUserProfileUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -52,6 +54,8 @@ import { RefreshAccessTokenUseCase } from "./usecases/auth/refresh-access-token.
 		SignInUseCase,
 		SignUpUseCase,
 		RefreshAccessTokenUseCase,
+		EditUserProfileUseCase,
 	],
 })
-export class ApplicationModule {}
+export class ApplicationModule {
+}

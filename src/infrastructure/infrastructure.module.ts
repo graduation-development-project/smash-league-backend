@@ -16,4 +16,5 @@ import { AuthController } from "./controllers/auth.controller";
 	providers: [LocalStrategy, JwtAccessTokenStrategy, JwtRefreshTokenStrategy],
 	exports: [],
 })
-export class InfrastructureModule {}
+export class InfrastructureModule {
+}
