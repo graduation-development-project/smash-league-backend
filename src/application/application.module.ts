@@ -13,6 +13,10 @@ import { PrismaAuthRepositoryAdapter } from "../infrastructure/repositories/pris
 import { JwtModule } from "@nestjs/jwt";
 import { RefreshAccessTokenUseCase } from "./usecases/auth/refresh-access-token.usecase";
 import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.usecase";
+import { SearchTournamentsUseCase } from "./usecases/tournaments/search-tournaments.usecase";
+import {
+	PrismaTournamentsRepositoryAdapter,
+} from "../infrastructure/repositories/prisma.tournaments.repository.adapter";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -32,6 +36,10 @@ import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.useca
 			provide: "UserRepository",
 			useClass: PrismaUsersRepositoryAdapter,
 		},
+		{
+			provide: "TournamentRepository",
+			useClass: PrismaTournamentsRepositoryAdapter,
+		},
 
 		ApplicationFunction,
 		GetUserByIdUseCase,
@@ -43,6 +51,7 @@ import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.useca
 		SignUpUseCase,
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
+		SearchTournamentsUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -55,6 +64,7 @@ import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.useca
 		SignUpUseCase,
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
+		SearchTournamentsUseCase,
 	],
 })
 export class ApplicationModule {
