@@ -3,12 +3,17 @@ services:
     container_name: smash_league_api
     ports:
       - 5000:5000
-    env_file:
-      - .env
+    environment:
+      - DATABASE_URL=postgres://root:password@database:5432/smashleague?schema=public
+      - PREFIX=api/v1
+      - ACCESS_TOKEN_SECRET_KEY="167031@SmashLeague@ACCESS"
+      - REFRESH_TOKEN_SECRET_KEY="167031@SmashLeague@REFRESH"
+      - JWT_ACCESS_TOKEN_EXPIRATION_TIME=1800
+      - JWT_REFRESH_TOKEN_EXPIRATION_TIME=25200
     build: 
       context: .
       dockerfile: Dockerfile
-    # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && echo 'Migration resolved' && node dist/main.js"
+    command: bash -c "npx prisma migrate deploy; npm run build; npm run start:prod"
     # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && node dist/main.js"
     volumes:
       - .:/usr/src/app
@@ -17,10 +22,11 @@ services:
     networks:
       - smashleague
   db:
+    container_name: database
     image: postgres:17.2
     restart: always
     ports: 
-      - "5001:5432"
+      - "5002:5432"
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
@@ -31,6 +37,6 @@ services:
       - smashleague
 
 networks:
-  smashleague: 
+  smashleague: {}
 volumes:
   postgres_data: 
