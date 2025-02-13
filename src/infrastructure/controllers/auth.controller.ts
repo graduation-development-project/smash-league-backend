@@ -19,7 +19,8 @@ export class AuthController {
 		private signUpUseCase: SignUpUseCase,
 		private signInUseCase: SignInUseCase,
 		private refreshAccessTokenUseCase: RefreshAccessTokenUseCase,
-	) {}
+	) {
+	}
 
 	@UseGuards(LocalAuthGuard)
 	@Post("/sign-in")
