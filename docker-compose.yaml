@@ -17,6 +17,7 @@ services:
     # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && node dist/main.js"
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - db
     networks:
