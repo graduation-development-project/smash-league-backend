@@ -1,16 +1,8 @@
-import * as bcrypt from "bcryptjs";
-import {
-	BadRequestException,
-	Injectable,
-	UnauthorizedException,
-} from "@nestjs/common";
-import { PrismaClient, TournamentParticipant, User } from "@prisma/client";
-import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
-import { CreateUserDTO } from "../dto/users/create-user.dto";
-import { TUserWithRole } from "../types/users.type";
-import { EditUserDTO } from "../dto/users/edit-user.dto";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { PrismaClient, TournamentParticipant } from "@prisma/client";
 import { AthletesRepository } from "../../domain/repositories/athletes.repository";
 import { RegisterTournamentDTO } from "../dto/athletes/register-tournament.dto";
+import { EventTypesEnum } from "../enums/event-types.enum";
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
@@ -31,34 +23,34 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
 				throw new BadRequestException("Tournament not found");
 			}
 
-			const userRegistered = await this.prisma.tournamentParticipant.findUnique(
-				{
+			const userRegistered: TournamentParticipant =
+				await this.prisma.tournamentParticipant.findFirst({
 					where: {
-						tournamentId_userId: {
-							userId,
-							tournamentId,
-						},
-					},
-				},
-			);
-
-			if (userRegistered) {
-				throw new BadRequestException(
-					"User already registered this tournament",
-				);
-			}
-
-			const registerStatus: TournamentParticipant =
-				await this.prisma.tournamentParticipant.create({
-					data: {
 						tournamentId,
-						userId,
-						eventType,
-						partnerId: eventType === "Double" ? partnerId || null : null,
+						OR: [
+							{ userId, eventType }, // * User registered as a player
+							{ partnerId: userId }, // * User is registered as a partner
+						],
 					},
 				});
 
-			return registerStatus;
+			if (userRegistered) {
+				throw new BadRequestException(
+					"User already registered this tournament event type",
+				);
+			}
+
+			return await this.prisma.tournamentParticipant.create({
+				data: {
+					tournamentId,
+					userId,
+					eventType,
+					partnerId:
+						eventType.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()
+							? partnerId || null
+							: null,
+				},
+			});
 		} catch (e) {
 			throw e;
 		}

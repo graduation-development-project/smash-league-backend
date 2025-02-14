@@ -112,7 +112,7 @@ model TournamentParticipant {
   user         User       @relation("FK_TournamentParticipant_User", fields: [userId], references: [id], onDelete: Cascade)
   partner      User?      @relation("FK_TournamentParticipant_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
 
-  @@unique([tournamentId, userId]) // Ensure a user can join a tournament only once per event type
+  @@unique([tournamentId, userId, eventType]) // Ensure a user can join a tournament only once per event type
   @@unique([tournamentId, partnerId]) // Ensure a pair is unique for doubles
 }
 
