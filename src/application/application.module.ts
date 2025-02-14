@@ -13,6 +13,8 @@ import { PrismaAuthRepositoryAdapter } from "../infrastructure/repositories/pris
 import { JwtModule } from "@nestjs/jwt";
 import { RefreshAccessTokenUseCase } from "./usecases/auth/refresh-access-token.usecase";
 import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.usecase";
+import { PrismaAthletesRepositoryAdapter } from "../infrastructure/repositories/prisma.athletes.repository.adapter";
+import { RegisterTournamentUseCase } from "./usecases/athletes/register-tournament.usecase";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -33,6 +35,11 @@ import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.useca
 			useClass: PrismaUsersRepositoryAdapter,
 		},
 
+		{
+			provide: "AthleteRepository",
+			useClass: PrismaAthletesRepositoryAdapter,
+		},
+
 		ApplicationFunction,
 		GetUserByIdUseCase,
 		GetAuthenticatedUserUseCase,
@@ -43,6 +50,7 @@ import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.useca
 		SignUpUseCase,
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
+		RegisterTournamentUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -55,7 +63,7 @@ import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.useca
 		SignUpUseCase,
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
+		RegisterTournamentUseCase,
 	],
 })
-export class ApplicationModule {
-}
+export class ApplicationModule {}

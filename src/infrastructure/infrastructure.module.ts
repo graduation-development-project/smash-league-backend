@@ -9,12 +9,17 @@ import { JwtRefreshTokenStrategy } from "./strategies/auth/jwt-refresh-token.str
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { AuthController } from "./controllers/auth.controller";
+import { AthletesController } from "./controllers/athletes.controller";
 
 @Module({
 	imports: [ApplicationModule, PassportModule, JwtModule.register({})],
-	controllers: [ApplicationController, UsersController, AuthController],
+	controllers: [
+		ApplicationController,
+		UsersController,
+		AuthController,
+		AthletesController,
+	],
 	providers: [LocalStrategy, JwtAccessTokenStrategy, JwtRefreshTokenStrategy],
 	exports: [],
 })
-export class InfrastructureModule {
-}
+export class InfrastructureModule {}

@@ -8,20 +8,22 @@ datasource db {
 }
 
 model User {
-  id                  String       @id @default(uuid())
-  email               String       @unique
-  password            String
-  firstName           String
-  lastName            String
-  phoneNumber         String       @unique
-  avatarURL           String?
-  currentRefreshToken String?
-  CreditsRemain       Int
-  teamId              String?
-  team                Team?        @relation("FK_User_UserTeam")
-  tournaments         Tournament[] @relation("FK_Tournament_UserTournament")
-  userRoles           UserRole[]   @relation("FK_User_UserRole")
-  userTeams           UserTeam[]   @relation("FK_User_UserTeam")
+  id                      String                  @id @default(uuid())
+  email                   String                  @unique
+  password                String
+  firstName               String
+  lastName                String
+  phoneNumber             String                  @unique
+  avatarURL               String?
+  currentRefreshToken     String?
+  CreditsRemain           Int
+  teamId                  String?
+  team                    Team?                   @relation("FK_User_UserTeam")
+  tournaments             Tournament[]            @relation("FK_Tournament_UserTournament") // Tournaments the user organizes
+  userRoles               UserRole[]              @relation("FK_User_UserRole")
+  userTeams               UserTeam[]              @relation("FK_User_UserTeam")
+  tournamentParticipation TournamentParticipant[] @relation("FK_TournamentParticipant_User") // Tournaments the user participates in
+  tournamentPartnership   TournamentParticipant[] @relation("FK_TournamentParticipant_Partner")
 }
 
 model Role {
@@ -87,11 +89,31 @@ model Notification {
 }
 
 model Tournament {
-  id              String           @id @default(uuid())
+  id              String                  @id @default(uuid())
+  name            String
+  shortName       String
   organizerId     String
+  startDate       DateTime
+  endDate         DateTime
+  status          String
   tournamentRules Json
-  organizer       User             @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
-  tournamentPosts TournamentPost[] @relation("FK_TournamentPost_TournamentPostTournament")
+  organizer       User                    @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
+  tournamentPosts TournamentPost[]        @relation("FK_TournamentPost_TournamentPostTournament")
+  participants    TournamentParticipant[] @relation("FK_TournamentParticipant_Tournament")
+}
+
+model TournamentParticipant {
+  id           String     @id @default(uuid())
+  tournamentId String
+  userId       String
+  eventType    String // "SINGLE" or "DOUBLE"
+  partnerId    String? // Nullable: Used only for doubles
+  tournament   Tournament @relation("FK_TournamentParticipant_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user         User       @relation("FK_TournamentParticipant_User", fields: [userId], references: [id], onDelete: Cascade)
+  partner      User?      @relation("FK_TournamentParticipant_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+
+  @@unique([tournamentId, userId]) // Ensure a user can join a tournament only once per event type
+  @@unique([tournamentId, partnerId]) // Ensure a pair is unique for doubles
 }
 
 model TournamentPost {
