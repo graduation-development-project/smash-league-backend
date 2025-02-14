@@ -34,6 +34,23 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
 					},
 				});
 
+			// * Check if partner is registered
+			if (eventType.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()) {
+				const partnerRegistered: TournamentParticipant =
+					await this.prisma.tournamentParticipant.findFirst({
+						where: {
+							tournamentId,
+							OR: [{ userId: partnerId, eventType }, { partnerId }],
+						},
+					});
+
+				if (partnerRegistered) {
+					throw new BadRequestException(
+						"Your partner already registered this tournament event type",
+					);
+				}
+			}
+
 			if (userRegistered) {
 				throw new BadRequestException(
 					"User already registered this tournament event type",
