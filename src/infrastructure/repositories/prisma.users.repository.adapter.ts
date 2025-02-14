@@ -1,9 +1,14 @@
 import * as bcrypt from "bcryptjs";
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+	BadRequestException,
+	Injectable,
+	UnauthorizedException,
+} from "@nestjs/common";
 import { PrismaClient, User } from "@prisma/client";
 import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
 import { CreateUserDTO } from "../dto/users/create-user.dto";
 import { TUserWithRole } from "../types/users.type";
+import { RoleMap } from "../enums/role.enum";
 import { EditUserDTO } from "../dto/users/edit-user.dto";
 
 @Injectable()
@@ -22,7 +27,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			return {
 				...user,
 				// @ts-ignore
-				userRoles: user?.userRoles?.map((role: { roleId: string; }) => role.roleId),
+				userRoles: user.userRoles.map((role: { roleId: string; }) => role.roleId),
 			};
 
 		} catch (e) {
@@ -94,18 +99,22 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	async createUser(createUserDTO: CreateUserDTO): Promise<User> {
 		try {
 			// console.log(createUserDTO)
+			const { avatarURL, currentRefreshToken, ...rest } = createUserDTO;
 
-			//* Set default data for user avatar, currentRefreshToken
+			//* Set default data for user avatar, currentRefreshToken, CreditsRemain
 			const userData = {
-				...createUserDTO,
-				avatarURL:
-					createUserDTO.avatarURL ||
-					"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
-				currentRefreshToken: createUserDTO.currentRefreshToken || null,
+				...rest,
+				avatarURL: avatarURL || "https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
+				currentRefreshToken: currentRefreshToken ?? null,
 				CreditsRemain: 0,
 			};
 
-			return await this.prisma.user.create({ data: userData });
+			return await this.prisma.$transaction(async (prisma): Promise<User> => {
+				const user: User = await prisma.user.create({ data: userData });
+				await prisma.userRole.create({ data: { roleId: RoleMap.Athlete.id.toString(), userId: user.id } });
+				return user;
+			});
+
 		} catch (e) {
 			throw new BadRequestException("Create user failed");
 		}
