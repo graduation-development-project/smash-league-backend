@@ -15,6 +15,7 @@ import { RefreshAccessTokenUseCase } from "./usecases/auth/refresh-access-token.
 import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.usecase";
 import { PrismaAthletesRepositoryAdapter } from "../infrastructure/repositories/prisma.athletes.repository.adapter";
 import { RegisterTournamentUseCase } from "./usecases/athletes/register-tournament.usecase";
+import {ChangePasswordUseCase} from "./usecases/users/change-password.usecase";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -51,6 +52,7 @@ import { RegisterTournamentUseCase } from "./usecases/athletes/register-tourname
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
+		ChangePasswordUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -64,6 +66,7 @@ import { RegisterTournamentUseCase } from "./usecases/athletes/register-tourname
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
+		ChangePasswordUseCase
 	],
 })
 export class ApplicationModule {}

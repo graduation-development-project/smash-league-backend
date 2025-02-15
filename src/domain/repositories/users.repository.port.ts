@@ -2,6 +2,7 @@ import { User } from "@prisma/client";
 import { CreateUserDTO } from "../../infrastructure/dto/users/create-user.dto";
 import { TUserWithRole } from "../../infrastructure/types/users.type";
 import { EditUserDTO } from "../../infrastructure/dto/users/edit-user.dto";
+import { ChangePasswordDTO } from "../../infrastructure/dto/users/change-password.dto";
 
 export interface UsersRepositoryPort {
 	findUserById(userID: string): Promise<TUserWithRole>;
@@ -14,5 +15,13 @@ export interface UsersRepositoryPort {
 
 	createUser(createUserDTO: CreateUserDTO): Promise<User>;
 
-	editUserProfile(userID: string, editUserDTO: EditUserDTO): Promise<TUserWithRole>;
+	editUserProfile(
+		userID: string,
+		editUserDTO: EditUserDTO,
+	): Promise<TUserWithRole>;
+
+	changePassword(
+		userID: string,
+		changePasswordDTO: ChangePasswordDTO,
+	): Promise<TUserWithRole>;
 }
