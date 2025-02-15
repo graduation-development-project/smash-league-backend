@@ -20,10 +20,21 @@ import { TUserWithRole } from "../types/users.type";
 import { GetUserByIdUseCase } from "../../application/usecases/users/get-user-by-id.usecase";
 import { SearchTournamentsUseCase } from "../../application/usecases/tournaments/search-tournaments.usecase";
 import { Tournament } from "@prisma/client";
+import { GetTournamentListUseCase } from "../../application/usecases/tournaments/get-tournament-list.usecase";
 
 @Controller("/tournaments")
 export class TournamentsController {
-	constructor(private searchTournamentsUseCase: SearchTournamentsUseCase) {}
+	constructor(
+		private searchTournamentsUseCase: SearchTournamentsUseCase,
+		private getTournamentListUseCase: GetTournamentListUseCase,
+	) {}
+
+	@Get("/")
+	getTournamentsList(
+		@Query() paginateOption: IPaginateOptions,
+	): Promise<IPaginatedOutput<Tournament>> {
+		return this.getTournamentListUseCase.execute(paginateOption);
+	}
 
 	@Get("/search")
 	searchTournaments(

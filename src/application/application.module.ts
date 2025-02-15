@@ -17,6 +17,7 @@ import { SearchTournamentsUseCase } from "./usecases/tournaments/search-tourname
 import {
 	PrismaTournamentsRepositoryAdapter,
 } from "../infrastructure/repositories/prisma.tournaments.repository.adapter";
+import {GetTournamentListUseCase} from "./usecases/tournaments/get-tournament-list.usecase";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -52,6 +53,7 @@ import {
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		SearchTournamentsUseCase,
+		GetTournamentListUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -65,6 +67,7 @@ import {
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		SearchTournamentsUseCase,
+		GetTournamentListUseCase
 	],
 })
 export class ApplicationModule {

@@ -9,4 +9,6 @@ export interface TournamentsRepositoryPort {
 		searchTerm: string,
 		options: IPaginateOptions,
 	): Promise<IPaginatedOutput<Tournament>>;
+
+	getTournamentsList(options: IPaginateOptions,): Promise<IPaginatedOutput<Tournament>>;
 }
