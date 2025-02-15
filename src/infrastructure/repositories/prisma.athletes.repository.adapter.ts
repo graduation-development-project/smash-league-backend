@@ -1,8 +1,13 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { PrismaClient, TournamentParticipant } from "@prisma/client";
+import {
+	PrismaClient,
+	Tournament,
+	TournamentParticipant,
+} from "@prisma/client";
 import { AthletesRepository } from "../../domain/repositories/athletes.repository";
 import { RegisterTournamentDTO } from "../dto/athletes/register-tournament.dto";
 import { EventTypesEnum } from "../enums/event-types.enum";
+import e from "express";
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
@@ -66,6 +71,30 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
 						eventType.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()
 							? partnerId || null
 							: null,
+				},
+			});
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	async getParticipatedTournaments(
+		userID: string,
+		tournamentStatus: string,
+	): Promise<Tournament[]> {
+		try {
+			return this.prisma.tournament.findMany({
+				where: {
+					participants: {
+						some: {
+							OR: [
+								{ userId: userID }, //* User participated as a player
+								{ partnerId: userID }, //* User participated as a partner
+							],
+						},
+					},
+
+					...(tournamentStatus ? { status: tournamentStatus } : {}),
 				},
 			});
 		} catch (e) {
