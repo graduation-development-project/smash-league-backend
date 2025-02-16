@@ -1,8 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { AthletesRepository } from "../../../domain/repositories/athletes.repository";
-import { User } from "@prisma/client";
+import { UserVerification } from "@prisma/client";
 import { RegisterNewRoleDTO } from "../../../infrastructure/dto/athletes/register-new-role.dto";
-import { TUserWithRole } from "../../../infrastructure/types/users.type";
 
 @Injectable()
 export class RegisterNewRoleUseCase {
@@ -13,7 +12,7 @@ export class RegisterNewRoleUseCase {
 	execute(
 		userID: string,
 		registerNewRoleDTO: RegisterNewRoleDTO,
-	): Promise<TUserWithRole> {
+	): Promise<UserVerification> {
 		return this.athletesRepository.registerNewRole(userID, registerNewRoleDTO);
 	}
 }
