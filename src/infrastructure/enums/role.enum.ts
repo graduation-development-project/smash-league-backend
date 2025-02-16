@@ -3,7 +3,7 @@ export const RoleMap = {
 	Organizer: { id: 2, name: "Organizer" },
 	Athlete: { id: 3, name: "Athlete" },
 	Team_Leader: { id: 4, name: "Team Leader" },
-	Referee: { id: 5, name: "Referee" },
+	Umpire: { id: 5, name: "Umpire" },
 } as const;
 
 export type Role = keyof typeof RoleMap;

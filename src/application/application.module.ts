@@ -16,6 +16,8 @@ import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.useca
 import { PrismaAthletesRepositoryAdapter } from "../infrastructure/repositories/prisma.athletes.repository.adapter";
 import { RegisterTournamentUseCase } from "./usecases/athletes/register-tournament.usecase";
 import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-participated-tournaments.usecase";
+import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.usecase";
+import {UploadVerificationImagesUseCase} from "./usecases/athletes/upload-verification-images.usecase";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -53,6 +55,8 @@ import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-parti
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
 		GetParticipatedTournamentsUseCase,
+		RegisterNewRoleUseCase,
+		UploadVerificationImagesUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -67,6 +71,8 @@ import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-parti
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
 		GetParticipatedTournamentsUseCase,
+		RegisterNewRoleUseCase,
+		UploadVerificationImagesUseCase
 	],
 })
 export class ApplicationModule {}

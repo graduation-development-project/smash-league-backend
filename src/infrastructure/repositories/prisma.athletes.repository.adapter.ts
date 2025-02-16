@@ -3,11 +3,17 @@ import {
 	PrismaClient,
 	Tournament,
 	TournamentParticipant,
+	User,
 } from "@prisma/client";
 import { AthletesRepository } from "../../domain/repositories/athletes.repository";
 import { RegisterTournamentDTO } from "../dto/athletes/register-tournament.dto";
 import { EventTypesEnum } from "../enums/event-types.enum";
-import e from "express";
+import { RegisterNewRoleDTO } from "../dto/athletes/register-new-role.dto";
+import { TUserWithRole } from "../types/users.type";
+import { TCloudinaryResponse } from "../types/cloudinary.type";
+import { v2 as cloudinary } from "cloudinary";
+
+const streamifier = require("streamifier");
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
@@ -96,6 +102,73 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
 
 					...(tournamentStatus ? { status: tournamentStatus } : {}),
 				},
+			});
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	async uploadVerificationImage(
+		files: Express.Multer.File[],
+		userID: string,
+	): Promise<TCloudinaryResponse[]> {
+		try {
+			const now = new Date();
+			const folderName = `verification-information/${now.toISOString().split("T")[0]}/${userID}`;
+
+			const uploadPromises: Promise<TCloudinaryResponse>[] = files.map(
+				(file) => {
+					return new Promise<TCloudinaryResponse>((resolve, reject) => {
+						const uploadStream = cloudinary.uploader.upload_stream(
+							{
+								resource_type: "auto",
+								folder: folderName, //* Specify the folder name
+								public_id: `${userID}-${now.toISOString()}`, //* Unique file name
+							},
+
+							(error, result) => {
+								if (error) return reject(error);
+								resolve(result);
+							},
+						);
+
+						streamifier.createReadStream(file.buffer).pipe(uploadStream);
+					});
+				},
+			);
+
+			return Promise.all(uploadPromises);
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	async registerNewRole(
+		userID: string,
+		registerNewRoleDTO: RegisterNewRoleDTO,
+	): Promise<TUserWithRole> {
+		try {
+			const { IDCardFront, IDCardBack, role, cardPhoto } = registerNewRoleDTO;
+
+			return this.prisma.$transaction(async (prisma) => {
+				const user: User = await prisma.user.update({
+					where: { id: userID },
+					data: { IDCardFront, IDCardBack, cardPhoto },
+				});
+
+				await prisma.userRole.create({
+					data: { roleId: role, userId: userID },
+				});
+
+				const userRoles: { roleId: string }[] = await prisma.userRole.findMany({
+					where: { userId: userID },
+					select: { roleId: true },
+				});
+
+				return {
+					...user,
+					userRoles: userRoles.map((role) => role.roleId),
+				};
 			});
 		} catch (e) {
 			throw e;

@@ -1,3 +1,3 @@
 import { User } from "@prisma/client";
 
-export type TUserWithRole = User & { userRoles: number[] }
+export type TUserWithRole = User & { userRoles: string[] };
