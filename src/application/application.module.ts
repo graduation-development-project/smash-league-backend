@@ -20,6 +20,7 @@ import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.us
 import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
 import { MailService } from "../infrastructure/service/mail.service";
 import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
+import {ChangePasswordUseCase} from "./usecases/users/change-password.usecase";
 import { PrismaStaffsRepositoryAdapter } from "../infrastructure/repositories/prisma.staffs.repository.adapter";
 import {VerifyUserInformationUseCase} from "./usecases/staffs/verify-user-information.usecase";
 
@@ -67,6 +68,7 @@ import {VerifyUserInformationUseCase} from "./usecases/staffs/verify-user-inform
 		RegisterNewRoleUseCase,
 		UploadVerificationImagesUseCase,
 		VerifyOTPUseCase,
+		ChangePasswordUseCase,
 		VerifyUserInformationUseCase
 	],
 	exports: [
@@ -81,6 +83,7 @@ import {VerifyUserInformationUseCase} from "./usecases/staffs/verify-user-inform
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
+		ChangePasswordUseCase,
 		GetParticipatedTournamentsUseCase,
 		RegisterNewRoleUseCase,
 		UploadVerificationImagesUseCase,

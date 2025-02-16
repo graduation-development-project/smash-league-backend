@@ -10,12 +10,14 @@ import { CreateUserDTO } from "../dto/users/create-user.dto";
 import { TUserWithRole } from "../types/users.type";
 import { RoleMap } from "../enums/role.enum";
 import { EditUserDTO } from "../dto/users/edit-user.dto";
+import { ChangePasswordDTO } from "../dto/users/change-password.dto";
 
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
 
 	async findUserById(userID: string): Promise<TUserWithRole> {
+
 		try {
 			const user: User = await this.prisma.user.findUnique({
 				where: { id: userID },
@@ -29,9 +31,11 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 					(role: { roleId: string }) => role.roleId,
 				),
 			};
+
 		} catch (e) {
 			throw new BadRequestException("User not found");
 		}
+
 	}
 
 	async getUserByEmail(email: string): Promise<User> {
@@ -106,9 +110,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			//* Set default data for user avatar, currentRefreshToken, CreditsRemain
 			const userData = {
 				...rest,
-				avatarURL:
-					avatarURL ||
-					"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
+				avatarURL: avatarURL || "https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
 				currentRefreshToken: currentRefreshToken ?? null,
 				CreditsRemain: 0,
 			};
@@ -120,6 +122,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				});
 				return user;
 			});
+
 		} catch (e) {
 			throw e;
 		}
@@ -130,6 +133,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 		editUserDTO: EditUserDTO,
 	): Promise<TUserWithRole> {
 		try {
+
 			// console.log(editUserDTO);
 
 			const updatedUser: User = await this.prisma.user.update({
@@ -141,7 +145,9 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				},
 
 				include: { userRoles: { select: { roleId: true } } },
+
 			});
+
 
 			return {
 				...updatedUser,
@@ -155,8 +161,51 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 							)
 						: [],
 			};
+
 		} catch (e) {
 			throw new BadRequestException("Edit user failed");
 		}
+	}
+
+	async changePassword(
+		userID: string,
+		changePasswordDTO: ChangePasswordDTO,
+	): Promise<TUserWithRole> {
+		const { repeatNewPassword, oldPassword, newPassword } = changePasswordDTO;
+
+		const user: User = await this.prisma.user.findUnique({
+			where: { id: userID },
+		});
+
+		await this.verifyPlainContentWithHashedContent(oldPassword, user.password);
+
+		if (newPassword !== repeatNewPassword) {
+			throw new BadRequestException("Password not match");
+		}
+
+		const hashedPassword: string = await bcrypt.hash(newPassword, 10);
+
+		const updatedUser: User = await this.prisma.user.update({
+			where: {
+				id: userID,
+			},
+			data: {
+				password: hashedPassword,
+			},
+
+			include: { userRoles: { select: { roleId: true } } },
+		});
+
+		return {
+			...updatedUser,
+			userRoles:
+				// @ts-ignore
+				updatedUser?.userRoles.length > 0
+					? // @ts-ignore
+						updatedUser?.userRoles?.map(
+							(role: { roleId: string }) => role.roleId,
+						)
+					: [],
+		};
 	}
 }
