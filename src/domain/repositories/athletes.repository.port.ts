@@ -9,7 +9,7 @@ import { RegisterNewRoleDTO } from "../../infrastructure/dto/athletes/register-n
 import { TUserWithRole } from "../../infrastructure/types/users.type";
 import { TCloudinaryResponse } from "../../infrastructure/types/cloudinary.type";
 
-export interface AthletesRepository {
+export interface AthletesRepositoryPort {
 	registerTournament(
 		registerTournamentDTO: RegisterTournamentDTO,
 	): Promise<TournamentParticipant>;
