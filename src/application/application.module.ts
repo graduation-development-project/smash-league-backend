@@ -17,7 +17,9 @@ import { PrismaAthletesRepositoryAdapter } from "../infrastructure/repositories/
 import { RegisterTournamentUseCase } from "./usecases/athletes/register-tournament.usecase";
 import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-participated-tournaments.usecase";
 import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.usecase";
-import {UploadVerificationImagesUseCase} from "./usecases/athletes/upload-verification-images.usecase";
+import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
+import { MailService } from "../infrastructure/service/mail.service";
+import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -43,6 +45,7 @@ import {UploadVerificationImagesUseCase} from "./usecases/athletes/upload-verifi
 			useClass: PrismaAthletesRepositoryAdapter,
 		},
 
+		MailService,
 		ApplicationFunction,
 		GetUserByIdUseCase,
 		GetAuthenticatedUserUseCase,
@@ -56,7 +59,8 @@ import {UploadVerificationImagesUseCase} from "./usecases/athletes/upload-verifi
 		RegisterTournamentUseCase,
 		GetParticipatedTournamentsUseCase,
 		RegisterNewRoleUseCase,
-		UploadVerificationImagesUseCase
+		UploadVerificationImagesUseCase,
+		VerifyOTPUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -72,7 +76,8 @@ import {UploadVerificationImagesUseCase} from "./usecases/athletes/upload-verifi
 		RegisterTournamentUseCase,
 		GetParticipatedTournamentsUseCase,
 		RegisterNewRoleUseCase,
-		UploadVerificationImagesUseCase
+		UploadVerificationImagesUseCase,
+		VerifyOTPUseCase,
 	],
 })
 export class ApplicationModule {}

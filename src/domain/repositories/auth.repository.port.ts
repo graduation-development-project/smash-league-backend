@@ -9,7 +9,9 @@ import {
 export interface AuthRepositoryPort {
 	signIn(userID: string): Promise<ISignInResponse>;
 
-	signUp(signUpDTO: SignUpDTO): Promise<ISignUpResponse>;
+	signUp(signUpDTO: SignUpDTO): Promise<string>;
 
 	refreshAccessToken(userID: string): string;
+
+	verifyOTP(email: string, otp: string): Promise<string>;
 }

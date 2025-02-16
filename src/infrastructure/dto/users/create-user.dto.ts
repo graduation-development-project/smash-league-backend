@@ -1,4 +1,5 @@
 import {
+	IsDate,
 	IsEmail,
 	IsNotEmpty,
 	IsOptional,
@@ -36,4 +37,12 @@ export class CreateUserDTO {
 	@IsOptional()
 	@IsString()
 	currentRefreshToken?: string;
+
+	@IsOptional()
+	@IsString()
+	otp?: string;
+
+	@IsOptional()
+	@IsDate()
+	otpExpiresTime: Date;
 }

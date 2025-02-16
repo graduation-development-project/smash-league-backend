@@ -13,11 +13,9 @@ import { EditUserDTO } from "../dto/users/edit-user.dto";
 
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
-	constructor(private prisma: PrismaClient) {
-	}
+	constructor(private prisma: PrismaClient) {}
 
 	async findUserById(userID: string): Promise<TUserWithRole> {
-
 		try {
 			const user: User = await this.prisma.user.findUnique({
 				where: { id: userID },
@@ -27,13 +25,13 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			return {
 				...user,
 				// @ts-ignore
-				userRoles: user.userRoles.map((role: { roleId: string; }) => role.roleId),
+				userRoles: user.userRoles.map(
+					(role: { roleId: string }) => role.roleId,
+				),
 			};
-
 		} catch (e) {
 			throw new BadRequestException("User not found");
 		}
-
 	}
 
 	async getUserByEmail(email: string): Promise<User> {
@@ -54,8 +52,10 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 		}
 	}
 
-
-	async getAuthenticatedUser(email: string, password: string): Promise<TUserWithRole> {
+	async getAuthenticatedUser(
+		email: string,
+		password: string,
+	): Promise<TUserWithRole> {
 		try {
 			// console.log(email, password);
 			const user: User = await this.prisma.user.findUnique({
@@ -67,7 +67,9 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			return {
 				...user,
 				// @ts-ignore
-				userRoles: user.userRoles.map((role: { roleId: string; }) => role.roleId),
+				userRoles: user.userRoles.map(
+					(role: { roleId: string }) => role.roleId,
+				),
 			};
 		} catch (e) {
 			throw new BadRequestException("Wrong credentials.");
@@ -104,25 +106,30 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			//* Set default data for user avatar, currentRefreshToken, CreditsRemain
 			const userData = {
 				...rest,
-				avatarURL: avatarURL || "https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
+				avatarURL:
+					avatarURL ||
+					"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
 				currentRefreshToken: currentRefreshToken ?? null,
 				CreditsRemain: 0,
 			};
 
 			return await this.prisma.$transaction(async (prisma): Promise<User> => {
 				const user: User = await prisma.user.create({ data: userData });
-				await prisma.userRole.create({ data: { roleId: RoleMap.Athlete.id.toString(), userId: user.id } });
+				await prisma.userRole.create({
+					data: { roleId: RoleMap.Athlete.id.toString(), userId: user.id },
+				});
 				return user;
 			});
-
 		} catch (e) {
-			throw new BadRequestException("Create user failed");
+			throw e;
 		}
 	}
 
-	async editUserProfile(userID: string, editUserDTO: EditUserDTO): Promise<TUserWithRole> {
+	async editUserProfile(
+		userID: string,
+		editUserDTO: EditUserDTO,
+	): Promise<TUserWithRole> {
 		try {
-
 			// console.log(editUserDTO);
 
 			const updatedUser: User = await this.prisma.user.update({
@@ -134,21 +141,22 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				},
 
 				include: { userRoles: { select: { roleId: true } } },
-
 			});
-
 
 			return {
 				...updatedUser,
 				// @ts-ignore
-				userRoles: updatedUser?.userRoles.length > 0 ? updatedUser?.userRoles?.map((role: {
-					roleId: string;
-				}) => role.roleId) : [],
+				userRoles:
+					// @ts-ignore
+					updatedUser?.userRoles.length > 0
+						? // @ts-ignore
+							updatedUser?.userRoles?.map(
+								(role: { roleId: string }) => role.roleId,
+							)
+						: [],
 			};
-
 		} catch (e) {
 			throw new BadRequestException("Edit user failed");
 		}
 	}
-
 }

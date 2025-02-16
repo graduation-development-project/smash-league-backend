@@ -21,6 +21,8 @@ model User {
   IDCardBack              String?
   cardPhoto               String?
   isVerified              Boolean                 @default(false)
+  otp                     String?
+  otpExpiresTime          DateTime?
   teamId                  String?
   team                    Team?                   @relation("FK_User_UserTeam")
   tournaments             Tournament[]            @relation("FK_Tournament_UserTournament") // Tournaments the user organizes

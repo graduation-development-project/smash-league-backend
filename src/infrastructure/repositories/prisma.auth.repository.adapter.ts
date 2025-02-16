@@ -11,6 +11,9 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
+import { MailService } from "../service/mail.service";
+import { generateOtpCode } from "../util/generate-otp-code.util";
+import { convertToLocalTime } from "../util/convert-to-local-time.util";
 
 @Injectable()
 export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
@@ -21,8 +24,8 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 		@Inject("UserRepository") private userRepository: UsersRepositoryPort,
 		private jwtService: JwtService,
 		private configService: ConfigService,
-	) {
-	}
+		private mailService: MailService,
+	) {}
 
 	generateAccessToken(payload: IPayload) {
 		return this.jwtService.sign(payload, {
@@ -41,7 +44,6 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 			)}s`,
 		});
 	}
-
 
 	async storeRefreshToken(userID: string, token: string): Promise<void> {
 		try {
@@ -83,7 +85,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 		}
 	}
 
-	async signUp(signUpDTO: SignUpDTO): Promise<ISignUpResponse> {
+	async signUp(signUpDTO: SignUpDTO): Promise<string> {
 		try {
 			const userExisted = await this.prisma.user.findUnique({
 				where: { email: signUpDTO.email },
@@ -98,27 +100,61 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				this.SALT_ROUND,
 			);
 
-			// console.log("hashedPassword", hashedPassword);
+			const otp: string = generateOtpCode();
+			const otpExpiresTime: Date = new Date();
+			otpExpiresTime.setMinutes(otpExpiresTime.getMinutes() + 10);
+
+			console.log(convertToLocalTime(otpExpiresTime));
 
 			const user: User = await this.userRepository.createUser({
 				...signUpDTO,
 				password: hashedPassword,
+				otp,
+				otpExpiresTime: convertToLocalTime(otpExpiresTime),
 			});
 
-			const refreshToken = this.generateRefreshToken({
-				userID: user.id,
+			await this.mailService.sendEmail(
+				user.email,
+				"Verify Your Account",
+				"OTP.hbs",
+				{ otp },
+			);
+
+			return "Sign Up successfully";
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	async verifyOTP(email: string, otp: string): Promise<string> {
+		try {
+			const user: User = await this.prisma.user.findUnique({
+				where: { email },
 			});
 
-			const accessToken = this.generateAccessToken({
-				userID: user.id,
+			if (!user) {
+				throw new BadRequestException("This email is not registered yet");
+			}
+
+			//* Check OTP expires or not
+			if (user.otpExpiresTime < convertToLocalTime(new Date())) {
+				throw new BadRequestException("OTP expired");
+			}
+
+			if (user.otp !== otp) {
+				throw new BadRequestException("Invalid OTP");
+			}
+
+			await this.prisma.user.update({
+				where: { email },
+				data: {
+					isVerified: true,
+					otp: null,
+					otpExpiresTime: null,
+				},
 			});
 
-			await this.storeRefreshToken(user.id, refreshToken);
-
-			return {
-				accessToken,
-				refreshToken,
-			};
+			return "Account verified successfully";
 		} catch (e) {
 			throw e;
 		}

@@ -11,13 +11,39 @@ import { JwtModule } from "@nestjs/jwt";
 import { AuthController } from "./controllers/auth.controller";
 import { AthletesController } from "./controllers/athletes.controller";
 import { v2 as cloudinary } from "cloudinary";
+import { MailerModule } from "@nestjs-modules/mailer";
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { MailService } from "./service/mail.service";
+import { join } from "path";
 
 @Module({
 	imports: [
 		ApplicationModule,
 		PassportModule,
 		JwtModule.register({}),
-		ConfigModule, // ✅ Ensure ConfigModule is imported
+		ConfigModule,
+		MailerModule.forRootAsync({
+			useFactory: (configService: ConfigService) => ({
+				transport: {
+					host: "smtp.gmail.com",
+					port: 465,
+					secure: true,
+					auth: {
+						user: configService.get<string>("NODEMAILER_USER"),
+						pass: configService.get<string>("NODEMAILER_PASS"),
+					},
+				},
+
+				template: {
+					dir: join(__dirname, "..", "src/infrastructure/email-templates"),
+					adapter: new HandlebarsAdapter(),
+					options: {
+						strict: true,
+					},
+				},
+			}),
+			inject: [ConfigService],
+		}),
 	],
 	controllers: [
 		ApplicationController,
@@ -29,6 +55,7 @@ import { v2 as cloudinary } from "cloudinary";
 		LocalStrategy,
 		JwtAccessTokenStrategy,
 		JwtRefreshTokenStrategy,
+		MailService,
 		{
 			provide: "CLOUDINARY",
 			useFactory: (configService: ConfigService) => {
@@ -41,6 +68,6 @@ import { v2 as cloudinary } from "cloudinary";
 			inject: [ConfigService],
 		},
 	],
-	exports: [],
+	exports: [MailService],
 })
 export class InfrastructureModule {}
