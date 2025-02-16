@@ -19,6 +19,7 @@ model User {
   CreditsRemain           Int
   otp                     String?
   otpExpiresTime          DateTime?
+  isVerified              Boolean                 @default(false)
   teamId                  String?
   team                    Team?                   @relation("FK_User_UserTeam")
   tournaments             Tournament[]            @relation("FK_Tournament_UserTournament")

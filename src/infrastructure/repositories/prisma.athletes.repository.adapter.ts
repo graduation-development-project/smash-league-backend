@@ -4,9 +4,10 @@ import {
 	Tournament,
 	TournamentParticipant,
 	User,
+	UserRole,
 	UserVerification,
 } from "@prisma/client";
-import { AthletesRepository } from "../../domain/repositories/athletes.repository";
+import { AthletesRepositoryPort } from "../../domain/repositories/athletes.repository.port";
 import { RegisterTournamentDTO } from "../dto/athletes/register-tournament.dto";
 import { EventTypesEnum } from "../enums/event-types.enum";
 import { RegisterNewRoleDTO } from "../dto/athletes/register-new-role.dto";
@@ -17,7 +18,7 @@ import { v2 as cloudinary } from "cloudinary";
 const streamifier = require("streamifier");
 
 @Injectable()
-export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
+export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
 
 	async registerTournament(
@@ -150,6 +151,19 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
 	): Promise<UserVerification> {
 		try {
 			const { IDCardFront, IDCardBack, role, cardPhoto } = registerNewRoleDTO;
+
+			const roleExisted: UserRole = await this.prisma.userRole.findUnique({
+				where: {
+					userId_roleId: {
+						userId: userID,
+						roleId: role,
+					},
+				},
+			});
+
+			if (roleExisted) {
+				throw new BadRequestException("This role is already registered");
+			}
 
 			return this.prisma.userVerification.create({
 				data: {

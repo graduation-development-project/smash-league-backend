@@ -20,6 +20,8 @@ import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.us
 import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
 import { MailService } from "../infrastructure/service/mail.service";
 import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
+import { PrismaStaffsRepositoryAdapter } from "../infrastructure/repositories/prisma.staffs.repository.adapter";
+import {VerifyUserInformationUseCase} from "./usecases/staffs/verify-user-information.usecase";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -44,6 +46,10 @@ import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 			provide: "AthleteRepository",
 			useClass: PrismaAthletesRepositoryAdapter,
 		},
+		{
+			provide: "StaffRepository",
+			useClass: PrismaStaffsRepositoryAdapter,
+		},
 
 		MailService,
 		ApplicationFunction,
@@ -61,6 +67,7 @@ import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 		RegisterNewRoleUseCase,
 		UploadVerificationImagesUseCase,
 		VerifyOTPUseCase,
+		VerifyUserInformationUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -78,6 +85,7 @@ import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 		RegisterNewRoleUseCase,
 		UploadVerificationImagesUseCase,
 		VerifyOTPUseCase,
+		VerifyUserInformationUseCase
 	],
 })
 export class ApplicationModule {}
