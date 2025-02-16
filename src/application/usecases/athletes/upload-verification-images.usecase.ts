@@ -1,11 +1,11 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { AthletesRepository } from "../../../domain/repositories/athletes.repository";
+import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
 import { TCloudinaryResponse } from "../../../infrastructure/types/cloudinary.type";
 
 @Injectable()
 export class UploadVerificationImagesUseCase {
 	constructor(
-		@Inject("AthleteRepository") private athletesRepository: AthletesRepository,
+		@Inject("AthleteRepository") private athletesRepository: AthletesRepositoryPort,
 	) {}
 
 	execute(

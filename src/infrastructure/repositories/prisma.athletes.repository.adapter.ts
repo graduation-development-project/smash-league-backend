@@ -4,8 +4,10 @@ import {
 	Tournament,
 	TournamentParticipant,
 	User,
+	UserRole,
+	UserVerification,
 } from "@prisma/client";
-import { AthletesRepository } from "../../domain/repositories/athletes.repository";
+import { AthletesRepositoryPort } from "../../domain/repositories/athletes.repository.port";
 import { RegisterTournamentDTO } from "../dto/athletes/register-tournament.dto";
 import { EventTypesEnum } from "../enums/event-types.enum";
 import { RegisterNewRoleDTO } from "../dto/athletes/register-new-role.dto";
@@ -16,7 +18,7 @@ import { v2 as cloudinary } from "cloudinary";
 const streamifier = require("streamifier");
 
 @Injectable()
-export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
+export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
 
 	async registerTournament(
@@ -146,29 +148,32 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepository {
 	async registerNewRole(
 		userID: string,
 		registerNewRoleDTO: RegisterNewRoleDTO,
-	): Promise<TUserWithRole> {
+	): Promise<UserVerification> {
 		try {
 			const { IDCardFront, IDCardBack, role, cardPhoto } = registerNewRoleDTO;
 
-			return this.prisma.$transaction(async (prisma) => {
-				const user: User = await prisma.user.update({
-					where: { id: userID },
-					data: { IDCardFront, IDCardBack, cardPhoto },
-				});
+			const roleExisted: UserRole = await this.prisma.userRole.findUnique({
+				where: {
+					userId_roleId: {
+						userId: userID,
+						roleId: role,
+					},
+				},
+			});
 
-				await prisma.userRole.create({
-					data: { roleId: role, userId: userID },
-				});
+			if (roleExisted) {
+				throw new BadRequestException("This role is already registered");
+			}
 
-				const userRoles: { roleId: string }[] = await prisma.userRole.findMany({
-					where: { userId: userID },
-					select: { roleId: true },
-				});
-
-				return {
-					...user,
-					userRoles: userRoles.map((role) => role.roleId),
-				};
+			return this.prisma.userVerification.create({
+				data: {
+					userId: userID,
+					role,
+					cardPhoto,
+					IDCardBack,
+					IDCardFront,
+					createdAt: new Date(),
+				},
 			});
 		} catch (e) {
 			throw e;

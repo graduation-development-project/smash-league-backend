@@ -9,12 +9,26 @@ CREATE TABLE "User" (
     "avatarURL" TEXT,
     "currentRefreshToken" TEXT,
     "CreditsRemain" INTEGER NOT NULL,
-    "IDCardFront" TEXT,
-    "IDCardBack" TEXT,
-    "cardPhoto" TEXT,
+    "otp" TEXT,
+    "otpExpiresTime" TIMESTAMP(3),
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "teamId" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UserVerification" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "IDCardFront" TEXT,
+    "IDCardBack" TEXT,
+    "cardPhoto" TEXT,
+    "role" TEXT NOT NULL,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "UserVerification_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -143,6 +157,9 @@ CREATE UNIQUE INDEX "TournamentParticipant_tournamentId_userId_eventType_key" ON
 
 -- CreateIndex
 CREATE UNIQUE INDEX "TournamentParticipant_tournamentId_partnerId_key" ON "TournamentParticipant"("tournamentId", "partnerId");
+
+-- AddForeignKey
+ALTER TABLE "UserVerification" ADD CONSTRAINT "UserVerification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

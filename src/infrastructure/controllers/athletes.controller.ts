@@ -3,7 +3,6 @@ import {
 	Controller,
 	Get,
 	Post,
-	Put,
 	Query,
 	Req,
 	UploadedFiles,
@@ -16,7 +15,11 @@ import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
-import { Tournament, TournamentParticipant } from "@prisma/client";
+import {
+	Tournament,
+	TournamentParticipant,
+	UserVerification,
+} from "@prisma/client";
 import { GetParticipatedTournamentsUseCase } from "../../application/usecases/athletes/get-participated-tournaments.usecase";
 import { IRequestUser } from "../interfaces/interfaces";
 import { RegisterNewRoleUseCase } from "../../application/usecases/athletes/register-new-role.usecase";
@@ -71,14 +74,14 @@ export class AthletesController {
 		return this.uploadVerificationImagesUseCase.execute(files, user.id);
 	}
 
-	@Put("register-new-role")
+	@Post("register-new-role")
 	@Roles(RoleMap.Athlete.id)
 	@UseGuards(RolesGuard)
 	@UseGuards(JwtAccessTokenGuard)
 	registerNewRole(
 		@Req() { user }: IRequestUser,
 		@Body() registerNewRoleDTO: RegisterNewRoleDTO,
-	): Promise<TUserWithRole> {
+	): Promise<UserVerification> {
 		return this.registerNewRoleUseCase.execute(user.id, registerNewRoleDTO);
 	}
 }
