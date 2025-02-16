@@ -9,6 +9,9 @@ CREATE TABLE "User" (
     "avatarURL" TEXT,
     "currentRefreshToken" TEXT,
     "CreditsRemain" INTEGER NOT NULL,
+    "IDCardFront" TEXT,
+    "IDCardBack" TEXT,
+    "cardPhoto" TEXT,
     "teamId" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -84,10 +87,26 @@ CREATE TABLE "Notification" (
 -- CreateTable
 CREATE TABLE "Tournament" (
     "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "shortName" TEXT NOT NULL,
     "organizerId" TEXT NOT NULL,
+    "startDate" TIMESTAMP(3) NOT NULL,
+    "endDate" TIMESTAMP(3) NOT NULL,
+    "status" TEXT NOT NULL,
     "tournamentRules" JSONB NOT NULL,
 
     CONSTRAINT "Tournament_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TournamentParticipant" (
+    "id" TEXT NOT NULL,
+    "tournamentId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "eventType" TEXT NOT NULL,
+    "partnerId" TEXT,
+
+    CONSTRAINT "TournamentParticipant_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -119,6 +138,12 @@ CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
 -- CreateIndex
 CREATE UNIQUE INDEX "Team_teamLeaderId_key" ON "Team"("teamLeaderId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "TournamentParticipant_tournamentId_userId_eventType_key" ON "TournamentParticipant"("tournamentId", "userId", "eventType");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TournamentParticipant_tournamentId_partnerId_key" ON "TournamentParticipant"("tournamentId", "partnerId");
+
 -- AddForeignKey
 ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -145,6 +170,15 @@ ALTER TABLE "Notification" ADD CONSTRAINT "Notification_typeId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "Tournament" ADD CONSTRAINT "Tournament_organizerId_fkey" FOREIGN KEY ("organizerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TournamentParticipant" ADD CONSTRAINT "TournamentParticipant_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TournamentParticipant" ADD CONSTRAINT "TournamentParticipant_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TournamentParticipant" ADD CONSTRAINT "TournamentParticipant_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TournamentPost" ADD CONSTRAINT "TournamentPost_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;

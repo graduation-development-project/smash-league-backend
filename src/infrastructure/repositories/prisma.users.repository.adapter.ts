@@ -17,6 +17,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
 
 	async findUserById(userID: string): Promise<TUserWithRole> {
+
 		try {
 			const user: User = await this.prisma.user.findUnique({
 				where: { id: userID },
@@ -30,9 +31,11 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 					(role: { roleId: string }) => role.roleId,
 				),
 			};
+
 		} catch (e) {
 			throw new BadRequestException("User not found");
 		}
+
 	}
 
 	async getUserByEmail(email: string): Promise<User> {
@@ -107,9 +110,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			//* Set default data for user avatar, currentRefreshToken, CreditsRemain
 			const userData = {
 				...rest,
-				avatarURL:
-					avatarURL ||
-					"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
+				avatarURL: avatarURL || "https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
 				currentRefreshToken: currentRefreshToken ?? null,
 				CreditsRemain: 0,
 			};
@@ -121,8 +122,9 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				});
 				return user;
 			});
+
 		} catch (e) {
-			throw new BadRequestException("Create user failed");
+			throw e;
 		}
 	}
 
@@ -131,6 +133,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 		editUserDTO: EditUserDTO,
 	): Promise<TUserWithRole> {
 		try {
+
 			// console.log(editUserDTO);
 
 			const updatedUser: User = await this.prisma.user.update({
@@ -142,10 +145,13 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				},
 
 				include: { userRoles: { select: { roleId: true } } },
+
 			});
+
 
 			return {
 				...updatedUser,
+				// @ts-ignore
 				userRoles:
 					// @ts-ignore
 					updatedUser?.userRoles.length > 0
@@ -155,6 +161,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 							)
 						: [],
 			};
+
 		} catch (e) {
 			throw new BadRequestException("Edit user failed");
 		}

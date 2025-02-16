@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Put, Req, UseGuards } from "@nestjs/common";
 
 import { SignUpUseCase } from "../../application/usecases/auth/sign-up.usecase";
 import { SignUpDTO } from "../dto/auth/sign-up.dto";
@@ -12,6 +12,8 @@ import {
 } from "../interfaces/interfaces";
 import { JwtRefreshTokenGuard } from "../guards/auth/jwt-refresh-token.guard";
 import { RefreshAccessTokenUseCase } from "../../application/usecases/auth/refresh-access-token.usecase";
+import { VerifyOTPUseCase } from "../../application/usecases/auth/verify-otp.usecase";
+import { VerifyOTPDTO } from "../dto/auth/verify-otp.dto";
 
 @Controller("/auth")
 export class AuthController {
@@ -19,6 +21,7 @@ export class AuthController {
 		private signUpUseCase: SignUpUseCase,
 		private signInUseCase: SignInUseCase,
 		private refreshAccessTokenUseCase: RefreshAccessTokenUseCase,
+		private verifyOTPUseCase: VerifyOTPUseCase,
 	) {}
 
 	@UseGuards(LocalAuthGuard)
@@ -32,7 +35,7 @@ export class AuthController {
 	}
 
 	@Post("/sign-up")
-	signUp(@Body() signUpDTO: SignUpDTO): Promise<ISignUpResponse> {
+	signUp(@Body() signUpDTO: SignUpDTO): Promise<string> {
 		return this.signUpUseCase.execute(signUpDTO);
 	}
 
@@ -45,5 +48,11 @@ export class AuthController {
 		return {
 			access_token,
 		};
+	}
+
+	@Put("/verify-otp")
+	verifyOTP(@Body() verifyOTPDTO: VerifyOTPDTO): Promise<string> {
+		console.log(verifyOTPDTO)
+		return this.verifyOTPUseCase.execute(verifyOTPDTO.email, verifyOTPDTO.otp);
 	}
 }

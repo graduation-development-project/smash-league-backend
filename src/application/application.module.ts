@@ -15,6 +15,11 @@ import { RefreshAccessTokenUseCase } from "./usecases/auth/refresh-access-token.
 import { EditUserProfileUseCase } from "./usecases/users/edit-user-profile.usecase";
 import { PrismaAthletesRepositoryAdapter } from "../infrastructure/repositories/prisma.athletes.repository.adapter";
 import { RegisterTournamentUseCase } from "./usecases/athletes/register-tournament.usecase";
+import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-participated-tournaments.usecase";
+import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.usecase";
+import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
+import { MailService } from "../infrastructure/service/mail.service";
+import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 import {ChangePasswordUseCase} from "./usecases/users/change-password.usecase";
 
 @Module({
@@ -41,6 +46,7 @@ import {ChangePasswordUseCase} from "./usecases/users/change-password.usecase";
 			useClass: PrismaAthletesRepositoryAdapter,
 		},
 
+		MailService,
 		ApplicationFunction,
 		GetUserByIdUseCase,
 		GetAuthenticatedUserUseCase,
@@ -52,6 +58,10 @@ import {ChangePasswordUseCase} from "./usecases/users/change-password.usecase";
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
+		GetParticipatedTournamentsUseCase,
+		RegisterNewRoleUseCase,
+		UploadVerificationImagesUseCase,
+		VerifyOTPUseCase,
 		ChangePasswordUseCase
 	],
 	exports: [
@@ -66,7 +76,11 @@ import {ChangePasswordUseCase} from "./usecases/users/change-password.usecase";
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
-		ChangePasswordUseCase
+		ChangePasswordUseCase,
+		GetParticipatedTournamentsUseCase,
+		RegisterNewRoleUseCase,
+		UploadVerificationImagesUseCase,
+		VerifyOTPUseCase,
 	],
 })
 export class ApplicationModule {}
