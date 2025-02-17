@@ -14,6 +14,9 @@ import { JwtRefreshTokenGuard } from "../guards/auth/jwt-refresh-token.guard";
 import { RefreshAccessTokenUseCase } from "../../application/usecases/auth/refresh-access-token.usecase";
 import { VerifyOTPUseCase } from "../../application/usecases/auth/verify-otp.usecase";
 import { VerifyOTPDTO } from "../dto/auth/verify-otp.dto";
+import { SendResetPasswordLinkUseCase } from "../../application/usecases/auth/send-reset-password-link.usecase";
+import { ResetPasswordDTO } from "../dto/auth/reset-password.dto";
+import { ResetPasswordUseCase } from "../../application/usecases/auth/reset-password.usecase";
 
 @Controller("/auth")
 export class AuthController {
@@ -22,6 +25,8 @@ export class AuthController {
 		private signInUseCase: SignInUseCase,
 		private refreshAccessTokenUseCase: RefreshAccessTokenUseCase,
 		private verifyOTPUseCase: VerifyOTPUseCase,
+		private sendResetPasswordLinkUseCase: SendResetPasswordLinkUseCase,
+		private resetPasswordUseCase: ResetPasswordUseCase,
 	) {}
 
 	@UseGuards(LocalAuthGuard)
@@ -52,7 +57,17 @@ export class AuthController {
 
 	@Put("/verify-otp")
 	verifyOTP(@Body() verifyOTPDTO: VerifyOTPDTO): Promise<string> {
-		console.log(verifyOTPDTO)
+		// console.log(verifyOTPDTO);
 		return this.verifyOTPUseCase.execute(verifyOTPDTO.email, verifyOTPDTO.otp);
+	}
+
+	@Post("/send-reset-password-link")
+	sendResetPasswordLink(@Body("email") email: string): Promise<string> {
+		return this.sendResetPasswordLinkUseCase.execute(email);
+	}
+
+	@Put("/reset-password")
+	resetPassword(@Body() resetPasswordDTO: ResetPasswordDTO): Promise<string> {
+		return this.resetPasswordUseCase.execute(resetPasswordDTO);
 	}
 }

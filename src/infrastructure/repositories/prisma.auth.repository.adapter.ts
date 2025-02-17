@@ -14,6 +14,7 @@ import { UsersRepositoryPort } from "../../domain/repositories/users.repository.
 import { MailService } from "../service/mail.service";
 import { generateOtpCode } from "../util/generate-otp-code.util";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
+import { ResetPasswordDTO } from "../dto/auth/reset-password.dto";
 
 @Injectable()
 export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
@@ -155,6 +156,75 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 			});
 
 			return "Account verified successfully";
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	async sendResetPasswordLink(email: string): Promise<string> {
+		try {
+			const user: User = await this.prisma.user.findUnique({
+				where: { email },
+			});
+
+			if (!user) {
+				throw new BadRequestException("This email is not registered yet");
+			}
+
+			const token: string = this.jwtService.sign(
+				{ email },
+				{
+					secret: this.configService.get<string>("RESET_TOKEN_SECRET_KEY"),
+					expiresIn: `${this.configService.get<string>("RESET_TOKEN_EXPIRATION_TIME")}s`,
+				},
+			);
+
+			const url = `${this.configService.get("EMAIL_RESET_PASSWORD_URL")}?token=${token}`;
+
+			await this.mailService.sendEmail(
+				email,
+				"Password Reset",
+				"reset-password.hbs",
+				{
+					name: user.firstName,
+					resetLink: url,
+					expiresIn: "10",
+				},
+			);
+
+			return "Reset Password Link is sent";
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	async resetPassword(resetPasswordDTO: ResetPasswordDTO): Promise<string> {
+		try {
+			const { token, password } = resetPasswordDTO;
+
+			let email: string = "";
+
+			// * Decode reset token
+			const payload = await this.jwtService.verify(token, {
+				secret: this.configService.get("RESET_TOKEN_SECRET_KEY"),
+			});
+
+			if (typeof payload === "object" && "email" in payload) {
+				email = payload.email;
+			} else {
+				throw new BadRequestException();
+			}
+
+			// * End decode reset token
+
+			const hashedPassword = await bcrypt.hash(password, this.SALT_ROUND);
+
+			await this.prisma.user.update({
+				where: { email },
+				data: { password: hashedPassword },
+			});
+
+			return "Reset Password Successfully";
 		} catch (e) {
 			throw e;
 		}

@@ -5,6 +5,7 @@ import {
 	ISignInResponse,
 	ISignUpResponse,
 } from "../../infrastructure/interfaces/interfaces";
+import {ResetPasswordDTO} from "../../infrastructure/dto/auth/reset-password.dto";
 
 export interface AuthRepositoryPort {
 	signIn(userID: string): Promise<ISignInResponse>;
@@ -14,4 +15,8 @@ export interface AuthRepositoryPort {
 	refreshAccessToken(userID: string): string;
 
 	verifyOTP(email: string, otp: string): Promise<string>;
+
+	sendResetPasswordLink(email: string): Promise<string>;
+
+	resetPassword(resetPasswordDTO: ResetPasswordDTO): Promise<string>;
 }
