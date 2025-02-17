@@ -199,34 +199,33 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 	}
 
 	async resetPassword(resetPasswordDTO: ResetPasswordDTO): Promise<string> {
+		const { token, password } = resetPasswordDTO;
+
 		try {
-			const { token, password } = resetPasswordDTO;
-
-			let email: string = "";
-
-			// * Decode reset token
+			//* Decode reset token
 			const payload = await this.jwtService.verify(token, {
 				secret: this.configService.get("RESET_TOKEN_SECRET_KEY"),
 			});
 
-			if (typeof payload === "object" && "email" in payload) {
-				email = payload.email;
-			} else {
-				throw new BadRequestException();
+			if (!payload?.email) {
+				throw new BadRequestException("Invalid token payload");
 			}
 
-			// * End decode reset token
 
 			const hashedPassword = await bcrypt.hash(password, this.SALT_ROUND);
 
+
 			await this.prisma.user.update({
-				where: { email },
+				where: { email: payload.email },
 				data: { password: hashedPassword },
 			});
 
 			return "Reset Password Successfully";
-		} catch (e) {
-			throw e;
+		} catch (error) {
+			if (error?.name === "TokenExpiredError") {
+				throw new BadRequestException("Reset token has expired");
+			}
+			throw new BadRequestException("Invalid or expired reset token");
 		}
 	}
 }
