@@ -36,7 +36,7 @@ import {StaffController} from "./controllers/staff.controller";
 				},
 
 				template: {
-					dir: join(__dirname, "..", "src/infrastructure/email-templates"),
+					dir: join(__dirname, "..", configService.get<string>("MAILER_TEMPLATE_URL")),
 					adapter: new HandlebarsAdapter(),
 					options: {
 						strict: true,
