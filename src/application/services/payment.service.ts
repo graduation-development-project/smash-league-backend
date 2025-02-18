@@ -19,7 +19,7 @@ export class PaymentPayOSService {
 			this.configService.get<string>("PAYOS_CHECKSUM_KEY")
 		);
 		const body = {
-			orderCode: 1234,
+			orderCode: 1,
 			amount: 2000,
 			description: "Thanh toan don hang",
 			items: [
