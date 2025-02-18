@@ -2,7 +2,7 @@ services:
   api:
     container_name: smash_league_api
     ports:
-      - 5001:5000
+      - 5000:5000
     environment:
       - DATABASE_URL=postgres://root:password@database:5432/smashleague?schema=public
       - PREFIX=api/v1

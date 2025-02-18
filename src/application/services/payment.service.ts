@@ -19,7 +19,7 @@ export class PaymentPayOSService {
 			"4ccaccfbf838d2507755aa2f976454fbb68ef6d069ff512ab44aec3409e63dcf"
 		);
 		const body = {
-			orderCode: 3123123,
+			orderCode: 5345345,
 			amount: 2000,
 			description: "Thanh toan don hang",
 			items: [
