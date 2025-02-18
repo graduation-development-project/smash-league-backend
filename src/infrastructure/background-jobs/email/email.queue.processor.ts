@@ -3,7 +3,7 @@ import { Processor, WorkerHost } from "@nestjs/bullmq";
 import * as console from "node:console";
 import { MailService } from "../../services/mail.service";
 
-@Processor("emailQueue")
+@Processor("emailQueue", { concurrency: 20 })
 export class EmailQueueProcessor extends WorkerHost {
 	constructor(private readonly mailService: MailService) {
 		super();
