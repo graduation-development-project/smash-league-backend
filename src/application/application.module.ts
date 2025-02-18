@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { ApplicationFunction } from "./usecases/application.function";
 import { PrismaClient } from "@prisma/client";
 import { GetUserByIdUseCase } from "./usecases/users/get-user-by-id.usecase";
@@ -27,9 +27,13 @@ import { SendResetPasswordLinkUseCase } from "./usecases/auth/send-reset-passwor
 import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
 import { PrismaPackageRepositoryAdapter } from "src/infrastructure/repositories/prisma.package.repository.adapter";
 import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
+import { CreatePaymentLinkUseCase } from "./usecases/payment/create-payment-link.usecase";
+import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
+import { PaymentPayOSService } from "./services/payment.service";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
-	imports: [JwtModule.register({})],
+	imports: [JwtModule.register({}), ConfigModule],
 	controllers: [],
 	providers: [
 		{
@@ -59,8 +63,8 @@ import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
 			provide: "PackageRepository",
 			useClass: PrismaPackageRepositoryAdapter,
 		},
-
 		MailService,
+		PaymentPayOSService,
 		ApplicationFunction,
 		GetUserByIdUseCase,
 		GetAuthenticatedUserUseCase,
@@ -80,7 +84,8 @@ import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
-		GetPackagesUseCase
+		GetPackagesUseCase,
+		CreatePaymentLinkUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -102,7 +107,9 @@ import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
-		GetPackagesUseCase
+		GetPackagesUseCase,
+		CreatePaymentLinkUseCase,
+		PaymentPayOSService,
 	],
 })
 export class ApplicationModule {}

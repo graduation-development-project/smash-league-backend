@@ -17,6 +17,7 @@ import { MailService } from "./services/mail.service";
 import { join } from "path";
 import {StaffController} from "./controllers/staff.controller";
 import { PackageController } from "./controllers/package.controller";
+import { PaymentController } from "./controllers/payment.controller";
 
 @Module({
 	imports: [
@@ -53,7 +54,8 @@ import { PackageController } from "./controllers/package.controller";
 		AuthController,
 		AthletesController,
 		StaffController,
-		PackageController
+		PackageController,
+		PaymentController
 	],
 	providers: [
 		LocalStrategy,
