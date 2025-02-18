@@ -1,8 +1,8 @@
 import { Body, Controller, Post, Put, Req, UseGuards } from "@nestjs/common";
 
 import { SignUpUseCase } from "../../application/usecases/auth/sign-up.usecase";
-import { SignUpDTO } from "../dto/auth/sign-up.dto";
-import { SignInDTO } from "../dto/auth/sign-in.dto";
+import { SignUpDTO } from "../../domain/dtos/auth/sign-up.dto";
+import { SignInDTO } from "../../domain/dtos/auth/sign-in.dto";
 import { SignInUseCase } from "../../application/usecases/auth/sign-in.usecase";
 import { LocalAuthGuard } from "../guards/auth/local.guard";
 import {
@@ -13,9 +13,9 @@ import {
 import { JwtRefreshTokenGuard } from "../guards/auth/jwt-refresh-token.guard";
 import { RefreshAccessTokenUseCase } from "../../application/usecases/auth/refresh-access-token.usecase";
 import { VerifyOTPUseCase } from "../../application/usecases/auth/verify-otp.usecase";
-import { VerifyOTPDTO } from "../dto/auth/verify-otp.dto";
+import { VerifyOTPDTO } from "../../domain/dtos/auth/verify-otp.dto";
 import { SendResetPasswordLinkUseCase } from "../../application/usecases/auth/send-reset-password-link.usecase";
-import { ResetPasswordDTO } from "../dto/auth/reset-password.dto";
+import { ResetPasswordDTO } from "../../domain/dtos/auth/reset-password.dto";
 import { ResetPasswordUseCase } from "../../application/usecases/auth/reset-password.usecase";
 
 @Controller("/auth")

@@ -13,8 +13,9 @@ import { AthletesController } from "./controllers/athletes.controller";
 import { v2 as cloudinary } from "cloudinary";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
-import { MailService } from "./service/mail.service";
+import { MailService } from "./services/mail.service";
 import { join } from "path";
+import { PackageController } from "./controllers/package.controller";
 import { StaffController } from "./controllers/staff.controller";
 import { EmailQueueModule } from "./background-jobs/email.queue.module";
 
@@ -38,7 +39,7 @@ import { EmailQueueModule } from "./background-jobs/email.queue.module";
 				},
 
 				template: {
-					dir: join(__dirname, "..", "src/infrastructure/email-templates"),
+					dir: join(__dirname, "..", configService.get<string>("MAILER_TEMPLATE_URL")),
 					adapter: new HandlebarsAdapter(),
 					options: {
 						strict: true,
@@ -54,6 +55,7 @@ import { EmailQueueModule } from "./background-jobs/email.queue.module";
 		AuthController,
 		AthletesController,
 		StaffController,
+		PackageController
 	],
 	providers: [
 		LocalStrategy,

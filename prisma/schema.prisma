@@ -28,6 +28,7 @@ model User {
   tournamentParticipation TournamentParticipant[] @relation("FK_TournamentParticipant_User")
   tournamentPartnership   TournamentParticipant[] @relation("FK_TournamentParticipant_Partner")
   verifications           UserVerification[]      @relation("FK_User_UserVerification")
+  transactions            Transaction[]           @relation("FK_Transaction_UserTransaction")
   notifications           UserNotification[]
 }
 
@@ -160,4 +161,40 @@ model ContentImage {
   imageUrl    String
   contentId   String
   postContent TournamentPost @relation("FK_ContentImage_TournamentPostContentImage", fields: [contentId], references: [id], onDelete: Cascade)
+}
+
+model Package {
+  id            String @id @default(uuid())
+  packageName   String
+  packageDetail String
+  price         Int
+  credits       Int
+}
+
+model TransactionType {
+  id                String @id @default(uuid())
+  transactionName   String
+  transactions      Transaction[]  @relation("FK_Transaction_TransactionTransactionType")
+}
+
+model Currency {
+  id      String    @id @default(uuid())
+  currencyCode  String
+  currencyName  String
+  transactions  Transaction[]     @relation("FK_Transaction_TransactionCurrency")
+}
+
+
+model Transaction {
+  id                String @id @default(uuid())
+  transactionDetail String
+  userId            String
+  user              User   @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
+  transactionTypeId String
+  transactionType   TransactionType @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
+  value             Int
+  currencyId        String
+  currency          Currency      @relation(name: "FK_Transaction_TransactionCurrency", fields: [currencyId], references: [id], onDelete: Cascade)
+  isCancelled       Boolean
+  cancelledReason   String?
 }

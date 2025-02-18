@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { EventTypesEnum } from "../../enums/event-types.enum";
+import { EventTypesEnum } from "../../../infrastructure/enums/event-types.enum";
 
 export class RegisterTournamentDTO {
 	@IsNotEmpty()

@@ -8,12 +8,27 @@ services:
       - PREFIX=api/v1
       - ACCESS_TOKEN_SECRET_KEY="167031@SmashLeague@ACCESS"
       - REFRESH_TOKEN_SECRET_KEY="167031@SmashLeague@REFRESH"
+      # Access Token
       - JWT_ACCESS_TOKEN_EXPIRATION_TIME=1800
       - JWT_REFRESH_TOKEN_EXPIRATION_TIME=25200
+      #Refresh token
+      - RESET_TOKEN_SECRET_KEY="167031@SmashLeague@RESET"
+      - RESET_TOKEN_EXPIRATION_TIME=600
+      #Reset Password URL
+      - EMAIL_RESET_PASSWORD_URL="http://localhost:3000/auth/reset-password"
+      #Cloudinary
+      - CLOUDINARY_NAME="dqdggrw7o"
+      - CLOUDINARY_API_KEY="172175352464367"
+      - CLOUDINARY_API_SECRET="63nzUkonqm4rGsB5mHKIXRAcp5s"
+      #NODEMAILER
+      - NODEMAILER_USER=sonpv07@gmail.com
+      - NODEMAILER_PASS=klcpbigrohbrxedh
+      #MAILER_TEMPLATE_URL
+      - MAILER_TEMPLATE_URL=infrastructure/email-templates
     build: 
       context: .
       dockerfile: Dockerfile
-    command: bash -c "npx prisma migrate deploy; npx prisma generate; npm run build; npm run start:prod"
+    command: bash -c "npx prisma migrate deploy; npx prisma generate; npm run build:linux; npm run start:prod"
     # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && node dist/main.js"
     volumes:
       - .:/usr/src/app

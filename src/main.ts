@@ -6,7 +6,8 @@ import { ConfigService } from '@nestjs/config';
 declare const module: any;
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule);
+  app.enableCors();
   const configService = app.get(ConfigService);
   const prefix = configService.get<string>('PREFIX');
   app.setGlobalPrefix(prefix);

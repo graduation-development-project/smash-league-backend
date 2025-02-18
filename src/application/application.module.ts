@@ -18,7 +18,7 @@ import { RegisterTournamentUseCase } from "./usecases/athletes/register-tourname
 import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-participated-tournaments.usecase";
 import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.usecase";
 import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
-import { MailService } from "../infrastructure/service/mail.service";
+import { MailService } from "../infrastructure/services/mail.service";
 import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 import { ChangePasswordUseCase } from "./usecases/users/change-password.usecase";
 import { PrismaStaffsRepositoryAdapter } from "../infrastructure/repositories/prisma.staffs.repository.adapter";
@@ -26,6 +26,8 @@ import { SendResetPasswordLinkUseCase } from "./usecases/auth/send-reset-passwor
 import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
 import { VerifyUserInformationUseCase } from "./usecases/staffs/verify-user-information.usecase";
 import { EmailQueueModule } from "../infrastructure/background-jobs/email.queue.module";
+import { PrismaPackageRepositoryAdapter } from "src/infrastructure/repositories/prisma.package.repository.adapter";
+import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
 
 @Module({
 	imports: [JwtModule.register({}), EmailQueueModule],
@@ -54,6 +56,10 @@ import { EmailQueueModule } from "../infrastructure/background-jobs/email.queue.
 			provide: "StaffRepository",
 			useClass: PrismaStaffsRepositoryAdapter,
 		},
+		{
+			provide: "PackageRepository",
+			useClass: PrismaPackageRepositoryAdapter,
+		},
 
 		MailService,
 		ApplicationFunction,
@@ -76,6 +82,7 @@ import { EmailQueueModule } from "../infrastructure/background-jobs/email.queue.
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
+		GetPackagesUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -98,6 +105,7 @@ import { EmailQueueModule } from "../infrastructure/background-jobs/email.queue.
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
+		GetPackagesUseCase
 	],
 })
 export class ApplicationModule {}

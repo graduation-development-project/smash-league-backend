@@ -1,0 +1,18 @@
+name: developer-deployment
+
+on: 
+  push:
+    branches: 
+      dev
+      
+jobs:
+  docker-compose: 
+    runs-on: self-hosted
+    environment: docker
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    # - name: Run "database"
+    #   run: docker compose up -d db 
+    - name: Run "docker compose"
+      run: docker compose up --build -d api
