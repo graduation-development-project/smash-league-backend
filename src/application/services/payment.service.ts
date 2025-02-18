@@ -14,9 +14,9 @@ export class PaymentPayOSService {
 	}
 	async createPaymentLink() : Promise<CheckoutResponseDataType> {
 		const payOS = new PayOS(
-			this.configService.get<string>("PAYOS_CLIENT_ID"),
-			this.configService.get<string>("PAYOS_API_KEY"),
-			this.configService.get<string>("PAYOS_CHECKSUM_KEY")
+			"699488c9-2d90-4c3a-afdb-95cf093e406f",
+			"03234458-982c-47a9-b4f2-c33486623104",
+			"4ccaccfbf838d2507755aa2f976454fbb68ef6d069ff512ab44aec3409e63dcf"
 		);
 		const body = {
 			orderCode: 3123123,
