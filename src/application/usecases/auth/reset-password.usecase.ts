@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { AuthRepositoryPort } from "../../../domain/repositories/auth.repository.port";
-import { ResetPasswordDTO } from "../../../infrastructure/dto/auth/reset-password.dto";
+import { ResetPasswordDTO } from "../../../domain/dtos/auth/reset-password.dto";
 
 @Injectable()
 export class ResetPasswordUseCase {

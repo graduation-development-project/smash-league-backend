@@ -6,11 +6,11 @@ import {
 } from "@nestjs/common";
 import { PrismaClient, User } from "@prisma/client";
 import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
-import { CreateUserDTO } from "../dto/users/create-user.dto";
+import { CreateUserDTO } from "../../domain/dtos/users/create-user.dto";
 import { TUserWithRole } from "../types/users.type";
 import { RoleMap } from "../enums/role.enum";
-import { EditUserDTO } from "../dto/users/edit-user.dto";
-import { ChangePasswordDTO } from "../dto/users/change-password.dto";
+import { EditUserDTO } from "../../domain/dtos/users/edit-user.dto";
+import { ChangePasswordDTO } from "../../domain/dtos/users/change-password.dto";
 
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {

@@ -16,6 +16,7 @@ import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handleba
 import { MailService } from "./services/mail.service";
 import { join } from "path";
 import {StaffController} from "./controllers/staff.controller";
+import { PackageController } from "./controllers/package.controller";
 
 @Module({
 	imports: [
@@ -51,7 +52,8 @@ import {StaffController} from "./controllers/staff.controller";
 		UsersController,
 		AuthController,
 		AthletesController,
-		StaffController
+		StaffController,
+		PackageController
 	],
 	providers: [
 		LocalStrategy,

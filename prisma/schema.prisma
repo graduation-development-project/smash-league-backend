@@ -152,6 +152,7 @@ model ContentImage {
 
 model Package {
   id            String @id @default(uuid())
+  packageName   String
   packageDetail String
   price         Int
   credits       Int

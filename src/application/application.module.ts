@@ -25,6 +25,8 @@ import { PrismaStaffsRepositoryAdapter } from "../infrastructure/repositories/pr
 import { VerifyUserInformationUseCase } from "./usecases/staffs/verify-user-information.usecase";
 import { SendResetPasswordLinkUseCase } from "./usecases/auth/send-reset-password-link.usecase";
 import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
+import { PrismaPackageRepositoryAdapter } from "src/infrastructure/repositories/prisma.package.repository.adapter";
+import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
 
 @Module({
 	imports: [JwtModule.register({})],
@@ -53,6 +55,10 @@ import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
 			provide: "StaffRepository",
 			useClass: PrismaStaffsRepositoryAdapter,
 		},
+		{
+			provide: "PackageRepository",
+			useClass: PrismaPackageRepositoryAdapter,
+		},
 
 		MailService,
 		ApplicationFunction,
@@ -74,6 +80,7 @@ import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
+		GetPackagesUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -95,6 +102,7 @@ import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
+		GetPackagesUseCase
 	],
 })
 export class ApplicationModule {}
