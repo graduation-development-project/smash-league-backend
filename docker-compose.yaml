@@ -25,6 +25,10 @@ services:
       - NODEMAILER_PASS=klcpbigrohbrxedh
       #MAILER_TEMPLATE_URL
       - MAILER_TEMPLATE_URL=infrastructure/email-templates
+      #PAYOS API KEY
+      - PAYOS_CLIENT_ID="75ef8838-9823-4044-a2a2-d12bd066eb51"
+      - PAYOS_API_KEY="555d3f78-3980-40e5-8e5f-dbb30f22cd94"
+      - PAYOS_CHECKSUM_KEY="7e1a6d408a2bfc81ea39c49c659b0bbb2397a1babfca676924f959f89980173e" 
     build: 
       context: .
       dockerfile: Dockerfile
