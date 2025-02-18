@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { EmailQueueProcessor } from "./email.queue.processor";
 
 import { BullModule } from "@nestjs/bullmq";
-import { MailService } from "../service/mail.service";
+import { MailService } from "../../services/mail.service";
 
 @Module({
 	imports: [
