@@ -8,9 +8,9 @@ import {
 	UserVerification,
 } from "@prisma/client";
 import { AthletesRepositoryPort } from "../../domain/repositories/athletes.repository.port";
-import { RegisterTournamentDTO } from "../dto/athletes/register-tournament.dto";
+import { RegisterTournamentDTO } from "../../domain/dtos/athletes/register-tournament.dto";
 import { EventTypesEnum } from "../enums/event-types.enum";
-import { RegisterNewRoleDTO } from "../dto/athletes/register-new-role.dto";
+import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
 import { TUserWithRole } from "../types/users.type";
 import { TCloudinaryResponse } from "../types/cloudinary.type";
 import { v2 as cloudinary } from "cloudinary";

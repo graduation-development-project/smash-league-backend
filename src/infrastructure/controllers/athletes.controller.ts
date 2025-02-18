@@ -9,7 +9,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from "@nestjs/common";
-import { RegisterTournamentDTO } from "../dto/athletes/register-tournament.dto";
+import { RegisterTournamentDTO } from "../../domain/dtos/athletes/register-tournament.dto";
 import { RegisterTournamentUseCase } from "../../application/usecases/athletes/register-tournament.usecase";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { RolesGuard } from "../guards/auth/role.guard";
@@ -23,7 +23,7 @@ import {
 import { GetParticipatedTournamentsUseCase } from "../../application/usecases/athletes/get-participated-tournaments.usecase";
 import { IRequestUser } from "../interfaces/interfaces";
 import { RegisterNewRoleUseCase } from "../../application/usecases/athletes/register-new-role.usecase";
-import { RegisterNewRoleDTO } from "../dto/athletes/register-new-role.dto";
+import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
 import { TUserWithRole } from "../types/users.type";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { UploadVerificationImagesUseCase } from "../../application/usecases/athletes/upload-verification-images.usecase";

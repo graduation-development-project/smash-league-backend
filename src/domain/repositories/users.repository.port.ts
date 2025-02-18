@@ -1,8 +1,8 @@
 import { User } from "@prisma/client";
-import { CreateUserDTO } from "../../infrastructure/dto/users/create-user.dto";
+import { CreateUserDTO } from "../dtos/users/create-user.dto";
 import { TUserWithRole } from "../../infrastructure/types/users.type";
-import { EditUserDTO } from "../../infrastructure/dto/users/edit-user.dto";
-import { ChangePasswordDTO } from "../../infrastructure/dto/users/change-password.dto";
+import { EditUserDTO } from "../dtos/users/edit-user.dto";
+import { ChangePasswordDTO } from "../dtos/users/change-password.dto";
 
 export interface UsersRepositoryPort {
 	findUserById(userID: string): Promise<TUserWithRole>;

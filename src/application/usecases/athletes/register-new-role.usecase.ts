@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
 import { UserVerification } from "@prisma/client";
-import { RegisterNewRoleDTO } from "../../../infrastructure/dto/athletes/register-new-role.dto";
+import { RegisterNewRoleDTO } from "../../../domain/dtos/athletes/register-new-role.dto";
 
 @Injectable()
 export class RegisterNewRoleUseCase {

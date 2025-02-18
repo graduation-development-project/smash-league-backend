@@ -2,7 +2,7 @@ import * as bcrypt from "bcryptjs";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { PrismaClient, User } from "@prisma/client";
 import { AuthRepositoryPort } from "../../domain/repositories/auth.repository.port";
-import { SignUpDTO } from "../dto/auth/sign-up.dto";
+import { SignUpDTO } from "../../domain/dtos/auth/sign-up.dto";
 import {
 	IPayload,
 	ISignInResponse,
@@ -14,7 +14,8 @@ import { UsersRepositoryPort } from "../../domain/repositories/users.repository.
 import { MailService } from "../services/mail.service";
 import { generateOtpCode } from "../util/generate-otp-code.util";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
-import { ResetPasswordDTO } from "../dto/auth/reset-password.dto";
+import { ResetPasswordDTO } from "../../domain/dtos/auth/reset-password.dto";
+import { UserEntity } from "src/domain/entities/authentication/user.entity";
 
 @Injectable()
 export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
@@ -88,7 +89,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 
 	async signUp(signUpDTO: SignUpDTO): Promise<any> {
 		try {
-			const userExisted = await this.prisma.user.findUnique({
+			const userExisted: UserEntity | null = await this.prisma.user.findUnique({
 				where: { email: signUpDTO.email },
 			});
 

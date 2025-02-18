@@ -1,8 +1,8 @@
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { UsersRepositoryPort } from "../../../domain/repositories/users.repository.port";
 import { User } from "@prisma/client";
-import { CreateUserDTO } from "../../../infrastructure/dto/users/create-user.dto";
-import { ChangePasswordDTO } from "../../../infrastructure/dto/users/change-password.dto";
+import { CreateUserDTO } from "../../../domain/dtos/users/create-user.dto";
+import { ChangePasswordDTO } from "../../../domain/dtos/users/change-password.dto";
 import { TUserWithRole } from "../../../infrastructure/types/users.type";
 
 @Injectable()

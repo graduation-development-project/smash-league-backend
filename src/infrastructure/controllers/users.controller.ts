@@ -16,9 +16,9 @@ import { RolesGuard } from "../guards/auth/role.guard";
 import { RoleMap } from "../enums/role.enum";
 import { TUserWithRole } from "../types/users.type";
 import { IRequestUser } from "../interfaces/interfaces";
-import { EditUserDTO } from "../dto/users/edit-user.dto";
+import { EditUserDTO } from "../../domain/dtos/users/edit-user.dto";
 import { EditUserProfileUseCase } from "../../application/usecases/users/edit-user-profile.usecase";
-import { ChangePasswordDTO } from "../dto/users/change-password.dto";
+import { ChangePasswordDTO } from "../../domain/dtos/users/change-password.dto";
 import { ChangePasswordUseCase } from "../../application/usecases/users/change-password.usecase";
 
 @Controller("/users")
