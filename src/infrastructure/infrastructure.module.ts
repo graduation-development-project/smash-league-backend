@@ -15,7 +15,8 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { MailService } from "./service/mail.service";
 import { join } from "path";
-import {StaffController} from "./controllers/staff.controller";
+import { StaffController } from "./controllers/staff.controller";
+import { EmailQueueModule } from "./background-jobs/email.queue.module";
 
 @Module({
 	imports: [
@@ -23,6 +24,7 @@ import {StaffController} from "./controllers/staff.controller";
 		PassportModule,
 		JwtModule.register({}),
 		ConfigModule,
+		EmailQueueModule,
 		MailerModule.forRootAsync({
 			useFactory: (configService: ConfigService) => ({
 				transport: {
@@ -51,7 +53,7 @@ import {StaffController} from "./controllers/staff.controller";
 		UsersController,
 		AuthController,
 		AthletesController,
-		StaffController
+		StaffController,
 	],
 	providers: [
 		LocalStrategy,

@@ -4,7 +4,8 @@ import { AppService } from "./app.service";
 import { ApplicationModule } from "./application/application.module";
 import { DomainModule } from "./domain/domain.module";
 import { InfrastructureModule } from "./infrastructure/infrastructure.module";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { BullModule } from "@nestjs/bullmq";
 
 @Module({
 	imports: [
@@ -12,8 +13,17 @@ import { ConfigModule } from "@nestjs/config";
 		DomainModule,
 		InfrastructureModule,
 		ConfigModule.forRoot({
-			isGlobal: true, // Makes ConfigModule globally available without needing to import it in other modules
-			envFilePath: ".env", // Specify the path to your .env file (default is `.env`)
+			isGlobal: true,
+			envFilePath: ".env",
+		}),
+		BullModule.forRootAsync({
+			inject: [ConfigService],
+			useFactory: async (configService: ConfigService) => ({
+				connection: {
+					host: configService.get("REDIS_HOST"),
+					port: configService.get("REDIS_PORT"),
+				},
+			}),
 		}),
 	],
 	controllers: [AppController],

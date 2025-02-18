@@ -14,6 +14,8 @@ import { UsersRepositoryPort } from "../../domain/repositories/users.repository.
 import { MailService } from "../service/mail.service";
 import { generateOtpCode } from "../util/generate-otp-code.util";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 import { ResetPasswordDTO } from "../dto/auth/reset-password.dto";
 
 @Injectable()
@@ -26,6 +28,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 		private jwtService: JwtService,
 		private configService: ConfigService,
 		private mailService: MailService,
+		@InjectQueue("emailQueue") private emailQueue: Queue,
 	) {}
 
 	generateAccessToken(payload: IPayload) {
@@ -114,12 +117,14 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				otpExpiresTime: convertToLocalTime(otpExpiresTime),
 			});
 
-			await this.mailService.sendEmail(
-				user.email,
-				"Verify Your Account",
-				"OTP.hbs",
-				{ otp },
-			);
+			await this.emailQueue.add("sendEmail", {
+				to: user.email,
+				subject: "Verify Your Account",
+				template: "OTP.hbs",
+				context: {
+					otp,
+				},
+			});
 
 			return "Sign Up successfully";
 		} catch (e) {
@@ -171,6 +176,10 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				throw new BadRequestException("This email is not registered yet");
 			}
 
+			if (!user.isVerified) {
+				throw new BadRequestException("Your account is not verified");
+			}
+
 			const token: string = this.jwtService.sign(
 				{ email },
 				{
@@ -181,16 +190,16 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 
 			const url = `${this.configService.get("EMAIL_RESET_PASSWORD_URL")}?token=${token}`;
 
-			await this.mailService.sendEmail(
-				email,
-				"Password Reset",
-				"reset-password.hbs",
-				{
+			await this.emailQueue.add("sendEmail", {
+				to: user.email,
+				subject: "Password Reset",
+				template: "reset-password.hbs",
+				context: {
 					name: user.firstName,
 					resetLink: url,
 					expiresIn: "10",
 				},
-			);
+			});
 
 			return "Reset Password Link is sent";
 		} catch (e) {
@@ -211,9 +220,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				throw new BadRequestException("Invalid token payload");
 			}
 
-
 			const hashedPassword = await bcrypt.hash(password, this.SALT_ROUND);
-
 
 			await this.prisma.user.update({
 				where: { email: payload.email },

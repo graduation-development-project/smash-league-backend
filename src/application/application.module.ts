@@ -22,12 +22,13 @@ import { MailService } from "../infrastructure/service/mail.service";
 import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 import { ChangePasswordUseCase } from "./usecases/users/change-password.usecase";
 import { PrismaStaffsRepositoryAdapter } from "../infrastructure/repositories/prisma.staffs.repository.adapter";
-import { VerifyUserInformationUseCase } from "./usecases/staffs/verify-user-information.usecase";
 import { SendResetPasswordLinkUseCase } from "./usecases/auth/send-reset-password-link.usecase";
 import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
+import { VerifyUserInformationUseCase } from "./usecases/staffs/verify-user-information.usecase";
+import { EmailQueueModule } from "../infrastructure/background-jobs/email.queue.module";
 
 @Module({
-	imports: [JwtModule.register({})],
+	imports: [JwtModule.register({}), EmailQueueModule],
 	controllers: [],
 	providers: [
 		{
@@ -72,6 +73,7 @@ import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
 		VerifyOTPUseCase,
 		ChangePasswordUseCase,
 		VerifyUserInformationUseCase,
+		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
 	],
@@ -92,6 +94,7 @@ import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
 		RegisterNewRoleUseCase,
 		UploadVerificationImagesUseCase,
 		VerifyOTPUseCase,
+		VerifyUserInformationUseCase,
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
