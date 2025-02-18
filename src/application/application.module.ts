@@ -18,7 +18,7 @@ import { RegisterTournamentUseCase } from "./usecases/athletes/register-tourname
 import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-participated-tournaments.usecase";
 import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.usecase";
 import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
-import { MailService } from "../infrastructure/service/mail.service";
+import { MailService } from "../infrastructure/services/mail.service";
 import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 import { ChangePasswordUseCase } from "./usecases/users/change-password.usecase";
 import { PrismaStaffsRepositoryAdapter } from "../infrastructure/repositories/prisma.staffs.repository.adapter";

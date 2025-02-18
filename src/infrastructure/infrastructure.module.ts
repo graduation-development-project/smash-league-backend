@@ -13,7 +13,7 @@ import { AthletesController } from "./controllers/athletes.controller";
 import { v2 as cloudinary } from "cloudinary";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
-import { MailService } from "./service/mail.service";
+import { MailService } from "./services/mail.service";
 import { join } from "path";
 import {StaffController} from "./controllers/staff.controller";
 
