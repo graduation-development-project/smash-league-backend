@@ -86,7 +86,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 		}
 	}
 
-	async signUp(signUpDTO: SignUpDTO): Promise<string> {
+	async signUp(signUpDTO: SignUpDTO): Promise<any> {
 		try {
 			const userExisted = await this.prisma.user.findUnique({
 				where: { email: signUpDTO.email },
@@ -121,7 +121,9 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				{ otp },
 			);
 
-			return "Sign Up successfully";
+			return {
+				email: user.email
+			};
 		} catch (e) {
 			throw e;
 		}
