@@ -25,12 +25,17 @@ import { PrismaStaffsRepositoryAdapter } from "../infrastructure/repositories/pr
 import { SendResetPasswordLinkUseCase } from "./usecases/auth/send-reset-password-link.usecase";
 import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
 import { VerifyUserInformationUseCase } from "./usecases/staffs/verify-user-information.usecase";
-import { EmailQueueModule } from "../infrastructure/background-jobs/email.queue.module";
+import { EmailQueueModule } from "../infrastructure/background-jobs/email/email.queue.module";
 import { PrismaPackageRepositoryAdapter } from "src/infrastructure/repositories/prisma.package.repository.adapter";
 import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
+import { NotificationQueueModule } from "../infrastructure/background-jobs/notification/notification.queue.module";
+import { PrismaNotificationsRepositoryAdapter } from "../infrastructure/repositories/prisma.notifications.repository.adapter";
+import { GetNotificationByUserUseCase } from "./usecases/notification/get-notification-by-user.usecase";
+import { CreateNotificationUseCase } from "./usecases/notification/create-notification.usecase";
+import {PrismaService} from "../infrastructure/services/prisma.service";
 
 @Module({
-	imports: [JwtModule.register({}), EmailQueueModule],
+	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule],
 	controllers: [],
 	providers: [
 		{
@@ -60,8 +65,13 @@ import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
 			provide: "PackageRepository",
 			useClass: PrismaPackageRepositoryAdapter,
 		},
+		{
+			provide: "NotificationRepository",
+			useClass: PrismaNotificationsRepositoryAdapter,
+		},
 
 		MailService,
+		PrismaService,
 		ApplicationFunction,
 		GetUserByIdUseCase,
 		GetAuthenticatedUserUseCase,
@@ -82,7 +92,9 @@ import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
-		GetPackagesUseCase
+		GetPackagesUseCase,
+		GetNotificationByUserUseCase,
+		CreateNotificationUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -105,7 +117,9 @@ import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
-		GetPackagesUseCase
+		GetPackagesUseCase,
+		GetNotificationByUserUseCase,
+		CreateNotificationUseCase,
 	],
 })
 export class ApplicationModule {}

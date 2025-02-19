@@ -17,7 +17,10 @@ import { MailService } from "./services/mail.service";
 import { join } from "path";
 import { PackageController } from "./controllers/package.controller";
 import { StaffController } from "./controllers/staff.controller";
-import { EmailQueueModule } from "./background-jobs/email.queue.module";
+import { EmailQueueModule } from "./background-jobs/email/email.queue.module";
+import {NotificationQueueModule} from "./background-jobs/notification/notification.queue.module";
+import {NotificationController} from "./controllers/notification.controller";
+import {PrismaService} from "./services/prisma.service";
 
 @Module({
 	imports: [
@@ -26,6 +29,7 @@ import { EmailQueueModule } from "./background-jobs/email.queue.module";
 		JwtModule.register({}),
 		ConfigModule,
 		EmailQueueModule,
+		NotificationQueueModule,
 		MailerModule.forRootAsync({
 			useFactory: (configService: ConfigService) => ({
 				transport: {
@@ -55,13 +59,15 @@ import { EmailQueueModule } from "./background-jobs/email.queue.module";
 		AuthController,
 		AthletesController,
 		StaffController,
-		PackageController
+		PackageController,
+		NotificationController,
 	],
 	providers: [
 		LocalStrategy,
 		JwtAccessTokenStrategy,
 		JwtRefreshTokenStrategy,
 		MailService,
+		PrismaService,
 		{
 			provide: "CLOUDINARY",
 			useFactory: (configService: ConfigService) => {

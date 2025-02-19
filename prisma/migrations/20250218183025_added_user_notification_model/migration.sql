@@ -99,6 +99,16 @@ CREATE TABLE "Notification" (
 );
 
 -- CreateTable
+CREATE TABLE "UserNotification" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "notificationId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "UserNotification_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Tournament" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -146,6 +156,7 @@ CREATE TABLE "ContentImage" (
 -- CreateTable
 CREATE TABLE "Package" (
     "id" TEXT NOT NULL,
+    "packageName" TEXT NOT NULL,
     "packageDetail" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "credits" INTEGER NOT NULL,
@@ -194,6 +205,9 @@ CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
 CREATE UNIQUE INDEX "Team_teamLeaderId_key" ON "Team"("teamLeaderId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "UserNotification_userId_notificationId_key" ON "UserNotification"("userId", "notificationId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "TournamentParticipant_tournamentId_userId_eventType_key" ON "TournamentParticipant"("tournamentId", "userId", "eventType");
 
 -- CreateIndex
@@ -225,6 +239,12 @@ ALTER TABLE "UserTeam" ADD CONSTRAINT "UserTeam_userId_fkey" FOREIGN KEY ("userI
 
 -- AddForeignKey
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "NotificationType"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserNotification" ADD CONSTRAINT "UserNotification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserNotification" ADD CONSTRAINT "UserNotification_notificationId_fkey" FOREIGN KEY ("notificationId") REFERENCES "Notification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Tournament" ADD CONSTRAINT "Tournament_organizerId_fkey" FOREIGN KEY ("organizerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
