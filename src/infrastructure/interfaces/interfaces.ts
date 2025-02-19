@@ -1,7 +1,9 @@
 import { User } from "@prisma/client";
+import { TUserWithRole } from "../types/users.type";
 
 export interface IPayload {
 	userID: string;
+	roles: string[];
 }
 
 export interface ISignInResponse {
@@ -15,5 +17,5 @@ export interface ISignUpResponse {
 }
 
 export interface IRequestUser extends Request {
-	user: User;
+	user: TUserWithRole;
 }

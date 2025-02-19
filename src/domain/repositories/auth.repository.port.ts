@@ -6,13 +6,14 @@ import {
 	ISignUpResponse,
 } from "../../infrastructure/interfaces/interfaces";
 import {ResetPasswordDTO} from "../dtos/auth/reset-password.dto";
+import { TUserWithRole } from "src/infrastructure/types/users.type";
 
 export interface AuthRepositoryPort {
-	signIn(userID: string): Promise<ISignInResponse>;
+	signIn(user: TUserWithRole): Promise<ISignInResponse>;
 
 	signUp(signUpDTO: SignUpDTO): Promise<string>;
 
-	refreshAccessToken(userID: string): string;
+	refreshAccessToken(userID: string, roles: string[]): string;
 
 	verifyOTP(email: string, otp: string): Promise<string>;
 

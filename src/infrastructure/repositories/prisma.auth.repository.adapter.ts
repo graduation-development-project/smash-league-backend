@@ -16,6 +16,7 @@ import { generateOtpCode } from "../util/generate-otp-code.util";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
 import { ResetPasswordDTO } from "../../domain/dtos/auth/reset-password.dto";
 import { UserEntity } from "src/domain/entities/authentication/user.entity";
+import { TUserWithRole } from "../types/users.type";
 
 @Injectable()
 export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
@@ -60,23 +61,28 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 	}
 
 	//* Use refresh token to generate new access token
-	refreshAccessToken(userID: string): string {
+	refreshAccessToken(userID: string, roles: string[]): string {
 		try {
-			return this.generateAccessToken({ userID });
+			return this.generateAccessToken({
+				userID,
+				roles
+			});
 		} catch (e) {
 			throw new BadRequestException("refresh access token failed");
 		}
 	}
 
-	async signIn(userID: string): Promise<ISignInResponse> {
+	async signIn(user: TUserWithRole): Promise<ISignInResponse> {
 		try {
 			const accessToken = this.generateAccessToken({
-				userID,
+				userID: user.id,
+				roles: user.userRoles
 			});
 			const refreshToken = this.generateRefreshToken({
-				userID,
+				userID: user.id,
+				roles: user.userRoles
 			});
-			await this.storeRefreshToken(userID, refreshToken);
+			await this.storeRefreshToken(user.id, refreshToken);
 
 			return {
 				accessToken,

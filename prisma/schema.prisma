@@ -156,6 +156,7 @@ model Package {
   packageDetail String
   price         Int
   credits       Int
+  cartItems     CartItem[]    @relation("FK_CartItem_PackageCartItem")
 }
 
 model TransactionType {
@@ -163,14 +164,6 @@ model TransactionType {
   transactionName   String 
   transactions      Transaction[]  @relation("FK_Transaction_TransactionTransactionType")
 }
-
-model Currency {
-  id      String    @id @default(uuid())
-  currencyCode  String
-  currencyName  String
-  transactions  Transaction[]     @relation("FK_Transaction_TransactionCurrency")
-}
-
 
 model Transaction {
   id                String @id @default(uuid())
@@ -180,8 +173,14 @@ model Transaction {
   transactionTypeId String
   transactionType   TransactionType @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
   value             Int
-  currencyId        String
-  currency          Currency      @relation(name: "FK_Transaction_TransactionCurrency", fields: [currencyId], references: [id], onDelete: Cascade)
   isCancelled       Boolean
   cancelledReason   String?
+}
+
+model CartItem {
+  id            String      @id @default(uuid())
+  packageId     String
+  package       Package     @relation(name: "FK_CartItem_PackageCartItem", fields: [packageId], references: [id], onDelete: Cascade)
+  quantity      Int
+  
 }

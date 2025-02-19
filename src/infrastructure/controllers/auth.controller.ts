@@ -36,7 +36,7 @@ export class AuthController {
 
 		// console.log("user", user);
 
-		return this.signInUseCase.execute(user.id);
+		return this.signInUseCase.execute(user);
 	}
 
 	@Post("/sign-up")
@@ -48,7 +48,7 @@ export class AuthController {
 	@Post("refresh")
 	async refreshAccessToken(@Req() request: IRequestUser) {
 		const { user } = request;
-		const access_token = this.refreshAccessTokenUseCase.execute(user.id);
+		const access_token = this.refreshAccessTokenUseCase.execute(user.id, user.userRoles);
 
 		return {
 			access_token,
