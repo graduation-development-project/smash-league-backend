@@ -32,7 +32,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: bash -c "npx prisma migrate deploy; npx prisma generate; npm run build && npm run start;  cp -r src/infrastructure/templates dist/src/infrastructure/templates"
+    command: bash -c "npx prisma migrate deploy; npx prisma generate; npm run build && npm run start; docker exec -it smash_league_api bash -c "cp -r src/infrastructure/templates dist/src/infrastructure/templates""
     # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && node dist/main.js"
     volumes:
       - .:/usr/src/app
