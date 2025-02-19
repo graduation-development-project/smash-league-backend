@@ -24,7 +24,7 @@ services:
       - NODEMAILER_USER=sonpv07@gmail.com
       - NODEMAILER_PASS=klcpbigrohbrxedh
       #MAILER_TEMPLATE_URL
-      - MAILER_TEMPLATE_URL=infrastructure/email-templates
+      - MAILER_TEMPLATE_URL=infrastructure/templates
       #PAYOS API KEY
       - PAYOS_CLIENT_ID=699488c9-2d90-4c3a-afdb-95cf093e406f
       - PAYOS_API_KEY=03234458-982c-47a9-b4f2-c33486623104
@@ -32,7 +32,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: bash -c "npx prisma migrate deploy; npx prisma generate; npm run build:linux; npm run start"
+    command: bash -c "npx prisma migrate deploy; npx prisma generate; npm run build && cp -r src/infrastructure/templates dist/src/infrastructure/templates; npm run start"
     # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && node dist/main.js"
     volumes:
       - .:/usr/src/app

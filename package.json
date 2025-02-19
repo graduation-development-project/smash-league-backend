@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build:linux": "npx nest build && cp -r src/infrastructure/email-templates dist/src/infrastructure/email-templates",
+    "copy-email-template": "cp -R /usr/src/app/src/infrastructure/templates /usr/src/app/dist/src/infrastructure/templates/ && echo \"Script executed from: ${PWD}\"",
     "build": "npx nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
