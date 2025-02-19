@@ -8,18 +8,21 @@ const PayOS = require("@payos/node");
 export class PaymentPayOSService {
 
 	constructor(
-		private readonly configService: ConfigService
+		private configService: ConfigService
 	) {
 
 	}
 	async createPaymentLink() : Promise<CheckoutResponseDataType> {
+		console.log("client: ", this.configService.get<string>("PAYOS_CLIENT_ID"));
+		console.log("api: ", this.configService.get<string>("PAYOS_API_KEY"));
+		console.log("checksum: ", this.configService.get<string>("PAYOS_CHECKSUM_KEY"));
 		const payOS = new PayOS(
-			"699488c9-2d90-4c3a-afdb-95cf093e406f",
-			"03234458-982c-47a9-b4f2-c33486623104",
-			"4ccaccfbf838d2507755aa2f976454fbb68ef6d069ff512ab44aec3409e63dcf"
+			this.configService.get<string>("PAYOS_CLIENT_ID"),
+			this.configService.get<string>("PAYOS_API_KEY"),
+			this.configService.get<string>("PAYOS_CHECKSUM_KEY")
 		);
 		const body = {
-			orderCode: 5345345,
+			orderCode: 8567565,
 			amount: 2000,
 			description: "Thanh toan don hang",
 			items: [
