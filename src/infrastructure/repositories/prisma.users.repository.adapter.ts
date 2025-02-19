@@ -64,7 +64,12 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				include: { userRoles: { select: { roleId: true } } },
 			});
 
+			if (!user) {
+				throw new UnauthorizedException("Wrong email or password");
+			}
+
 			await this.verifyPlainContentWithHashedContent(password, user.password);
+
 			return {
 				...user,
 				// @ts-ignore
