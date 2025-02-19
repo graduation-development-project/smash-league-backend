@@ -1,6 +1,10 @@
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+	BadRequestException,
+	Injectable,
+	UnauthorizedException,
+} from "@nestjs/common";
 import { GetAuthenticatedUserUseCase } from "../../../application/usecases/users/get-authenticated-user.usecase";
 import { User } from "@prisma/client";
 import { SignInDTO } from "../../../domain/dtos/auth/sign-in.dto";
@@ -15,16 +19,21 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 	}
 
 	async validate(email: string, password: string): Promise<User> {
-
 		// console.log(email, password);
 
 		const user: User = await this.getAuthenticatedUserUseCase.execute(
 			email,
 			password,
 		);
+
 		if (!user) {
 			throw new UnauthorizedException();
 		}
+
+		if (!user.isVerified) {
+			throw new UnauthorizedException("User not verified");
+		}
+
 		return user;
 	}
 }

@@ -64,10 +64,6 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				include: { userRoles: { select: { roleId: true } } },
 			});
 
-			if (!user.isVerified) {
-				throw new UnauthorizedException("User not verified");
-			}
-
 			await this.verifyPlainContentWithHashedContent(password, user.password);
 			return {
 				...user,
