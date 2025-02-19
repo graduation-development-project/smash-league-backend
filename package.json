@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "copy-email-template": "cp -R /usr/src/app/src/infrastructure/templates /usr/src/app/dist/src/infrastructure/templates/ && echo \"Script executed from: ${PWD}\"",
-    "build": "npx nest build",
+    "build": "npx nest build && node moving-templates.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch",
@@ -63,6 +63,8 @@
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "fs-extra": "^11.3.0",
+    "glob": "^11.0.1",
     "jest": "^29.5.0",
     "prettier": "^3.0.0",
     "prisma": "^6.2.1",
