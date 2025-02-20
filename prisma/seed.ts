@@ -23,7 +23,7 @@ async function main() {
 	];
 	await Promise.all(
 		roles.map(async (role) => {
-			await prisma.role.create({
+			prisma.role.create({
 				data: role
 			})
 		})
