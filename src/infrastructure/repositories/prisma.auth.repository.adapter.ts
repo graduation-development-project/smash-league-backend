@@ -97,7 +97,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				refreshToken: refreshToken,
 				email: userSignIn.email,
 				name: userSignIn.firstName + " " + userSignIn.lastName,
-				roles: [],
+				roles: ["Athlete"],
 				id: userSignIn.id
 			};
 		} catch (e) {
