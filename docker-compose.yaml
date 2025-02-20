@@ -32,10 +32,10 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: sh -c "npx prisma migrate deploy && npx prisma generate && npm run build && npm run start"
+    command: sh -c "npx prisma migrate deploy && npx prisma generate && npx prisma db seed && npm run build && npm run start"
     # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && node dist/main.js"
     volumes:
-      - .:/usr/src/app
+      - backend_service:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
       - db
@@ -60,3 +60,4 @@ networks:
   smashleague: {}
 volumes:
   postgres_data: 
+  backend_service:
