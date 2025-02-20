@@ -186,6 +186,7 @@ model Package {
   packageDetail String
   price         Int
   credits       Int
+  cartItems     CartItem[]    @relation("FK_CartItem_PackageCartItem")
 }
 
 model TransactionType {
@@ -194,23 +195,45 @@ model TransactionType {
   transactions    Transaction[] @relation("FK_Transaction_TransactionTransactionType")
 }
 
-model Currency {
-  id           String        @id @default(uuid())
-  currencyCode String
-  currencyName String
-  transactions Transaction[] @relation("FK_Transaction_TransactionCurrency")
-}
-
 model Transaction {
-  id                String          @id @default(uuid())
+  id                String @id @default(uuid())
   transactionDetail String
   userId            String
-  user              User            @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
+  user              User   @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
   transactionTypeId String
   transactionType   TransactionType @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
   value             Int
-  currencyId        String
-  currency          Currency        @relation(name: "FK_Transaction_TransactionCurrency", fields: [currencyId], references: [id], onDelete: Cascade)
-  isCancelled       Boolean
+  cartId            String
+  cart              Cart          @relation(name: "FK_Transaction_TransactionCart", fields: [cartId], references: [id], onDelete: Cascade)
+  status            TransactionStatus
   cancelledReason   String?
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+}
+
+model CartItem {
+  id            String      @id @default(uuid())
+  packageId     String
+  package       Package     @relation(name: "FK_CartItem_PackageCartItem", fields: [packageId], references: [id], onDelete: Cascade)
+  quantity      Int
+  cartId        String
+  cart          Cart        @relation(name: "FK_CartItem_CartItemCart", fields: [cartId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id    String      @id @default(uuid())
+  total       Int
+  cartItems     CartItem[]      @relation("FK_CartItem_CartItemCart")
+  transactions  Transaction[]     @relation("FK_Transaction_TransactionCart")
+  cartStatus    CartStatus
+}
+
+enum CartStatus {
+  PAID
+  PENDING
+  FAILED
 }

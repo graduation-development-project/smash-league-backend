@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "TransactionStatus" AS ENUM ('PENDING', 'SUCCESSFUL', 'FAILED');
+
+-- CreateEnum
+CREATE TYPE "CartStatus" AS ENUM ('PAID', 'PENDING', 'FAILED');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -130,7 +136,7 @@ CREATE TABLE "TournamentRegistration" (
     "eventType" TEXT NOT NULL,
     "partnerId" TEXT,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
-    "rejectionId" TEXT NOT NULL,
+    "rejectionId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "TournamentRegistration_pkey" PRIMARY KEY ("id")
@@ -188,26 +194,36 @@ CREATE TABLE "TransactionType" (
 );
 
 -- CreateTable
-CREATE TABLE "Currency" (
-    "id" TEXT NOT NULL,
-    "currencyCode" TEXT NOT NULL,
-    "currencyName" TEXT NOT NULL,
-
-    CONSTRAINT "Currency_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Transaction" (
     "id" TEXT NOT NULL,
     "transactionDetail" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "transactionTypeId" TEXT NOT NULL,
     "value" INTEGER NOT NULL,
-    "currencyId" TEXT NOT NULL,
-    "isCancelled" BOOLEAN NOT NULL,
+    "cartId" TEXT NOT NULL,
+    "status" "TransactionStatus" NOT NULL,
     "cancelledReason" TEXT,
 
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CartItem" (
+    "id" TEXT NOT NULL,
+    "packageId" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "cartId" TEXT NOT NULL,
+
+    CONSTRAINT "CartItem_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Cart" (
+    "id" TEXT NOT NULL,
+    "total" INTEGER NOT NULL,
+    "cartStatus" "CartStatus" NOT NULL,
+
+    CONSTRAINT "Cart_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -298,4 +314,10 @@ ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_userId_fkey" FOREIGN KEY (
 ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_transactionTypeId_fkey" FOREIGN KEY ("transactionTypeId") REFERENCES "TransactionType"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_currencyId_fkey" FOREIGN KEY ("currencyId") REFERENCES "Currency"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_packageId_fkey" FOREIGN KEY ("packageId") REFERENCES "Package"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("id") ON DELETE CASCADE ON UPDATE CASCADE;

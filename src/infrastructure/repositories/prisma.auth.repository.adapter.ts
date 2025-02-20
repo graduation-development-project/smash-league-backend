@@ -18,6 +18,7 @@ import { ResetPasswordDTO } from "../../domain/dtos/auth/reset-password.dto";
 import { UserEntity } from "src/domain/entities/authentication/user.entity";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
+import { TUserWithRole } from "../types/users.type";
 
 @Injectable()
 export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
@@ -63,27 +64,44 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 	}
 
 	//* Use refresh token to generate new access token
-	refreshAccessToken(userID: string): string {
+	refreshAccessToken(userID: string, roles: string[]): string {
 		try {
-			return this.generateAccessToken({ userID });
+			return this.generateAccessToken({
+				userID,
+				roles
+			});
 		} catch (e) {
 			throw new BadRequestException("refresh access token failed");
 		}
 	}
 
-	async signIn(userID: string): Promise<ISignInResponse> {
+	async signIn(user: TUserWithRole): Promise<ISignInResponse> {
 		try {
+			const userSignIn = await this.prisma.user.findUnique({
+				where: {id: user.id},
+				include: {
+					userRoles: true
+				}
+			});
+			const roles = userSignIn.userRoles.map(item => item.roleId);
+			console.log(roles);
 			const accessToken = this.generateAccessToken({
-				userID,
+				userID: user.id,
+				roles: user.userRoles
 			});
 			const refreshToken = this.generateRefreshToken({
-				userID,
+				userID: user.id,
+				roles: user.userRoles
 			});
-			await this.storeRefreshToken(userID, refreshToken);
+			await this.storeRefreshToken(user.id, refreshToken);
 
 			return {
-				accessToken,
-				refreshToken,
+				accessToken: accessToken,
+				refreshToken: refreshToken,
+				email: userSignIn.email,
+				name: userSignIn.firstName + " " + userSignIn.lastName,
+				roles: ["Athlete"],
+				id: userSignIn.id
 			};
 		} catch (e) {
 			throw e;

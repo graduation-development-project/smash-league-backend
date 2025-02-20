@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { ApplicationFunction } from "./usecases/application.function";
 import { PrismaClient } from "@prisma/client";
 import { GetUserByIdUseCase } from "./usecases/users/get-user-by-id.usecase";
@@ -33,9 +33,13 @@ import { PrismaNotificationsRepositoryAdapter } from "../infrastructure/reposito
 import { GetNotificationByUserUseCase } from "./usecases/notification/get-notification-by-user.usecase";
 import { CreateNotificationUseCase } from "./usecases/notification/create-notification.usecase";
 import {PrismaService} from "../infrastructure/services/prisma.service";
+import { CreatePaymentLinkUseCase } from "./usecases/payment/create-payment-link.usecase";
+import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
+import { PaymentPayOSService } from "./services/payment.service";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
-	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule],
+	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule, ConfigModule],
 	controllers: [],
 	providers: [
 		{
@@ -71,6 +75,7 @@ import {PrismaService} from "../infrastructure/services/prisma.service";
 		},
 
 		MailService,
+		PaymentPayOSService,
 		PrismaService,
 		ApplicationFunction,
 		GetUserByIdUseCase,
@@ -89,9 +94,10 @@ import {PrismaService} from "../infrastructure/services/prisma.service";
 		VerifyOTPUseCase,
 		ChangePasswordUseCase,
 		VerifyUserInformationUseCase,
-		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
+		GetPackagesUseCase,
+		CreatePaymentLinkUseCase,
 		GetPackagesUseCase,
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -114,12 +120,13 @@ import {PrismaService} from "../infrastructure/services/prisma.service";
 		UploadVerificationImagesUseCase,
 		VerifyOTPUseCase,
 		VerifyUserInformationUseCase,
-		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
-		GetPackagesUseCase,
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
+		GetPackagesUseCase,
+		CreatePaymentLinkUseCase,
+		PaymentPayOSService,
 	],
 })
 export class ApplicationModule {}

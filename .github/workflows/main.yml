@@ -12,6 +12,11 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
+    - name: Execute "drop docker volume" before building
+      run: |
+        docker stop database
+        docker rm database
+        docker volume rm smash-league-backend_postgres_data
     - name: Run "database"
       run: docker compose up -d db 
     - name: Run "docker compose"

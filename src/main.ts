@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { loadRoleMap } from './infrastructure/enums/role.enum';
 
 
 declare const module: any;
 
 async function bootstrap() {
+  await loadRoleMap();
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   const configService = app.get(ConfigService);

@@ -21,6 +21,7 @@ import { EmailQueueModule } from "./background-jobs/email/email.queue.module";
 import {NotificationQueueModule} from "./background-jobs/notification/notification.queue.module";
 import {NotificationController} from "./controllers/notification.controller";
 import {PrismaService} from "./services/prisma.service";
+import { PaymentController } from "./controllers/payment.controller";
 
 @Module({
 	imports: [
@@ -61,6 +62,7 @@ import {PrismaService} from "./services/prisma.service";
 		StaffController,
 		PackageController,
 		NotificationController,
+		PaymentController
 	],
 	providers: [
 		LocalStrategy,
