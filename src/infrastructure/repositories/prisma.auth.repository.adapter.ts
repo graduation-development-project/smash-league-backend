@@ -74,6 +74,14 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 
 	async signIn(user: TUserWithRole): Promise<ISignInResponse> {
 		try {
+			const userSignIn = await this.prisma.user.findUnique({
+				where: {id: user.id},
+				include: {
+					userRoles: true
+				}
+			});
+			const roles = userSignIn.userRoles.map(item => item.roleId);
+			console.log(roles);
 			const accessToken = this.generateAccessToken({
 				userID: user.id,
 				roles: user.userRoles
@@ -85,8 +93,12 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 			await this.storeRefreshToken(user.id, refreshToken);
 
 			return {
-				accessToken,
-				refreshToken,
+				accessToken: accessToken,
+				refreshToken: refreshToken,
+				email: userSignIn.email,
+				name: userSignIn.firstName + " " + userSignIn.lastName,
+				roles: [],
+				id: userSignIn.id
 			};
 		} catch (e) {
 			throw e;
