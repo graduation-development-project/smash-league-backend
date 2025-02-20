@@ -21,13 +21,11 @@ async function main() {
 			roleName: "Umpire"
 		}
 	];
-	await Promise.all(
-		roles.map(async (role) => {
-			prisma.role.create({
-				data: role
-			})
+	roles.map(async (role) => {
+		await prisma.role.create({
+			data: role
 		})
-	)
+	})
 }
 main()
   .then(async () => {
