@@ -163,6 +163,17 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("This role is already registered");
 			}
 
+			const verificationExisted = await this.prisma.userVerification.findFirst({
+				where: {
+					userId: userID,
+					role,
+				},
+			});
+
+			if(verificationExisted) {
+				throw new BadRequestException("You already registered this role");
+			}
+
 			return this.prisma.userVerification.create({
 				data: {
 					userId: userID,

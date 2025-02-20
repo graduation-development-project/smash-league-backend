@@ -15,7 +15,11 @@ import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
-import {Tournament, TournamentRegistration, UserVerification} from "@prisma/client";
+import {
+	Tournament,
+	TournamentRegistration,
+	UserVerification,
+} from "@prisma/client";
 import { GetParticipatedTournamentsUseCase } from "../../application/usecases/athletes/get-participated-tournaments.usecase";
 import { IRequestUser } from "../interfaces/interfaces";
 import { RegisterNewRoleUseCase } from "../../application/usecases/athletes/register-new-role.usecase";
@@ -26,7 +30,7 @@ import { UploadVerificationImagesUseCase } from "../../application/usecases/athl
 import { TCloudinaryResponse } from "../types/cloudinary.type";
 
 @Controller("/athletes")
-@UseGuards(JwtAccessTokenGuard)
+@UseGuards(JwtAccessTokenGuard, RolesGuard)
 export class AthletesController {
 	constructor(
 		private registerTournamentUseCase: RegisterTournamentUseCase,
@@ -37,7 +41,6 @@ export class AthletesController {
 
 	@Post("register-tournament")
 	@Roles(RoleMap.Athlete.id)
-	@UseGuards(RolesGuard)
 	registerTournament(
 		@Body() registerTournamentDTO: RegisterTournamentDTO,
 	): Promise<TournamentRegistration> {
@@ -46,7 +49,6 @@ export class AthletesController {
 
 	@Get("participated-tournament")
 	@Roles(RoleMap.Athlete.id)
-	@UseGuards(RolesGuard)
 	getParticipatedTournaments(
 		@Req() { user }: IRequestUser,
 		@Query("status") tournamentStatus: string,
@@ -59,7 +61,6 @@ export class AthletesController {
 
 	@Post("upload-verification-images")
 	@Roles(RoleMap.Athlete.id)
-	@UseGuards(RolesGuard)
 	@UseInterceptors(AnyFilesInterceptor())
 	uploadVerificationImage(
 		@Req() { user }: IRequestUser,
@@ -70,7 +71,6 @@ export class AthletesController {
 
 	@Post("register-new-role")
 	@Roles(RoleMap.Athlete.id)
-	@UseGuards(RolesGuard)
 	registerNewRole(
 		@Req() { user }: IRequestUser,
 		@Body() registerNewRoleDTO: RegisterNewRoleDTO,
