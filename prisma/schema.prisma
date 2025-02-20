@@ -173,8 +173,16 @@ model Transaction {
   transactionTypeId String
   transactionType   TransactionType @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
   value             Int
-  isCancelled       Boolean
+  cartId            String 
+  cart              Cart          @relation(name: "FK_Transaction_TransactionCart", fields: [cartId], references: [id], onDelete: Cascade)
+  status            TransactionStatus
   cancelledReason   String?
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
 }
 
 model CartItem {
@@ -182,5 +190,20 @@ model CartItem {
   packageId     String
   package       Package     @relation(name: "FK_CartItem_PackageCartItem", fields: [packageId], references: [id], onDelete: Cascade)
   quantity      Int
-  
+  cartId        String
+  cart          Cart        @relation(name: "FK_CartItem_CartItemCart", fields: [cartId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id    String      @id @default(uuid())
+  total       Int     
+  cartItems     CartItem[]      @relation("FK_CartItem_CartItemCart")
+  transactions  Transaction[]     @relation("FK_Transaction_TransactionCart")
+  cartStatus    CartStatus      
+}
+
+enum CartStatus {
+  PAID
+  PENDING
+  FAILED
 }
