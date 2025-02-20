@@ -20,10 +20,30 @@ async function main() {
 		{
 			roleName: "Umpire",
 		},
+		{
+			roleName: "Staff",
+		},
 	];
+
+	let notificationType: Prisma.NotificationTypeCreateInput[] = [
+		{
+			typeOfNotification: "Reject",
+		},
+
+		{
+			typeOfNotification: "Approve",
+		},
+	];
+
 	roles.map(async (role) => {
 		await prisma.role.create({
 			data: role,
+		});
+	});
+
+	notificationType.map(async (type) => {
+		await prisma.notificationType.create({
+			data: type,
 		});
 	});
 }
