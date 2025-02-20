@@ -9,6 +9,10 @@ export interface IPayload {
 export interface ISignInResponse {
 	accessToken: string;
 	refreshToken: string;
+	email: string;
+	id: string;
+	roles: string[];
+	name: string;
 }
 
 export interface ISignUpResponse {
