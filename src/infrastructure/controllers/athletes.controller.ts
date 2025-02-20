@@ -15,11 +15,7 @@ import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
-import {
-	Tournament,
-	TournamentParticipant,
-	UserVerification,
-} from "@prisma/client";
+import {Tournament, TournamentRegistration, UserVerification} from "@prisma/client";
 import { GetParticipatedTournamentsUseCase } from "../../application/usecases/athletes/get-participated-tournaments.usecase";
 import { IRequestUser } from "../interfaces/interfaces";
 import { RegisterNewRoleUseCase } from "../../application/usecases/athletes/register-new-role.usecase";
@@ -30,6 +26,7 @@ import { UploadVerificationImagesUseCase } from "../../application/usecases/athl
 import { TCloudinaryResponse } from "../types/cloudinary.type";
 
 @Controller("/athletes")
+@UseGuards(JwtAccessTokenGuard)
 export class AthletesController {
 	constructor(
 		private registerTournamentUseCase: RegisterTournamentUseCase,
@@ -41,17 +38,15 @@ export class AthletesController {
 	@Post("register-tournament")
 	@Roles(RoleMap.Athlete.id)
 	@UseGuards(RolesGuard)
-	@UseGuards(JwtAccessTokenGuard)
 	registerTournament(
 		@Body() registerTournamentDTO: RegisterTournamentDTO,
-	): Promise<TournamentParticipant> {
+	): Promise<TournamentRegistration> {
 		return this.registerTournamentUseCase.execute(registerTournamentDTO);
 	}
 
 	@Get("participated-tournament")
 	@Roles(RoleMap.Athlete.id)
 	@UseGuards(RolesGuard)
-	@UseGuards(JwtAccessTokenGuard)
 	getParticipatedTournaments(
 		@Req() { user }: IRequestUser,
 		@Query("status") tournamentStatus: string,
@@ -65,7 +60,6 @@ export class AthletesController {
 	@Post("upload-verification-images")
 	@Roles(RoleMap.Athlete.id)
 	@UseGuards(RolesGuard)
-	@UseGuards(JwtAccessTokenGuard)
 	@UseInterceptors(AnyFilesInterceptor())
 	uploadVerificationImage(
 		@Req() { user }: IRequestUser,
@@ -77,7 +71,6 @@ export class AthletesController {
 	@Post("register-new-role")
 	@Roles(RoleMap.Athlete.id)
 	@UseGuards(RolesGuard)
-	@UseGuards(JwtAccessTokenGuard)
 	registerNewRole(
 		@Req() { user }: IRequestUser,
 		@Body() registerNewRoleDTO: RegisterNewRoleDTO,

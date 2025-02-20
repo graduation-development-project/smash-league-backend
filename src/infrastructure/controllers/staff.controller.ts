@@ -9,11 +9,17 @@ export class StaffController {
 
 	@Put("/verify-information")
 	verifyInformation(
-		@Body() body: { verificationID: string; option: boolean },
+		@Body()
+		body: {
+			verificationID: string;
+			option: boolean;
+			rejectionReason?: string;
+		},
 	): Promise<string> {
 		return this.verifyUserInformationUseCase.execute(
 			body.verificationID,
 			body.option,
+			body.rejectionReason,
 		);
 	}
 }

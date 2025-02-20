@@ -41,8 +41,6 @@ export class PrismaNotificationsRepositoryAdapter
 		const { title, message, type } = createNotificationDTO;
 
 		try {
-			console.log("receiverList", receiverList);
-
 			if (!receiverList || receiverList.length === 0) {
 				throw new BadRequestException("Receiver list is required");
 			}
@@ -59,17 +57,12 @@ export class PrismaNotificationsRepositoryAdapter
 				throw new BadRequestException("create notification failed");
 			}
 
-			const batchSize = 10;
-
-			for (let i: number = 0; i < receiverList.length; i += batchSize) {
-				const batch = receiverList.slice(i, i + batchSize);
-				await this.notificationQueue.add("sendNotificationBatch", {
-					notifications: batch.map((userId) => ({
-						userId,
-						notificationId: notification.id,
-					})),
-				});
-			}
+			await this.notificationQueue.addBulk(
+				receiverList.map((userId) => ({
+					name: "sendNotification",
+					data: { userId, notificationId: notification.id },
+				})),
+			);
 
 			return "Create and send notifications successfully";
 		} catch (e) {

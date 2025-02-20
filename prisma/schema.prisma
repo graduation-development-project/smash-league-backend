@@ -8,40 +8,41 @@ datasource db {
 }
 
 model User {
-  id                      String                  @id @default(uuid())
-  email                   String                  @unique
-  password                String
-  firstName               String
-  lastName                String
-  phoneNumber             String                  @unique
-  avatarURL               String?
-  currentRefreshToken     String?
-  CreditsRemain           Int
-  otp                     String?
-  otpExpiresTime          DateTime?
-  isVerified              Boolean                 @default(false)
-  teamId                  String?
-  team                    Team?                   @relation("FK_User_UserTeam")
-  tournaments             Tournament[]            @relation("FK_Tournament_UserTournament")
-  userRoles               UserRole[]              @relation("FK_User_UserRole")
-  userTeams               UserTeam[]              @relation("FK_User_UserTeam")
-  tournamentParticipation TournamentParticipant[] @relation("FK_TournamentParticipant_User")
-  tournamentPartnership   TournamentParticipant[] @relation("FK_TournamentParticipant_Partner")
-  verifications           UserVerification[]      @relation("FK_User_UserVerification")
-  transactions            Transaction[]           @relation("FK_Transaction_UserTransaction")
-  notifications           UserNotification[]
+  id                            String                   @id @default(uuid())
+  email                         String                   @unique
+  password                      String
+  firstName                     String
+  lastName                      String
+  phoneNumber                   String                   @unique
+  avatarURL                     String?
+  currentRefreshToken           String?
+  CreditsRemain                 Int
+  otp                           String?
+  otpExpiresTime                DateTime?
+  isVerified                    Boolean                  @default(false)
+  teamId                        String?
+  team                          Team?                    @relation("FK_User_UserTeam")
+  tournaments                   Tournament[]             @relation("FK_Tournament_UserTournament")
+  userRoles                     UserRole[]               @relation("FK_User_UserRole")
+  userTeams                     UserTeam[]               @relation("FK_User_UserTeam")
+  verifications                 UserVerification[]       @relation("FK_User_UserVerification")
+  transactions                  Transaction[]            @relation("FK_Transaction_UserTransaction")
+  notifications                 UserNotification[]
+  tournamentRegistrations       TournamentRegistration[] @relation("FK_TournamentRegistration_User")
+  TournamentRegistrationPartner TournamentRegistration[] @relation("FK_TournamentRegistration_Partner")
 }
 
 model UserVerification {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   userId      String
-  user        User     @relation("FK_User_UserVerification", fields: [userId], references: [id])
+  user        User       @relation("FK_User_UserVerification", fields: [userId], references: [id])
   IDCardFront String?
   IDCardBack  String?
   cardPhoto   String?
   role        String
-  isVerified  Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  isVerified  Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  rejection   Rejection? @relation("FK_UserVerification_Rejection")
 }
 
 model Role {
@@ -119,7 +120,7 @@ model UserNotification {
 }
 
 model Tournament {
-  id              String                  @id @default(uuid())
+  id              String                   @id @default(uuid())
   name            String
   shortName       String
   organizerId     String
@@ -127,23 +128,28 @@ model Tournament {
   endDate         DateTime
   status          String
   tournamentRules Json
-  organizer       User                    @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
-  tournamentPosts TournamentPost[]        @relation("FK_TournamentPost_TournamentPostTournament")
-  participants    TournamentParticipant[] @relation("FK_TournamentParticipant_Tournament")
+  organizer       User                     @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
+  tournamentPosts TournamentPost[]         @relation("FK_TournamentPost_TournamentPostTournament")
+  registrations   TournamentRegistration[] @relation("FK_TournamentRegistration_Tournament")
 }
 
-model TournamentParticipant {
-  id           String     @id @default(uuid())
+model TournamentRegistration {
+  id           String   @id @default(uuid())
   tournamentId String
   userId       String
   eventType    String // "SINGLE" or "DOUBLE"
   partnerId    String? // Nullable: Used only for doubles
-  tournament   Tournament @relation("FK_TournamentParticipant_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
-  user         User       @relation("FK_TournamentParticipant_User", fields: [userId], references: [id], onDelete: Cascade)
-  partner      User?      @relation("FK_TournamentParticipant_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  status       String   @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
+  rejectionId  String?
+  createdAt    DateTime @default(now())
 
-  @@unique([tournamentId, userId, eventType]) // Ensure a user can join a tournament only once per event type
-  @@unique([tournamentId, partnerId]) // Ensure a pair is unique for doubles
+  tournament Tournament @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user       User       @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
+  partner    User?      @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  rejection  Rejection? @relation("FK_TournamentRegistration_Rejection")
+
+  @@unique([tournamentId, userId, eventType]) // Ensure a user can register only once per event type
+  @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
 }
 
 model TournamentPost {
@@ -154,6 +160,17 @@ model TournamentPost {
   content       String
   contentImages ContentImage[] @relation("FK_ContentImage_TournamentPostContentImage")
   tournament    Tournament     @relation("FK_TournamentPost_TournamentPostTournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+}
+
+model Rejection {
+  id                       String                  @id @default(uuid())
+  userVerificationId       String?                 @unique // Can be null if rejection is for tournament
+  tournamentRegistrationId String?                 @unique // Can be null if rejection is for verification
+  reason                   String // Explanation for rejection
+  type                     String
+  createdAt                DateTime                @default(now())
+  userVerification         UserVerification?       @relation("FK_UserVerification_Rejection", fields: [userVerificationId], references: [id], onDelete: Cascade)
+  tournamentRegistration   TournamentRegistration? @relation("FK_TournamentRegistration_Rejection", fields: [tournamentRegistrationId], references: [id])
 }
 
 model ContentImage {
@@ -172,29 +189,28 @@ model Package {
 }
 
 model TransactionType {
-  id                String @id @default(uuid())
-  transactionName   String
-  transactions      Transaction[]  @relation("FK_Transaction_TransactionTransactionType")
+  id              String        @id @default(uuid())
+  transactionName String
+  transactions    Transaction[] @relation("FK_Transaction_TransactionTransactionType")
 }
 
 model Currency {
-  id      String    @id @default(uuid())
-  currencyCode  String
-  currencyName  String
-  transactions  Transaction[]     @relation("FK_Transaction_TransactionCurrency")
+  id           String        @id @default(uuid())
+  currencyCode String
+  currencyName String
+  transactions Transaction[] @relation("FK_Transaction_TransactionCurrency")
 }
 
-
 model Transaction {
-  id                String @id @default(uuid())
+  id                String          @id @default(uuid())
   transactionDetail String
   userId            String
-  user              User   @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
+  user              User            @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
   transactionTypeId String
   transactionType   TransactionType @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
   value             Int
   currencyId        String
-  currency          Currency      @relation(name: "FK_Transaction_TransactionCurrency", fields: [currencyId], references: [id], onDelete: Cascade)
+  currency          Currency        @relation(name: "FK_Transaction_TransactionCurrency", fields: [currencyId], references: [id], onDelete: Cascade)
   isCancelled       Boolean
   cancelledReason   String?
 }

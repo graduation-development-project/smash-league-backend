@@ -7,7 +7,7 @@ export class VerifyUserInformationUseCase {
 		@Inject("StaffRepository") private staffRepository: StaffsRepositoryPort,
 	) {}
 
-	execute(verificationID: string, option: boolean): Promise<string> {
-		return this.staffRepository.verifyUserInformation(verificationID, option);
+	execute(verificationID: string, option: boolean, rejectionReason?: string): Promise<string> {
+		return this.staffRepository.verifyUserInformation(verificationID, option, rejectionReason);
 	}
 }

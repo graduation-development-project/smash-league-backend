@@ -110,6 +110,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 			otpExpiresTime.setMinutes(otpExpiresTime.getMinutes() + 10);
 
 			console.log(convertToLocalTime(otpExpiresTime));
+			console.log(convertToLocalTime(new Date()));
 
 			const user: User = await this.userRepository.createUser({
 				...signUpDTO,
@@ -128,7 +129,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 			});
 
 			return {
-				email: user.email
+				email: user.email,
 			};
 		} catch (e) {
 			throw e;
@@ -144,6 +145,8 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 			if (!user) {
 				throw new BadRequestException("This email is not registered yet");
 			}
+
+			console.log(user.otpExpiresTime, " - ", convertToLocalTime(new Date()));
 
 			//* Check OTP expires or not
 			if (user.otpExpiresTime < convertToLocalTime(new Date())) {
