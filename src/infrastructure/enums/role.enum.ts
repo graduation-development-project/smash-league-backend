@@ -19,6 +19,7 @@ export const RoleMap = {
   Athlete: { id: null, name: 'Athlete' },
   Team_Leader: { id: null, name: 'Team Leader' },
   Umpire: { id: null, name: 'Umpire' },
+  Staff: { id: null, name: 'Staff' },
 };
 
 export async function loadRoleMap() {
