@@ -19,6 +19,7 @@ import { UserEntity } from "src/domain/entities/authentication/user.entity";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { TUserWithRole } from "../types/users.type";
+import { verifyOTP } from "../util/verify-otp.util";
 
 @Injectable()
 export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
@@ -68,7 +69,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 		try {
 			return this.generateAccessToken({
 				userID,
-				roles
+				roles,
 			});
 		} catch (e) {
 			throw new BadRequestException("refresh access token failed");
@@ -78,20 +79,20 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 	async signIn(user: TUserWithRole): Promise<ISignInResponse> {
 		try {
 			const userSignIn = await this.prisma.user.findUnique({
-				where: {id: user.id},
+				where: { id: user.id },
 				include: {
-					userRoles: true
-				}
+					userRoles: true,
+				},
 			});
-			const roles = userSignIn.userRoles.map(item => item.roleId);
+			const roles = userSignIn.userRoles.map((item) => item.roleId);
 			console.log(roles);
 			const accessToken = this.generateAccessToken({
 				userID: user.id,
-				roles: user.userRoles
+				roles: user.userRoles,
 			});
 			const refreshToken = this.generateRefreshToken({
 				userID: user.id,
-				roles: user.userRoles
+				roles: user.userRoles,
 			});
 			await this.storeRefreshToken(user.id, refreshToken);
 
@@ -101,7 +102,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				email: userSignIn.email,
 				name: userSignIn.firstName + " " + userSignIn.lastName,
 				roles: ["Athlete"],
-				id: userSignIn.id
+				id: userSignIn.id,
 			};
 		} catch (e) {
 			throw e;
@@ -156,24 +157,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 
 	async verifyOTP(email: string, otp: string): Promise<string> {
 		try {
-			const user: User = await this.prisma.user.findUnique({
-				where: { email },
-			});
-
-			if (!user) {
-				throw new BadRequestException("This email is not registered yet");
-			}
-
-			console.log(user.otpExpiresTime, " - ", convertToLocalTime(new Date()));
-
-			//* Check OTP expires or not
-			if (user.otpExpiresTime < convertToLocalTime(new Date())) {
-				throw new BadRequestException("OTP expired");
-			}
-
-			if (user.otp !== otp) {
-				throw new BadRequestException("Invalid OTP");
-			}
+			await verifyOTP(email, otp, this.prisma);
 
 			await this.prisma.user.update({
 				where: { email },
@@ -204,24 +188,24 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				throw new BadRequestException("Your account is not verified");
 			}
 
-			const token: string = this.jwtService.sign(
-				{ email },
-				{
-					secret: this.configService.get<string>("RESET_TOKEN_SECRET_KEY"),
-					expiresIn: `${this.configService.get<string>("RESET_TOKEN_EXPIRATION_TIME")}s`,
-				},
-			);
+			const otp: string = generateOtpCode();
+			const otpExpiresTime: Date = new Date();
+			otpExpiresTime.setMinutes(otpExpiresTime.getMinutes() + 10);
 
-			const url = `${this.configService.get("EMAIL_RESET_PASSWORD_URL")}?token=${token}`;
+			await this.prisma.user.update({
+				where: { email },
+				data: {
+					otp,
+					otpExpiresTime: convertToLocalTime(otpExpiresTime),
+				},
+			});
 
 			await this.emailQueue.add("sendEmail", {
-				to: user.email,
+				to: email,
 				subject: "Password Reset",
 				template: "reset-password.hbs",
 				context: {
-					name: user.firstName,
-					resetLink: url,
-					expiresIn: "10",
+					otp,
 				},
 			});
 
@@ -232,22 +216,18 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 	}
 
 	async resetPassword(resetPasswordDTO: ResetPasswordDTO): Promise<string> {
-		const { token, password } = resetPasswordDTO;
+		const { password, otp, email } = resetPasswordDTO;
 
 		try {
-			//* Decode reset token
-			const payload = await this.jwtService.verify(token, {
-				secret: this.configService.get("RESET_TOKEN_SECRET_KEY"),
-			});
+			await verifyOTP(email, otp, this.prisma);
 
-			if (!payload?.email) {
-				throw new BadRequestException("Invalid token payload");
-			}
-
-			const hashedPassword = await bcrypt.hash(password, this.SALT_ROUND);
+			const hashedPassword: string = await bcrypt.hash(
+				password,
+				this.SALT_ROUND,
+			);
 
 			await this.prisma.user.update({
-				where: { email: payload.email },
+				where: { email },
 				data: { password: hashedPassword },
 			});
 
