@@ -1,4 +1,10 @@
 -- CreateEnum
+CREATE TYPE "TournamentStatus" AS ENUM ('OPENING', 'OPENING_FOR_REGISTRATION', 'DRAWING', 'ON_GOING', 'FINISHED');
+
+-- CreateEnum
+CREATE TYPE "BadmintonDiscipline" AS ENUM ('MENS_SINGLE', 'WOMEN_SINGLE', 'MENS_DOUBLE', 'WOMENS_DOUBLE', 'MIXED_DOUBLE');
+
+-- CreateEnum
 CREATE TYPE "TransactionStatus" AS ENUM ('PENDING', 'SUCCESSFUL', 'FAILED');
 
 -- CreateEnum
@@ -120,12 +126,31 @@ CREATE TABLE "Tournament" (
     "name" TEXT NOT NULL,
     "shortName" TEXT NOT NULL,
     "organizerId" TEXT NOT NULL,
+    "registrationOpeningDate" TIMESTAMP(3) NOT NULL,
+    "registrationClosingDate" TIMESTAMP(3) NOT NULL,
+    "drawDate" TIMESTAMP(3) NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
-    "status" TEXT NOT NULL,
-    "tournamentRules" JSONB NOT NULL,
+    "registrationFeePerPerson" INTEGER NOT NULL,
+    "registrationFeePerPair" INTEGER,
+    "status" "TournamentStatus" NOT NULL,
+    "protestFeePerTime" INTEGER NOT NULL,
 
     CONSTRAINT "Tournament_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TournamentDiscipline" (
+    "id" TEXT NOT NULL,
+    "tournamentDiscipline" "BadmintonDiscipline" NOT NULL,
+    "fromAge" INTEGER NOT NULL DEFAULT 6,
+    "toAge" INTEGER NOT NULL DEFAULT 90,
+    "winningPoint" INTEGER NOT NULL DEFAULT 21,
+    "lastPoint" INTEGER NOT NULL DEFAULT 31,
+    "numberOfSets" INTEGER NOT NULL DEFAULT 3,
+    "tournamentId" TEXT NOT NULL,
+
+    CONSTRAINT "TournamentDiscipline_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -133,11 +158,12 @@ CREATE TABLE "TournamentRegistration" (
     "id" TEXT NOT NULL,
     "tournamentId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "eventType" TEXT NOT NULL,
+    "tournamentDisciplineId" TEXT NOT NULL,
     "partnerId" TEXT,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
     "rejectionId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "fromTeamId" TEXT,
 
     CONSTRAINT "TournamentRegistration_pkey" PRIMARY KEY ("id")
 );
@@ -147,8 +173,11 @@ CREATE TABLE "TournamentPost" (
     "id" TEXT NOT NULL,
     "tournamentId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL,
+    "createdByUserId" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "updatedByUserId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
+    "backgroundImage" TEXT NOT NULL,
 
     CONSTRAINT "TournamentPost_pkey" PRIMARY KEY ("id")
 );
@@ -239,7 +268,7 @@ CREATE UNIQUE INDEX "Team_teamLeaderId_key" ON "Team"("teamLeaderId");
 CREATE UNIQUE INDEX "UserNotification_userId_notificationId_key" ON "UserNotification"("userId", "notificationId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TournamentRegistration_tournamentId_userId_eventType_key" ON "TournamentRegistration"("tournamentId", "userId", "eventType");
+CREATE UNIQUE INDEX "TournamentRegistration_tournamentId_userId_tournamentDiscip_key" ON "TournamentRegistration"("tournamentId", "userId", "tournamentDisciplineId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "TournamentRegistration_tournamentId_partnerId_key" ON "TournamentRegistration"("tournamentId", "partnerId");
@@ -287,6 +316,12 @@ ALTER TABLE "UserNotification" ADD CONSTRAINT "UserNotification_notificationId_f
 ALTER TABLE "Tournament" ADD CONSTRAINT "Tournament_organizerId_fkey" FOREIGN KEY ("organizerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "TournamentDiscipline" ADD CONSTRAINT "TournamentDiscipline_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_tournamentDisciplineId_fkey" FOREIGN KEY ("tournamentDisciplineId") REFERENCES "TournamentDiscipline"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -294,6 +329,9 @@ ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_user
 
 -- AddForeignKey
 ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_fromTeamId_fkey" FOREIGN KEY ("fromTeamId") REFERENCES "Team"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TournamentPost" ADD CONSTRAINT "TournamentPost_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;

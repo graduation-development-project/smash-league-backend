@@ -12,6 +12,7 @@ import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role
 import { TCloudinaryResponse } from "../types/cloudinary.type";
 import { v2 as cloudinary } from "cloudinary";
 import { PrismaService } from "../services/prisma.service";
+import { TournamentStatusEnum } from "../enums/tournament-status.enum";
 
 const streamifier = require("streamifier");
 
@@ -39,7 +40,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 					where: {
 						tournamentId,
 						OR: [
-							{ userId, eventType }, // * User registered as a player
+							{ userId, tournamentDisciplineId: eventType }, // * User registered as a player
 							{ partnerId: userId }, // * User is registered as a partner
 						],
 					},
@@ -57,7 +58,10 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 					await this.prisma.tournamentRegistration.findFirst({
 						where: {
 							tournamentId,
-							OR: [{ userId: partnerId, eventType }, { partnerId }],
+							OR: [
+								{ userId: partnerId, tournamentDisciplineId: eventType },
+								{ partnerId },
+							],
 						},
 					});
 
@@ -72,7 +76,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				data: {
 					tournamentId,
 					userId,
-					eventType,
+					tournamentDisciplineId: eventType,
 					partnerId:
 						eventType.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()
 							? partnerId || null
@@ -100,7 +104,9 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 						},
 					},
 
-					...(tournamentStatus ? { status: tournamentStatus } : {}),
+					...(tournamentStatus
+						? { status: TournamentStatusEnum[tournamentStatus] }
+						: {}),
 				},
 			});
 		} catch (e) {
@@ -170,7 +176,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				},
 			});
 
-			if(verificationExisted) {
+			if (verificationExisted) {
 				throw new BadRequestException("You already registered this role");
 			}
 

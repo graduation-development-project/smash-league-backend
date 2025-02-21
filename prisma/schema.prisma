@@ -77,12 +77,12 @@ model RolePermission {
 }
 
 model Team {
-  id                     String                  @id @default(uuid())
+  id                     String                   @id @default(uuid())
   teamName               String
-  teamLeaderId           String                  @unique
-  teamLeader             User                    @relation("FK_User_UserTeam", fields: [teamLeaderId], references: [id], onDelete: Cascade)
-  userTeams              UserTeam[]              @relation("FK_Team_UserTeam")
-  tournamentParticipants TournamentParticipant[] @relation("FK_TournamentParticipant_TournamentParticipantTeam")
+  teamLeaderId           String                   @unique
+  teamLeader             User                     @relation("FK_User_UserTeam", fields: [teamLeaderId], references: [id], onDelete: Cascade)
+  userTeams              UserTeam[]               @relation("FK_Team_UserTeam")
+  tournamentRegistration TournamentRegistration[] @relation("FK_TournamentPRegistration_TournamentRegistrationTeam")
 }
 
 model UserTeam {
@@ -121,7 +121,7 @@ model UserNotification {
 }
 
 model Tournament {
-  id                       String                  @id @default(uuid())
+  id                       String                   @id @default(uuid())
   name                     String
   shortName                String
   organizerId              String
@@ -134,10 +134,10 @@ model Tournament {
   registrationFeePerPair   Int?
   status                   TournamentStatus
   protestFeePerTime        Int
-  organizer                User                    @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
-  tournamentPosts          TournamentPost[]        @relation("FK_TournamentPost_TournamentPostTournament")
-  participants             TournamentParticipant[] @relation("FK_TournamentParticipant_Tournament")
-  tournamentDisciplines    TournamentDiscipline[]  @relation("FK_TournamentDiscipline_TournamentTournamentDiscipline")
+  organizer                User                     @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
+  tournamentPosts          TournamentPost[]         @relation("FK_TournamentPost_TournamentPostTournament")
+  registrations            TournamentRegistration[] @relation("FK_TournamentRegistration_Tournament")
+  tournamentDisciplines    TournamentDiscipline[]   @relation("FK_TournamentDiscipline_TournamentTournamentDiscipline")
 }
 
 enum TournamentStatus {
@@ -157,9 +157,9 @@ model TournamentDiscipline {
   lastPoint            Int                 @default(31)
   numberOfSets         Int                 @default(3)
 
-  tournamentId           String
-  tournament             Tournament              @relation(name: "FK_TournamentDiscipline_TournamentTournamentDiscipline", fields: [tournamentId], references: [id], onDelete: Cascade)
-  tournamentParticipants TournamentParticipant[] @relation("FK_TournamentParticipant_TournamentParticipantTournamentDiscipline")
+  tournamentId          String
+  tournament            Tournament               @relation(name: "FK_TournamentDiscipline_TournamentTournamentDiscipline", fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournamenRegistration TournamentRegistration[] @relation("FK_TournamentRegistration_TournamentRegistrationTournamentDiscipline")
 }
 
 enum BadmintonDiscipline {
@@ -170,21 +170,25 @@ enum BadmintonDiscipline {
   MIXED_DOUBLE
 }
 
-model TournamentParticipant {
+model TournamentRegistration {
   id                     String               @id @default(uuid())
   tournamentId           String
   userId                 String
   tournamentDisciplineId String // "SINGLE" or "DOUBLE"
-  tournamentDiscipline   TournamentDiscipline @relation(name: "FK_TournamentParticipant_TournamentParticipantTournamentDiscipline", fields: [tournamentDisciplineId], references: [id], onDelete: Cascade)
+  tournamentDiscipline   TournamentDiscipline @relation(name: "FK_TournamentRegistration_TournamentRegistrationTournamentDiscipline", fields: [tournamentDisciplineId], references: [id], onDelete: Cascade)
   partnerId              String? // Nullable: Used only for doubles
-  tournament             Tournament           @relation("FK_TournamentParticipant_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
-  user                   User                 @relation("FK_TournamentParticipant_User", fields: [userId], references: [id], onDelete: Cascade)
-  partner                User?                @relation("FK_TournamentParticipant_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  status                 String               @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
+  rejectionId            String?
+  createdAt              DateTime             @default(now())
+  tournament             Tournament           @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user                   User                 @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
+  partner                User?                @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  rejection              Rejection?           @relation("FK_TournamentRegistration_Rejection")
   fromTeamId             String?
-  fromTeam               Team?                @relation(name: "FK_TournamentParticipant_TournamentParticipantTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
+  fromTeam               Team?                @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
 
-  @@unique([tournamentId, userId, tournamentDisciplineId]) // Ensure a user can join a tournament only once per event type
-  @@unique([tournamentId, partnerId]) // Ensure a pair is unique for doubles
+  @@unique([tournamentId, userId, tournamentDisciplineId]) // Ensure a user can register only once per event type
+  @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
 }
 
 model TournamentPost {
