@@ -3,7 +3,7 @@ import { Reflector } from "@nestjs/core";
 import { Observable } from "rxjs";
 import { ROLES_KEY } from "../../decorators/roles.decorator";
 import { IRequestUser } from "../../interfaces/interfaces";
-import { Role } from "../../enums/role.enum";
+import { Role, RoleMap } from "../../enums/role.enum";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -18,7 +18,16 @@ export class RolesGuard implements CanActivate {
 		);
 		const { user }: IRequestUser = context.switchToHttp().getRequest();
 
+		const roleIds = roles
+			.map((roleName) => RoleMap[roleName]?.id)
+			.filter(Boolean);
+
+		console.log("roles: ", roles);
+		console.log(roleIds);
+		console.log("User Roles in Request:", user?.userRoles);
 		// @ts-ignore
-		return user?.userRoles.some((userRole: string) => roles.includes(userRole));
+		return user?.userRoles.some((userRole: string) =>
+			roleIds.includes(userRole),
+		);
 	}
 }
