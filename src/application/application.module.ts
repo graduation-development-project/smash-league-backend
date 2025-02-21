@@ -37,6 +37,7 @@ import { CreatePaymentLinkUseCase } from "./usecases/payment/create-payment-link
 import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
 import { PaymentPayOSService } from "./services/payment.service";
 import { ConfigModule } from "@nestjs/config";
+import {ResendOtpUseCase} from "./usecases/auth/resend-otp.usecase";
 
 @Module({
 	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule, ConfigModule],
@@ -101,6 +102,7 @@ import { ConfigModule } from "@nestjs/config";
 		GetPackagesUseCase,
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
+		ResendOtpUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -127,6 +129,7 @@ import { ConfigModule } from "@nestjs/config";
 		GetPackagesUseCase,
 		CreatePaymentLinkUseCase,
 		PaymentPayOSService,
+		ResendOtpUseCase,
 	],
 })
 export class ApplicationModule {}

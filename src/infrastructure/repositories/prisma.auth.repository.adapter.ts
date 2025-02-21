@@ -155,6 +155,35 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 		}
 	}
 
+	async resendOTP(email: string): Promise<string> {
+		try {
+			const userExisted: UserEntity | null = await this.prisma.user.findUnique({
+				where: { email },
+			});
+
+			if (userExisted) {
+				throw new BadRequestException("Email already in used");
+			}
+
+			const otp: string = generateOtpCode();
+			const otpExpiresTime: Date = new Date();
+			otpExpiresTime.setMinutes(otpExpiresTime.getMinutes() + 10);
+
+			await this.emailQueue.add("sendEmail", {
+				to: email,
+				subject: "Verify Your Account",
+				template: "OTP.hbs",
+				context: {
+					otp,
+				},
+			});
+		} catch (e) {
+			throw e;
+		}
+
+		return "Resend OTP completed";
+	}
+
 	async verifyOTP(email: string, otp: string): Promise<string> {
 		try {
 			await verifyOTP(email, otp, this.prisma);

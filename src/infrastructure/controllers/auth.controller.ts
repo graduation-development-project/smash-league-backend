@@ -17,6 +17,7 @@ import { VerifyOTPDTO } from "../../domain/dtos/auth/verify-otp.dto";
 import { SendResetPasswordLinkUseCase } from "../../application/usecases/auth/send-reset-password-link.usecase";
 import { ResetPasswordDTO } from "../../domain/dtos/auth/reset-password.dto";
 import { ResetPasswordUseCase } from "../../application/usecases/auth/reset-password.usecase";
+import { ResendOtpUseCase } from "../../application/usecases/auth/resend-otp.usecase";
 
 @Controller("/auth")
 export class AuthController {
@@ -27,6 +28,7 @@ export class AuthController {
 		private verifyOTPUseCase: VerifyOTPUseCase,
 		private sendResetPasswordLinkUseCase: SendResetPasswordLinkUseCase,
 		private resetPasswordUseCase: ResetPasswordUseCase,
+		private resendOtpUseCase: ResendOtpUseCase,
 	) {}
 
 	@UseGuards(LocalAuthGuard)
@@ -48,11 +50,19 @@ export class AuthController {
 	@Post("refresh")
 	async refreshAccessToken(@Req() request: IRequestUser) {
 		const { user } = request;
-		const access_token = this.refreshAccessTokenUseCase.execute(user.id, user.userRoles);
+		const access_token = this.refreshAccessTokenUseCase.execute(
+			user.id,
+			user.userRoles,
+		);
 
 		return {
 			access_token,
 		};
+	}
+
+	@Post("/resend-otp")
+	resendOTP(@Body("email") email: string): Promise<string> {
+		return this.resendOtpUseCase.execute(email);
 	}
 
 	@Put("/verify-otp")
