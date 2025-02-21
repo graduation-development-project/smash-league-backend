@@ -169,6 +169,14 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 			const otpExpiresTime: Date = new Date();
 			otpExpiresTime.setMinutes(otpExpiresTime.getMinutes() + 10);
 
+			await this.prisma.user.update({
+				where: { email },
+				data: {
+					otp,
+					otpExpiresTime: convertToLocalTime(otpExpiresTime),
+				},
+			});
+
 			await this.emailQueue.add("sendEmail", {
 				to: email,
 				subject: "Verify Your Account",
