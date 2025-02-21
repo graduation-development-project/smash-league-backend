@@ -5,7 +5,7 @@ services:
       - 5000:5000
     environment:
       - .env
-      # - DATABASE_URL=postgres://root:password@database:5432/smashleague?schema=public
+      - DATABASE_URL=postgres://root:password@database:5432/smashleague?schema=public
       # - PREFIX=api/v1
       # - ACCESS_TOKEN_SECRET_KEY="167031@SmashLeague@ACCESS"
       # - REFRESH_TOKEN_SECRET_KEY="167031@SmashLeague@REFRESH"
