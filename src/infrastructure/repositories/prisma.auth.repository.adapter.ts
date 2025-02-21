@@ -161,8 +161,8 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				where: { email },
 			});
 
-			if (userExisted) {
-				throw new BadRequestException("Email already in used");
+			if (!userExisted) {
+				throw new BadRequestException("Email is not registered yet");
 			}
 
 			const otp: string = generateOtpCode();
