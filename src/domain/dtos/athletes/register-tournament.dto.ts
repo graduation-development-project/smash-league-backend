@@ -11,8 +11,7 @@ export class RegisterTournamentDTO {
 	tournamentId: string;
 
 	@IsNotEmpty()
-	@IsEnum(EventTypesEnum)
-	eventType: string;
+	tournamentDisciplineId: string;
 
 	@IsOptional()
 	@IsString()

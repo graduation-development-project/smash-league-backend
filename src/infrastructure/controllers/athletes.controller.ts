@@ -17,7 +17,7 @@ import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import {
 	Tournament,
-	TournamentRegistration,
+	TournamentParticipant,
 	UserVerification,
 } from "@prisma/client";
 import { GetParticipatedTournamentsUseCase } from "../../application/usecases/athletes/get-participated-tournaments.usecase";
@@ -43,7 +43,7 @@ export class AthletesController {
 	@Post("register-tournament")
 	registerTournament(
 		@Body() registerTournamentDTO: RegisterTournamentDTO,
-	): Promise<TournamentRegistration> {
+	): Promise<TournamentParticipant> {
 		return this.registerTournamentUseCase.execute(registerTournamentDTO);
 	}
 
