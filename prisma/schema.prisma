@@ -77,11 +77,12 @@ model RolePermission {
 }
 
 model Team {
-  id           String     @id @default(uuid())
-  teamName     String
-  teamLeaderId String     @unique
-  teamLeader   User       @relation("FK_User_UserTeam", fields: [teamLeaderId], references: [id], onDelete: Cascade)
-  userTeams    UserTeam[] @relation("FK_Team_UserTeam")
+  id                     String                  @id @default(uuid())
+  teamName               String
+  teamLeaderId           String                  @unique
+  teamLeader             User                    @relation("FK_User_UserTeam", fields: [teamLeaderId], references: [id], onDelete: Cascade)
+  userTeams              UserTeam[]              @relation("FK_Team_UserTeam")
+  tournamentParticipants TournamentParticipant[] @relation("FK_TournamentParticipant_TournamentParticipantTeam")
 }
 
 model UserTeam {
@@ -120,17 +121,31 @@ model UserNotification {
 }
 
 model Tournament {
-  id              String                   @id @default(uuid())
-  name            String
-  shortName       String
-  organizerId     String
-  startDate       DateTime
-  endDate         DateTime
-  status          String
-  tournamentRules Json
-  organizer       User                     @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
-  tournamentPosts TournamentPost[]         @relation("FK_TournamentPost_TournamentPostTournament")
-  registrations   TournamentRegistration[] @relation("FK_TournamentRegistration_Tournament")
+  id                       String                  @id @default(uuid())
+  name                     String
+  shortName                String
+  organizerId              String
+  registrationOpeningDate  DateTime
+  registrationClosingDate  DateTime
+  drawDate                 DateTime
+  startDate                DateTime
+  endDate                  DateTime
+  registrationFeePerPerson Int
+  registrationFeePerPair   Int?
+  status                   TournamentStatus
+  protestFeePerTime        Int
+  organizer                User                    @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
+  tournamentPosts          TournamentPost[]        @relation("FK_TournamentPost_TournamentPostTournament")
+  participants             TournamentParticipant[] @relation("FK_TournamentParticipant_Tournament")
+  tournamentDisciplines    TournamentDiscipline[]  @relation("FK_TournamentDiscipline_TournamentTournamentDiscipline")
+}
+
+enum TournamentStatus {
+  OPENING
+  OPENING_FOR_REGISTRATION
+  DRAWING
+  ON_GOING
+  FINISHED
 }
 
 model TournamentRegistration {
@@ -153,13 +168,16 @@ model TournamentRegistration {
 }
 
 model TournamentPost {
-  id            String         @id @default(uuid())
-  tournamentId  String
-  createdAt     DateTime
-  updatedAt     DateTime
-  content       String
-  contentImages ContentImage[] @relation("FK_ContentImage_TournamentPostContentImage")
-  tournament    Tournament     @relation("FK_TournamentPost_TournamentPostTournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  id              String         @id @default(uuid())
+  tournamentId    String
+  createdAt       DateTime
+  createdByUserId String
+  updatedAt       DateTime
+  updatedByUserId String
+  content         String
+  backgroundImage String
+  contentImages   ContentImage[] @relation("FK_ContentImage_TournamentPostContentImage")
+  tournament      Tournament     @relation("FK_TournamentPost_TournamentPostTournament", fields: [tournamentId], references: [id], onDelete: Cascade)
 }
 
 model Rejection {
@@ -181,12 +199,12 @@ model ContentImage {
 }
 
 model Package {
-  id            String @id @default(uuid())
+  id            String     @id @default(uuid())
   packageName   String
   packageDetail String
   price         Int
   credits       Int
-  cartItems     CartItem[]    @relation("FK_CartItem_PackageCartItem")
+  cartItems     CartItem[] @relation("FK_CartItem_PackageCartItem")
 }
 
 model TransactionType {
@@ -196,15 +214,15 @@ model TransactionType {
 }
 
 model Transaction {
-  id                String @id @default(uuid())
+  id                String            @id @default(uuid())
   transactionDetail String
   userId            String
-  user              User   @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
+  user              User              @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
   transactionTypeId String
-  transactionType   TransactionType @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
+  transactionType   TransactionType   @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
   value             Int
   cartId            String
-  cart              Cart          @relation(name: "FK_Transaction_TransactionCart", fields: [cartId], references: [id], onDelete: Cascade)
+  cart              Cart              @relation(name: "FK_Transaction_TransactionCart", fields: [cartId], references: [id], onDelete: Cascade)
   status            TransactionStatus
   cancelledReason   String?
 }
@@ -216,20 +234,20 @@ enum TransactionStatus {
 }
 
 model CartItem {
-  id            String      @id @default(uuid())
-  packageId     String
-  package       Package     @relation(name: "FK_CartItem_PackageCartItem", fields: [packageId], references: [id], onDelete: Cascade)
-  quantity      Int
-  cartId        String
-  cart          Cart        @relation(name: "FK_CartItem_CartItemCart", fields: [cartId], references: [id], onDelete: Cascade)
+  id        String  @id @default(uuid())
+  packageId String
+  package   Package @relation(name: "FK_CartItem_PackageCartItem", fields: [packageId], references: [id], onDelete: Cascade)
+  quantity  Int
+  cartId    String
+  cart      Cart    @relation(name: "FK_CartItem_CartItemCart", fields: [cartId], references: [id], onDelete: Cascade)
 }
 
 model Cart {
-  id    String      @id @default(uuid())
-  total       Int
-  cartItems     CartItem[]      @relation("FK_CartItem_CartItemCart")
-  transactions  Transaction[]     @relation("FK_Transaction_TransactionCart")
-  cartStatus    CartStatus
+  id           String        @id @default(uuid())
+  total        Int
+  cartItems    CartItem[]    @relation("FK_CartItem_CartItemCart")
+  transactions Transaction[] @relation("FK_Transaction_TransactionCart")
+  cartStatus   CartStatus
 }
 
 enum CartStatus {
