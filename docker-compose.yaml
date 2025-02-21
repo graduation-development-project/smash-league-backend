@@ -21,8 +21,8 @@ services:
       - CLOUDINARY_API_KEY="172175352464367"
       - CLOUDINARY_API_SECRET="63nzUkonqm4rGsB5mHKIXRAcp5s"
       #NODEMAILER
-      - NODEMAILER_USER=sonpv07@gmail.com
-      - NODEMAILER_PASS=klcpbigrohbrxedh
+      - NODEMAILER_USER=smash.league.2025@gmail.com
+      - NODEMAILER_PASS=rxaxhbxtapjeemot
       #MAILER_TEMPLATE_URL
       - MAILER_TEMPLATE_URL=infrastructure/templates
       #PAYOS API KEY
