@@ -1,9 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import {
-	PrismaClient,
 	Tournament,
-	TournamentParticipant,
-	User,
+	TournamentRegistration,
 	UserRole,
 	UserVerification,
 } from "@prisma/client";
@@ -11,19 +9,19 @@ import { AthletesRepositoryPort } from "../../domain/repositories/athletes.repos
 import { RegisterTournamentDTO } from "../../domain/dtos/athletes/register-tournament.dto";
 import { EventTypesEnum } from "../enums/event-types.enum";
 import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
-import { TUserWithRole } from "../types/users.type";
 import { TCloudinaryResponse } from "../types/cloudinary.type";
 import { v2 as cloudinary } from "cloudinary";
+import { PrismaService } from "../services/prisma.service";
 
 const streamifier = require("streamifier");
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
-	constructor(private prisma: PrismaClient) {}
+	constructor(private prisma: PrismaService) {}
 
 	async registerTournament(
 		registerTournamentDTO: RegisterTournamentDTO,
-	): Promise<TournamentParticipant> {
+	): Promise<TournamentRegistration> {
 		try {
 			const { tournamentId, partnerId, userId, eventType } =
 				registerTournamentDTO;
@@ -36,8 +34,8 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("Tournament not found");
 			}
 
-			const userRegistered: TournamentParticipant =
-				await this.prisma.tournamentParticipant.findFirst({
+			const userRegistered: TournamentRegistration =
+				await this.prisma.tournamentRegistration.findFirst({
 					where: {
 						tournamentId,
 						OR: [
@@ -47,10 +45,16 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 					},
 				});
 
+			if (userRegistered) {
+				throw new BadRequestException(
+					"User already registered this tournament event type",
+				);
+			}
+
 			// * Check if partner is registered
 			if (eventType.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()) {
-				const partnerRegistered: TournamentParticipant =
-					await this.prisma.tournamentParticipant.findFirst({
+				const partnerRegistered: TournamentRegistration =
+					await this.prisma.tournamentRegistration.findFirst({
 						where: {
 							tournamentId,
 							OR: [{ userId: partnerId, eventType }, { partnerId }],
@@ -64,13 +68,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				}
 			}
 
-			if (userRegistered) {
-				throw new BadRequestException(
-					"User already registered this tournament event type",
-				);
-			}
-
-			return await this.prisma.tournamentParticipant.create({
+			return await this.prisma.tournamentRegistration.create({
 				data: {
 					tournamentId,
 					userId,
@@ -93,7 +91,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		try {
 			return this.prisma.tournament.findMany({
 				where: {
-					participants: {
+					registrations: {
 						some: {
 							OR: [
 								{ userId: userID }, //* User participated as a player
@@ -163,6 +161,17 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 			if (roleExisted) {
 				throw new BadRequestException("This role is already registered");
+			}
+
+			const verificationExisted = await this.prisma.userVerification.findFirst({
+				where: {
+					userId: userID,
+					role,
+				},
+			});
+
+			if(verificationExisted) {
+				throw new BadRequestException("You already registered this role");
 			}
 
 			return this.prisma.userVerification.create({

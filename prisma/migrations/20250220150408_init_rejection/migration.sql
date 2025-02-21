@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "TransactionStatus" AS ENUM ('PENDING', 'SUCCESSFUL', 'FAILED');
+
+-- CreateEnum
+CREATE TYPE "CartStatus" AS ENUM ('PAID', 'PENDING', 'FAILED');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -99,6 +105,16 @@ CREATE TABLE "Notification" (
 );
 
 -- CreateTable
+CREATE TABLE "UserNotification" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "notificationId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "UserNotification_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Tournament" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -113,14 +129,17 @@ CREATE TABLE "Tournament" (
 );
 
 -- CreateTable
-CREATE TABLE "TournamentParticipant" (
+CREATE TABLE "TournamentRegistration" (
     "id" TEXT NOT NULL,
     "tournamentId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "eventType" TEXT NOT NULL,
     "partnerId" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "rejectionId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "TournamentParticipant_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "TournamentRegistration_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -135,6 +154,18 @@ CREATE TABLE "TournamentPost" (
 );
 
 -- CreateTable
+CREATE TABLE "Rejection" (
+    "id" TEXT NOT NULL,
+    "userVerificationId" TEXT,
+    "tournamentRegistrationId" TEXT,
+    "reason" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Rejection_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "ContentImage" (
     "id" TEXT NOT NULL,
     "imageUrl" TEXT NOT NULL,
@@ -146,6 +177,7 @@ CREATE TABLE "ContentImage" (
 -- CreateTable
 CREATE TABLE "Package" (
     "id" TEXT NOT NULL,
+    "packageName" TEXT NOT NULL,
     "packageDetail" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "credits" INTEGER NOT NULL,
@@ -162,26 +194,36 @@ CREATE TABLE "TransactionType" (
 );
 
 -- CreateTable
-CREATE TABLE "Currency" (
-    "id" TEXT NOT NULL,
-    "currencyCode" TEXT NOT NULL,
-    "currencyName" TEXT NOT NULL,
-
-    CONSTRAINT "Currency_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Transaction" (
     "id" TEXT NOT NULL,
     "transactionDetail" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "transactionTypeId" TEXT NOT NULL,
     "value" INTEGER NOT NULL,
-    "currencyId" TEXT NOT NULL,
-    "isCancelled" BOOLEAN NOT NULL,
+    "cartId" TEXT NOT NULL,
+    "status" "TransactionStatus" NOT NULL,
     "cancelledReason" TEXT,
 
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "CartItem" (
+    "id" TEXT NOT NULL,
+    "packageId" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "cartId" TEXT NOT NULL,
+
+    CONSTRAINT "CartItem_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Cart" (
+    "id" TEXT NOT NULL,
+    "total" INTEGER NOT NULL,
+    "cartStatus" "CartStatus" NOT NULL,
+
+    CONSTRAINT "Cart_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -194,10 +236,19 @@ CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
 CREATE UNIQUE INDEX "Team_teamLeaderId_key" ON "Team"("teamLeaderId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TournamentParticipant_tournamentId_userId_eventType_key" ON "TournamentParticipant"("tournamentId", "userId", "eventType");
+CREATE UNIQUE INDEX "UserNotification_userId_notificationId_key" ON "UserNotification"("userId", "notificationId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TournamentParticipant_tournamentId_partnerId_key" ON "TournamentParticipant"("tournamentId", "partnerId");
+CREATE UNIQUE INDEX "TournamentRegistration_tournamentId_userId_eventType_key" ON "TournamentRegistration"("tournamentId", "userId", "eventType");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TournamentRegistration_tournamentId_partnerId_key" ON "TournamentRegistration"("tournamentId", "partnerId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Rejection_userVerificationId_key" ON "Rejection"("userVerificationId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Rejection_tournamentRegistrationId_key" ON "Rejection"("tournamentRegistrationId");
 
 -- AddForeignKey
 ALTER TABLE "UserVerification" ADD CONSTRAINT "UserVerification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -227,19 +278,31 @@ ALTER TABLE "UserTeam" ADD CONSTRAINT "UserTeam_userId_fkey" FOREIGN KEY ("userI
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "NotificationType"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "UserNotification" ADD CONSTRAINT "UserNotification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserNotification" ADD CONSTRAINT "UserNotification_notificationId_fkey" FOREIGN KEY ("notificationId") REFERENCES "Notification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Tournament" ADD CONSTRAINT "Tournament_organizerId_fkey" FOREIGN KEY ("organizerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TournamentParticipant" ADD CONSTRAINT "TournamentParticipant_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TournamentParticipant" ADD CONSTRAINT "TournamentParticipant_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TournamentParticipant" ADD CONSTRAINT "TournamentParticipant_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TournamentPost" ADD CONSTRAINT "TournamentPost_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Rejection" ADD CONSTRAINT "Rejection_userVerificationId_fkey" FOREIGN KEY ("userVerificationId") REFERENCES "UserVerification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Rejection" ADD CONSTRAINT "Rejection_tournamentRegistrationId_fkey" FOREIGN KEY ("tournamentRegistrationId") REFERENCES "TournamentRegistration"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ContentImage" ADD CONSTRAINT "ContentImage_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "TournamentPost"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -251,4 +314,10 @@ ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_userId_fkey" FOREIGN KEY (
 ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_transactionTypeId_fkey" FOREIGN KEY ("transactionTypeId") REFERENCES "TransactionType"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_currencyId_fkey" FOREIGN KEY ("currencyId") REFERENCES "Currency"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_packageId_fkey" FOREIGN KEY ("packageId") REFERENCES "Package"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("id") ON DELETE CASCADE ON UPDATE CASCADE;

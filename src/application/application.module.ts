@@ -22,18 +22,24 @@ import { MailService } from "../infrastructure/services/mail.service";
 import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 import { ChangePasswordUseCase } from "./usecases/users/change-password.usecase";
 import { PrismaStaffsRepositoryAdapter } from "../infrastructure/repositories/prisma.staffs.repository.adapter";
-import { VerifyUserInformationUseCase } from "./usecases/staffs/verify-user-information.usecase";
 import { SendResetPasswordLinkUseCase } from "./usecases/auth/send-reset-password-link.usecase";
 import { ResetPasswordUseCase } from "./usecases/auth/reset-password.usecase";
+import { VerifyUserInformationUseCase } from "./usecases/staffs/verify-user-information.usecase";
+import { EmailQueueModule } from "../infrastructure/background-jobs/email/email.queue.module";
 import { PrismaPackageRepositoryAdapter } from "src/infrastructure/repositories/prisma.package.repository.adapter";
 import { GetPackagesUseCase } from "./usecases/packages/get-packages.usecase";
+import { NotificationQueueModule } from "../infrastructure/background-jobs/notification/notification.queue.module";
+import { PrismaNotificationsRepositoryAdapter } from "../infrastructure/repositories/prisma.notifications.repository.adapter";
+import { GetNotificationByUserUseCase } from "./usecases/notification/get-notification-by-user.usecase";
+import { CreateNotificationUseCase } from "./usecases/notification/create-notification.usecase";
+import {PrismaService} from "../infrastructure/services/prisma.service";
 import { CreatePaymentLinkUseCase } from "./usecases/payment/create-payment-link.usecase";
 import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
 import { PaymentPayOSService } from "./services/payment.service";
 import { ConfigModule } from "@nestjs/config";
 
 @Module({
-	imports: [JwtModule.register({}), ConfigModule],
+	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule, ConfigModule],
 	controllers: [],
 	providers: [
 		{
@@ -63,8 +69,14 @@ import { ConfigModule } from "@nestjs/config";
 			provide: "PackageRepository",
 			useClass: PrismaPackageRepositoryAdapter,
 		},
+		{
+			provide: "NotificationRepository",
+			useClass: PrismaNotificationsRepositoryAdapter,
+		},
+
 		MailService,
 		PaymentPayOSService,
+		PrismaService,
 		ApplicationFunction,
 		GetUserByIdUseCase,
 		GetAuthenticatedUserUseCase,
@@ -85,7 +97,10 @@ import { ConfigModule } from "@nestjs/config";
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
 		GetPackagesUseCase,
-		CreatePaymentLinkUseCase
+		CreatePaymentLinkUseCase,
+		GetPackagesUseCase,
+		GetNotificationByUserUseCase,
+		CreateNotificationUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -107,6 +122,8 @@ import { ConfigModule } from "@nestjs/config";
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
+		GetNotificationByUserUseCase,
+		CreateNotificationUseCase,
 		GetPackagesUseCase,
 		CreatePaymentLinkUseCase,
 		PaymentPayOSService,

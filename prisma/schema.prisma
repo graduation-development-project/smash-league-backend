@@ -8,39 +8,41 @@ datasource db {
 }
 
 model User {
-  id                      String                  @id @default(uuid())
-  email                   String                  @unique
-  password                String
-  firstName               String
-  lastName                String
-  phoneNumber             String                  @unique
-  avatarURL               String?
-  currentRefreshToken     String?
-  CreditsRemain           Int
-  otp                     String?
-  otpExpiresTime          DateTime?
-  isVerified              Boolean                 @default(false)
-  teamId                  String?
-  team                    Team?                   @relation("FK_User_UserTeam")
-  tournaments             Tournament[]            @relation("FK_Tournament_UserTournament")
-  userRoles               UserRole[]              @relation("FK_User_UserRole")
-  userTeams               UserTeam[]              @relation("FK_User_UserTeam")
-  tournamentParticipation TournamentParticipant[] @relation("FK_TournamentParticipant_User")
-  tournamentPartnership   TournamentParticipant[] @relation("FK_TournamentParticipant_Partner")
-  verifications           UserVerification[]      @relation("FK_User_UserVerification")
-  transactions            Transaction[]           @relation("FK_Transaction_UserTransaction")
+  id                            String                   @id @default(uuid())
+  email                         String                   @unique
+  password                      String
+  firstName                     String
+  lastName                      String
+  phoneNumber                   String                   @unique
+  avatarURL                     String?
+  currentRefreshToken           String?
+  CreditsRemain                 Int
+  otp                           String?
+  otpExpiresTime                DateTime?
+  isVerified                    Boolean                  @default(false)
+  teamId                        String?
+  team                          Team?                    @relation("FK_User_UserTeam")
+  tournaments                   Tournament[]             @relation("FK_Tournament_UserTournament")
+  userRoles                     UserRole[]               @relation("FK_User_UserRole")
+  userTeams                     UserTeam[]               @relation("FK_User_UserTeam")
+  verifications                 UserVerification[]       @relation("FK_User_UserVerification")
+  transactions                  Transaction[]            @relation("FK_Transaction_UserTransaction")
+  notifications                 UserNotification[]
+  tournamentRegistrations       TournamentRegistration[] @relation("FK_TournamentRegistration_User")
+  TournamentRegistrationPartner TournamentRegistration[] @relation("FK_TournamentRegistration_Partner")
 }
 
 model UserVerification {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   userId      String
-  user        User     @relation("FK_User_UserVerification", fields: [userId], references: [id])
+  user        User       @relation("FK_User_UserVerification", fields: [userId], references: [id])
   IDCardFront String?
   IDCardBack  String?
   cardPhoto   String?
   role        String
-  isVerified  Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  isVerified  Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  rejection   Rejection? @relation("FK_UserVerification_Rejection")
 }
 
 model Role {
@@ -99,11 +101,23 @@ model NotificationType {
 }
 
 model Notification {
-  id      String           @id @default(uuid())
-  title   String
-  message String
-  typeId  String
-  type    NotificationType @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
+  id               String             @id @default(uuid())
+  title            String
+  message          String
+  typeId           String
+  type             NotificationType   @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
+  UserNotification UserNotification[]
+}
+
+model UserNotification {
+  id             String       @id @default(uuid())
+  userId         String
+  notificationId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, notificationId])
 }
 
 model Tournament {
@@ -184,6 +198,17 @@ model TournamentPost {
   backgroundImage String
   contentImages   ContentImage[] @relation("FK_ContentImage_TournamentPostContentImage")
   tournament      Tournament     @relation("FK_TournamentPost_TournamentPostTournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+}
+
+model Rejection {
+  id                       String                  @id @default(uuid())
+  userVerificationId       String?                 @unique // Can be null if rejection is for tournament
+  tournamentRegistrationId String?                 @unique // Can be null if rejection is for verification
+  reason                   String // Explanation for rejection
+  type                     String
+  createdAt                DateTime                @default(now())
+  userVerification         UserVerification?       @relation("FK_UserVerification_Rejection", fields: [userVerificationId], references: [id], onDelete: Cascade)
+  tournamentRegistration   TournamentRegistration? @relation("FK_TournamentRegistration_Rejection", fields: [tournamentRegistrationId], references: [id])
 }
 
 model ContentImage {

@@ -15,8 +15,12 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { MailService } from "./services/mail.service";
 import { join } from "path";
-import {StaffController} from "./controllers/staff.controller";
 import { PackageController } from "./controllers/package.controller";
+import { StaffController } from "./controllers/staff.controller";
+import { EmailQueueModule } from "./background-jobs/email/email.queue.module";
+import {NotificationQueueModule} from "./background-jobs/notification/notification.queue.module";
+import {NotificationController} from "./controllers/notification.controller";
+import {PrismaService} from "./services/prisma.service";
 import { PaymentController } from "./controllers/payment.controller";
 
 @Module({
@@ -25,6 +29,8 @@ import { PaymentController } from "./controllers/payment.controller";
 		PassportModule,
 		JwtModule.register({}),
 		ConfigModule,
+		EmailQueueModule,
+		NotificationQueueModule,
 		MailerModule.forRootAsync({
 			useFactory: (configService: ConfigService) => ({
 				transport: {
@@ -55,6 +61,7 @@ import { PaymentController } from "./controllers/payment.controller";
 		AthletesController,
 		StaffController,
 		PackageController,
+		NotificationController,
 		PaymentController
 	],
 	providers: [
@@ -62,6 +69,7 @@ import { PaymentController } from "./controllers/payment.controller";
 		JwtAccessTokenStrategy,
 		JwtRefreshTokenStrategy,
 		MailService,
+		PrismaService,
 		{
 			provide: "CLOUDINARY",
 			useFactory: (configService: ConfigService) => {

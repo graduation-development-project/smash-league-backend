@@ -1,7 +1,6 @@
 import { RegisterTournamentDTO } from "../dtos/athletes/register-tournament.dto";
 import {
-	Tournament,
-	TournamentParticipant,
+	Tournament, TournamentRegistration,
 	User,
 	UserVerification,
 } from "@prisma/client";
@@ -12,7 +11,7 @@ import { TCloudinaryResponse } from "../../infrastructure/types/cloudinary.type"
 export interface AthletesRepositoryPort {
 	registerTournament(
 		registerTournamentDTO: RegisterTournamentDTO,
-	): Promise<TournamentParticipant>;
+	): Promise<TournamentRegistration>;
 
 	getParticipatedTournaments(
 		userID: string,
