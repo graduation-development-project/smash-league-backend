@@ -133,6 +133,7 @@ CREATE TABLE "Tournament" (
     "endDate" TIMESTAMP(3) NOT NULL,
     "registrationFeePerPerson" INTEGER NOT NULL,
     "registrationFeePerPair" INTEGER,
+    "maxDisciplinePerPerson" INTEGER NOT NULL,
     "status" "TournamentStatus" NOT NULL,
     "protestFeePerTime" INTEGER NOT NULL,
 
