@@ -31,6 +31,7 @@ import { TCloudinaryResponse } from "../types/cloudinary.type";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
+@Roles(RoleMap.Athlete.name)
 export class AthletesController {
 	constructor(
 		private registerTournamentUseCase: RegisterTournamentUseCase,
@@ -40,7 +41,6 @@ export class AthletesController {
 	) {}
 
 	@Post("register-tournament")
-	@Roles(RoleMap.Athlete.id)
 	registerTournament(
 		@Body() registerTournamentDTO: RegisterTournamentDTO,
 	): Promise<TournamentRegistration> {
@@ -48,7 +48,6 @@ export class AthletesController {
 	}
 
 	@Get("participated-tournament")
-	@Roles(RoleMap.Athlete.id)
 	getParticipatedTournaments(
 		@Req() { user }: IRequestUser,
 		@Query("status") tournamentStatus: string,
@@ -60,17 +59,16 @@ export class AthletesController {
 	}
 
 	@Post("upload-verification-images")
-	@Roles(RoleMap.Athlete.id)
 	@UseInterceptors(AnyFilesInterceptor())
 	uploadVerificationImage(
 		@Req() { user }: IRequestUser,
 		@UploadedFiles() files: Express.Multer.File[],
 	): Promise<TCloudinaryResponse[]> {
+		console.log("files", files);
 		return this.uploadVerificationImagesUseCase.execute(files, user.id);
 	}
 
 	@Post("register-new-role")
-	@Roles(RoleMap.Athlete.id)
 	registerNewRole(
 		@Req() { user }: IRequestUser,
 		@Body() registerNewRoleDTO: RegisterNewRoleDTO,
