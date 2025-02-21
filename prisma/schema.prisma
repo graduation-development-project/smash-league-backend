@@ -27,7 +27,7 @@ model User {
   userTeams                     UserTeam[]               @relation("FK_User_UserTeam")
   verifications                 UserVerification[]       @relation("FK_User_UserVerification")
   transactions                  Transaction[]            @relation("FK_Transaction_UserTransaction")
-  notifications                 UserNotification[]
+  notifications                 UserNotification[]       @relation("FK_UserNotification_User")
   tournamentRegistrations       TournamentRegistration[] @relation("FK_TournamentRegistration_User")
   TournamentRegistrationPartner TournamentRegistration[] @relation("FK_TournamentRegistration_Partner")
 }
@@ -106,6 +106,18 @@ model Notification {
   message String
   typeId  String
   type    NotificationType @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
+  userNotification    UserNotification[]    @relation("FK_UserNotification_Notification")
+}
+
+model UserNotification {
+  id             String       @id @default(uuid())
+  userId         String
+  notificationId String
+  user           User         @relation(name: "FK_UserNotification_User", fields: [userId], references: [id], onDelete: Cascade)
+  notification   Notification @relation(name: "FK_UserNotification_Notification", fields: [notificationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, notificationId])
 }
 
 model Tournament {
@@ -159,7 +171,6 @@ enum BadmintonDiscipline {
   MIXED_DOUBLE
 }
 
-model TournamentRegistration {
 model TournamentRegistration {
   id                     String               @id @default(uuid())
   tournamentId           String

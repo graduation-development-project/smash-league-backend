@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import {
 	Tournament,
-	TournamentParticipant,
+	TournamentRegistration,
 	UserRole,
 	UserVerification,
 } from "@prisma/client";
@@ -22,67 +22,71 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 	async registerTournament(
 		registerTournamentDTO: RegisterTournamentDTO,
-	): Promise<TournamentParticipant> {
-		try {
-			const { tournamentId, partnerId, userId, tournamentDisciplineId } =
-				registerTournamentDTO;
+	): Promise<TournamentRegistration> {
+		// try {
+		// 	const { tournamentId, partnerId, userId, tournamentDisciplineId } =
+		// 		registerTournamentDTO;
 
-			// const tournamentExisted = await this.prisma.tournament.findUnique({
-			// 	where: { id: tournamentId },
-			// });
+		// 	// const tournamentExisted = await this.prisma.tournament.findUnique({
+		// 	// 	where: { id: tournamentId },
+		// 	// });
 
-			// if (!tournamentExisted) {
-			// 	throw new BadRequestException("Tournament not found");
-			// }
+		// 	// if (!tournamentExisted) {
+		// 	// 	throw new BadRequestException("Tournament not found");
+		// 	// }
 
-			const userRegistered: TournamentParticipant =
-				await this.prisma.tournamentParticipant.findFirst({
-					where: {
-						tournamentId,
-						OR: [
-							{ userId, tournamentDisciplineId }, // * User registered as a player
-							{ partnerId: userId }, // * User is registered as a partner
-						],
-					},
-				});
+		// 	const userRegistered: TournamentParticipant =
+		// 		await this.prisma.tournamentParticipant.findFirst({
+		// 			where: {
+		// 				tournamentId,
+		// 				OR: [
+		// 					{ userId, eventType }, // * User registered as a player
+		// 					{ partnerId: userId }, // * User is registered as a partner
+		// 				],
+		// 			},
+		// 		});
 
-			// if (userRegistered) {
-			// 	throw new BadRequestException(
-			// 		"User already registered this tournament event type",
-			// 	);
-			// }
+		// 	// if (userRegistered) {
+		// 	// 	throw new BadRequestException(
+		// 	// 		"User already registered this tournament event type",
+		// 	// 	);
+		// 	// }
 
-			// * Check if partner is registered
-			if (eventType.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()) {
-				const partnerRegistered: TournamentRegistration =
-					await this.prisma.tournamentRegistration.findFirst({
-						where: {
-							tournamentId,
-							OR: [{ userId: partnerId, eventType }, { partnerId }],
-						},
-					});
+		// 	// // * Check if partner is registered
+		// 	// if (tournamentDisciplineId.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()) {
+		// 	// 	const partnerRegistered: TournamentRegistration =
+		// 	// 		await this.prisma.tournamentRegistration.findFirst({
+		// 	// 			where: {
+		// 	// 				tournamentId,
+		// 	// 				OR: [
+		// 	// 					{ userId: partnerId, tournamentDisciplineId: eventType },
+		// 	// 					{ partnerId },
+		// 	// 				],
+		// 	// 			},
+		// 	// 		});
 
-			// 	if (partnerRegistered) {
-			// 		throw new BadRequestException(
-			// 			"Your partner already registered this tournament event type",
-			// 		);
-			// 	}
-			// }
+		// 	// 	if (partnerRegistered) {
+		// 	// 		throw new BadRequestException(
+		// 	// 			"Your partner already registered this tournament event type",
+		// 	// 		);
+		// 	// 	}
+		// 	// }
 
-			return await this.prisma.tournamentRegistration.create({
-				data: {
-					tournamentId,
-					userId,
-					eventType,
-					partnerId:
-						eventType.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()
-							? partnerId || null
-							: null,
-				},
-			});
-		} catch (e) {
-			throw e;
-		}
+		// 	// return await this.prisma.tournamentRegistration.create({
+		// 	// 	data: {
+		// 	// 		tournamentId,
+		// 	// 		userId,
+		// 	// 		tournamentDisciplineId: eventType,
+		// 	// 		partnerId:
+		// 	// 			eventType.toUpperCase() === EventTypesEnum.DOUBLE.toUpperCase()
+		// 	// 				? partnerId || null
+		// 	// 				: null,
+		// 	// 	},
+		// 	// });
+		// // } catch (e) {
+		// // 	throw e;
+		// // }
+		return null;
 	}
 
 	async getParticipatedTournaments(

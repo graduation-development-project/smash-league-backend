@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
 import { RegisterTournamentDTO } from "../../../domain/dtos/athletes/register-tournament.dto";
-import { TournamentParticipant } from "@prisma/client";
+import { TournamentRegistration } from "@prisma/client";
 
 @Injectable()
 export class RegisterTournamentUseCase {
@@ -12,7 +12,7 @@ export class RegisterTournamentUseCase {
 
 	execute(
 		registerTournamentDTO: RegisterTournamentDTO,
-	): Promise<TournamentParticipant> {
+	): Promise<TournamentRegistration> {
 		return this.athletesRepository.registerTournament(registerTournamentDTO);
 	}
 }
