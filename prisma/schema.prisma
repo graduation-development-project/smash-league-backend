@@ -21,15 +21,15 @@ model User {
   otpExpiresTime                DateTime?
   isVerified                    Boolean                  @default(false)
   teamId                        String?
-  team                          Team?                    @relation("FK_User_UserTeam")
-  tournaments                   Tournament[]             @relation("FK_Tournament_UserTournament")
-  userRoles                     UserRole[]               @relation("FK_User_UserRole")
-  userTeams                     UserTeam[]               @relation("FK_User_UserTeam")
-  verifications                 UserVerification[]       @relation("FK_User_UserVerification")
-  transactions                  Transaction[]            @relation("FK_Transaction_UserTransaction")
-  notifications                 UserNotification[]       @relation("FK_UserNotification_User")
-  tournamentRegistrations       TournamentRegistration[] @relation("FK_TournamentRegistration_User")
-  TournamentRegistrationPartner TournamentRegistration[] @relation("FK_TournamentRegistration_Partner")
+  team                          Team?                    @relation(name: "FK_User_UserTeam")
+  tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
+  userRoles                     UserRole[]               @relation(name: "FK_User_UserRole")
+  userTeams                     UserTeam[]               @relation(name: "FK_User_UserTeam")
+  verifications                 UserVerification[]       @relation(name: "FK_User_UserVerification")
+  transactions                  Transaction[]            @relation(name: "FK_Transaction_UserTransaction")
+  notifications                 UserNotification[]       @relation(name: "FK_UserNotification_User")
+  tournamentRegistrations       TournamentRegistration[] @relation(name: "FK_TournamentRegistration_User")
+  TournamentRegistrationPartner TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Partner")
 }
 
 model UserVerification {
@@ -101,12 +101,12 @@ model NotificationType {
 }
 
 model Notification {
-  id      String           @id @default(uuid())
-  title   String
-  message String
-  typeId  String
-  type    NotificationType @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
-  userNotification    UserNotification[]    @relation("FK_UserNotification_Notification")
+  id               String             @id @default(uuid())
+  title            String
+  message          String
+  typeId           String
+  type             NotificationType   @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
+  userNotification UserNotification[] @relation("FK_UserNotification_Notification")
 }
 
 model UserNotification {
@@ -118,6 +118,13 @@ model UserNotification {
   createdAt      DateTime     @default(now())
 
   @@unique([userId, notificationId])
+}
+
+model TournamentSerie {
+  id                      String       @id @default(uuid())
+  tournamentSerie         String
+  serieBackgroundImageURL String
+  tournaments             Tournament[] @relation("FK_Tournament_TournamentSerie")
 }
 
 model Tournament {
@@ -135,10 +142,12 @@ model Tournament {
   maxDisciplinePerPerson   Int
   status                   TournamentStatus
   protestFeePerTime        Int
-  organizer                User                     @relation("FK_Tournament_UserTournament", fields: [organizerId], references: [id], onDelete: Cascade)
-  tournamentPosts          TournamentPost[]         @relation("FK_TournamentPost_TournamentPostTournament")
-  registrations            TournamentRegistration[] @relation("FK_TournamentRegistration_Tournament")
-  tournamentDisciplines    TournamentDiscipline[]   @relation("FK_TournamentDiscipline_TournamentTournamentDiscipline")
+  tournamentSerieId        String
+  tournamentSerie          TournamentSerie          @relation(name: "FK_Tournament_TournamentSerie", fields: [tournamentSerieId], references: [id], onDelete: Cascade)
+  organizer                User                     @relation(name: "FK_Tournament_User", fields: [organizerId], references: [id], onDelete: Cascade)
+  tournamentPosts          TournamentPost[]         @relation(name: "FK_TournamentPost_Tournament")
+  registrations            TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Tournament")
+  tournamentDisciplines    TournamentEvent[]        @relation(name: "FK_Tournament_TournamentEvent")
 }
 
 enum TournamentStatus {
@@ -149,21 +158,26 @@ enum TournamentStatus {
   FINISHED
 }
 
-model TournamentDiscipline {
-  id                   String              @id @default(uuid())
-  tournamentDiscipline BadmintonDiscipline
-  fromAge              Int                 @default(6)
-  toAge                Int                 @default(90)
-  winningPoint         Int                 @default(21)
-  lastPoint            Int                 @default(31)
-  numberOfSets         Int                 @default(3)
-
+model TournamentEvent {
+  id                    String                   @id @default(uuid())
+  tournamentEvent       BadmintonParticipantType
+  fromAge               Int?                     @default(6)
+  toAge                 Int?                     @default(90)
+  winningPoint          Int?                     @default(21)
+  lastPoint             Int                      @default(31)
+  numberOfSets          Int                      @default(3)
+  typeOfFormat          TypeOfFormat
   tournamentId          String
-  tournament            Tournament               @relation(name: "FK_TournamentDiscipline_TournamentTournamentDiscipline", fields: [tournamentId], references: [id], onDelete: Cascade)
-  tournamenRegistration TournamentRegistration[] @relation("FK_TournamentRegistration_TournamentRegistrationTournamentDiscipline")
+  tournament            Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournamenRegistration TournamentRegistration[] @relation("FK_TournamentRegistration_TournamentEvent")
 }
 
-enum BadmintonDiscipline {
+enum TypeOfFormat {
+  SINGLE_ELIMINATION
+  ROUND_ROBIN
+}
+
+enum BadmintonParticipantType {
   MENS_SINGLE
   WOMEN_SINGLE
   MENS_DOUBLE
@@ -172,23 +186,23 @@ enum BadmintonDiscipline {
 }
 
 model TournamentRegistration {
-  id                     String               @id @default(uuid())
-  tournamentId           String
-  userId                 String
-  tournamentDisciplineId String // "SINGLE" or "DOUBLE"
-  tournamentDiscipline   TournamentDiscipline @relation(name: "FK_TournamentRegistration_TournamentRegistrationTournamentDiscipline", fields: [tournamentDisciplineId], references: [id], onDelete: Cascade)
-  partnerId              String? // Nullable: Used only for doubles
-  status                 String               @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
-  rejectionId            String?
-  createdAt              DateTime             @default(now())
-  tournament             Tournament           @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
-  user                   User                 @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
-  partner                User?                @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
-  rejection              Rejection?           @relation("FK_TournamentRegistration_Rejection")
-  fromTeamId             String?
-  fromTeam               Team?                @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
+  id                String          @id @default(uuid())
+  tournamentId      String
+  userId            String
+  tournamentEventId String // "SINGLE" or "DOUBLE"
+  tournamentEvent   TournamentEvent @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
+  partnerId         String? // Nullable: Used only for doubles
+  status            String          @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
+  rejectionId       String?
+  createdAt         DateTime        @default(now())
+  tournament        Tournament      @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user              User            @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
+  partner           User?           @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  rejection         Rejection?      @relation("FK_TournamentRegistration_Rejection")
+  fromTeamId        String?
+  fromTeam          Team?           @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
 
-  @@unique([tournamentId, userId, tournamentDisciplineId]) // Ensure a user can register only once per event type
+  @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
 }
 
@@ -202,7 +216,7 @@ model TournamentPost {
   content         String
   backgroundImage String
   contentImages   ContentImage[] @relation("FK_ContentImage_TournamentPostContentImage")
-  tournament      Tournament     @relation("FK_TournamentPost_TournamentPostTournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournament      Tournament     @relation(name: "FK_TournamentPost_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
 }
 
 model Rejection {
