@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import { TUserWithRole } from "../types/users.type";
+import { TUserWithRole } from "../../infrastructure/types/users.type";
 
 export interface IPayload {
 	userID: string;

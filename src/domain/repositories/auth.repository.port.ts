@@ -4,7 +4,7 @@ import {
 	IRequestUser,
 	ISignInResponse,
 	ISignUpResponse,
-} from "../../infrastructure/interfaces/interfaces";
+} from "../interfaces/interfaces";
 import { ResetPasswordDTO } from "../dtos/auth/reset-password.dto";
 import { TUserWithRole } from "src/infrastructure/types/users.type";
 

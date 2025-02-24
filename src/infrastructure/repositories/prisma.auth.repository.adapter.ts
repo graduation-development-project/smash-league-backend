@@ -7,7 +7,7 @@ import {
 	IPayload,
 	ISignInResponse,
 	ISignUpResponse,
-} from "../interfaces/interfaces";
+} from "../../domain/interfaces/interfaces";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";

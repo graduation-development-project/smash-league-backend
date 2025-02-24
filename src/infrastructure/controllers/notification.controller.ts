@@ -11,7 +11,7 @@ import { GetNotificationByUserUseCase } from "../../application/usecases/notific
 import { Notification } from "@prisma/client";
 import { CreateNotificationUseCase } from "../../application/usecases/notification/create-notification.usecase";
 import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
-import { IRequestUser } from "../interfaces/interfaces";
+import { IRequestUser } from "../../domain/interfaces/interfaces";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 
 @Controller("/notifications")

@@ -15,7 +15,7 @@ import { Roles } from "../decorators/roles.decorator";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { RoleMap } from "../enums/role.enum";
 import { TUserWithRole } from "../types/users.type";
-import { IRequestUser } from "../interfaces/interfaces";
+import { IRequestUser } from "../../domain/interfaces/interfaces";
 import { EditUserDTO } from "../../domain/dtos/users/edit-user.dto";
 import { EditUserProfileUseCase } from "../../application/usecases/users/edit-user-profile.usecase";
 import { ChangePasswordDTO } from "../../domain/dtos/users/change-password.dto";

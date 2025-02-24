@@ -9,7 +9,7 @@
     "copy-email-template": "cp -R /usr/src/app/src/infrastructure/templates /usr/src/app/dist/src/infrastructure/templates/ && echo \"Script executed from: ${PWD}\"",
     "build": "npx nest build && node moving-templates.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "nest start --watch",
     "start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch",
     "prisma:deploy": "npx prisma migrate deploy",
     "start:debug": "nest start --debug --watch",

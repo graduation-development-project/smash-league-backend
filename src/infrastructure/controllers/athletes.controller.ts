@@ -21,7 +21,7 @@ import {
 	UserVerification,
 } from "@prisma/client";
 import { GetParticipatedTournamentsUseCase } from "../../application/usecases/athletes/get-participated-tournaments.usecase";
-import { IRequestUser } from "../interfaces/interfaces";
+import { IRequestUser } from "../../domain/interfaces/interfaces";
 import { RegisterNewRoleUseCase } from "../../application/usecases/athletes/register-new-role.usecase";
 import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
 import { TUserWithRole } from "../types/users.type";

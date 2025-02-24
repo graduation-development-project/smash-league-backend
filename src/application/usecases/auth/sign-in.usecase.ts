@@ -1,6 +1,6 @@
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { AuthRepositoryPort } from "../../../domain/repositories/auth.repository.port";
-import { ISignInResponse } from "../../../infrastructure/interfaces/interfaces";
+import { ISignInResponse } from "../../../domain/interfaces/interfaces";
 import { TUserWithRole } from "src/infrastructure/types/users.type";
 
 @Injectable()

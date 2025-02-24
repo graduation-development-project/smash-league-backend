@@ -1,0 +1,4 @@
+export enum FormatType {
+	SINGLE_ELIMINATION = "SINGLE_ELIMINATION",
+	ROUND_ROBIN = "ROUND_ROBIN"
+}

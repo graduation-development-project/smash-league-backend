@@ -1,3 +1,4 @@
+import { Tournament } from '@prisma/client';
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config"; // ✅ Import ConfigModule
 import { ApplicationController } from "./controllers/application.controller";
@@ -22,6 +23,7 @@ import {NotificationQueueModule} from "./background-jobs/notification/notificati
 import {NotificationController} from "./controllers/notification.controller";
 import {PrismaService} from "./services/prisma.service";
 import { PaymentController } from "./controllers/payment.controller";
+import { TournamentController } from './controllers/tournament.controller';
 
 @Module({
 	imports: [
@@ -62,7 +64,8 @@ import { PaymentController } from "./controllers/payment.controller";
 		StaffController,
 		PackageController,
 		NotificationController,
-		PaymentController
+		PaymentController,
+		TournamentController
 	],
 	providers: [
 		LocalStrategy,

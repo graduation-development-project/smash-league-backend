@@ -128,7 +128,7 @@ model TournamentSerie {
 }
 
 model Tournament {
-  id                       String                   @id @default(uuid())
+  id                       String                   @id 
   name                     String
   shortName                String
   organizerId              String

@@ -38,6 +38,8 @@ import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
 import { PaymentPayOSService } from "./services/payment.service";
 import { ConfigModule } from "@nestjs/config";
 import {ResendOtpUseCase} from "./usecases/auth/resend-otp.usecase";
+import { GetAllTournamentUseCase } from "./usecases/tournament/get-all-tournament.usecase";
+import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositories/prisma.tournament.repository.adapter";
 
 @Module({
 	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule, ConfigModule],
@@ -74,7 +76,10 @@ import {ResendOtpUseCase} from "./usecases/auth/resend-otp.usecase";
 			provide: "NotificationRepository",
 			useClass: PrismaNotificationsRepositoryAdapter,
 		},
-
+		{
+			provide: "TournamentRepository",
+			useClass: PrismaTournamentRepositorAdapter
+		},
 		MailService,
 		PaymentPayOSService,
 		PrismaService,
@@ -103,6 +108,7 @@ import {ResendOtpUseCase} from "./usecases/auth/resend-otp.usecase";
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
 		ResendOtpUseCase,
+		GetAllTournamentUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -130,6 +136,7 @@ import {ResendOtpUseCase} from "./usecases/auth/resend-otp.usecase";
 		CreatePaymentLinkUseCase,
 		PaymentPayOSService,
 		ResendOtpUseCase,
+		GetAllTournamentUseCase
 	],
 })
 export class ApplicationModule {}

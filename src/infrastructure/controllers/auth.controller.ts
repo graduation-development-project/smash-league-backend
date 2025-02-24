@@ -9,7 +9,7 @@ import {
 	IRequestUser,
 	ISignInResponse,
 	ISignUpResponse,
-} from "../interfaces/interfaces";
+} from "../../domain/interfaces/interfaces";
 import { JwtRefreshTokenGuard } from "../guards/auth/jwt-refresh-token.guard";
 import { RefreshAccessTokenUseCase } from "../../application/usecases/auth/refresh-access-token.usecase";
 import { VerifyOTPUseCase } from "../../application/usecases/auth/verify-otp.usecase";

@@ -2,7 +2,7 @@ import {Request} from "express";
 import {Injectable} from "@nestjs/common";
 import {PassportStrategy} from "@nestjs/passport";
 import {ExtractJwt, Strategy} from "passport-jwt";
-import {IPayload} from "../../interfaces/interfaces";
+import {IPayload} from "../../../domain/interfaces/interfaces";
 import {GetUserWithRefreshTokenUseCase} from "../../../application/usecases/users/get-user-with-refresh-token.usecase";
 import {ConfigService} from "@nestjs/config";
 
