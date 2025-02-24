@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 export const NotificationTypeMap = {
 	Reject: { id: null, name: "Reject" },
 	Approve: { id: null, name: "Approve" },
+	Invitation: { id: null, name: "Invitation" },
 };
 
 export async function loadNotificationTypeMap() {
