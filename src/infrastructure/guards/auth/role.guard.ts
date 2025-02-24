@@ -18,9 +18,14 @@ export class RolesGuard implements CanActivate {
 		);
 		const { user }: IRequestUser = context.switchToHttp().getRequest();
 
-		const roleIds = roles
-			.map((roleName) => RoleMap[roleName]?.id)
-			.filter(Boolean);
+		const roleNameMapping = {
+			"Team Leader": "Team_Leader",
+		};
+
+		const roleIds = roles.map((roleName) => {
+			const mappedRoleName = roleNameMapping[roleName] || roleName;
+			return RoleMap[mappedRoleName]?.id;
+		});
 
 		console.log("roles: ", roles);
 		console.log(roleIds);
