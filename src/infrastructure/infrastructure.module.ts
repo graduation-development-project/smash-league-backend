@@ -1,4 +1,4 @@
-import { Tournament } from '@prisma/client';
+import { Tournament } from "@prisma/client";
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config"; // ✅ Import ConfigModule
 import { ApplicationController } from "./controllers/application.controller";
@@ -19,11 +19,13 @@ import { join } from "path";
 import { PackageController } from "./controllers/package.controller";
 import { StaffController } from "./controllers/staff.controller";
 import { EmailQueueModule } from "./background-jobs/email/email.queue.module";
-import {NotificationQueueModule} from "./background-jobs/notification/notification.queue.module";
-import {NotificationController} from "./controllers/notification.controller";
-import {PrismaService} from "./services/prisma.service";
+import { NotificationQueueModule } from "./background-jobs/notification/notification.queue.module";
+import { NotificationController } from "./controllers/notification.controller";
+import { PrismaService } from "./services/prisma.service";
 import { PaymentController } from "./controllers/payment.controller";
-import { TournamentController } from './controllers/tournament.controller';
+import { TournamentController } from "./controllers/tournament.controller";
+import { UploadService } from "./services/upload.service";
+import {TeamLeaderController} from "./controllers/team-leader.controller";
 
 @Module({
 	imports: [
@@ -46,7 +48,11 @@ import { TournamentController } from './controllers/tournament.controller';
 				},
 
 				template: {
-					dir: join(__dirname, "..", configService.get<string>("MAILER_TEMPLATE_URL")),
+					dir: join(
+						__dirname,
+						"..",
+						configService.get<string>("MAILER_TEMPLATE_URL"),
+					),
 					adapter: new HandlebarsAdapter(),
 					options: {
 						strict: true,
@@ -65,7 +71,8 @@ import { TournamentController } from './controllers/tournament.controller';
 		PackageController,
 		NotificationController,
 		PaymentController,
-		TournamentController
+		TournamentController,
+		TeamLeaderController,
 	],
 	providers: [
 		LocalStrategy,
@@ -73,6 +80,7 @@ import { TournamentController } from './controllers/tournament.controller';
 		JwtRefreshTokenStrategy,
 		MailService,
 		PrismaService,
+		UploadService,
 		{
 			provide: "CLOUDINARY",
 			useFactory: (configService: ConfigService) => {
@@ -85,6 +93,6 @@ import { TournamentController } from './controllers/tournament.controller';
 			inject: [ConfigService],
 		},
 	],
-	exports: [MailService],
+	exports: [MailService, UploadService],
 })
 export class InfrastructureModule {}

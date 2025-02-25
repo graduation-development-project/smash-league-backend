@@ -40,6 +40,12 @@ import { ConfigModule } from "@nestjs/config";
 import {ResendOtpUseCase} from "./usecases/auth/resend-otp.usecase";
 import { GetAllTournamentUseCase } from "./usecases/tournament/get-all-tournament.usecase";
 import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositories/prisma.tournament.repository.adapter";
+import {UploadService} from "../infrastructure/services/upload.service";
+import {
+	PrismaTeamLeadersRepositoryAdapter
+} from "../infrastructure/repositories/prisma.team-leaders.repository.adapter";
+import {CreateTeamUseCase} from "./usecases/team-leader/create-team.usecase";
+import {SendTeamInvitationUseCase} from "./usecases/team-leader/send-team-invitation.usecase";
 
 @Module({
 	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule, ConfigModule],
@@ -80,7 +86,12 @@ import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositorie
 			provide: "TournamentRepository",
 			useClass: PrismaTournamentRepositorAdapter
 		},
+		{
+			provide: "TeamLeaderRepository",
+			useClass: PrismaTeamLeadersRepositoryAdapter
+		},
 		MailService,
+		UploadService,
 		PaymentPayOSService,
 		PrismaService,
 		ApplicationFunction,
@@ -108,7 +119,9 @@ import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositorie
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
 		ResendOtpUseCase,
-		GetAllTournamentUseCase
+		GetAllTournamentUseCase,
+		CreateTeamUseCase,
+		SendTeamInvitationUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -136,7 +149,9 @@ import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositorie
 		CreatePaymentLinkUseCase,
 		PaymentPayOSService,
 		ResendOtpUseCase,
-		GetAllTournamentUseCase
+		GetAllTournamentUseCase,
+		CreateTeamUseCase,
+		SendTeamInvitationUseCase,
 	],
 })
 export class ApplicationModule {}

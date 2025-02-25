@@ -21,7 +21,7 @@ model User {
   otpExpiresTime                DateTime?
   isVerified                    Boolean                  @default(false)
   teamId                        String?
-  team                          Team?                    @relation(name: "FK_User_UserTeam")
+  teamLeaderOf                  Team[]                   @relation("FK_User_TeamLeader")
   tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
   userRoles                     UserRole[]               @relation(name: "FK_User_UserRole")
   userTeams                     UserTeam[]               @relation(name: "FK_User_UserTeam")
@@ -30,6 +30,7 @@ model User {
   notifications                 UserNotification[]       @relation(name: "FK_UserNotification_User")
   tournamentRegistrations       TournamentRegistration[] @relation(name: "FK_TournamentRegistration_User")
   TournamentRegistrationPartner TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Partner")
+  teamInvitation                TeamInvitation[]         @relation("FK_User_TeamInvitation")
 }
 
 model UserVerification {
@@ -79,10 +80,13 @@ model RolePermission {
 model Team {
   id                     String                   @id @default(uuid())
   teamName               String
+  description            String?
+  logo                   String?
   teamLeaderId           String                   @unique
-  teamLeader             User                     @relation("FK_User_UserTeam", fields: [teamLeaderId], references: [id], onDelete: Cascade)
+  teamLeader             User                     @relation("FK_User_TeamLeader", fields: [teamLeaderId], references: [id], onDelete: Cascade)
   userTeams              UserTeam[]               @relation("FK_Team_UserTeam")
   tournamentRegistration TournamentRegistration[] @relation("FK_TournamentPRegistration_TournamentRegistrationTeam")
+  invitations            TeamInvitation[]         @relation("FK_Team_TeamInvitation")
 }
 
 model UserTeam {
@@ -92,6 +96,28 @@ model UserTeam {
   user   User   @relation("FK_User_UserTeam", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, teamId])
+}
+
+model TeamInvitation {
+  id            String           @id @default(uuid())
+  teamId        String
+  invitedUserId String
+  status        InvitationStatus @default(PENDING)
+
+  team         Team          @relation("FK_Team_TeamInvitation", fields: [teamId], references: [id], onDelete: Cascade)
+  invitedUser  User          @relation("FK_User_TeamInvitation", fields: [invitedUserId], references: [id], onDelete: Cascade)
+  notification Notification? @relation("FK_TeamInvitation_Notification")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([teamId, invitedUserId])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 model NotificationType {
@@ -107,6 +133,8 @@ model Notification {
   typeId           String
   type             NotificationType   @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
   userNotification UserNotification[] @relation("FK_UserNotification_Notification")
+  teamInvitationId String?            @unique
+  teamInvitation   TeamInvitation?    @relation("FK_TeamInvitation_Notification", fields: [teamInvitationId], references: [id], onDelete: Cascade)
 }
 
 model UserNotification {
@@ -128,7 +156,7 @@ model TournamentSerie {
 }
 
 model Tournament {
-  id                       String                   @id 
+  id                       String                   @id
   name                     String
   shortName                String
   organizerId              String
