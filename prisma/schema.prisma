@@ -167,7 +167,7 @@ model Tournament {
   endDate                  DateTime
   registrationFeePerPerson Int
   registrationFeePerPair   Int?
-  maxDisciplinePerPerson   Int
+  maxEventPerPerson        Int
   status                   TournamentStatus
   protestFeePerTime        Int
   tournamentSerieId        String
@@ -175,7 +175,7 @@ model Tournament {
   organizer                User                     @relation(name: "FK_Tournament_User", fields: [organizerId], references: [id], onDelete: Cascade)
   tournamentPosts          TournamentPost[]         @relation(name: "FK_TournamentPost_Tournament")
   registrations            TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Tournament")
-  tournamentDisciplines    TournamentEvent[]        @relation(name: "FK_Tournament_TournamentEvent")
+  tournamentEvents         TournamentEvent[]        @relation(name: "FK_Tournament_TournamentEvent")
 }
 
 enum TournamentStatus {
@@ -195,6 +195,8 @@ model TournamentEvent {
   lastPoint             Int                      @default(31)
   numberOfSets          Int                      @default(3)
   typeOfFormat          TypeOfFormat
+  ruleOfEventExtension  String?
+  maximumAthlete        Int?
   tournamentId          String
   tournament            Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade)
   tournamenRegistration TournamentRegistration[] @relation("FK_TournamentRegistration_TournamentEvent")
@@ -214,24 +216,30 @@ enum BadmintonParticipantType {
 }
 
 model TournamentRegistration {
-  id                String          @id @default(uuid())
+  id                String                       @id @default(uuid())
   tournamentId      String
   userId            String
-  tournamentEventId String // "SINGLE" or "DOUBLE"
-  tournamentEvent   TournamentEvent @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
+  tournamentEventId String
+  tournamentEvent   TournamentEvent              @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
   partnerId         String? // Nullable: Used only for doubles
-  status            String          @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
+  status            TournamentRegistrationStatus @default(APPROVED) // "PENDING", "APPROVED", "REJECTED"
   rejectionId       String?
-  createdAt         DateTime        @default(now())
-  tournament        Tournament      @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
-  user              User            @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
-  partner           User?           @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
-  rejection         Rejection?      @relation("FK_TournamentRegistration_Rejection")
+  createdAt         DateTime                     @default(now())
+  tournament        Tournament                   @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user              User                         @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
+  partner           User?                        @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  rejection         Rejection?                   @relation("FK_TournamentRegistration_Rejection")
   fromTeamId        String?
-  fromTeam          Team?           @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
+  fromTeam          Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
+}
+
+enum TournamentRegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model TournamentPost {
