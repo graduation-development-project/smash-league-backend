@@ -13,12 +13,16 @@ import { TCloudinaryResponse } from "../types/cloudinary.type";
 import { v2 as cloudinary } from "cloudinary";
 import { PrismaService } from "../services/prisma.service";
 import { TournamentStatusEnum } from "../enums/tournament-status.enum";
+import { UploadService } from "../services/upload.service";
 
 const streamifier = require("streamifier");
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
-	constructor(private prisma: PrismaService) {}
+	constructor(
+		private prisma: PrismaService,
+		private uploadService: UploadService,
+	) {}
 
 	async registerTournament(
 		registerTournamentDTO: RegisterTournamentDTO,
@@ -115,52 +119,52 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		}
 	}
 
-	async uploadVerificationImage(
-		files: Express.Multer.File[],
-		userID: string,
-	): Promise<TCloudinaryResponse[]> {
-		try {
-			const now = new Date();
-			const folderName = `verification-information/${now.toISOString().split("T")[0]}/${userID}`;
-
-			const uploadPromises: Promise<TCloudinaryResponse>[] = files.map(
-				(file) => {
-					return new Promise<TCloudinaryResponse>((resolve, reject) => {
-						const uploadStream = cloudinary.uploader.upload_stream(
-							{
-								resource_type: "auto",
-								folder: folderName, //* Specify the folder name
-								public_id: `${userID}-${now.toISOString()}`, //* Unique file name
-							},
-
-							(error, result) => {
-								if (error) return reject(error);
-								resolve(result);
-							},
-						);
-
-						streamifier.createReadStream(file.buffer).pipe(uploadStream);
-					});
-				},
-			);
-
-			return Promise.all(uploadPromises);
-		} catch (e) {
-			throw e;
-		}
-	}
+	// async uploadVerificationImage(
+	// 	files: Express.Multer.File[],
+	// 	userID: string,
+	// ): Promise<TCloudinaryResponse[]> {
+	// 	try {
+	// 		const now = new Date();
+	// 		const folderName = `verification-information/${now.toISOString().split("T")[0]}/${userID}`;
+	//
+	// 		const uploadPromises: Promise<TCloudinaryResponse>[] = files.map(
+	// 			(file) => {
+	// 				return new Promise<TCloudinaryResponse>((resolve, reject) => {
+	// 					const uploadStream = cloudinary.uploader.upload_stream(
+	// 						{
+	// 							resource_type: "auto",
+	// 							folder: folderName, //* Specify the folder name
+	// 							public_id: `${userID}-${now.toISOString()}`, //* Unique file name
+	// 						},
+	//
+	// 						(error, result) => {
+	// 							if (error) return reject(error);
+	// 							resolve(result);
+	// 						},
+	// 					);
+	//
+	// 					streamifier.createReadStream(file.buffer).pipe(uploadStream);
+	// 				});
+	// 			},
+	// 		);
+	//
+	// 		return Promise.all(uploadPromises);
+	// 	} catch (e) {
+	// 		throw e;
+	// 	}
+	// }
 
 	async registerNewRole(
-		userID: string,
 		registerNewRoleDTO: RegisterNewRoleDTO,
 	): Promise<UserVerification> {
 		try {
-			const { IDCardFront, IDCardBack, role, cardPhoto } = registerNewRoleDTO;
+			console.log(registerNewRoleDTO)
+			const { files, role, userId } = registerNewRoleDTO;
 
 			const roleExisted: UserRole = await this.prisma.userRole.findUnique({
 				where: {
 					userId_roleId: {
-						userId: userID,
+						userId,
 						roleId: role,
 					},
 				},
@@ -172,7 +176,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 			const verificationExisted = await this.prisma.userVerification.findFirst({
 				where: {
-					userId: userID,
+					userId,
 					role,
 				},
 			});
@@ -181,13 +185,27 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("You already registered this role");
 			}
 
+			const folderName = `verification-information/${new Date().toISOString().split("T")[0]}/${userId}`;
+
+			const imageUrls = await this.uploadService.uploadFiles(
+				files,
+				folderName,
+				userId,
+			);
+
+			console.log(imageUrls)
+
+			if (!imageUrls) {
+				throw new BadRequestException("Upload images fail");
+			}
+
 			return this.prisma.userVerification.create({
 				data: {
-					userId: userID,
+					userId,
 					role,
-					cardPhoto,
-					IDCardBack,
-					IDCardFront,
+					IDCardFront: imageUrls[0].secure_url,
+					IDCardBack: imageUrls[1].secure_url,
+					cardPhoto: imageUrls[2].secure_url,
 					createdAt: new Date(),
 				},
 			});

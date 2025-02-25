@@ -17,7 +17,7 @@ import { PrismaAthletesRepositoryAdapter } from "../infrastructure/repositories/
 import { RegisterTournamentUseCase } from "./usecases/athletes/register-tournament.usecase";
 import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-participated-tournaments.usecase";
 import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.usecase";
-import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
+// import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
 import { MailService } from "../infrastructure/services/mail.service";
 import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 import { ChangePasswordUseCase } from "./usecases/users/change-password.usecase";
@@ -107,7 +107,7 @@ import {SendTeamInvitationUseCase} from "./usecases/team-leader/send-team-invita
 		RegisterTournamentUseCase,
 		GetParticipatedTournamentsUseCase,
 		RegisterNewRoleUseCase,
-		UploadVerificationImagesUseCase,
+		// UploadVerificationImagesUseCase,
 		VerifyOTPUseCase,
 		ChangePasswordUseCase,
 		VerifyUserInformationUseCase,
@@ -138,7 +138,7 @@ import {SendTeamInvitationUseCase} from "./usecases/team-leader/send-team-invita
 		ChangePasswordUseCase,
 		GetParticipatedTournamentsUseCase,
 		RegisterNewRoleUseCase,
-		UploadVerificationImagesUseCase,
+		// UploadVerificationImagesUseCase,
 		VerifyOTPUseCase,
 		VerifyUserInformationUseCase,
 		SendResetPasswordLinkUseCase,
