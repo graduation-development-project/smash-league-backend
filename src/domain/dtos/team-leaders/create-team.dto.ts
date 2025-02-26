@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {IsArray, IsNotEmpty, IsOptional, IsString} from "class-validator";
 
 export class CreateTeamDTO {
 	@IsString()
@@ -10,6 +10,7 @@ export class CreateTeamDTO {
 	teamName: string;
 
 	@IsNotEmpty()
+	@IsArray()
 	logo: Express.Multer.File[];
 
 	@IsString()

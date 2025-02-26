@@ -29,6 +29,16 @@ export class PrismaTeamLeadersRepositoryAdapter
 				throw new BadRequestException("You cannot manage more than 3 teams");
 			}
 
+			const existedTeamName = await this.prismaService.team.findMany({
+				where: {
+					teamName: { contains: teamName, mode: "insensitive" },
+				},
+			});
+
+			if (existedTeamName.length > 0) {
+				throw new BadRequestException("This team name is already in use");
+			}
+
 			const folderName = `verification-information/${new Date().toISOString().split("T")[0]}/${teamName}`;
 
 			const imageUrls = await this.uploadService.uploadFiles(
@@ -37,17 +47,30 @@ export class PrismaTeamLeadersRepositoryAdapter
 				teamName,
 			);
 
-			if (!imageUrls) {
+			console.log(imageUrls);
+
+			if (imageUrls.length <= 0) {
 				throw new BadRequestException("Upload images fail");
 			}
 
-			return this.prismaService.team.create({
-				data: {
-					teamLeaderId,
-					teamName,
-					logo: imageUrls[0].secure_url,
-					description,
-				},
+			return this.prismaService.$transaction(async (prisma) => {
+				const createdTeam: Team = await prisma.team.create({
+					data: {
+						teamLeaderId,
+						teamName,
+						logo: imageUrls[0].secure_url,
+						description,
+					},
+				});
+
+				await prisma.userTeam.create({
+					data: {
+						teamId: createdTeam.id,
+						userId: teamLeaderId,
+					},
+				});
+
+				return createdTeam;
 			});
 		} catch (e) {
 			console.error(`Create team failed: ${e.message}`, e.stack);

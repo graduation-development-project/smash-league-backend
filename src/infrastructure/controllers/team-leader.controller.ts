@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	Post,
+	Req,
 	UploadedFiles,
 	UseGuards,
 	UseInterceptors,
@@ -15,8 +16,9 @@ import { CreateTeamUseCase } from "../../application/usecases/team-leader/create
 import { Team } from "@prisma/client";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { SendTeamInvitationUseCase } from "../../application/usecases/team-leader/send-team-invitation.usecase";
-import {Send} from "express";
-import {SendInvitationDTO} from "../../domain/dtos/team-leaders/send-invitation.dto";
+import { Send } from "express";
+import { SendInvitationDTO } from "../../domain/dtos/team-leaders/send-invitation.dto";
+import { IRequestUser } from "../../domain/interfaces/interfaces";
 
 @Controller("/team-leaders")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -30,16 +32,18 @@ export class TeamLeaderController {
 	@Post("/create-team")
 	@UseInterceptors(AnyFilesInterceptor())
 	async createTeam(
-		@Body() createTeamDTO: CreateTeamDTO,
+		@Body()
+		{ teamName, description }: { teamName: string; description: string },
 		@UploadedFiles() logo: Express.Multer.File[],
+		@Req() { user }: IRequestUser,
 	): Promise<Team> {
-		return this.createTeamUseCase.execute({ ...createTeamDTO, logo });
+		return this.createTeamUseCase.execute({ teamLeaderId: user.id, teamName, description, logo });
 	}
 
 	@Post("/send-invitation")
 	async sendTeamInvitation(
 		@Body() sendInvitationDTO: SendInvitationDTO,
 	): Promise<string> {
-		return this.sendTeamInvitationUseCase.execute(sendInvitationDTO)
+		return this.sendTeamInvitationUseCase.execute(sendInvitationDTO);
 	}
 }
