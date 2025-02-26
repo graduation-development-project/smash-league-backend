@@ -110,8 +110,6 @@ model TeamInvitation {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@unique([teamId, invitedUserId])
 }
 
 enum InvitationStatus {

@@ -1,13 +1,21 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { TeamLeadersRepositoryPort } from "../../domain/repositories/team-leaders.repository.port";
 import { PrismaService } from "../services/prisma.service";
-import { Notification, Team, User, UserTeam } from "@prisma/client";
+import {
+	InvitationStatus,
+	Notification,
+	Team,
+	User,
+	UserTeam,
+} from "@prisma/client";
 import { SendInvitationDTO } from "../../domain/dtos/team-leaders/send-invitation.dto";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { UploadService } from "../services/upload.service";
 import { CreateTeamDTO } from "../../domain/dtos/team-leaders/create-team.dto";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
 import { RoleMap } from "../enums/role.enum";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -16,6 +24,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 	constructor(
 		private prismaService: PrismaService,
 		private uploadService: UploadService,
+		@InjectQueue("emailQueue") private emailQueue: Queue,
 	) {}
 
 	async createTeam(createTeamDTO: CreateTeamDTO): Promise<Team> {
@@ -98,6 +107,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 				}),
 				this.prismaService.team.findUnique({
 					where: { id: teamId },
+					include: { teamLeader: true },
 				}),
 			]);
 
@@ -118,43 +128,67 @@ export class PrismaTeamLeadersRepositoryAdapter
 			}
 
 			const existingInvitation =
-				await this.prismaService.teamInvitation.findUnique({
+				await this.prismaService.teamInvitation.findFirst({
 					where: {
-						teamId_invitedUserId: {
-							teamId,
-							invitedUserId: userExisted.id,
-						},
+						teamId,
+						invitedUserId: userExisted.id,
+						status: InvitationStatus.PENDING,
 					},
 				});
 
 			await this.prismaService.$transaction(async (prisma) => {
-				if (existingInvitation) {
+				const oneDayInMs = 24 * 60 * 60 * 1000;
+				const now = new Date();
+
+				if (existingInvitation?.status === InvitationStatus.PENDING) {
+					let timeSinceLastInvitation: number;
+
+					if (existingInvitation.updatedAt !== null) {
+						timeSinceLastInvitation =
+							now.getTime() - existingInvitation.updatedAt.getTime();
+					} else {
+						timeSinceLastInvitation =
+							now.getTime() - existingInvitation.createdAt.getTime();
+					}
+
+					if (timeSinceLastInvitation < oneDayInMs) {
+						throw new BadRequestException(
+							"You need to wait 1 day to create a new invitation",
+						);
+					}
+
 					await prisma.teamInvitation.update({
 						where: { id: existingInvitation.id },
-						data: { updatedAt: convertToLocalTime(new Date()) },
+						data: { updatedAt: now, status: InvitationStatus.PENDING },
 					});
+
 				} else {
 					await prisma.teamInvitation.create({
-						data: {
-							teamId,
-							invitedUserId: userExisted.id,
-						},
+						data: { teamId, invitedUserId: userExisted.id },
 					});
 				}
 
-				const createdNotification: Notification =
-					await prisma.notification.create({
-						data: {
-							typeId: NotificationTypeMap.Invitation.id,
-							message: `You have an invitation from team ${teamExisted.teamName}`,
-							title: `You have an invitation from team ${teamExisted.teamName}`,
-						},
-					});
+				const message = `You have an invitation from team ${teamExisted.teamName}`;
+
+				const notification: Notification = await prisma.notification.create({
+					data: {
+						typeId: NotificationTypeMap.Invitation.id,
+						message,
+						title: message,
+					},
+				});
 
 				await prisma.userNotification.create({
-					data: {
-						userId: userExisted.id,
-						notificationId: createdNotification.id,
+					data: { userId: userExisted.id, notificationId: notification.id },
+				});
+
+				await this.emailQueue.add("sendEmail", {
+					to: invitedUserEmail,
+					subject: `You have an invitation from team ${teamExisted.teamName}`,
+					template: "team-invitation.hbs",
+					context: {
+						teamLeader: `${teamExisted.teamLeader.firstName} ${teamExisted.teamLeader.lastName}`,
+						teamName: teamExisted.teamName,
 					},
 				});
 			});
