@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { TeamLeadersRepositoryPort } from "../../domain/repositories/team-leaders.repository.port";
 import { PrismaService } from "../services/prisma.service";
-import { Team, User, UserTeam } from "@prisma/client";
+import { Notification, Team, User, UserTeam } from "@prisma/client";
 import { SendInvitationDTO } from "../../domain/dtos/team-leaders/send-invitation.dto";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { UploadService } from "../services/upload.service";
 import { CreateTeamDTO } from "../../domain/dtos/team-leaders/create-team.dto";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
+import { RoleMap } from "../enums/role.enum";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -67,6 +68,13 @@ export class PrismaTeamLeadersRepositoryAdapter
 					data: {
 						teamId: createdTeam.id,
 						userId: teamLeaderId,
+					},
+				});
+
+				await prisma.userRole.create({
+					data: {
+						userId: teamLeaderId,
+						roleId: RoleMap.Team_Leader.id,
 					},
 				});
 
@@ -134,11 +142,19 @@ export class PrismaTeamLeadersRepositoryAdapter
 					});
 				}
 
-				await prisma.notification.create({
+				const createdNotification: Notification =
+					await prisma.notification.create({
+						data: {
+							typeId: NotificationTypeMap.Invitation.id,
+							message: `You have an invitation from team ${teamExisted.teamName}`,
+							title: `You have an invitation from team ${teamExisted.teamName}`,
+						},
+					});
+
+				await prisma.userNotification.create({
 					data: {
-						typeId: NotificationTypeMap.Invitation.id,
-						message: `You have an invitation from team ${teamExisted.teamName}`,
-						title: `You have an invitation from team ${teamExisted.teamName}`,
+						userId: userExisted.id,
+						notificationId: createdNotification.id,
 					},
 				});
 			});
