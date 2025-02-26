@@ -1,16 +1,18 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
 import { BadmintonParticipantType, Tournament } from "@prisma/client";
 import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/tournament/get-all-badminton-participant-type.usecase";
+import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
 import { GetAllTournamentUseCase } from "src/application/usecases/tournament/get-all-tournament.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { TournamentEntity } from "src/domain/entities/tournament/tournament.entity";
-import { CreateTournament, ParticipantType } from "src/domain/interfaces/tournament.class";
+import { CreateTournament, FormatType, ParticipantType } from "src/domain/interfaces/tournament.class";
 
 @Controller("/tournaments")
 export class TournamentController {
 	constructor(
 		private readonly getAllTournamentUseCase: GetAllTournamentUseCase,
-		private readonly getAllBadmintonParticipantTypeUseCase: GetAllBadmintonParticipantTypeUseCase
+		private readonly getAllBadmintonParticipantTypeUseCase: GetAllBadmintonParticipantTypeUseCase,
+		private readonly getAllFormatTypeUseCase: GetAllFormatTypeUseCase
 	) {	
 	}
 
@@ -27,5 +29,10 @@ export class TournamentController {
 	@Get("/get-all-badminton-participant-type")
 	async getAllTournamentEvent() : Promise<ApiResponse<ParticipantType[]>> {
 		return await this.getAllBadmintonParticipantTypeUseCase.execute();
+	}
+
+	@Get("/get-all-format-types")
+	async getAllFormatTypes() : Promise<ApiResponse<FormatType[]>> {
+		return await this.getAllFormatTypeUseCase.execute();
 	}
 }
