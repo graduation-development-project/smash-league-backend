@@ -8,6 +8,7 @@ import {
 import { RegisterNewRoleDTO } from "../dtos/athletes/register-new-role.dto";
 import { TUserWithRole } from "../../infrastructure/types/users.type";
 import { TCloudinaryResponse } from "../../infrastructure/types/cloudinary.type";
+import { ResponseToTeamInvitationDTO } from "../dtos/athletes/response-to-team-invitation.dto";
 
 export interface AthletesRepositoryPort {
 	registerTournament(
@@ -27,4 +28,8 @@ export interface AthletesRepositoryPort {
 	registerNewRole(
 		registerNewRoleDTO: RegisterNewRoleDTO,
 	): Promise<UserVerification>;
+
+	responseToTeamInvitation(
+		responseToTeamInvitationDTO: ResponseToTeamInvitationDTO,
+	): Promise<string>;
 }

@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import {
+	InvitationStatus,
+	TeamInvitation,
 	Tournament,
 	TournamentRegistration,
 	UserRole,
@@ -14,6 +16,8 @@ import { v2 as cloudinary } from "cloudinary";
 import { PrismaService } from "../services/prisma.service";
 import { TournamentStatusEnum } from "../enums/tournament-status.enum";
 import { UploadService } from "../services/upload.service";
+import { ResponseToTeamInvitationDTO } from "../../domain/dtos/athletes/response-to-team-invitation.dto";
+import { NotificationTypeMap } from "../enums/notification-type.enum";
 
 const streamifier = require("streamifier");
 
@@ -158,7 +162,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		registerNewRoleDTO: RegisterNewRoleDTO,
 	): Promise<UserVerification> {
 		try {
-			console.log(registerNewRoleDTO)
+			console.log(registerNewRoleDTO);
 			const { files, role, userId } = registerNewRoleDTO;
 
 			const roleExisted: UserRole = await this.prisma.userRole.findUnique({
@@ -193,7 +197,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				userId,
 			);
 
-			console.log(imageUrls)
+			console.log(imageUrls);
 
 			if (!imageUrls) {
 				throw new BadRequestException("Upload images fail");
@@ -210,6 +214,72 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				},
 			});
 		} catch (e) {
+			throw e;
+		}
+	}
+
+	async responseToTeamInvitation(
+		responseToTeamInvitationDTO: ResponseToTeamInvitationDTO,
+	): Promise<string> {
+		const { invitationId, option } = responseToTeamInvitationDTO;
+
+		try {
+			const existedInvitation = await this.prisma.teamInvitation.findUnique({
+				where: {
+					id: invitationId,
+					status: InvitationStatus.PENDING,
+				},
+
+				include: {
+					invitedUser: true,
+					team: true,
+				},
+			});
+
+			if (!existedInvitation) {
+				throw new BadRequestException("This invitation does not exist");
+			}
+
+			let athleteName: string = `${existedInvitation.invitedUser.firstName} ${existedInvitation.invitedUser.lastName}`;
+
+			await this.prisma.$transaction(async (prisma) => {
+				await prisma.teamInvitation.update({
+					where: { id: invitationId },
+					data: {
+						status: option
+							? InvitationStatus.ACCEPTED
+							: InvitationStatus.REJECTED,
+					},
+				});
+
+				if (option) {
+					await prisma.userTeam.create({
+						data: {
+							userId: existedInvitation.invitedUserId,
+							teamId: existedInvitation.teamId,
+						},
+					});
+				}
+
+				const createdNotification = await prisma.notification.create({
+					data: {
+						title: option ? "Accept join team" : "Reject join team",
+						message: `${athleteName} ${option ? "accepted your invitation" : "rejected your invitation"}`,
+						typeId: NotificationTypeMap.Reject.id,
+					},
+				});
+
+				await prisma.userNotification.create({
+					data: {
+						notificationId: createdNotification.id,
+						userId: existedInvitation.team.teamLeaderId,
+					},
+				});
+			});
+
+			return option ? "Accept Successfully" : "Reject Successfully";
+		} catch (e) {
+			console.error("Response to invitation failed", e);
 			throw e;
 		}
 	}

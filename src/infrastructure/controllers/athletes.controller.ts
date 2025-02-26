@@ -28,6 +28,8 @@ import { TUserWithRole } from "../types/users.type";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 // import { UploadVerificationImagesUseCase } from "../../application/usecases/athletes/upload-verification-images.usecase";
 import { TCloudinaryResponse } from "../types/cloudinary.type";
+import { ResponseToTeamInvitationDTO } from "../../domain/dtos/athletes/response-to-team-invitation.dto";
+import { ResponseToTeamInvitationUseCase } from "../../application/usecases/athletes/response-to-team-invitation.usecase";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -37,6 +39,7 @@ export class AthletesController {
 		private registerTournamentUseCase: RegisterTournamentUseCase,
 		private getParticipatedTournamentsUseCase: GetParticipatedTournamentsUseCase,
 		private registerNewRoleUseCase: RegisterNewRoleUseCase,
+		private responseToTeamInvitationUseCase: ResponseToTeamInvitationUseCase,
 		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
@@ -80,5 +83,14 @@ export class AthletesController {
 			userId: user.id,
 			files,
 		});
+	}
+
+	@Post("response-team-invitation")
+	responseTeamInvitation(
+		@Body() responseToTeamInvitationDTO: ResponseToTeamInvitationDTO,
+	): Promise<string> {
+		return this.responseToTeamInvitationUseCase.execute(
+			responseToTeamInvitationDTO,
+		);
 	}
 }
