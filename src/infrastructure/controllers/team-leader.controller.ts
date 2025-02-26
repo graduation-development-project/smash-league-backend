@@ -37,7 +37,12 @@ export class TeamLeaderController {
 		@UploadedFiles() logo: Express.Multer.File[],
 		@Req() { user }: IRequestUser,
 	): Promise<Team> {
-		return this.createTeamUseCase.execute({ teamLeaderId: user.id, teamName, description, logo });
+		return this.createTeamUseCase.execute({
+			teamLeaderId: user.id,
+			teamName,
+			description,
+			logo,
+		});
 	}
 
 	@Post("/send-invitation")
