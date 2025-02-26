@@ -30,6 +30,7 @@ export class TeamLeaderController {
 	) {}
 
 	@Post("/create-team")
+	@Roles(RoleMap.Team_Leader.name, RoleMap.Athlete.name)
 	@UseInterceptors(AnyFilesInterceptor())
 	async createTeam(
 		@Body()
