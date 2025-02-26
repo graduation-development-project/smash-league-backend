@@ -17,6 +17,9 @@ jobs:
         docker stop database
         docker rm database
         docker volume rm smash-league-backend_postgres_data
+        docker container stop smash_league_api
+        docker container rm smash_league_api
+        docker volume rm smash-league-backend_backend_service
     - name: Run "database"
       run: docker compose up -d db 
     - name: Run "docker compose"
