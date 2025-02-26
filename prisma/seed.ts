@@ -33,6 +33,9 @@ async function main() {
 		{
 			typeOfNotification: "Approve",
 		},
+		{
+			typeOfNotification: "Invitation",
+		},
 	];
 
 	roles.map(async (role) => {
