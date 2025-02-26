@@ -23,7 +23,7 @@ export class SignUpDTO extends PartialType(CreateUserDTO) {
 	email: string;
 
 	@IsNotEmpty()
-	@IsPhoneNumber()
+	@IsPhoneNumber("VN")
 	phoneNumber: string;
 
 	@IsNotEmpty()
