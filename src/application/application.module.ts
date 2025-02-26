@@ -46,6 +46,7 @@ import {
 } from "../infrastructure/repositories/prisma.team-leaders.repository.adapter";
 import {CreateTeamUseCase} from "./usecases/team-leader/create-team.usecase";
 import {SendTeamInvitationUseCase} from "./usecases/team-leader/send-team-invitation.usecase";
+import { GetAllBadmintonParticipantTypeUseCase } from "./usecases/tournament/get-all-badminton-participant-type.usecase";
 
 @Module({
 	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule, ConfigModule],
@@ -122,6 +123,7 @@ import {SendTeamInvitationUseCase} from "./usecases/team-leader/send-team-invita
 		GetAllTournamentUseCase,
 		CreateTeamUseCase,
 		SendTeamInvitationUseCase,
+		GetAllBadmintonParticipantTypeUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -152,6 +154,7 @@ import {SendTeamInvitationUseCase} from "./usecases/team-leader/send-team-invita
 		GetAllTournamentUseCase,
 		CreateTeamUseCase,
 		SendTeamInvitationUseCase,
+		GetAllBadmintonParticipantTypeUseCase
 	],
 })
 export class ApplicationModule {}
