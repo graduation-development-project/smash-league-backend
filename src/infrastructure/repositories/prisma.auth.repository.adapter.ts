@@ -135,7 +135,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				...signUpDTO,
 				password: hashedPassword,
 				otp,
-				otpExpiresTime: convertToLocalTime(otpExpiresTime),
+				otpExpiresTime: otpExpiresTime,
 			});
 
 			await this.emailQueue.add("sendEmail", {
@@ -173,7 +173,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				where: { email },
 				data: {
 					otp,
-					otpExpiresTime: convertToLocalTime(otpExpiresTime),
+					otpExpiresTime: otpExpiresTime,
 				},
 			});
 
@@ -233,7 +233,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				where: { email },
 				data: {
 					otp,
-					otpExpiresTime: convertToLocalTime(otpExpiresTime),
+					otpExpiresTime: otpExpiresTime,
 				},
 			});
 
