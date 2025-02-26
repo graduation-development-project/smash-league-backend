@@ -1,6 +1,7 @@
 import { RegisterTournamentDTO } from "../dtos/athletes/register-tournament.dto";
 import {
-	Tournament, TournamentRegistration,
+	Tournament,
+	TournamentRegistration,
 	User,
 	UserVerification,
 } from "@prisma/client";
@@ -18,13 +19,12 @@ export interface AthletesRepositoryPort {
 		tournamentStatus: string,
 	): Promise<Tournament[]>;
 
-	uploadVerificationImage(
-		files: Express.Multer.File[],
-		userID: string,
-	): Promise<TCloudinaryResponse[]>;
+	// uploadVerificationImage(
+	// 	files: Express.Multer.File[],
+	// 	userID: string,
+	// ): Promise<TCloudinaryResponse[]>;
 
 	registerNewRole(
-		userID: string,
 		registerNewRoleDTO: RegisterNewRoleDTO,
 	): Promise<UserVerification>;
 }

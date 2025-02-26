@@ -26,7 +26,7 @@ import { RegisterNewRoleUseCase } from "../../application/usecases/athletes/regi
 import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
 import { TUserWithRole } from "../types/users.type";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
-import { UploadVerificationImagesUseCase } from "../../application/usecases/athletes/upload-verification-images.usecase";
+// import { UploadVerificationImagesUseCase } from "../../application/usecases/athletes/upload-verification-images.usecase";
 import { TCloudinaryResponse } from "../types/cloudinary.type";
 
 @Controller("/athletes")
@@ -37,7 +37,7 @@ export class AthletesController {
 		private registerTournamentUseCase: RegisterTournamentUseCase,
 		private getParticipatedTournamentsUseCase: GetParticipatedTournamentsUseCase,
 		private registerNewRoleUseCase: RegisterNewRoleUseCase,
-		private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
+		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
 	@Post("register-tournament")
@@ -58,21 +58,27 @@ export class AthletesController {
 		);
 	}
 
-	@Post("upload-verification-images")
-	@UseInterceptors(AnyFilesInterceptor())
-	uploadVerificationImage(
-		@Req() { user }: IRequestUser,
-		@UploadedFiles() files: Express.Multer.File[],
-	): Promise<TCloudinaryResponse[]> {
-		console.log("files", files);
-		return this.uploadVerificationImagesUseCase.execute(files, user.id);
-	}
+	// @Post("upload-verification-images")
+	// @UseInterceptors(AnyFilesInterceptor())
+	// uploadVerificationImage(
+	// 	@Req() { user }: IRequestUser,
+	// 	@UploadedFiles() files: Express.Multer.File[],
+	// ): Promise<TCloudinaryResponse[]> {
+	// 	console.log("files", files);
+	// 	return this.uploadVerificationImagesUseCase.execute(files, user.id);
+	// }
 
 	@Post("register-new-role")
+	@UseInterceptors(AnyFilesInterceptor())
 	registerNewRole(
 		@Req() { user }: IRequestUser,
+		@UploadedFiles() files: Express.Multer.File[],
 		@Body() registerNewRoleDTO: RegisterNewRoleDTO,
 	): Promise<UserVerification> {
-		return this.registerNewRoleUseCase.execute(user.id, registerNewRoleDTO);
+		return this.registerNewRoleUseCase.execute({
+			...registerNewRoleDTO,
+			userId: user.id,
+			files,
+		});
 	}
 }

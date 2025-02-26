@@ -22,7 +22,7 @@ export class UploadService {
 						{
 							resource_type: "auto",
 							folder: folderName,
-							public_id: `${prefix}-${now.toISOString()}`,
+							public_id: `${prefix}-${file.fieldname}-${now.toISOString()}`,
 						},
 						(error, result) => {
 							if (error) return reject(error);

@@ -6,13 +6,11 @@ import { RegisterNewRoleDTO } from "../../../domain/dtos/athletes/register-new-r
 @Injectable()
 export class RegisterNewRoleUseCase {
 	constructor(
-		@Inject("AthleteRepository") private athletesRepository: AthletesRepositoryPort,
+		@Inject("AthleteRepository")
+		private athletesRepository: AthletesRepositoryPort,
 	) {}
 
-	execute(
-		userID: string,
-		registerNewRoleDTO: RegisterNewRoleDTO,
-	): Promise<UserVerification> {
-		return this.athletesRepository.registerNewRole(userID, registerNewRoleDTO);
+	execute(registerNewRoleDTO: RegisterNewRoleDTO): Promise<UserVerification> {
+		return this.athletesRepository.registerNewRole(registerNewRoleDTO);
 	}
 }
