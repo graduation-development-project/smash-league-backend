@@ -88,9 +88,11 @@ export class AthletesController {
 	@Post("response-team-invitation")
 	responseTeamInvitation(
 		@Body() responseToTeamInvitationDTO: ResponseToTeamInvitationDTO,
+		@Req() { user }: IRequestUser,
 	): Promise<string> {
-		return this.responseToTeamInvitationUseCase.execute(
-			responseToTeamInvitationDTO,
-		);
+		return this.responseToTeamInvitationUseCase.execute({
+			...responseToTeamInvitationDTO,
+			invitedUserId: user.id,
+		});
 	}
 }

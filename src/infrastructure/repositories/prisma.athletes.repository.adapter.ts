@@ -221,13 +221,14 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 	async responseToTeamInvitation(
 		responseToTeamInvitationDTO: ResponseToTeamInvitationDTO,
 	): Promise<string> {
-		const { invitationId, option } = responseToTeamInvitationDTO;
+		const { invitationId, option, invitedUserId } = responseToTeamInvitationDTO;
 
 		try {
 			const existedInvitation = await this.prisma.teamInvitation.findUnique({
 				where: {
 					id: invitationId,
 					status: InvitationStatus.PENDING,
+					invitedUserId,
 				},
 
 				include: {
