@@ -6,19 +6,18 @@ import {
 	Notification,
 	Team,
 	TeamStatus,
-	User,
 	UserTeam,
 } from "@prisma/client";
 import { SendInvitationDTO } from "../../domain/dtos/team-leaders/send-invitation.dto";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { UploadService } from "../services/upload.service";
 import { CreateTeamDTO } from "../../domain/dtos/team-leaders/create-team.dto";
-import { convertToLocalTime } from "../util/convert-to-local-time.util";
 import { RoleMap } from "../enums/role.enum";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
+import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -47,7 +46,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 
 			const existedTeamName = await this.prismaService.team.findMany({
 				where: {
-					teamName: { contains: teamName, mode: "insensitive" },
+					teamName: { equals: teamName, mode: "insensitive" },
 					status: TeamStatus.ACTIVE,
 				},
 			});
@@ -56,7 +55,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 				throw new BadRequestException("This team name is already in use");
 			}
 
-			const folderName = `verification-information/${new Date().toISOString().split("T")[0]}/${teamName}`;
+			const folderName = `team/${new Date().toISOString().split("T")[0]}/${teamName}`;
 
 			const imageUrls = await this.uploadService.uploadFiles(
 				logo,
@@ -260,6 +259,67 @@ export class PrismaTeamLeadersRepositoryAdapter
 			return "Team will be deleted in 24 hours.";
 		} catch (e) {
 			console.error(`Failed to remove team: ${teamId}`, e.message, e.stack);
+			throw e;
+		}
+	}
+
+	async editTeam(editTeamDTO: EditTeamDTO): Promise<Team> {
+		const { teamId, teamName, description, logo, teamLeaderId } = editTeamDTO;
+		try {
+			const team: Team = await this.prismaService.team.findUnique({
+				where: {
+					id: teamId,
+					teamLeaderId: teamLeaderId,
+				},
+			});
+
+			if (!team) {
+				throw new BadRequestException(`Team does not exist.`);
+			}
+
+			const updateData: Partial<Team> = {};
+
+			if (logo.length > 0) {
+				const folderName = `team/${new Date().toISOString().split("T")[0]}/${teamName || team.teamName}`;
+
+				const imageUrls = await this.uploadService.uploadFiles(
+					logo,
+					folderName,
+					teamName || team.teamName,
+				);
+
+				if (!imageUrls.length)
+					throw new BadRequestException("Upload images failed");
+
+				updateData.logo = imageUrls[0].secure_url;
+			}
+
+			if (teamName) {
+				const existedTeamName = await this.prismaService.team.findMany({
+					where: {
+						teamName: { equals: teamName, mode: "insensitive" },
+						status: TeamStatus.ACTIVE,
+						id: { not: teamId },
+					},
+				});
+
+				if (existedTeamName.length > 0) {
+					throw new BadRequestException("This team name is already in use");
+				}
+
+				updateData.teamName = teamName;
+			}
+
+			if (description !== undefined && description !== team.description) {
+				updateData.description = description;
+			}
+
+			return await this.prismaService.team.update({
+				where: { id: teamId },
+				data: updateData,
+			});
+		} catch (e) {
+			console.error("Edit team failed", e.message, e.stack);
 			throw e;
 		}
 	}

@@ -21,6 +21,8 @@ import { Send } from "express";
 import { SendInvitationDTO } from "../../domain/dtos/team-leaders/send-invitation.dto";
 import { IRequestUser } from "../../domain/interfaces/interfaces";
 import { RemoveTeamUseCase } from "../../application/usecases/team-leader/remove-team.usecase";
+import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
+import {EditTeamUseCase} from "../../application/usecases/team-leader/edit-team.usecase";
 
 @Controller("/team-leaders")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -30,6 +32,7 @@ export class TeamLeaderController {
 		private createTeamUseCase: CreateTeamUseCase,
 		private sendTeamInvitationUseCase: SendTeamInvitationUseCase,
 		private removeTeamUseCase: RemoveTeamUseCase,
+		private editTeamUseCase: EditTeamUseCase,
 	) {}
 
 	@Post("/create-team")
@@ -44,7 +47,7 @@ export class TeamLeaderController {
 		return this.createTeamUseCase.execute({
 			teamLeader: user,
 			teamName,
-		description,
+			description,
 			logo,
 		});
 	}
@@ -62,5 +65,19 @@ export class TeamLeaderController {
 		@Req() { user }: IRequestUser,
 	): Promise<string> {
 		return this.removeTeamUseCase.execute(teamId, user.id);
+	}
+
+	@Put("edit-team")
+	@UseInterceptors(AnyFilesInterceptor())
+	editTeam(
+		@Body() editTeamDTO: EditTeamDTO,
+		@UploadedFiles() logo: Express.Multer.File[],
+		@Req() { user }: IRequestUser,
+	): Promise<Team> {
+		return this.editTeamUseCase.execute({
+			...editTeamDTO,
+			teamLeaderId: user.id,
+			logo
+		});
 	}
 }

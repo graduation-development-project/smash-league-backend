@@ -49,6 +49,7 @@ import { GetAllBadmintonParticipantTypeUseCase } from "./usecases/tournament/get
 import { GetAllFormatTypeUseCase } from "./usecases/tournament/get-all-format-type.usecase";
 import { TeamQueueModule } from "../infrastructure/background-jobs/team/team.queue.module";
 import {RemoveTeamUseCase} from "./usecases/team-leader/remove-team.usecase";
+import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
 
 @Module({
 	imports: [
@@ -135,6 +136,7 @@ import {RemoveTeamUseCase} from "./usecases/team-leader/remove-team.usecase";
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		RemoveTeamUseCase,
+		EditTeamUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -169,6 +171,7 @@ import {RemoveTeamUseCase} from "./usecases/team-leader/remove-team.usecase";
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		RemoveTeamUseCase,
+		EditTeamUseCase,
 	],
 })
 export class ApplicationModule {}
