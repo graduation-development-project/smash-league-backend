@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "TeamStatus" AS ENUM ('ACTIVE', 'INACTIVE', 'WAITING_DISBAND');
+
+-- CreateEnum
 CREATE TYPE "InvitationStatus" AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED');
 
 -- CreateEnum
@@ -90,7 +93,7 @@ CREATE TABLE "Team" (
     "teamName" TEXT NOT NULL,
     "description" TEXT,
     "logo" TEXT,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "status" "TeamStatus" NOT NULL DEFAULT 'ACTIVE',
     "teamLeaderId" TEXT NOT NULL,
 
     CONSTRAINT "Team_pkey" PRIMARY KEY ("id")
@@ -299,9 +302,6 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_phoneNumber_key" ON "User"("phoneNumber");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Team_teamLeaderId_key" ON "Team"("teamLeaderId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Notification_teamInvitationId_key" ON "Notification"("teamInvitationId");
