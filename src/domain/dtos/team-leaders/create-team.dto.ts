@@ -1,9 +1,9 @@
-import {IsArray, IsNotEmpty, IsOptional, IsString} from "class-validator";
+import { IsArray, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {TUserWithRole} from "../../../infrastructure/types/users.type";
 
 export class CreateTeamDTO {
-	@IsString()
 	@IsNotEmpty()
-	teamLeaderId: string;
+	teamLeader: TUserWithRole;
 
 	@IsString()
 	@IsNotEmpty()
