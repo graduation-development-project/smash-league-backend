@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	Post,
+	Put,
 	Req,
 	UploadedFiles,
 	UseGuards,
@@ -19,6 +20,7 @@ import { SendTeamInvitationUseCase } from "../../application/usecases/team-leade
 import { Send } from "express";
 import { SendInvitationDTO } from "../../domain/dtos/team-leaders/send-invitation.dto";
 import { IRequestUser } from "../../domain/interfaces/interfaces";
+import { RemoveTeamUseCase } from "../../application/usecases/team-leader/remove-team.usecase";
 
 @Controller("/team-leaders")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -27,6 +29,7 @@ export class TeamLeaderController {
 	constructor(
 		private createTeamUseCase: CreateTeamUseCase,
 		private sendTeamInvitationUseCase: SendTeamInvitationUseCase,
+		private removeTeamUseCase: RemoveTeamUseCase,
 	) {}
 
 	@Post("/create-team")
@@ -39,9 +42,9 @@ export class TeamLeaderController {
 		@Req() { user }: IRequestUser,
 	): Promise<Team> {
 		return this.createTeamUseCase.execute({
-			teamLeaderId: user.id,
+			teamLeader: user,
 			teamName,
-			description,
+		description,
 			logo,
 		});
 	}
@@ -51,5 +54,13 @@ export class TeamLeaderController {
 		@Body() sendInvitationDTO: SendInvitationDTO,
 	): Promise<string> {
 		return this.sendTeamInvitationUseCase.execute(sendInvitationDTO);
+	}
+
+	@Put("/remove-team")
+	async removeTeam(
+		@Body("teamId") teamId: string,
+		@Req() { user }: IRequestUser,
+	): Promise<string> {
+		return this.removeTeamUseCase.execute(teamId, user.id);
 	}
 }

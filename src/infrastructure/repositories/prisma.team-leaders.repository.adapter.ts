@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { TeamLeadersRepositoryPort } from "../../domain/repositories/team-leaders.repository.port";
 import { PrismaService } from "../services/prisma.service";
 import {
 	InvitationStatus,
 	Notification,
 	Team,
+	TeamStatus,
 	User,
 	UserTeam,
 } from "@prisma/client";
@@ -16,6 +17,8 @@ import { convertToLocalTime } from "../util/convert-to-local-time.util";
 import { RoleMap } from "../enums/role.enum";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
+import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
+import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -25,14 +28,17 @@ export class PrismaTeamLeadersRepositoryAdapter
 		private prismaService: PrismaService,
 		private uploadService: UploadService,
 		@InjectQueue("emailQueue") private emailQueue: Queue,
+		@InjectQueue("teamQueue") private teamQueue: Queue,
+		@Inject("NotificationRepository")
+		private notificationsRepository: NotificationsRepositoryPort,
 	) {}
 
 	async createTeam(createTeamDTO: CreateTeamDTO): Promise<Team> {
-		let { teamLeaderId, teamName, logo, description } = createTeamDTO;
+		let { teamLeader, teamName, logo, description } = createTeamDTO;
 
 		try {
 			const existedTeam: Team[] = await this.prismaService.team.findMany({
-				where: { teamLeaderId },
+				where: { teamLeaderId: teamLeader.id },
 			});
 
 			if (existedTeam.length >= 3) {
@@ -42,6 +48,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 			const existedTeamName = await this.prismaService.team.findMany({
 				where: {
 					teamName: { contains: teamName, mode: "insensitive" },
+					status: TeamStatus.ACTIVE,
 				},
 			});
 
@@ -57,8 +64,6 @@ export class PrismaTeamLeadersRepositoryAdapter
 				teamName,
 			);
 
-			console.log(imageUrls);
-
 			if (imageUrls.length <= 0) {
 				throw new BadRequestException("Upload images fail");
 			}
@@ -66,7 +71,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 			return this.prismaService.$transaction(async (prisma) => {
 				const createdTeam: Team = await prisma.team.create({
 					data: {
-						teamLeaderId,
+						teamLeaderId: teamLeader.id,
 						teamName,
 						logo: imageUrls[0].secure_url,
 						description,
@@ -76,16 +81,19 @@ export class PrismaTeamLeadersRepositoryAdapter
 				await prisma.userTeam.create({
 					data: {
 						teamId: createdTeam.id,
-						userId: teamLeaderId,
+						userId: teamLeader.id,
 					},
 				});
 
-				await prisma.userRole.create({
-					data: {
-						userId: teamLeaderId,
-						roleId: RoleMap.Team_Leader.id,
-					},
-				});
+				//* Add role team leader if user dont have
+				if (!teamLeader.userRoles.includes(RoleMap.Team_Leader.id)) {
+					await prisma.userRole.create({
+						data: {
+							userId: teamLeader.id,
+							roleId: RoleMap.Team_Leader.id,
+						},
+					});
+				}
 
 				return createdTeam;
 			});
@@ -161,7 +169,6 @@ export class PrismaTeamLeadersRepositoryAdapter
 						where: { id: existingInvitation.id },
 						data: { updatedAt: now, status: InvitationStatus.PENDING },
 					});
-
 				} else {
 					await prisma.teamInvitation.create({
 						data: { teamId, invitedUserId: userExisted.id },
@@ -196,6 +203,63 @@ export class PrismaTeamLeadersRepositoryAdapter
 			return "Send invitation successfully!";
 		} catch (e) {
 			console.error(`Failed to send invitation: ${e.message}`, e.stack);
+			throw e;
+		}
+	}
+
+	async removeTeam(teamId: string, teamLeaderId: string): Promise<string> {
+		try {
+			const [team, usersTeam] = await Promise.all([
+				this.prismaService.team.findUnique({
+					where: { id: teamId, teamLeaderId, status: TeamStatus.ACTIVE },
+				}),
+				this.prismaService.userTeam.findMany({ where: { teamId } }),
+			]);
+
+			if (!team) {
+				throw new BadRequestException(`Team does not exist.`);
+			}
+
+			// * Send notifications for team members before disband
+			if (usersTeam.length > 0) {
+				const date = new Date();
+				date.setDate(date.getDate() + 7);
+
+				const day: string = String(date.getDate()).padStart(2, "0");
+				const month: string = String(date.getMonth() + 1).padStart(2, "0");
+				const year: string = String(date.getFullYear());
+
+				const receiverList: string[] = usersTeam.map(
+					(user: UserTeam) => user.userId,
+				);
+				const createNotificationDTO: CreateNotificationDTO = {
+					type: NotificationTypeMap.Disband.id,
+					message: `Team Leader of ${team.teamName} has decided to delete the team on ${day}/${month}/${year}. Please back up necessary data before this time.`,
+					title: `Your team (${team.teamName}) will be disbanded`,
+				};
+
+				await this.notificationsRepository.createNotification(
+					createNotificationDTO,
+					receiverList,
+				);
+
+				await this.prismaService.team.update({
+					where: {
+						id: teamId,
+					},
+					data: {
+						status: TeamStatus.WAITING_DISBAND,
+					},
+				});
+			}
+
+			await this.teamQueue.add("removeTeam", {
+				team,
+			});
+
+			return "Team will be deleted in 24 hours.";
+		} catch (e) {
+			console.error(`Failed to remove team: ${teamId}`, e.message, e.stack);
 			throw e;
 		}
 	}

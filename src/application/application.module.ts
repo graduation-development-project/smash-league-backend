@@ -32,26 +32,32 @@ import { NotificationQueueModule } from "../infrastructure/background-jobs/notif
 import { PrismaNotificationsRepositoryAdapter } from "../infrastructure/repositories/prisma.notifications.repository.adapter";
 import { GetNotificationByUserUseCase } from "./usecases/notification/get-notification-by-user.usecase";
 import { CreateNotificationUseCase } from "./usecases/notification/create-notification.usecase";
-import {PrismaService} from "../infrastructure/services/prisma.service";
+import { PrismaService } from "../infrastructure/services/prisma.service";
 import { CreatePaymentLinkUseCase } from "./usecases/payment/create-payment-link.usecase";
 import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
 import { PaymentPayOSService } from "./services/payment.service";
 import { ConfigModule } from "@nestjs/config";
-import {ResendOtpUseCase} from "./usecases/auth/resend-otp.usecase";
+import { ResendOtpUseCase } from "./usecases/auth/resend-otp.usecase";
 import { GetAllTournamentUseCase } from "./usecases/tournament/get-all-tournament.usecase";
 import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositories/prisma.tournament.repository.adapter";
-import {UploadService} from "../infrastructure/services/upload.service";
-import {
-	PrismaTeamLeadersRepositoryAdapter
-} from "../infrastructure/repositories/prisma.team-leaders.repository.adapter";
-import {CreateTeamUseCase} from "./usecases/team-leader/create-team.usecase";
-import {SendTeamInvitationUseCase} from "./usecases/team-leader/send-team-invitation.usecase";
-import {ResponseToTeamInvitationUseCase} from "./usecases/athletes/response-to-team-invitation.usecase";
+import { UploadService } from "../infrastructure/services/upload.service";
+import { PrismaTeamLeadersRepositoryAdapter } from "../infrastructure/repositories/prisma.team-leaders.repository.adapter";
+import { CreateTeamUseCase } from "./usecases/team-leader/create-team.usecase";
+import { SendTeamInvitationUseCase } from "./usecases/team-leader/send-team-invitation.usecase";
+import { ResponseToTeamInvitationUseCase } from "./usecases/athletes/response-to-team-invitation.usecase";
 import { GetAllBadmintonParticipantTypeUseCase } from "./usecases/tournament/get-all-badminton-participant-type.usecase";
 import { GetAllFormatTypeUseCase } from "./usecases/tournament/get-all-format-type.usecase";
+import { TeamQueueModule } from "../infrastructure/background-jobs/team/team.queue.module";
+import {RemoveTeamUseCase} from "./usecases/team-leader/remove-team.usecase";
 
 @Module({
-	imports: [JwtModule.register({}), EmailQueueModule, NotificationQueueModule, ConfigModule],
+	imports: [
+		JwtModule.register({}),
+		EmailQueueModule,
+		NotificationQueueModule,
+		TeamQueueModule,
+		ConfigModule,
+	],
 	controllers: [],
 	providers: [
 		{
@@ -87,11 +93,11 @@ import { GetAllFormatTypeUseCase } from "./usecases/tournament/get-all-format-ty
 		},
 		{
 			provide: "TournamentRepository",
-			useClass: PrismaTournamentRepositorAdapter
+			useClass: PrismaTournamentRepositorAdapter,
 		},
 		{
 			provide: "TeamLeaderRepository",
-			useClass: PrismaTeamLeadersRepositoryAdapter
+			useClass: PrismaTeamLeadersRepositoryAdapter,
 		},
 		MailService,
 		UploadService,
@@ -127,7 +133,8 @@ import { GetAllFormatTypeUseCase } from "./usecases/tournament/get-all-format-ty
 		SendTeamInvitationUseCase,
 		ResponseToTeamInvitationUseCase,
 		GetAllBadmintonParticipantTypeUseCase,
-		GetAllFormatTypeUseCase
+		GetAllFormatTypeUseCase,
+		RemoveTeamUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -160,7 +167,8 @@ import { GetAllFormatTypeUseCase } from "./usecases/tournament/get-all-format-ty
 		SendTeamInvitationUseCase,
 		ResponseToTeamInvitationUseCase,
 		GetAllBadmintonParticipantTypeUseCase,
-		GetAllFormatTypeUseCase
+		GetAllFormatTypeUseCase,
+		RemoveTeamUseCase,
 	],
 })
 export class ApplicationModule {}

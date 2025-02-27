@@ -82,11 +82,18 @@ model Team {
   teamName               String
   description            String?
   logo                   String?
-  teamLeaderId           String                   @unique
+  status                 TeamStatus               @default(ACTIVE)
+  teamLeaderId           String
   teamLeader             User                     @relation("FK_User_TeamLeader", fields: [teamLeaderId], references: [id], onDelete: Cascade)
   userTeams              UserTeam[]               @relation("FK_Team_UserTeam")
   tournamentRegistration TournamentRegistration[] @relation("FK_TournamentPRegistration_TournamentRegistrationTeam")
   invitations            TeamInvitation[]         @relation("FK_Team_TeamInvitation")
+}
+
+enum TeamStatus {
+  ACTIVE
+  INACTIVE
+  WAITING_DISBAND
 }
 
 model UserTeam {

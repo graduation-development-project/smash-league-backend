@@ -25,7 +25,8 @@ import { PrismaService } from "./services/prisma.service";
 import { PaymentController } from "./controllers/payment.controller";
 import { TournamentController } from "./controllers/tournament.controller";
 import { UploadService } from "./services/upload.service";
-import {TeamLeaderController} from "./controllers/team-leader.controller";
+import { TeamLeaderController } from "./controllers/team-leader.controller";
+import { TeamQueueModule } from "./background-jobs/team/team.queue.module";
 
 @Module({
 	imports: [
@@ -35,6 +36,7 @@ import {TeamLeaderController} from "./controllers/team-leader.controller";
 		ConfigModule,
 		EmailQueueModule,
 		NotificationQueueModule,
+		TeamQueueModule,
 		MailerModule.forRootAsync({
 			useFactory: (configService: ConfigService) => ({
 				transport: {
