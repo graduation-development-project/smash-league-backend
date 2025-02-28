@@ -27,6 +27,7 @@ import { TournamentController } from "./controllers/tournament.controller";
 import { UploadService } from "./services/upload.service";
 import { TeamLeaderController } from "./controllers/team-leader.controller";
 import { TeamQueueModule } from "./background-jobs/team/team.queue.module";
+import {GoogleStrategy} from "./strategies/auth/google.strategy";
 
 @Module({
 	imports: [
@@ -80,6 +81,7 @@ import { TeamQueueModule } from "./background-jobs/team/team.queue.module";
 		LocalStrategy,
 		JwtAccessTokenStrategy,
 		JwtRefreshTokenStrategy,
+		GoogleStrategy,
 		MailService,
 		PrismaService,
 		UploadService,

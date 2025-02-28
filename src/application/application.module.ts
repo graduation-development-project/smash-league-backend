@@ -50,6 +50,7 @@ import { GetAllFormatTypeUseCase } from "./usecases/tournament/get-all-format-ty
 import { TeamQueueModule } from "../infrastructure/background-jobs/team/team.queue.module";
 import {RemoveTeamUseCase} from "./usecases/team-leader/remove-team.usecase";
 import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
+import {AuthService} from "./services/auth.service";
 
 @Module({
 	imports: [
@@ -103,6 +104,7 @@ import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
 		MailService,
 		UploadService,
 		PaymentPayOSService,
+		AuthService,
 		PrismaService,
 		ApplicationFunction,
 		GetUserByIdUseCase,
@@ -125,7 +127,6 @@ import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
 		ResetPasswordUseCase,
 		GetPackagesUseCase,
 		CreatePaymentLinkUseCase,
-		GetPackagesUseCase,
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
 		ResendOtpUseCase,
@@ -163,6 +164,7 @@ import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
 		GetPackagesUseCase,
 		CreatePaymentLinkUseCase,
 		PaymentPayOSService,
+		AuthService,
 		ResendOtpUseCase,
 		GetAllTournamentUseCase,
 		CreateTeamUseCase,

@@ -1,4 +1,13 @@
-import { Body, Controller, Post, Put, Req, UseGuards } from "@nestjs/common";
+import {
+	Body,
+	Controller,
+	Get,
+	Post,
+	Put,
+	Req,
+	Res,
+	UseGuards,
+} from "@nestjs/common";
 
 import { SignUpUseCase } from "../../application/usecases/auth/sign-up.usecase";
 import { SignUpDTO } from "../../domain/dtos/auth/sign-up.dto";
@@ -18,6 +27,7 @@ import { SendResetPasswordLinkUseCase } from "../../application/usecases/auth/se
 import { ResetPasswordDTO } from "../../domain/dtos/auth/reset-password.dto";
 import { ResetPasswordUseCase } from "../../application/usecases/auth/reset-password.usecase";
 import { ResendOtpUseCase } from "../../application/usecases/auth/resend-otp.usecase";
+import { GoogleAuthGuard } from "../guards/auth/google-auth.guard";
 
 @Controller("/auth")
 export class AuthController {
@@ -30,6 +40,17 @@ export class AuthController {
 		private resetPasswordUseCase: ResetPasswordUseCase,
 		private resendOtpUseCase: ResendOtpUseCase,
 	) {}
+
+	@UseGuards(GoogleAuthGuard)
+	@Get("google/login")
+	googleLogin() {}
+
+	@UseGuards(GoogleAuthGuard)
+	@Get("google/callback")
+	googleCallback(@Req() { user }: IRequestUser) {
+		console.log(user)
+		return this.signInUseCase.execute(user);
+	}
 
 	@UseGuards(LocalAuthGuard)
 	@Post("/sign-in")
