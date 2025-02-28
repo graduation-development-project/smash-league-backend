@@ -4,6 +4,7 @@ import { PrismaService } from "../services/prisma.service";
 import {
 	InvitationStatus,
 	Notification,
+	ReasonType,
 	Team,
 	TeamStatus,
 	UserTeam,
@@ -18,6 +19,7 @@ import { Queue } from "bullmq";
 import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
 import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
+import { RemoveTeamMemberDTO } from "../../domain/dtos/team-leaders/remove-team-member.dto";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -320,6 +322,68 @@ export class PrismaTeamLeadersRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("Edit team failed", e.message, e.stack);
+			throw e;
+		}
+	}
+
+	async removeTeamMember(
+		removeTeamMemberDTO: RemoveTeamMemberDTO,
+	): Promise<string> {
+		const { teamMemberIds, reason, teamId, teamLeaderId } = removeTeamMemberDTO;
+
+		try {
+			const teamExisted: Team = await this.prismaService.team.findUnique({
+				where: { id: teamId, teamLeaderId },
+			});
+
+			if (!teamExisted) {
+				throw new BadRequestException("Team does not exist.");
+			}
+
+			if (teamMemberIds.length <= 0) {
+				throw new BadRequestException("Remove list cannot empty");
+			}
+
+			const checkIncludeTeamLeader = teamMemberIds.find(
+				(id) => id === teamLeaderId,
+			);
+
+			if (checkIncludeTeamLeader) {
+				throw new BadRequestException(
+					"Remove list can not include team leader",
+				);
+			}
+
+			await this.prismaService.$transaction(async (prisma) => {
+				await prisma.userTeam.deleteMany({
+					where: {
+						teamId,
+						userId: { in: teamMemberIds },
+					},
+				});
+
+				await prisma.reason.create({
+					data: {
+						reason,
+						type: ReasonType.REMOVE_TEAM_MEMBER,
+					},
+				});
+
+				const createNotificationDTO = {
+					title: `You were removed from team ${teamExisted.teamName}`,
+					message: reason,
+					type: NotificationTypeMap.Kick.id,
+				};
+
+				await this.notificationsRepository.createNotification(
+					createNotificationDTO,
+					teamMemberIds,
+				);
+			});
+
+			return "Remove team member successfully";
+		} catch (e) {
+			console.error("Remove teamMember failed", e.message, e.stackTrace);
 			throw e;
 		}
 	}

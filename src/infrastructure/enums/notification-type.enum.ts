@@ -7,6 +7,7 @@ export const NotificationTypeMap = {
 	Approve: { id: null, name: "Approve" },
 	Invitation: { id: null, name: "Invitation" },
 	Disband: { id: null, name: "Disband" },
+	Kick: { id: null, name: "Kick" },
 };
 
 export async function loadNotificationTypeMap() {
