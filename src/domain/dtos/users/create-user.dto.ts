@@ -44,5 +44,8 @@ export class CreateUserDTO {
 
 	@IsOptional()
 	@IsDate()
-	otpExpiresTime: Date;
+	otpExpiresTime?: Date;
+
+	@IsOptional()
+	provider?: String;
 }
