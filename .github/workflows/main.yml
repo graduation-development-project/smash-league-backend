@@ -20,6 +20,9 @@ jobs:
         docker container stop smash_league_api
         docker container rm smash_league_api
         docker volume rm smash-league-backend_backend_service
+    
+    - name: Run "database"
+      run: docker compose up -d db 
     - name: Set up environment variable for docker
       run: |
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
@@ -55,8 +58,6 @@ jobs:
           
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}" >> .env
-          echo "GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }}" >> .env
-    - name: Run "database"
-      run: docker compose up -d db 
+          echo "GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }}" >> .env  
     - name: Run "docker compose"
       run: docker compose up --build -d api
