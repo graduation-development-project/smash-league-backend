@@ -59,5 +59,7 @@ jobs:
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}" >> .env
           echo "GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }}" >> .env  
+    - name: Display .env file
+      run: cat .env
     - name: Run "docker compose"
       run: docker compose up --build -d api
