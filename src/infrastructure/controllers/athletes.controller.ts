@@ -30,6 +30,8 @@ import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { TCloudinaryResponse } from "../types/cloudinary.type";
 import { ResponseToTeamInvitationDTO } from "../../domain/dtos/athletes/response-to-team-invitation.dto";
 import { ResponseToTeamInvitationUseCase } from "../../application/usecases/athletes/response-to-team-invitation.usecase";
+import { LeaveTeamUseCase } from "../../application/usecases/athletes/leave-team.usecase";
+import { LeaveTeamDTO } from "../../domain/dtos/athletes/leave-team.dto";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -40,6 +42,7 @@ export class AthletesController {
 		private getParticipatedTournamentsUseCase: GetParticipatedTournamentsUseCase,
 		private registerNewRoleUseCase: RegisterNewRoleUseCase,
 		private responseToTeamInvitationUseCase: ResponseToTeamInvitationUseCase,
+		private leaveTeamUseCase: LeaveTeamUseCase,
 		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
@@ -94,5 +97,13 @@ export class AthletesController {
 			...responseToTeamInvitationDTO,
 			invitedUserId: user.id,
 		});
+	}
+
+	@Post("leave-team")
+	leaveTeam(
+		@Req() { user }: IRequestUser,
+		@Body() leaveTeamDTO: LeaveTeamDTO,
+	): Promise<string> {
+		return this.leaveTeamUseCase.execute({ ...leaveTeamDTO, user });
 	}
 }

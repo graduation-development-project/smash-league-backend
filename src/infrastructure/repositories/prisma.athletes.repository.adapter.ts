@@ -1,23 +1,26 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import {
 	InvitationStatus,
+	ReasonType,
+	Team,
 	TeamInvitation,
+	TeamRequestType,
 	Tournament,
 	TournamentRegistration,
 	UserRole,
+	UserTeam,
 	UserVerification,
 } from "@prisma/client";
 import { AthletesRepositoryPort } from "../../domain/repositories/athletes.repository.port";
 import { RegisterTournamentDTO } from "../../domain/dtos/athletes/register-tournament.dto";
-import { EventTypesEnum } from "../enums/event-types.enum";
 import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
-import { TCloudinaryResponse } from "../types/cloudinary.type";
-import { v2 as cloudinary } from "cloudinary";
 import { PrismaService } from "../services/prisma.service";
 import { TournamentStatusEnum } from "../enums/tournament-status.enum";
 import { UploadService } from "../services/upload.service";
 import { ResponseToTeamInvitationDTO } from "../../domain/dtos/athletes/response-to-team-invitation.dto";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
+import { LeaveTeamDTO } from "../../domain/dtos/athletes/leave-team.dto";
+import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
 
 const streamifier = require("streamifier");
 
@@ -26,6 +29,8 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 	constructor(
 		private prisma: PrismaService,
 		private uploadService: UploadService,
+		@Inject("NotificationRepository")
+		private notificationsRepository: NotificationsRepositoryPort,
 	) {}
 
 	async registerTournament(
@@ -281,6 +286,64 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			return option ? "Accept Successfully" : "Reject Successfully";
 		} catch (e) {
 			console.error("Response to invitation failed", e);
+			throw e;
+		}
+	}
+
+	async leaveTeam(leaveTeamDTO: LeaveTeamDTO): Promise<string> {
+		const { teamId, user, reason } = leaveTeamDTO;
+
+		try {
+			const teamExisted: Team = await this.prisma.team.findUnique({
+				where: {
+					id: teamId,
+				},
+			});
+
+			if (!teamExisted) {
+				throw new BadRequestException("Team does not exist!");
+			}
+
+			const userInTeam: UserTeam = await this.prisma.userTeam.findUnique({
+				where: {
+					userId_teamId: {
+						userId: user.id,
+						teamId,
+					},
+				},
+			});
+
+			if (!userInTeam) {
+				throw new BadRequestException("User not in this team");
+			}
+
+			const userName = `${user.firstName} ${user.lastName}`;
+
+			const createNotificationDTO = {
+				message: `${userName} want to leave team`,
+				title: `${userName} want to leave team`,
+				type: NotificationTypeMap.Leave_Team.id,
+			};
+
+			await this.prisma.$transaction(async (prisma) => {
+				await prisma.teamRequest.create({
+					data: {
+						leaveTeamReason: reason,
+						teamMemberId: user.id,
+						teamId,
+						type: TeamRequestType.LEAVE_TEAM,
+					},
+				});
+
+				await this.notificationsRepository.createNotification(
+					createNotificationDTO,
+					[teamExisted.teamLeaderId],
+				);
+			});
+
+			return "Leave team request send successfully";
+		} catch (e) {
+			console.error("Leave team request failed", e.message, e.stackTrace);
 			throw e;
 		}
 	}

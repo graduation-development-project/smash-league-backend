@@ -31,6 +31,8 @@ model User {
   tournamentRegistrations       TournamentRegistration[] @relation(name: "FK_TournamentRegistration_User")
   TournamentRegistrationPartner TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Partner")
   teamInvitation                TeamInvitation[]         @relation("FK_User_TeamInvitation")
+  Reason                        Reason[]                 @relation("FK_TeamMember_Reason")
+  TeamRequest                   TeamRequest[]            @relation("FK_TeamMember_TeamRequest")
 }
 
 model UserVerification {
@@ -44,7 +46,6 @@ model UserVerification {
   isVerified   Boolean  @default(false)
   createdAt    DateTime @default(now())
   rejectReason Reason?  @relation("FK_UserVerification_Reason")
-  reasonId     String?
 }
 
 model Role {
@@ -89,6 +90,8 @@ model Team {
   userTeams              UserTeam[]               @relation("FK_Team_UserTeam")
   tournamentRegistration TournamentRegistration[] @relation("FK_TournamentPRegistration_TournamentRegistrationTeam")
   invitations            TeamInvitation[]         @relation("FK_Team_TeamInvitation")
+  Reason                 Reason[]                 @relation("FK_Team_Reason")
+  TeamRequest            TeamRequest[]            @relation("FK_Team_TeamRequest")
 }
 
 enum TeamStatus {
@@ -229,7 +232,6 @@ model TournamentRegistration {
   tournamentEvent   TournamentEvent              @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
   partnerId         String? // Nullable: Used only for doubles
   status            TournamentRegistrationStatus @default(APPROVED) // "PENDING", "APPROVED", "REJECTED"
-  rejectionId       String?
   createdAt         DateTime                     @default(now())
   tournament        Tournament                   @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
   user              User                         @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
@@ -237,7 +239,7 @@ model TournamentRegistration {
   rejectReason      Reason?                      @relation("FK_TournamentRegistration_Reason")
   fromTeamId        String?
   fromTeam          Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
-  reasonId          String?
+  reasonId          String?                      @unique
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
@@ -262,16 +264,45 @@ model TournamentPost {
   tournament      Tournament     @relation(name: "FK_TournamentPost_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
 }
 
+model TeamRequest {
+  id              String            @id @default(uuid())
+  teamMemberId    String
+  teamId          String
+  status          TeamRequestStatus @default(PENDING)
+  type            TeamRequestType
+  teamMember      User?             @relation("FK_TeamMember_TeamRequest", fields: [teamMemberId], references: [id])
+  team            Team?             @relation("FK_Team_TeamRequest", fields: [teamId], references: [id])
+  leaveTeamReason String?
+  rejectReason    Reason?           @relation("FK_TeamRequest_Reason")
+}
+
+enum TeamRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TeamRequestType {
+  JOIN_TEAM
+  LEAVE_TEAM
+}
+
 model Reason {
   id                       String                  @id @default(uuid())
   userVerificationId       String?                 @unique // Can be null if rejection is for tournament
   tournamentRegistrationId String?                 @unique // Can be null if rejection is for verification
+  teamRequestId            String?                 @unique
+  userId                   String? // Store the user who left or was removed
+  teamId                   String? // Store the team from which the user left
   reason                   String // Explanation for rejection
   status                   ReasonStatus?
   type                     ReasonType
   createdAt                DateTime                @default(now())
   userVerification         UserVerification?       @relation("FK_UserVerification_Reason", fields: [userVerificationId], references: [id], onDelete: Cascade)
   tournamentRegistration   TournamentRegistration? @relation("FK_TournamentRegistration_Reason", fields: [tournamentRegistrationId], references: [id])
+  teamRequest              TeamRequest?            @relation("FK_TeamRequest_Reason", fields: [teamRequestId], references: [id])
+  user                     User?                   @relation("FK_TeamMember_Reason", fields: [userId], references: [id])
+  team                     Team?                   @relation("FK_Team_Reason", fields: [teamId], references: [id])
 }
 
 enum ReasonStatus {

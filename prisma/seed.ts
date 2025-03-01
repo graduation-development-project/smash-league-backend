@@ -42,6 +42,9 @@ async function main() {
 		{
 			typeOfNotification: "Kick",
 		},
+		{
+			typeOfNotification: "Leave Team",
+		},
 	];
 
 	roles.map(async (role) => {

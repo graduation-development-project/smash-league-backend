@@ -2,13 +2,11 @@ import { RegisterTournamentDTO } from "../dtos/athletes/register-tournament.dto"
 import {
 	Tournament,
 	TournamentRegistration,
-	User,
 	UserVerification,
 } from "@prisma/client";
 import { RegisterNewRoleDTO } from "../dtos/athletes/register-new-role.dto";
-import { TUserWithRole } from "../../infrastructure/types/users.type";
-import { TCloudinaryResponse } from "../../infrastructure/types/cloudinary.type";
 import { ResponseToTeamInvitationDTO } from "../dtos/athletes/response-to-team-invitation.dto";
+import { LeaveTeamDTO } from "../dtos/athletes/leave-team.dto";
 
 export interface AthletesRepositoryPort {
 	registerTournament(
@@ -32,4 +30,6 @@ export interface AthletesRepositoryPort {
 	responseToTeamInvitation(
 		responseToTeamInvitationDTO: ResponseToTeamInvitationDTO,
 	): Promise<string>;
+
+	leaveTeam(leaveTeamDTO: LeaveTeamDTO): Promise<string>;
 }

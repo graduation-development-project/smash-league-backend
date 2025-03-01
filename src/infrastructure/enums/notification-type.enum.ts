@@ -8,6 +8,11 @@ export const NotificationTypeMap = {
 	Invitation: { id: null, name: "Invitation" },
 	Disband: { id: null, name: "Disband" },
 	Kick: { id: null, name: "Kick" },
+	Leave_Team: { id: null, name: "Leave Team" },
+};
+
+const notificationTypeMapping = {
+	"Leave Team": "Leave_Team",
 };
 
 export async function loadNotificationTypeMap() {
@@ -15,8 +20,12 @@ export async function loadNotificationTypeMap() {
 	console.log(notificationType);
 
 	notificationType.forEach((type) => {
-		if (NotificationTypeMap[type.typeOfNotification]) {
-			NotificationTypeMap[type.typeOfNotification].id = type.id;
+		const mappedNotificationType =
+			notificationTypeMapping[type.typeOfNotification] ||
+			type.typeOfNotification;
+
+		if (NotificationTypeMap[mappedNotificationType]) {
+			NotificationTypeMap[mappedNotificationType].id = type.id;
 		}
 	});
 }

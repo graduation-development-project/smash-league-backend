@@ -17,6 +17,18 @@ CREATE TYPE "BadmintonParticipantType" AS ENUM ('MENS_SINGLE', 'WOMEN_SINGLE', '
 CREATE TYPE "TournamentRegistrationStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 
 -- CreateEnum
+CREATE TYPE "TeamRequestStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+
+-- CreateEnum
+CREATE TYPE "TeamRequestType" AS ENUM ('JOIN_TEAM', 'LEAVE_TEAM');
+
+-- CreateEnum
+CREATE TYPE "ReasonStatus" AS ENUM ('APPROVE', 'REJECT');
+
+-- CreateEnum
+CREATE TYPE "ReasonType" AS ENUM ('TOURNAMENT_REGISTRATION_REJECTION', 'USER_VERIFICATION_REJECTION', 'REMOVE_TEAM_MEMBER', 'OUT_TEAM');
+
+-- CreateEnum
 CREATE TYPE "TransactionStatus" AS ENUM ('PENDING', 'SUCCESSFUL', 'FAILED');
 
 -- CreateEnum
@@ -203,9 +215,9 @@ CREATE TABLE "TournamentRegistration" (
     "tournamentEventId" TEXT NOT NULL,
     "partnerId" TEXT,
     "status" "TournamentRegistrationStatus" NOT NULL DEFAULT 'APPROVED',
-    "rejectionId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "fromTeamId" TEXT,
+    "reasonId" TEXT,
 
     CONSTRAINT "TournamentRegistration_pkey" PRIMARY KEY ("id")
 );
@@ -225,15 +237,31 @@ CREATE TABLE "TournamentPost" (
 );
 
 -- CreateTable
-CREATE TABLE "Rejection" (
+CREATE TABLE "TeamRequest" (
+    "id" TEXT NOT NULL,
+    "teamMemberId" TEXT NOT NULL,
+    "teamId" TEXT NOT NULL,
+    "status" "TeamRequestStatus" NOT NULL DEFAULT 'PENDING',
+    "type" "TeamRequestType" NOT NULL,
+    "leaveTeamReason" TEXT,
+
+    CONSTRAINT "TeamRequest_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Reason" (
     "id" TEXT NOT NULL,
     "userVerificationId" TEXT,
     "tournamentRegistrationId" TEXT,
+    "teamRequestId" TEXT,
+    "userId" TEXT,
+    "teamId" TEXT,
     "reason" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
+    "status" "ReasonStatus",
+    "type" "ReasonType" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Rejection_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Reason_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -310,16 +338,22 @@ CREATE UNIQUE INDEX "Notification_teamInvitationId_key" ON "Notification"("teamI
 CREATE UNIQUE INDEX "UserNotification_userId_notificationId_key" ON "UserNotification"("userId", "notificationId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "TournamentRegistration_reasonId_key" ON "TournamentRegistration"("reasonId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "TournamentRegistration_tournamentId_userId_tournamentEventI_key" ON "TournamentRegistration"("tournamentId", "userId", "tournamentEventId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "TournamentRegistration_tournamentId_partnerId_key" ON "TournamentRegistration"("tournamentId", "partnerId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Rejection_userVerificationId_key" ON "Rejection"("userVerificationId");
+CREATE UNIQUE INDEX "Reason_userVerificationId_key" ON "Reason"("userVerificationId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Rejection_tournamentRegistrationId_key" ON "Rejection"("tournamentRegistrationId");
+CREATE UNIQUE INDEX "Reason_tournamentRegistrationId_key" ON "Reason"("tournamentRegistrationId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Reason_teamRequestId_key" ON "Reason"("teamRequestId");
 
 -- AddForeignKey
 ALTER TABLE "UserVerification" ADD CONSTRAINT "UserVerification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -391,10 +425,25 @@ ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_from
 ALTER TABLE "TournamentPost" ADD CONSTRAINT "TournamentPost_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Rejection" ADD CONSTRAINT "Rejection_userVerificationId_fkey" FOREIGN KEY ("userVerificationId") REFERENCES "UserVerification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "TeamRequest" ADD CONSTRAINT "TeamRequest_teamMemberId_fkey" FOREIGN KEY ("teamMemberId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Rejection" ADD CONSTRAINT "Rejection_tournamentRegistrationId_fkey" FOREIGN KEY ("tournamentRegistrationId") REFERENCES "TournamentRegistration"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "TeamRequest" ADD CONSTRAINT "TeamRequest_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Reason" ADD CONSTRAINT "Reason_userVerificationId_fkey" FOREIGN KEY ("userVerificationId") REFERENCES "UserVerification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Reason" ADD CONSTRAINT "Reason_tournamentRegistrationId_fkey" FOREIGN KEY ("tournamentRegistrationId") REFERENCES "TournamentRegistration"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Reason" ADD CONSTRAINT "Reason_teamRequestId_fkey" FOREIGN KEY ("teamRequestId") REFERENCES "TeamRequest"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Reason" ADD CONSTRAINT "Reason_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Reason" ADD CONSTRAINT "Reason_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "Team"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ContentImage" ADD CONSTRAINT "ContentImage_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "TournamentPost"("id") ON DELETE CASCADE ON UPDATE CASCADE;
