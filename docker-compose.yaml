@@ -4,35 +4,7 @@ services:
     ports:
       - 5000:5000
     environment:
-      - DATABASE_URL=postgres://root:password@database:5432/smashleague?schema=public
-      - PREFIX=api/v1
-      - ACCESS_TOKEN_SECRET_KEY="167031@SmashLeague@ACCESS"
-      - REFRESH_TOKEN_SECRET_KEY="167031@SmashLeague@REFRESH"
-      # Access Token
-      - JWT_ACCESS_TOKEN_EXPIRATION_TIME=1800
-      - JWT_REFRESH_TOKEN_EXPIRATION_TIME=25200
-      #Refresh token
-      - RESET_TOKEN_SECRET_KEY="167031@SmashLeague@RESET"
-      - RESET_TOKEN_EXPIRATION_TIME=600
-      #Reset Password URL
-      - EMAIL_RESET_PASSWORD_URL="http://localhost:3000/auth/reset-password"
-      #Cloudinary
-      - CLOUDINARY_NAME="dqdggrw7o"
-      - CLOUDINARY_API_KEY="172175352464367"
-      - CLOUDINARY_API_SECRET="63nzUkonqm4rGsB5mHKIXRAcp5s"
-      #NODEMAILER
-      - NODEMAILER_USER=smash.league.2025@gmail.com
-      - NODEMAILER_PASS=rxaxhbxtapjeemot
-      #MAILER_TEMPLATE_URL
-      - MAILER_TEMPLATE_URL=infrastructure/templates
-      #PAYOS API KEY
-      - PAYOS_CLIENT_ID=699488c9-2d90-4c3a-afdb-95cf093e406f
-      - PAYOS_API_KEY=03234458-982c-47a9-b4f2-c33486623104
-      - PAYOS_CHECKSUM_KEY=4ccaccfbf838d2507755aa2f976454fbb68ef6d069ff512ab44aec3409e63dcf
-      #REDIS
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-
+      - .env
     build: 
       context: .
       dockerfile: Dockerfile
