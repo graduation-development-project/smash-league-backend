@@ -16,7 +16,7 @@ model User {
   phoneNumber                   String                   @unique
   avatarURL                     String?
   currentRefreshToken           String?
-  CreditsRemain                 Int
+  creditsRemain                 Int
   otp                           String?
   otpExpiresTime                DateTime?
   isVerified                    Boolean                  @default(false)
@@ -34,16 +34,17 @@ model User {
 }
 
 model UserVerification {
-  id          String     @id @default(uuid())
-  userId      String
-  user        User       @relation("FK_User_UserVerification", fields: [userId], references: [id])
-  IDCardFront String?
-  IDCardBack  String?
-  cardPhoto   String?
-  role        String
-  isVerified  Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  rejection   Rejection? @relation("FK_UserVerification_Rejection")
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation("FK_User_UserVerification", fields: [userId], references: [id])
+  IDCardFront  String?
+  IDCardBack   String?
+  cardPhoto    String?
+  role         String
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  rejectReason Reason?  @relation("FK_UserVerification_Reason")
+  reasonId     String?
 }
 
 model Role {
@@ -157,24 +158,32 @@ model TournamentSerie {
   id                      String       @id @default(uuid())
   tournamentSerie         String
   serieBackgroundImageURL String
-  tournaments             Tournament[] @relation("FK_Tournament_TournamentSerie")
+  tournaments             Tournament[] @relation(name: "FK_Tournament_TournamentSerie")
 }
 
 model Tournament {
   id                       String                   @id
   name                     String
-  shortName                String
+  shortName                String?
   organizerId              String
   registrationOpeningDate  DateTime
   registrationClosingDate  DateTime
   drawDate                 DateTime
   startDate                DateTime
   endDate                  DateTime
+  checkInBeforeStart       DateTime
+  umpirePerMatch           Int
+  linemanPerMatch          Int
   registrationFeePerPerson Int
   registrationFeePerPair   Int?
   maxEventPerPerson        Int
   status                   TournamentStatus
   protestFeePerTime        Int
+  prizePool                String[]
+  hasMerchandise           Boolean
+  numberOfMerchandise      Int
+  merchandiseImageContent  String[]
+  merchandise              String
   tournamentSerieId        String
   tournamentSerie          TournamentSerie          @relation(name: "FK_Tournament_TournamentSerie", fields: [tournamentSerieId], references: [id], onDelete: Cascade)
   organizer                User                     @relation(name: "FK_Tournament_User", fields: [organizerId], references: [id], onDelete: Cascade)
@@ -202,9 +211,13 @@ model TournamentEvent {
   typeOfFormat          TypeOfFormat
   ruleOfEventExtension  String?
   maximumAthlete        Int?
+  championPrize         String[]
+  runnerUpPrize         String[]
+  thirdPlacePrize       String[]                 @default([])
+  jointThirdPlacePrize  String[]                 @default([])
   tournamentId          String
   tournament            Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade)
-  tournamenRegistration TournamentRegistration[] @relation("FK_TournamentRegistration_TournamentEvent")
+  tournamenRegistration TournamentRegistration[] @relation(name: "FK_TournamentRegistration_TournamentEvent")
 }
 
 enum TypeOfFormat {
@@ -233,9 +246,10 @@ model TournamentRegistration {
   tournament        Tournament                   @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
   user              User                         @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
   partner           User?                        @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
-  rejection         Rejection?                   @relation("FK_TournamentRegistration_Rejection")
+  rejectReason      Reason?                      @relation("FK_TournamentRegistration_Reason")
   fromTeamId        String?
   fromTeam          Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
+  reasonId          String?
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
@@ -260,15 +274,28 @@ model TournamentPost {
   tournament      Tournament     @relation(name: "FK_TournamentPost_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
 }
 
-model Rejection {
+model Reason {
   id                       String                  @id @default(uuid())
   userVerificationId       String?                 @unique // Can be null if rejection is for tournament
   tournamentRegistrationId String?                 @unique // Can be null if rejection is for verification
   reason                   String // Explanation for rejection
-  type                     String
+  status                   ReasonStatus?
+  type                     ReasonType
   createdAt                DateTime                @default(now())
-  userVerification         UserVerification?       @relation("FK_UserVerification_Rejection", fields: [userVerificationId], references: [id], onDelete: Cascade)
-  tournamentRegistration   TournamentRegistration? @relation("FK_TournamentRegistration_Rejection", fields: [tournamentRegistrationId], references: [id])
+  userVerification         UserVerification?       @relation("FK_UserVerification_Reason", fields: [userVerificationId], references: [id], onDelete: Cascade)
+  tournamentRegistration   TournamentRegistration? @relation("FK_TournamentRegistration_Reason", fields: [tournamentRegistrationId], references: [id])
+}
+
+enum ReasonStatus {
+  APPROVE
+  REJECT
+}
+
+enum ReasonType {
+  TOURNAMENT_REGISTRATION_REJECTION
+  USER_VERIFICATION_REJECTION
+  REMOVE_TEAM_MEMBER
+  OUT_TEAM
 }
 
 model ContentImage {

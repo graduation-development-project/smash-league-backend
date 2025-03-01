@@ -22,7 +22,9 @@ import { SendInvitationDTO } from "../../domain/dtos/team-leaders/send-invitatio
 import { IRequestUser } from "../../domain/interfaces/interfaces";
 import { RemoveTeamUseCase } from "../../application/usecases/team-leader/remove-team.usecase";
 import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
-import {EditTeamUseCase} from "../../application/usecases/team-leader/edit-team.usecase";
+import { EditTeamUseCase } from "../../application/usecases/team-leader/edit-team.usecase";
+import { RemoveTeamMemberDTO } from "../../domain/dtos/team-leaders/remove-team-member.dto";
+import { RemoveTeamMemberUseCase } from "../../application/usecases/team-leader/remove-team-member.usecase";
 
 @Controller("/team-leaders")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -33,6 +35,7 @@ export class TeamLeaderController {
 		private sendTeamInvitationUseCase: SendTeamInvitationUseCase,
 		private removeTeamUseCase: RemoveTeamUseCase,
 		private editTeamUseCase: EditTeamUseCase,
+		private removeTeamMemberUseCase: RemoveTeamMemberUseCase,
 	) {}
 
 	@Post("/create-team")
@@ -77,7 +80,18 @@ export class TeamLeaderController {
 		return this.editTeamUseCase.execute({
 			...editTeamDTO,
 			teamLeaderId: user.id,
-			logo
+			logo,
+		});
+	}
+
+	@Put("remove-team-members")
+	removeTeamMember(
+		@Body() removeTeamMemberDTO: RemoveTeamMemberDTO,
+		@Req() { user }: IRequestUser,
+	): Promise<string> {
+		return this.removeTeamMemberUseCase.execute({
+			...removeTeamMemberDTO,
+			teamLeaderId: user.id,
 		});
 	}
 }

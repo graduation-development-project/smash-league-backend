@@ -51,6 +51,7 @@ import { TeamQueueModule } from "../infrastructure/background-jobs/team/team.que
 import {RemoveTeamUseCase} from "./usecases/team-leader/remove-team.usecase";
 import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
 import {AuthService} from "./services/auth.service";
+import {RemoveTeamMemberUseCase} from "./usecases/team-leader/remove-team-member.usecase";
 
 @Module({
 	imports: [
@@ -138,6 +139,7 @@ import {AuthService} from "./services/auth.service";
 		GetAllFormatTypeUseCase,
 		RemoveTeamUseCase,
 		EditTeamUseCase,
+		RemoveTeamMemberUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -174,6 +176,7 @@ import {AuthService} from "./services/auth.service";
 		GetAllFormatTypeUseCase,
 		RemoveTeamUseCase,
 		EditTeamUseCase,
+		RemoveTeamMemberUseCase,
 	],
 })
 export class ApplicationModule {}

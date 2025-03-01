@@ -8,6 +8,7 @@ import { PrismaService } from "../services/prisma.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
+import {ReasonType} from "@prisma/client";
 
 @Injectable()
 export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
@@ -42,10 +43,10 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 					},
 				});
 			} else {
-				await prisma.rejection.create({
+				await prisma.reason.create({
 					data: {
 						reason: rejectionReason || "No reason provided",
-						type: "Rejection",
+						type: ReasonType.USER_VERIFICATION_REJECTION,
 						userVerificationId: verificationID,
 					},
 				});
