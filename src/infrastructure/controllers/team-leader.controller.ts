@@ -27,6 +27,7 @@ import { RemoveTeamMemberDTO } from "../../domain/dtos/team-leaders/remove-team-
 import { RemoveTeamMemberUseCase } from "../../application/usecases/team-leader/remove-team-member.usecase";
 import { ResponseLeaveTeamRequestUseCase } from "../../application/usecases/team-leader/response-leave-team-request.usecase";
 import { ResponseLeaveTeamRequestDTO } from "../../domain/dtos/team-leaders/response-leave-team-request.dto";
+import { ResponseJoinTeamRequestUseCase } from "../../application/usecases/team-leader/response-join-team-request.usecase";
 
 @Controller("/team-leaders")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -39,6 +40,7 @@ export class TeamLeaderController {
 		private editTeamUseCase: EditTeamUseCase,
 		private removeTeamMemberUseCase: RemoveTeamMemberUseCase,
 		private responseLeaveTeamRequestUseCase: ResponseLeaveTeamRequestUseCase,
+		private responseJoinTeamRequestUseCase: ResponseJoinTeamRequestUseCase,
 	) {}
 
 	@Post("/create-team")
@@ -105,6 +107,17 @@ export class TeamLeaderController {
 	): Promise<string> {
 		return this.responseLeaveTeamRequestUseCase.execute({
 			...responseLeaveTeamRequestDTO,
+			user,
+		});
+	}
+
+	@Put("response-join-team-request")
+	responseJoinTeamRequest(
+		@Body() responseJoinTeamRequestDTO: ResponseLeaveTeamRequestDTO,
+		@Req() { user }: IRequestUser,
+	): Promise<string> {
+		return this.responseJoinTeamRequestUseCase.execute({
+			...responseJoinTeamRequestDTO,
 			user,
 		});
 	}

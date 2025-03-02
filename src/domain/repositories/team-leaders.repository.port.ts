@@ -1,9 +1,9 @@
 import { Team } from "@prisma/client";
 import { SendInvitationDTO } from "../dtos/team-leaders/send-invitation.dto";
 import { CreateTeamDTO } from "../dtos/team-leaders/create-team.dto";
-import {EditTeamDTO} from "../dtos/team-leaders/edit-team.dto";
-import {RemoveTeamMemberDTO} from "../dtos/team-leaders/remove-team-member.dto";
-import {ResponseLeaveTeamRequestDTO} from "../dtos/team-leaders/response-leave-team-request.dto";
+import { EditTeamDTO } from "../dtos/team-leaders/edit-team.dto";
+import { RemoveTeamMemberDTO } from "../dtos/team-leaders/remove-team-member.dto";
+import { ResponseLeaveTeamRequestDTO } from "../dtos/team-leaders/response-leave-team-request.dto";
 
 export interface TeamLeadersRepositoryPort {
 	createTeam(createTeamDTO: CreateTeamDTO): Promise<Team>;
@@ -16,5 +16,11 @@ export interface TeamLeadersRepositoryPort {
 
 	removeTeamMember(removeTeamMemberDTO: RemoveTeamMemberDTO): Promise<string>;
 
-	responseLeaveTeamRequest(responseLeaveTeamRequest: ResponseLeaveTeamRequestDTO): Promise<string>;
+	responseLeaveTeamRequest(
+		responseLeaveTeamRequest: ResponseLeaveTeamRequestDTO,
+	): Promise<string>;
+
+	responseJoinTeamRequest(
+		responseJoinTeamRequest: ResponseLeaveTeamRequestDTO,
+	): Promise<string>;
 }

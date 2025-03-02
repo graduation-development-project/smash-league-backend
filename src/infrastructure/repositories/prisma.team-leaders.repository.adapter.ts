@@ -433,7 +433,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 					promises.push(
 						prisma.reason.create({
 							data: {
-								type: ReasonType.OUT_TEAM,
+								type: ReasonType.OUT_TEAM_REJECTION,
 								teamRequestId: requestId,
 								reason: rejectReason,
 							},
@@ -457,6 +457,90 @@ export class PrismaTeamLeadersRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("Response leave team request failed", e.message, e.stack);
+			throw e;
+		}
+	}
+
+	async responseJoinTeamRequest(
+		responseJoinTeamRequest: ResponseLeaveTeamRequestDTO,
+	): Promise<string> {
+		const { requestId, rejectReason, option, teamId } = responseJoinTeamRequest;
+
+		try {
+			const requestExisted: TeamRequest =
+				await this.prismaService.teamRequest.findUnique({
+					where: {
+						id: requestId,
+					},
+				});
+
+			if (!requestExisted) {
+				throw new BadRequestException("Request does not exist.");
+			}
+
+
+			const userAlreadyInTeam = await this.prismaService.userTeam.findUnique({
+				where: {
+					userId_teamId: {
+						userId: requestExisted.teamMemberId,
+						teamId
+					}
+				}
+			})
+
+			if(userAlreadyInTeam) {
+				throw new BadRequestException("This athlete already in team")
+			}
+
+			return await this.prismaService.$transaction(async (prisma) => {
+				const updateRequestPromise = prisma.teamRequest.update({
+					where: { id: requestId },
+					data: {
+						status: option
+							? TeamRequestStatus.APPROVED
+							: TeamRequestStatus.REJECTED,
+					},
+				});
+
+				const promises: Promise<any>[] = [updateRequestPromise];
+
+				if (option) {
+					promises.push(
+						prisma.userTeam.create({
+							data: {
+								teamId,
+								userId: requestExisted.teamMemberId,
+							},
+						}),
+					);
+				} else {
+					promises.push(
+						prisma.reason.create({
+							data: {
+								type: ReasonType.JOIN_TEAM_REJECTION,
+								teamRequestId: requestId,
+								reason: rejectReason,
+							},
+						}),
+						this.notificationsRepository.createNotification(
+							{
+								title: `Team Leader did not accept your join team request`,
+								message: rejectReason,
+								type: NotificationTypeMap.Reject.id,
+							},
+							[requestExisted.teamMemberId],
+						),
+					);
+				}
+
+				await Promise.all(promises);
+
+				return option
+					? "Accepted join Team Request successfully"
+					: "Rejected join Team Request successfully";
+			});
+		} catch (e) {
+			console.error("Response join team request failed", e.message, e.stack);
 			throw e;
 		}
 	}
