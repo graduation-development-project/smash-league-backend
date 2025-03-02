@@ -15,42 +15,11 @@ jobs:
     - name: Set up environment variable for docker
       run: |
           touch .env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          echo "PREFIX=${{ secrets.PREFIX }}" >> .env
-          echo "ACCESS_TOKEN_SECRET_KEY=${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" >> .env
-          echo "REFRESH_TOKEN_SECRET_KEY=${{ secrets.REFRESH_TOKEN_SECRET_KEY }}" >> .env
-          
-          echo "JWT_ACCESS_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}" >> .env
-          
-          echo "JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}" >> .env
-          echo "JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}" >> .env
-          
-          echo "RESET_TOKEN_SECRET_KEY=${{ secrets.RESET_TOKEN_SECRET_KEY }}" >> .env
-          echo "RESET_TOKEN_EXPIRATION_TIME=${{ secrets.RESET_TOKEN_EXPIRATION_TIME }}" >> .env
-
-          echo "EMAIL_RESET_PASSWORD_URL=${{ secrets.EMAIL_RESET_PASSWORD_URL }}" >> .env
-
-          echo "CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }}" >> .env
-          echo "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" >> .env
-          echo "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
-          
-          echo "NODEMAILER_USER=${{ secrets.NODEMAILER_USER }}" >> .env
-          echo "NODEMAILER_PASS=${{ secrets.NODEMAILER_PASS }}" >> .env
-          
-          echo "MAILER_TEMPLATE_URL=${{ secrets.MAILER_TEMPLATE_URL }}" >> .env
-          
-          echo "PAYOS_CLIENT_ID=${{ secrets.PAYOS_CLIENT_ID }}" >> .env
-          echo "PAYOS_API_KEY=${{ secrets.PAYOS_API_KEY }}" >> .env
-          echo "PAYOS_CHECKSUM_KEY=${{ secrets.PAYOS_CHECKSUM_KEY }}" >> .env
-          
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
-          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
-          
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-          echo "GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}" >> .env
-          echo "GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }}" >> .env  
+          echo "${{ secrets.ENV_VARIABLE }}" >> .env
     - name: Display .env file
-      run: cat .env
+      run: |
+          readlink -f .env
+          cat .env
     - name: Run "database"
       run: docker compose up -d db 
     - name: Run "docker compose"
