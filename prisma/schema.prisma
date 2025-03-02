@@ -16,7 +16,7 @@ model User {
   phoneNumber                   String                   @unique
   avatarURL                     String?
   currentRefreshToken           String?
-  creditsRemain                 Int
+  creditsRemain                 Int?
   otp                           String?
   otpExpiresTime                DateTime?
   isVerified                    Boolean                  @default(false)
