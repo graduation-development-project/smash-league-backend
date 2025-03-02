@@ -107,7 +107,8 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	async createUser(createUserDTO: CreateUserDTO): Promise<User> {
 		try {
 			// console.log(createUserDTO)
-			const { avatarURL, currentRefreshToken, provider, ...rest } = createUserDTO;
+			const { avatarURL, currentRefreshToken, provider, ...rest } =
+				createUserDTO;
 
 			//* Set default data for user avatar, currentRefreshToken, CreditsRemain
 			const userData = {
@@ -116,7 +117,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 					avatarURL ||
 					"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
 				currentRefreshToken: currentRefreshToken ?? null,
-				CreditsRemain: 0,
+				creditsRemain: 0,
 				isVerified: provider === "google",
 			};
 

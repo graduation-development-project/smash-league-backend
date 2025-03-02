@@ -400,7 +400,11 @@ export class PrismaTeamLeadersRepositoryAdapter
 
 		try {
 			const requestExisted = await this.prismaService.teamRequest.findUnique({
-				where: { id: requestId, type: TeamRequestType.LEAVE_TEAM },
+				where: {
+					id: requestId,
+					type: TeamRequestType.LEAVE_TEAM,
+					status: TeamRequestStatus.PENDING,
+				},
 			});
 
 			if (!requestExisted) {
