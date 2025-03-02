@@ -4,6 +4,7 @@ import {
 	ReasonType,
 	Team,
 	TeamInvitation,
+	TeamRequestStatus,
 	TeamRequestType,
 	Tournament,
 	TournamentRegistration,
@@ -21,6 +22,8 @@ import { ResponseToTeamInvitationDTO } from "../../domain/dtos/athletes/response
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { LeaveTeamDTO } from "../../domain/dtos/athletes/leave-team.dto";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
+import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
+import {request} from "express";
 
 const streamifier = require("streamifier");
 
@@ -343,7 +346,55 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 			return "Leave team request send successfully";
 		} catch (e) {
-			console.error("Leave team request failed", e.message, e.stackTrace);
+			console.error("Leave team request failed", e.message, e.stack);
+			throw e;
+		}
+	}
+
+	async requestJoinTeam(
+		requestJoinTeamDTO: RequestJoinTeamDTO,
+	): Promise<string> {
+		const { teamId, user } = requestJoinTeamDTO;
+
+		try {
+			const [teamExist, checkAlreadyInTeam, requestExisted] = await Promise.all(
+				[
+					this.prisma.team.findUnique({ where: { id: teamId } }),
+					this.prisma.userTeam.findUnique({
+						where: { userId_teamId: { userId: user.id, teamId } },
+					}),
+					this.prisma.teamRequest.findFirst({
+						where: { teamId, teamMemberId: user.id },
+					}),
+				],
+			);
+
+			if (requestExisted) {
+				throw new BadRequestException(
+					"You already send request to join this team",
+				);
+			}
+
+			if (checkAlreadyInTeam) {
+				throw new BadRequestException("User already in this team");
+			}
+
+			if (!teamExist) {
+				throw new BadRequestException("Team does not exist");
+			}
+
+			await this.prisma.teamRequest.create({
+				data: {
+					teamId,
+					type: TeamRequestType.JOIN_TEAM,
+					status: TeamRequestStatus.PENDING,
+					teamMemberId: user.id,
+				},
+			});
+
+			return "Request to join team successfully";
+		} catch (e) {
+			console.error("Request join team failed", e.message, e.stack);
 			throw e;
 		}
 	}

@@ -32,6 +32,8 @@ import { ResponseToTeamInvitationDTO } from "../../domain/dtos/athletes/response
 import { ResponseToTeamInvitationUseCase } from "../../application/usecases/athletes/response-to-team-invitation.usecase";
 import { LeaveTeamUseCase } from "../../application/usecases/athletes/leave-team.usecase";
 import { LeaveTeamDTO } from "../../domain/dtos/athletes/leave-team.dto";
+import { RequestJoinTeamUseCase } from "../../application/usecases/athletes/request-join-team.usecase";
+import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -43,6 +45,7 @@ export class AthletesController {
 		private registerNewRoleUseCase: RegisterNewRoleUseCase,
 		private responseToTeamInvitationUseCase: ResponseToTeamInvitationUseCase,
 		private leaveTeamUseCase: LeaveTeamUseCase,
+		private requestJoinTeamUseCase: RequestJoinTeamUseCase,
 		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
@@ -105,5 +108,13 @@ export class AthletesController {
 		@Body() leaveTeamDTO: LeaveTeamDTO,
 	): Promise<string> {
 		return this.leaveTeamUseCase.execute({ ...leaveTeamDTO, user });
+	}
+
+	@Post("request-join-team")
+	requestJoinTeam(
+		@Body() requestJoinTeamDTO: RequestJoinTeamDTO,
+		@Req() { user }: IRequestUser,
+	): Promise<string> {
+		return this.requestJoinTeamUseCase.execute({ ...requestJoinTeamDTO, user });
 	}
 }
