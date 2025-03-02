@@ -16,10 +16,12 @@ jobs:
       run: |
           touch .env
           echo "${{ secrets.ENV_VARIABLE }}" >> .env
+          
     - name: Display .env file
       run: |
           readlink -f .env
           cat .env
+
     - name: Run "database"
       run: docker compose up -d db 
     - name: Run "docker compose"
