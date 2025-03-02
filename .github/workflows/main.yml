@@ -27,7 +27,6 @@ jobs:
     - name: Display .env file
       run: |
           readlink -f .env
-          cat .env
 
     - name: Run "database"
       run: docker compose up -d db 
