@@ -12,15 +12,6 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-    - name: Execute "drop docker volume" before building
-      run: |
-        docker stop database
-        docker rm database
-        docker volume rm smash-league-backend_postgres_data
-        docker container stop smash_league_api
-        docker container rm smash_league_api
-        docker volume rm smash-league-backend_backend_service
-
     - name: Set up environment variable for docker
       run: |
           touch .env
