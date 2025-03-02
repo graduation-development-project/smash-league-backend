@@ -23,6 +23,7 @@ jobs:
 
     - name: Set up environment variable for docker
       run: |
+          touch .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "PREFIX=${{ secrets.PREFIX }}" >> .env
           echo "ACCESS_TOKEN_SECRET_KEY=${{ secrets.ACCESS_TOKEN_SECRET_KEY }}" >> .env
