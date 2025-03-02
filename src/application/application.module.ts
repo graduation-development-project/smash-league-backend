@@ -53,6 +53,7 @@ import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
 import {AuthService} from "./services/auth.service";
 import {RemoveTeamMemberUseCase} from "./usecases/team-leader/remove-team-member.usecase";
 import {LeaveTeamUseCase} from "./usecases/athletes/leave-team.usecase";
+import {ResponseLeaveTeamRequestUseCase} from "./usecases/team-leader/response-leave-team-request.usecase";
 
 @Module({
 	imports: [
@@ -142,6 +143,7 @@ import {LeaveTeamUseCase} from "./usecases/athletes/leave-team.usecase";
 		EditTeamUseCase,
 		RemoveTeamMemberUseCase,
 		LeaveTeamUseCase,
+		ResponseLeaveTeamRequestUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -180,6 +182,7 @@ import {LeaveTeamUseCase} from "./usecases/athletes/leave-team.usecase";
 		EditTeamUseCase,
 		RemoveTeamMemberUseCase,
 		LeaveTeamUseCase,
+		ResponseLeaveTeamRequestUseCase,
 	],
 })
 export class ApplicationModule {}

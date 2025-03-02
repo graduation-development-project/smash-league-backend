@@ -6,6 +6,9 @@ import {
 	Notification,
 	ReasonType,
 	Team,
+	TeamRequest,
+	TeamRequestStatus,
+	TeamRequestType,
 	TeamStatus,
 	UserTeam,
 } from "@prisma/client";
@@ -20,6 +23,7 @@ import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-no
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
 import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
 import { RemoveTeamMemberDTO } from "../../domain/dtos/team-leaders/remove-team-member.dto";
+import { ResponseLeaveTeamRequestDTO } from "../../domain/dtos/team-leaders/response-leave-team-request.dto";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -384,6 +388,71 @@ export class PrismaTeamLeadersRepositoryAdapter
 			return "Remove team member successfully";
 		} catch (e) {
 			console.error("Remove teamMember failed", e.message, e.stackTrace);
+			throw e;
+		}
+	}
+
+	async responseLeaveTeamRequest(
+		responseLeaveTeamRequest: ResponseLeaveTeamRequestDTO,
+	): Promise<string> {
+		const { requestId, rejectReason, option, user, teamId } =
+			responseLeaveTeamRequest;
+
+		try {
+			const requestExisted = await this.prismaService.teamRequest.findUnique({
+				where: { id: requestId, type: TeamRequestType.LEAVE_TEAM },
+			});
+
+			if (!requestExisted) {
+				throw new BadRequestException("Request does not exist.");
+			}
+
+			return await this.prismaService.$transaction(async (prisma) => {
+				const updateRequestPromise = prisma.teamRequest.update({
+					where: { id: requestId },
+					data: {
+						status: option
+							? TeamRequestStatus.APPROVED
+							: TeamRequestStatus.REJECTED,
+					},
+				});
+
+				const promises: Promise<any>[] = [updateRequestPromise];
+
+				if (option) {
+					promises.push(
+						prisma.userTeam.delete({
+							where: { userId_teamId: { userId: user.id, teamId } },
+						}),
+					);
+				} else {
+					promises.push(
+						prisma.reason.create({
+							data: {
+								type: ReasonType.OUT_TEAM,
+								teamRequestId: requestId,
+								reason: rejectReason,
+							},
+						}),
+						this.notificationsRepository.createNotification(
+							{
+								title: `Team Leader did not accept your leave team request`,
+								message: rejectReason,
+								type: NotificationTypeMap.Reject.id,
+							},
+							[requestExisted.teamMemberId],
+						),
+					);
+				}
+
+				await Promise.all(promises);
+
+				return option
+					? "Accepted Leave Team Request successfully"
+					: "Rejected Leave Team Request successfully";
+			});
+		} catch (e) {
+			console.error("Response leave team request failed", e.message, e.stack);
 			throw e;
 		}
 	}
