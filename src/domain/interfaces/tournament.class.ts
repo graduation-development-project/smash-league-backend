@@ -32,14 +32,24 @@ export enum RequiredAttachment {
 export class CreateTournamentSerie {
 	@IsString()
 	@IsNotEmpty()
-	tournamentEvent: string;
+	tournamentSerie: string;
 }
 
 
 export class CreateTournamentEvent {
-	
+	@Min(6, {
+		message: "Age for participating must be older than 6 years old."
+	})
+	@Max(90, {
+		message: "Age for participating must be younger than 90 years old."
+	})
 	fromAge?: number;
-
+	@Min(6, {
+		message: "Age for participating must be older than 6 years old."
+	})
+	@Max(90, {
+		message: "Age for participating must be younger than 90 years old."
+	})
 	toAge?: number;
 
 	@IsEnum(FormatType, {
@@ -47,15 +57,39 @@ export class CreateTournamentEvent {
 		"SINGLE_ELIMINATION, " + "ROUND_ROBIN"
 	})
 	formatType: FormatType;
-
+	@Min(11, {
+		message: "Winning point must be bigger than 11."
+	})
+	@Max(31, {
+		message: "Winning point must be under 31."
+	})
 	winningPoint?: number;
+	@Min(30, {
+		message: "Last point must be bigger than 30."
+	})
+	@Max(51, {
+		message: "Last point must be under 51."
+	})
 	lastPoint: number;
-	numberOfSets: number;
+	@Min(1, {
+		message: "Number of games must be bigger than 1."
+	})
+	@Max(5, {
+		message: "Number of games must be under 5."
+	})
+	numberOfGames: number;
+	
+	minimumParticipantToStart: number;
 	@IsEnum(ParticipantType, {
 		message: "Participant type must be one of the following: " + 
 		"MENS_SINGLE, " + "WOMENS_SINGLE, " + "MENS_DOUBLE, " + "WOMENS_DOUBLE, " + "MIXED_DOUBLE" 
 	})
 	participantType: ParticipantType;
+
+	championshipPrize: string[];
+	runnerUpPrize: string[];
+	thirdPrize?: string[];
+	jointThirdPrize?: string[];
 }
 
 export class CreateTournament {

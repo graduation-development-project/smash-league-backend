@@ -21,6 +21,8 @@ model User {
   otpExpiresTime                DateTime?
   isVerified                    Boolean                  @default(false)
   teamId                        String?
+  height                        Int?
+  
   teamLeaderOf                  Team[]                   @relation("FK_User_TeamLeader")
   tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
   userRoles                     UserRole[]               @relation(name: "FK_User_UserRole")
