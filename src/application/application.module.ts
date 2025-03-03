@@ -48,14 +48,16 @@ import { ResponseToTeamInvitationUseCase } from "./usecases/athletes/response-to
 import { GetAllBadmintonParticipantTypeUseCase } from "./usecases/tournament/get-all-badminton-participant-type.usecase";
 import { GetAllFormatTypeUseCase } from "./usecases/tournament/get-all-format-type.usecase";
 import { TeamQueueModule } from "../infrastructure/background-jobs/team/team.queue.module";
-import {RemoveTeamUseCase} from "./usecases/team-leader/remove-team.usecase";
-import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
-import {AuthService} from "./services/auth.service";
-import {RemoveTeamMemberUseCase} from "./usecases/team-leader/remove-team-member.usecase";
-import {LeaveTeamUseCase} from "./usecases/athletes/leave-team.usecase";
-import {ResponseLeaveTeamRequestUseCase} from "./usecases/team-leader/response-leave-team-request.usecase";
-import {RequestJoinTeamUseCase} from "./usecases/athletes/request-join-team.usecase";
-import {ResponseJoinTeamRequestUseCase} from "./usecases/team-leader/response-join-team-request.usecase";
+import { RemoveTeamUseCase } from "./usecases/team-leader/remove-team.usecase";
+import { EditTeamUseCase } from "./usecases/team-leader/edit-team.usecase";
+import { AuthService } from "./services/auth.service";
+import { RemoveTeamMemberUseCase } from "./usecases/team-leader/remove-team-member.usecase";
+import { LeaveTeamUseCase } from "./usecases/athletes/leave-team.usecase";
+import { ResponseLeaveTeamRequestUseCase } from "./usecases/team-leader/response-leave-team-request.usecase";
+import { RequestJoinTeamUseCase } from "./usecases/athletes/request-join-team.usecase";
+import { ResponseJoinTeamRequestUseCase } from "./usecases/team-leader/response-join-team-request.usecase";
+import { GetTeamMembersUseCase } from "./usecases/teams/get-team-members.usecase";
+import {PrismaTeamsRepositoryAdapter} from "../infrastructure/repositories/prisma.teams.repository.adapter";
 
 @Module({
 	imports: [
@@ -106,6 +108,11 @@ import {ResponseJoinTeamRequestUseCase} from "./usecases/team-leader/response-jo
 			provide: "TeamLeaderRepository",
 			useClass: PrismaTeamLeadersRepositoryAdapter,
 		},
+
+		{
+			provide: "TeamRepository",
+			useClass: PrismaTeamsRepositoryAdapter,
+		},
 		MailService,
 		UploadService,
 		PaymentPayOSService,
@@ -148,6 +155,7 @@ import {ResponseJoinTeamRequestUseCase} from "./usecases/team-leader/response-jo
 		ResponseLeaveTeamRequestUseCase,
 		RequestJoinTeamUseCase,
 		ResponseJoinTeamRequestUseCase,
+		GetTeamMembersUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -189,6 +197,7 @@ import {ResponseJoinTeamRequestUseCase} from "./usecases/team-leader/response-jo
 		ResponseLeaveTeamRequestUseCase,
 		RequestJoinTeamUseCase,
 		ResponseJoinTeamRequestUseCase,
+		GetTeamMembersUseCase,
 	],
 })
 export class ApplicationModule {}
