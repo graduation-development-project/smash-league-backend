@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateNotificationDTO {
 	@IsString()
@@ -12,4 +12,10 @@ export class CreateNotificationDTO {
 	@IsString()
 	@IsNotEmpty()
 	type: string;
+
+	@IsOptional()
+	teamInvitationId?: string;
+
+	@IsOptional()
+	teamRequestId?: string;
 }

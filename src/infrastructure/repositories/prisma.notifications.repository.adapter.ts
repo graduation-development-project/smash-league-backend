@@ -38,18 +38,23 @@ export class PrismaNotificationsRepositoryAdapter
 		createNotificationDTO: CreateNotificationDTO,
 		receiverList: string[],
 	): Promise<string> {
-		const { title, message, type } = createNotificationDTO;
+		const { title, message, type, teamRequestId, teamInvitationId } =
+			createNotificationDTO;
 
 		try {
 			if (!receiverList || receiverList.length === 0) {
 				throw new BadRequestException("Receiver list is required");
 			}
 
+			console.log("teamRequestId", teamRequestId);
+
 			const notification: Notification = await this.prisma.notification.create({
 				data: {
 					message,
 					typeId: type,
 					title,
+					...(teamRequestId && { teamRequestId }),
+					...(teamInvitationId && { teamInvitationId }),
 				},
 			});
 
