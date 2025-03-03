@@ -58,6 +58,7 @@ import { RequestJoinTeamUseCase } from "./usecases/athletes/request-join-team.us
 import { ResponseJoinTeamRequestUseCase } from "./usecases/team-leader/response-join-team-request.usecase";
 import { GetTeamMembersUseCase } from "./usecases/teams/get-team-members.usecase";
 import {PrismaTeamsRepositoryAdapter} from "../infrastructure/repositories/prisma.teams.repository.adapter";
+import {TransferTeamLeaderUseCase} from "./usecases/team-leader/transfer-team-leader.usecase";
 
 @Module({
 	imports: [
@@ -156,6 +157,7 @@ import {PrismaTeamsRepositoryAdapter} from "../infrastructure/repositories/prism
 		RequestJoinTeamUseCase,
 		ResponseJoinTeamRequestUseCase,
 		GetTeamMembersUseCase,
+		TransferTeamLeaderUseCase,
 	],
 	exports: [
 		ApplicationFunction,
@@ -198,6 +200,7 @@ import {PrismaTeamsRepositoryAdapter} from "../infrastructure/repositories/prism
 		RequestJoinTeamUseCase,
 		ResponseJoinTeamRequestUseCase,
 		GetTeamMembersUseCase,
+		TransferTeamLeaderUseCase,
 	],
 })
 export class ApplicationModule {}

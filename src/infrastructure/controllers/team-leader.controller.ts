@@ -28,6 +28,8 @@ import { RemoveTeamMemberUseCase } from "../../application/usecases/team-leader/
 import { ResponseLeaveTeamRequestUseCase } from "../../application/usecases/team-leader/response-leave-team-request.usecase";
 import { ResponseLeaveTeamRequestDTO } from "../../domain/dtos/team-leaders/response-leave-team-request.dto";
 import { ResponseJoinTeamRequestUseCase } from "../../application/usecases/team-leader/response-join-team-request.usecase";
+import { TransferTeamLeaderRoleDTO } from "../../domain/dtos/team-leaders/transfer-team-leader-role.dto";
+import { TransferTeamLeaderUseCase } from "../../application/usecases/team-leader/transfer-team-leader.usecase";
 
 @Controller("/team-leaders")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -41,6 +43,7 @@ export class TeamLeaderController {
 		private removeTeamMemberUseCase: RemoveTeamMemberUseCase,
 		private responseLeaveTeamRequestUseCase: ResponseLeaveTeamRequestUseCase,
 		private responseJoinTeamRequestUseCase: ResponseJoinTeamRequestUseCase,
+		private transferTeamLeaderUseCase: TransferTeamLeaderUseCase,
 	) {}
 
 	@Post("/create-team")
@@ -118,6 +121,17 @@ export class TeamLeaderController {
 	): Promise<string> {
 		return this.responseJoinTeamRequestUseCase.execute({
 			...responseJoinTeamRequestDTO,
+			user,
+		});
+	}
+
+	@Post("transfer-team-leader")
+	transferTeamLeader(
+		@Body() transferTeamLeaderRoleDTO: TransferTeamLeaderRoleDTO,
+		@Req() { user }: IRequestUser,
+	): Promise<string> {
+		return this.transferTeamLeaderUseCase.execute({
+			...transferTeamLeaderRoleDTO,
 			user,
 		});
 	}

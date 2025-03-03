@@ -24,6 +24,7 @@ import { NotificationsRepositoryPort } from "../../domain/repositories/notificat
 import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
 import { RemoveTeamMemberDTO } from "../../domain/dtos/team-leaders/remove-team-member.dto";
 import { ResponseLeaveTeamRequestDTO } from "../../domain/dtos/team-leaders/response-leave-team-request.dto";
+import { TransferTeamLeaderRoleDTO } from "../../domain/dtos/team-leaders/transfer-team-leader-role.dto";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -478,18 +479,17 @@ export class PrismaTeamLeadersRepositoryAdapter
 				throw new BadRequestException("Request does not exist.");
 			}
 
-
 			const userAlreadyInTeam = await this.prismaService.userTeam.findUnique({
 				where: {
 					userId_teamId: {
 						userId: requestExisted.teamMemberId,
-						teamId
-					}
-				}
-			})
+						teamId,
+					},
+				},
+			});
 
-			if(userAlreadyInTeam) {
-				throw new BadRequestException("This athlete already in team")
+			if (userAlreadyInTeam) {
+				throw new BadRequestException("This athlete already in team");
 			}
 
 			return await this.prismaService.$transaction(async (prisma) => {
@@ -541,6 +541,68 @@ export class PrismaTeamLeadersRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("Response join team request failed", e.message, e.stack);
+			throw e;
+		}
+	}
+
+	async transferTeamLeaderRole(
+		transferTeamLeaderRoleDTO: TransferTeamLeaderRoleDTO,
+	): Promise<string> {
+		const { teamId, newTeamLeaderId, user } = transferTeamLeaderRoleDTO;
+
+		try {
+			const teamExisted: Team = await this.prismaService.team.findUnique({
+				where: {
+					id: teamId,
+					teamLeaderId: user.id,
+				},
+			});
+
+			if (!teamExisted) {
+				throw new BadRequestException("You are not team leader of this team");
+			}
+
+			const isNewLeaderInTeam: UserTeam =
+				await this.prismaService.userTeam.findUnique({
+					where: {
+						userId_teamId: {
+							userId: newTeamLeaderId,
+							teamId,
+						},
+					},
+				});
+
+			if (!isNewLeaderInTeam) {
+				throw new BadRequestException("This user is not in this team");
+			}
+
+			const teamRequest: { id: string } = await this.prismaService.teamRequest.create({
+				data: {
+					teamMemberId: newTeamLeaderId,
+					type: TeamRequestType.TRANSFER_TEAM_LEADER,
+					teamId,
+				},
+
+				select: {
+					id: true,
+				},
+			});
+
+			const createNotificationDTO = {
+				title: `You are requested to be new team leader of team ${teamExisted.teamName}`,
+				message: `Your team leader has sent you a request to become a new team leader of ${teamExisted.teamName}`,
+				type: NotificationTypeMap.Transfer_Team_Leader.id,
+				teamRequestId: teamRequest.id,
+			};
+
+			await this.notificationsRepository.createNotification(
+				createNotificationDTO,
+				[newTeamLeaderId],
+			);
+
+			return "Transfer team leader successfully";
+		} catch (e) {
+			console.error("Transfer team leader role failed", e.message, e.stack);
 			throw e;
 		}
 	}

@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "TeamRequestType" ADD VALUE 'TRANSFER_TEAM_LEADER';

@@ -8,21 +8,21 @@ datasource db {
 }
 
 model User {
-  id                            String                   @id @default(uuid())
-  email                         String                   @unique
-  password                      String
-  firstName                     String
-  lastName                      String
-  phoneNumber                   String                   @unique
-  avatarURL                     String?
-  currentRefreshToken           String?
-  creditsRemain                 Int?
-  otp                           String?
-  otpExpiresTime                DateTime?
-  isVerified                    Boolean                  @default(false)
-  teamId                        String?
-  height                        Int?
-  
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  password            String
+  firstName           String
+  lastName            String
+  phoneNumber         String    @unique
+  avatarURL           String?
+  currentRefreshToken String?
+  creditsRemain       Int?
+  otp                 String?
+  otpExpiresTime      DateTime?
+  isVerified          Boolean   @default(false)
+  teamId              String?
+  height              Int?
+
   teamLeaderOf                  Team[]                   @relation("FK_User_TeamLeader")
   tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
   userRoles                     UserRole[]               @relation(name: "FK_User_UserRole")
@@ -146,6 +146,8 @@ model Notification {
   userNotification UserNotification[] @relation("FK_UserNotification_Notification")
   teamInvitationId String?            @unique
   teamInvitation   TeamInvitation?    @relation("FK_TeamInvitation_Notification", fields: [teamInvitationId], references: [id], onDelete: Cascade)
+  teamRequestId    String?            @unique
+  teamRequest      TeamRequest?       @relation("FK_TeamRequest_Notification", fields: [teamRequestId], references: [id], onDelete: Cascade)
 }
 
 model UserNotification {
@@ -288,6 +290,7 @@ model TeamRequest {
   team            Team?             @relation("FK_Team_TeamRequest", fields: [teamId], references: [id])
   leaveTeamReason String?
   rejectReason    Reason?           @relation("FK_TeamRequest_Reason")
+  Notification    Notification?     @relation("FK_TeamRequest_Notification")
 }
 
 enum TeamRequestStatus {
@@ -299,6 +302,7 @@ enum TeamRequestStatus {
 enum TeamRequestType {
   JOIN_TEAM
   LEAVE_TEAM
+  TRANSFER_TEAM_LEADER
 }
 
 model Reason {
