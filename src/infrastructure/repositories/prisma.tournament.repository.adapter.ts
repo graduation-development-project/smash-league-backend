@@ -1,5 +1,4 @@
 import { PrismaClient, Tournament } from "@prisma/client";
-import { TournamentEntity } from "src/domain/entities/tournament/tournament.entity";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { Injectable } from "@nestjs/common";
 
