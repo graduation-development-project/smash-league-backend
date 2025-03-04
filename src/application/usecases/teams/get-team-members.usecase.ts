@@ -8,7 +8,7 @@ export class GetTeamMembersUseCase {
 		@Inject("TeamRepository") private teamRepository: TeamRepositoryPort,
 	) {}
 
-	execute(teamId: string, user: User): Promise<User[]> {
-		return this.teamRepository.getTeamMember(teamId, user);
+	execute(teamId: string): Promise<User[]> {
+		return this.teamRepository.getTeamMemberByTeamId(teamId);
 	}
 }

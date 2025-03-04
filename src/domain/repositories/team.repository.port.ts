@@ -1,5 +1,7 @@
-import { User } from "@prisma/client";
+import { Team, User } from "@prisma/client";
 
 export interface TeamRepositoryPort {
-	getTeamMember(teamId: string, user: User): Promise<User[]>;
+	getTeamMemberByTeamId(teamId: string): Promise<User[]>;
+	getTeamDetails(teamId: string): Promise<Team>;
+	getJoinedTeam(user: User): Promise<Team[]>;
 }
