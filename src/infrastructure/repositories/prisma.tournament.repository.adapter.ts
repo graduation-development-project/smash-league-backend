@@ -1,14 +1,16 @@
 import { PrismaClient, Tournament } from "@prisma/client";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { Injectable } from "@nestjs/common";
+import { ICreateTournament } from "src/domain/interfaces/tournament/tournament.interface";
 
 @Injectable()
 export class PrismaTournamentRepositorAdapter implements TournamentRepositoryPort {
 	constructor(private prisma: PrismaClient) {	
 	}
 
-	createTournament(): Promise<Tournament> {
-		return null
+	async createTournament(tournament: ICreateTournament): Promise<ICreateTournament> {
+		return tournament;
+
 	}
 	async getAllTournament(): Promise<Tournament[]> {
 		const tournaments = await this.prisma.tournament.findMany();
