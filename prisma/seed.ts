@@ -45,6 +45,12 @@ async function main() {
 		{
 			typeOfNotification: "Leave Team",
 		},
+		{
+			typeOfNotification: "Join Team",
+		},
+		{
+			typeOfNotification: "Transfer Team Leader",
+		},
 	];
 
 	roles.map(async (role) => {

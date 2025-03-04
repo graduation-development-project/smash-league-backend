@@ -9,10 +9,14 @@ export const NotificationTypeMap = {
 	Disband: { id: null, name: "Disband" },
 	Kick: { id: null, name: "Kick" },
 	Leave_Team: { id: null, name: "Leave Team" },
+	Join_Team: { id: null, name: "Join Team" },
+	Transfer_Team_Leader: { id: null, name: "Transfer Team Leader" },
 };
 
 const notificationTypeMapping = {
 	"Leave Team": "Leave_Team",
+	"Join Team": "Join_Team",
+	"Transfer Team Leader": "Transfer_Team_Leader",
 };
 
 export async function loadNotificationTypeMap() {

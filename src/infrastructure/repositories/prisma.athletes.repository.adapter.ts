@@ -4,6 +4,7 @@ import {
 	ReasonType,
 	Team,
 	TeamInvitation,
+	TeamRequest,
 	TeamRequestStatus,
 	TeamRequestType,
 	Tournament,
@@ -23,7 +24,9 @@ import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { LeaveTeamDTO } from "../../domain/dtos/athletes/leave-team.dto";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
 import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
-import {request} from "express";
+import { request } from "express";
+import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
+import { ResponseTeamLeaderTransferDTO } from "../../domain/dtos/athletes/response-team-leader-transfer.dto";
 
 const streamifier = require("streamifier");
 
@@ -251,8 +254,8 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 			let athleteName: string = `${existedInvitation.invitedUser.firstName} ${existedInvitation.invitedUser.lastName}`;
 
-			await this.prisma.$transaction(async (prisma) => {
-				await prisma.teamInvitation.update({
+			const teamInvitation: TeamInvitation =
+				await this.prisma.teamInvitation.update({
 					where: { id: invitationId },
 					data: {
 						status: option
@@ -261,30 +264,42 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 					},
 				});
 
-				if (option) {
-					await prisma.userTeam.create({
-						data: {
-							userId: existedInvitation.invitedUserId,
-							teamId: existedInvitation.teamId,
-						},
-					});
-				}
-
-				const createdNotification = await prisma.notification.create({
+			if (option) {
+				await this.prisma.userTeam.create({
 					data: {
-						title: option ? "Accept join team" : "Reject join team",
-						message: `${athleteName} ${option ? "accepted your invitation" : "rejected your invitation"}`,
-						typeId: NotificationTypeMap.Reject.id,
+						userId: existedInvitation.invitedUserId,
+						teamId: existedInvitation.teamId,
 					},
 				});
+			}
 
-				await prisma.userNotification.create({
-					data: {
-						notificationId: createdNotification.id,
-						userId: existedInvitation.team.teamLeaderId,
-					},
-				});
-			});
+			await this.notificationsRepository.createNotification(
+				{
+					title: option ? "Accept join team" : "Reject join team",
+					message: `${athleteName} ${option ? "accepted your invitation" : "rejected your invitation"}`,
+					type: option
+						? NotificationTypeMap.Approve.id
+						: NotificationTypeMap.Reject.id,
+					teamInvitationId: teamInvitation.id,
+				},
+				[existedInvitation.team.teamLeaderId],
+			);
+			//
+			// const createdNotification = await prisma.notification.create({
+			// 	data: {
+			// 		title: option ? "Accept join team" : "Reject join team",
+			// 		message: `${athleteName} ${option ? "accepted your invitation" : "rejected your invitation"}`,
+			// 		typeId: NotificationTypeMap.Reject.id,
+			// 		teamInvitationId: teamInvitation.id,
+			// 	},
+			// });
+			//
+			// await prisma.userNotification.create({
+			// 	data: {
+			// 		notificationId: createdNotification.id,
+			// 		userId: existedInvitation.team.teamLeaderId,
+			// 	},
+			// });
 
 			return option ? "Accept Successfully" : "Reject Successfully";
 		} catch (e) {
@@ -322,27 +337,26 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 			const userName = `${user.firstName} ${user.lastName}`;
 
-			const createNotificationDTO = {
+			const teamRequest: TeamRequest = await this.prisma.teamRequest.create({
+				data: {
+					leaveTeamReason: reason,
+					teamMemberId: user.id,
+					teamId,
+					type: TeamRequestType.LEAVE_TEAM,
+				},
+			});
+
+			const createNotificationDTO: CreateNotificationDTO = {
 				message: `${userName} want to leave team`,
 				title: `${userName} want to leave team`,
 				type: NotificationTypeMap.Leave_Team.id,
+				teamRequestId: teamRequest.id,
 			};
 
-			await this.prisma.$transaction(async (prisma) => {
-				await prisma.teamRequest.create({
-					data: {
-						leaveTeamReason: reason,
-						teamMemberId: user.id,
-						teamId,
-						type: TeamRequestType.LEAVE_TEAM,
-					},
-				});
-
-				await this.notificationsRepository.createNotification(
-					createNotificationDTO,
-					[teamExisted.teamLeaderId],
-				);
-			});
+			await this.notificationsRepository.createNotification(
+				createNotificationDTO,
+				[teamExisted.teamLeaderId],
+			);
 
 			return "Leave team request send successfully";
 		} catch (e) {
@@ -357,8 +371,8 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		const { teamId, user } = requestJoinTeamDTO;
 
 		try {
-			const [teamExist, checkAlreadyInTeam, requestExisted] = await Promise.all(
-				[
+			const [teamExisted, checkAlreadyInTeam, requestExisted] =
+				await Promise.all([
 					this.prisma.team.findUnique({ where: { id: teamId } }),
 					this.prisma.userTeam.findUnique({
 						where: { userId_teamId: { userId: user.id, teamId } },
@@ -366,8 +380,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 					this.prisma.teamRequest.findFirst({
 						where: { teamId, teamMemberId: user.id },
 					}),
-				],
-			);
+				]);
 
 			if (requestExisted) {
 				throw new BadRequestException(
@@ -379,11 +392,11 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("User already in this team");
 			}
 
-			if (!teamExist) {
+			if (!teamExisted) {
 				throw new BadRequestException("Team does not exist");
 			}
 
-			await this.prisma.teamRequest.create({
+			const teamRequest: TeamRequest = await this.prisma.teamRequest.create({
 				data: {
 					teamId,
 					type: TeamRequestType.JOIN_TEAM,
@@ -392,9 +405,93 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				},
 			});
 
+			const userName = `${user.firstName} ${user.lastName}`;
+
+			const createNotificationDTO: CreateNotificationDTO = {
+				message: `${userName} want to join team`,
+				title: `${userName} want to join team`,
+				type: NotificationTypeMap.Join_Team.id,
+				teamRequestId: teamRequest.id,
+			};
+
+			await this.notificationsRepository.createNotification(
+				createNotificationDTO,
+				[teamExisted.teamLeaderId],
+			);
+
 			return "Request to join team successfully";
 		} catch (e) {
 			console.error("Request join team failed", e.message, e.stack);
+			throw e;
+		}
+	}
+
+	async responseToTransferTeamLeader(
+		responseToTransferTeamLeaderDTO: ResponseTeamLeaderTransferDTO,
+	): Promise<string> {
+		const { requestId, option, user } = responseToTransferTeamLeaderDTO;
+
+		console.log(responseToTransferTeamLeaderDTO);
+		try {
+			const requestExisted: TeamRequest =
+				await this.prisma.teamRequest.findUnique({
+					where: {
+						id: requestId,
+						teamMemberId: user.id,
+					},
+				});
+
+			if (!requestExisted) {
+				throw new BadRequestException("Request not existed");
+			}
+
+			let athleteName: string = `${user.firstName} ${user.lastName}`;
+
+			const teamRequest = await this.prisma.teamRequest.update({
+				where: { id: requestId },
+				data: {
+					status: option
+						? TeamRequestStatus.APPROVED
+						: TeamRequestStatus.REJECTED,
+				},
+
+				include: {
+					team: true,
+				},
+			});
+
+			const oldTeamLeaderId: string = teamRequest.team.teamLeaderId;
+
+			if (option) {
+				await this.prisma.team.update({
+					where: {
+						id: requestExisted.teamId,
+					},
+					data: {
+						teamLeaderId: user.id,
+					},
+				});
+			}
+
+			await this.notificationsRepository.createNotification(
+				{
+					title: option
+						? "Accept become new team leader"
+						: "Reject become new team leader",
+					message: `${athleteName} ${option ? "accepted your transfer team leader request" : "rejected your transfer team leader request"}`,
+					type: option
+						? NotificationTypeMap.Approve.id
+						: NotificationTypeMap.Reject.id,
+					teamRequestId: requestId,
+				},
+				[oldTeamLeaderId],
+			);
+
+			return option
+				? "Accept transfer team leader request successfully"
+				: "Reject transfer team leader request successfully";
+		} catch (e) {
+			console.error("Response to transferTeamLeader", e.message, e.stack);
 			throw e;
 		}
 	}

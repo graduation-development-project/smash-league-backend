@@ -28,6 +28,7 @@ import { UploadService } from "./services/upload.service";
 import { TeamLeaderController } from "./controllers/team-leader.controller";
 import { TeamQueueModule } from "./background-jobs/team/team.queue.module";
 import {GoogleStrategy} from "./strategies/auth/google.strategy";
+import {TeamController} from "./controllers/team.controller";
 
 @Module({
 	imports: [
@@ -76,6 +77,7 @@ import {GoogleStrategy} from "./strategies/auth/google.strategy";
 		PaymentController,
 		TournamentController,
 		TeamLeaderController,
+		TeamController,
 	],
 	providers: [
 		LocalStrategy,

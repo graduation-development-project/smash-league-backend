@@ -6,6 +6,7 @@ import {
 	Notification,
 	ReasonType,
 	Team,
+	TeamInvitation,
 	TeamRequest,
 	TeamRequestStatus,
 	TeamRequestType,
@@ -24,6 +25,7 @@ import { NotificationsRepositoryPort } from "../../domain/repositories/notificat
 import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
 import { RemoveTeamMemberDTO } from "../../domain/dtos/team-leaders/remove-team-member.dto";
 import { ResponseLeaveTeamRequestDTO } from "../../domain/dtos/team-leaders/response-leave-team-request.dto";
+import { TransferTeamLeaderRoleDTO } from "../../domain/dtos/team-leaders/transfer-team-leader-role.dto";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -149,60 +151,71 @@ export class PrismaTeamLeadersRepositoryAdapter
 					},
 				});
 
-			await this.prismaService.$transaction(async (prisma) => {
-				const oneDayInMs = 24 * 60 * 60 * 1000;
-				const now = new Date();
+			const oneDayInMs: number = 24 * 60 * 60 * 1000;
+			const now = new Date();
+			let teamInvitation: TeamInvitation = null;
 
-				if (existingInvitation?.status === InvitationStatus.PENDING) {
-					let timeSinceLastInvitation: number;
+			if (existingInvitation?.status === InvitationStatus.PENDING) {
+				let timeSinceLastInvitation: number;
 
-					if (existingInvitation.updatedAt !== null) {
-						timeSinceLastInvitation =
-							now.getTime() - existingInvitation.updatedAt.getTime();
-					} else {
-						timeSinceLastInvitation =
-							now.getTime() - existingInvitation.createdAt.getTime();
-					}
-
-					if (timeSinceLastInvitation < oneDayInMs) {
-						throw new BadRequestException(
-							"You need to wait 1 day to create a new invitation",
-						);
-					}
-
-					await prisma.teamInvitation.update({
-						where: { id: existingInvitation.id },
-						data: { updatedAt: now, status: InvitationStatus.PENDING },
-					});
+				if (existingInvitation.updatedAt !== null) {
+					timeSinceLastInvitation =
+						now.getTime() - existingInvitation.updatedAt.getTime();
 				} else {
-					await prisma.teamInvitation.create({
-						data: { teamId, invitedUserId: userExisted.id },
-					});
+					timeSinceLastInvitation =
+						now.getTime() - existingInvitation.createdAt.getTime();
 				}
 
-				const message = `You have an invitation from team ${teamExisted.teamName}`;
+				if (timeSinceLastInvitation < oneDayInMs) {
+					throw new BadRequestException(
+						"You need to wait 1 day to create a new invitation",
+					);
+				}
 
-				const notification: Notification = await prisma.notification.create({
-					data: {
-						typeId: NotificationTypeMap.Invitation.id,
-						message,
-						title: message,
-					},
+				teamInvitation = await this.prismaService.teamInvitation.update({
+					where: { id: existingInvitation.id },
+					data: { updatedAt: now, status: InvitationStatus.PENDING },
 				});
+			} else {
+				teamInvitation = await this.prismaService.teamInvitation.create({
+					data: { teamId, invitedUserId: userExisted.id },
+				});
+			}
 
-				await prisma.userNotification.create({
-					data: { userId: userExisted.id, notificationId: notification.id },
-				});
+			const message = `You have an invitation from team ${teamExisted.teamName}`;
 
-				await this.emailQueue.add("sendEmail", {
-					to: invitedUserEmail,
-					subject: `You have an invitation from team ${teamExisted.teamName}`,
-					template: "team-invitation.hbs",
-					context: {
-						teamLeader: `${teamExisted.teamLeader.firstName} ${teamExisted.teamLeader.lastName}`,
-						teamName: teamExisted.teamName,
-					},
-				});
+			await this.notificationsRepository.createNotification(
+				{
+					type: NotificationTypeMap.Invitation.id,
+					message,
+					title: message,
+					teamInvitationId: teamInvitation.id,
+				},
+				[userExisted.id],
+			);
+
+			// const notification: Notification =
+			// 	await this.prismaService.notification.create({
+			// 		data: {
+			// 			typeId: NotificationTypeMap.Invitation.id,
+			// 			message,
+			// 			title: message,
+			// 			teamInvitationId: teamInvitation.id,
+			// 		},
+			// 	});
+			//
+			// await this.prismaService.userNotification.create({
+			// 	data: { userId: userExisted.id, notificationId: notification.id },
+			// });
+
+			await this.emailQueue.add("sendEmail", {
+				to: invitedUserEmail,
+				subject: `You have an invitation from team ${teamExisted.teamName}`,
+				template: "team-invitation.hbs",
+				context: {
+					teamLeader: `${teamExisted.teamLeader.firstName} ${teamExisted.teamLeader.lastName}`,
+					teamName: teamExisted.teamName,
+				},
 			});
 
 			return "Send invitation successfully!";
@@ -411,8 +424,8 @@ export class PrismaTeamLeadersRepositoryAdapter
 				throw new BadRequestException("Request does not exist.");
 			}
 
-			return await this.prismaService.$transaction(async (prisma) => {
-				const updateRequestPromise = prisma.teamRequest.update({
+			const updateRequested: TeamRequest =
+				await this.prismaService.teamRequest.update({
 					where: { id: requestId },
 					data: {
 						status: option
@@ -421,40 +434,32 @@ export class PrismaTeamLeadersRepositoryAdapter
 					},
 				});
 
-				const promises: Promise<any>[] = [updateRequestPromise];
-
-				if (option) {
-					promises.push(
-						prisma.userTeam.delete({
-							where: { userId_teamId: { userId: user.id, teamId } },
-						}),
+			if (option) {
+				await this.prismaService.userTeam.delete({
+					where: { userId_teamId: { userId: user.id, teamId } },
+				});
+			} else {
+				await this.prismaService.reason.create({
+					data: {
+						type: ReasonType.OUT_TEAM_REJECTION,
+						teamRequestId: requestId,
+						reason: rejectReason,
+					},
+				}),
+					await this.notificationsRepository.createNotification(
+						{
+							title: `Team Leader did not accept your leave team request`,
+							message: rejectReason,
+							type: NotificationTypeMap.Reject.id,
+							teamRequestId: updateRequested.id,
+						},
+						[requestExisted.teamMemberId],
 					);
-				} else {
-					promises.push(
-						prisma.reason.create({
-							data: {
-								type: ReasonType.OUT_TEAM_REJECTION,
-								teamRequestId: requestId,
-								reason: rejectReason,
-							},
-						}),
-						this.notificationsRepository.createNotification(
-							{
-								title: `Team Leader did not accept your leave team request`,
-								message: rejectReason,
-								type: NotificationTypeMap.Reject.id,
-							},
-							[requestExisted.teamMemberId],
-						),
-					);
-				}
+			}
 
-				await Promise.all(promises);
-
-				return option
-					? "Accepted Leave Team Request successfully"
-					: "Rejected Leave Team Request successfully";
-			});
+			return option
+				? "Accepted Leave Team Request successfully"
+				: "Rejected Leave Team Request successfully";
 		} catch (e) {
 			console.error("Response leave team request failed", e.message, e.stack);
 			throw e;
@@ -478,22 +483,21 @@ export class PrismaTeamLeadersRepositoryAdapter
 				throw new BadRequestException("Request does not exist.");
 			}
 
-
 			const userAlreadyInTeam = await this.prismaService.userTeam.findUnique({
 				where: {
 					userId_teamId: {
 						userId: requestExisted.teamMemberId,
-						teamId
-					}
-				}
-			})
+						teamId,
+					},
+				},
+			});
 
-			if(userAlreadyInTeam) {
-				throw new BadRequestException("This athlete already in team")
+			if (userAlreadyInTeam) {
+				throw new BadRequestException("This athlete already in team");
 			}
 
-			return await this.prismaService.$transaction(async (prisma) => {
-				const updateRequestPromise = prisma.teamRequest.update({
+			const updatedRequest: TeamRequest =
+				await this.prismaService.teamRequest.update({
 					where: { id: requestId },
 					data: {
 						status: option
@@ -502,45 +506,101 @@ export class PrismaTeamLeadersRepositoryAdapter
 					},
 				});
 
-				const promises: Promise<any>[] = [updateRequestPromise];
+			if (option) {
+				await this.prismaService.userTeam.create({
+					data: {
+						teamId,
+						userId: requestExisted.teamMemberId,
+					},
+				});
+			} else {
+				await this.prismaService.reason.create({
+					data: {
+						type: ReasonType.JOIN_TEAM_REJECTION,
+						teamRequestId: requestId,
+						reason: rejectReason,
+					},
+				});
 
-				if (option) {
-					promises.push(
-						prisma.userTeam.create({
-							data: {
-								teamId,
-								userId: requestExisted.teamMemberId,
-							},
-						}),
-					);
-				} else {
-					promises.push(
-						prisma.reason.create({
-							data: {
-								type: ReasonType.JOIN_TEAM_REJECTION,
-								teamRequestId: requestId,
-								reason: rejectReason,
-							},
-						}),
-						this.notificationsRepository.createNotification(
-							{
-								title: `Team Leader did not accept your join team request`,
-								message: rejectReason,
-								type: NotificationTypeMap.Reject.id,
-							},
-							[requestExisted.teamMemberId],
-						),
-					);
-				}
+				await this.notificationsRepository.createNotification(
+					{
+						title: `Team Leader did not accept your join team request`,
+						message: rejectReason,
+						type: NotificationTypeMap.Reject.id,
+						teamRequestId: updatedRequest.id,
+					},
+					[requestExisted.teamMemberId],
+				);
+			}
 
-				await Promise.all(promises);
-
-				return option
-					? "Accepted join Team Request successfully"
-					: "Rejected join Team Request successfully";
-			});
+			return option
+				? "Accepted join Team Request successfully"
+				: "Rejected join Team Request successfully";
 		} catch (e) {
 			console.error("Response join team request failed", e.message, e.stack);
+			throw e;
+		}
+	}
+
+	async transferTeamLeaderRole(
+		transferTeamLeaderRoleDTO: TransferTeamLeaderRoleDTO,
+	): Promise<string> {
+		const { teamId, newTeamLeaderId, user } = transferTeamLeaderRoleDTO;
+
+		try {
+			const teamExisted: Team = await this.prismaService.team.findUnique({
+				where: {
+					id: teamId,
+					teamLeaderId: user.id,
+				},
+			});
+
+			if (!teamExisted) {
+				throw new BadRequestException("You are not team leader of this team");
+			}
+
+			const isNewLeaderInTeam: UserTeam =
+				await this.prismaService.userTeam.findUnique({
+					where: {
+						userId_teamId: {
+							userId: newTeamLeaderId,
+							teamId,
+						},
+					},
+				});
+
+			if (!isNewLeaderInTeam) {
+				throw new BadRequestException("This user is not in this team");
+			}
+
+			const teamRequest: { id: string } =
+				await this.prismaService.teamRequest.create({
+					data: {
+						teamMemberId: newTeamLeaderId,
+						type: TeamRequestType.TRANSFER_TEAM_LEADER,
+						teamId,
+					},
+
+					select: {
+						id: true,
+					},
+				});
+
+			const createNotificationDTO = {
+				title: `You are requested to be new team leader of team ${teamExisted.teamName}`,
+				message: `Your team leader has sent you a request to become a new team leader of ${teamExisted.teamName}`,
+				type: NotificationTypeMap.Transfer_Team_Leader.id,
+				teamRequestId: teamRequest.id,
+			};
+
+			await this.notificationsRepository.createNotification(
+				createNotificationDTO,
+				[newTeamLeaderId],
+			);
+
+			return "Transfer team leader successfully";
+		} catch (e) {
+			console.error("Transfer team leader role failed", e.message, e.stack);
 			throw e;
 		}
 	}

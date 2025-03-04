@@ -3,6 +3,7 @@ import {
 	Controller,
 	Get,
 	Post,
+	Put,
 	Query,
 	Req,
 	UploadedFiles,
@@ -34,6 +35,8 @@ import { LeaveTeamUseCase } from "../../application/usecases/athletes/leave-team
 import { LeaveTeamDTO } from "../../domain/dtos/athletes/leave-team.dto";
 import { RequestJoinTeamUseCase } from "../../application/usecases/athletes/request-join-team.usecase";
 import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
+import { ResponseTeamLeaderTransferDTO } from "../../domain/dtos/athletes/response-team-leader-transfer.dto";
+import { ResponseTransferTeamLeaderUseCase } from "../../application/usecases/athletes/response-transfer-team-leader.usecase";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -46,6 +49,7 @@ export class AthletesController {
 		private responseToTeamInvitationUseCase: ResponseToTeamInvitationUseCase,
 		private leaveTeamUseCase: LeaveTeamUseCase,
 		private requestJoinTeamUseCase: RequestJoinTeamUseCase,
+		private responseTransferTeamLeaderUseCase: ResponseTransferTeamLeaderUseCase,
 		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
@@ -116,5 +120,16 @@ export class AthletesController {
 		@Req() { user }: IRequestUser,
 	): Promise<string> {
 		return this.requestJoinTeamUseCase.execute({ ...requestJoinTeamDTO, user });
+	}
+
+	@Put("response-transfer-team-leader")
+	responseTransferTeamLeader(
+		@Body() responseTeamLeaderTransferDTO: ResponseTeamLeaderTransferDTO,
+		@Req() { user }: IRequestUser,
+	): Promise<string> {
+		return this.responseTransferTeamLeaderUseCase.execute({
+			...responseTeamLeaderTransferDTO,
+			user,
+		});
 	}
 }

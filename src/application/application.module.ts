@@ -48,14 +48,20 @@ import { ResponseToTeamInvitationUseCase } from "./usecases/athletes/response-to
 import { GetAllBadmintonParticipantTypeUseCase } from "./usecases/tournament/get-all-badminton-participant-type.usecase";
 import { GetAllFormatTypeUseCase } from "./usecases/tournament/get-all-format-type.usecase";
 import { TeamQueueModule } from "../infrastructure/background-jobs/team/team.queue.module";
-import {RemoveTeamUseCase} from "./usecases/team-leader/remove-team.usecase";
-import {EditTeamUseCase} from "./usecases/team-leader/edit-team.usecase";
-import {AuthService} from "./services/auth.service";
-import {RemoveTeamMemberUseCase} from "./usecases/team-leader/remove-team-member.usecase";
-import {LeaveTeamUseCase} from "./usecases/athletes/leave-team.usecase";
-import {ResponseLeaveTeamRequestUseCase} from "./usecases/team-leader/response-leave-team-request.usecase";
-import {RequestJoinTeamUseCase} from "./usecases/athletes/request-join-team.usecase";
-import {ResponseJoinTeamRequestUseCase} from "./usecases/team-leader/response-join-team-request.usecase";
+import { RemoveTeamUseCase } from "./usecases/team-leader/remove-team.usecase";
+import { EditTeamUseCase } from "./usecases/team-leader/edit-team.usecase";
+import { AuthService } from "./services/auth.service";
+import { RemoveTeamMemberUseCase } from "./usecases/team-leader/remove-team-member.usecase";
+import { LeaveTeamUseCase } from "./usecases/athletes/leave-team.usecase";
+import { ResponseLeaveTeamRequestUseCase } from "./usecases/team-leader/response-leave-team-request.usecase";
+import { RequestJoinTeamUseCase } from "./usecases/athletes/request-join-team.usecase";
+import { ResponseJoinTeamRequestUseCase } from "./usecases/team-leader/response-join-team-request.usecase";
+import { GetTeamMembersUseCase } from "./usecases/teams/get-team-members.usecase";
+import { PrismaTeamsRepositoryAdapter } from "../infrastructure/repositories/prisma.teams.repository.adapter";
+import { TransferTeamLeaderUseCase } from "./usecases/team-leader/transfer-team-leader.usecase";
+import { ResponseTransferTeamLeaderUseCase } from "./usecases/athletes/response-transfer-team-leader.usecase";
+import {GetTeamDetailUseCase} from "./usecases/teams/get-team-detail.usecase";
+import {GetJoinedTeamsUseCase} from "./usecases/teams/get-joined-teams.usecase";
 import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tournament.useacase";
 
 @Module({
@@ -107,6 +113,11 @@ import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tou
 			provide: "TeamLeaderRepository",
 			useClass: PrismaTeamLeadersRepositoryAdapter,
 		},
+
+		{
+			provide: "TeamRepository",
+			useClass: PrismaTeamsRepositoryAdapter,
+		},
 		MailService,
 		UploadService,
 		PaymentPayOSService,
@@ -149,7 +160,12 @@ import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tou
 		ResponseLeaveTeamRequestUseCase,
 		RequestJoinTeamUseCase,
 		ResponseJoinTeamRequestUseCase,
-		CreateNewTournamentUseCase
+		GetTeamMembersUseCase,
+		TransferTeamLeaderUseCase,
+		ResponseTransferTeamLeaderUseCase,
+		GetTeamDetailUseCase,
+		GetJoinedTeamsUseCase,
+    CreateNewTournamentUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -191,7 +207,12 @@ import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tou
 		ResponseLeaveTeamRequestUseCase,
 		RequestJoinTeamUseCase,
 		ResponseJoinTeamRequestUseCase,
-		CreateNewTournamentUseCase
+		GetTeamMembersUseCase,
+		TransferTeamLeaderUseCase,
+		ResponseTransferTeamLeaderUseCase,
+		GetTeamDetailUseCase,
+		GetJoinedTeamsUseCase,
+    CreateNewTournamentUseCase
 	],
 })
 export class ApplicationModule {}
