@@ -8,9 +8,7 @@ export class PrismaTournamentRepositorAdapter implements TournamentRepositoryPor
 	}
 
 	createTournament(): Promise<Tournament> {
-		return await this.prisma.tournament.create({
-			data: null
-		})
+		return null
 	}
 	async getAllTournament(): Promise<Tournament[]> {
 		const tournaments = await this.prisma.tournament.findMany();
