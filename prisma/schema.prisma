@@ -204,6 +204,7 @@ enum TournamentStatus {
   DRAWING
   ON_GOING
   FINISHED
+  
 }
 
 model TournamentEvent {
