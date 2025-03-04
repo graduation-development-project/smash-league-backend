@@ -56,6 +56,7 @@ import {LeaveTeamUseCase} from "./usecases/athletes/leave-team.usecase";
 import {ResponseLeaveTeamRequestUseCase} from "./usecases/team-leader/response-leave-team-request.usecase";
 import {RequestJoinTeamUseCase} from "./usecases/athletes/request-join-team.usecase";
 import {ResponseJoinTeamRequestUseCase} from "./usecases/team-leader/response-join-team-request.usecase";
+import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tournament.useacase";
 
 @Module({
 	imports: [
@@ -148,6 +149,7 @@ import {ResponseJoinTeamRequestUseCase} from "./usecases/team-leader/response-jo
 		ResponseLeaveTeamRequestUseCase,
 		RequestJoinTeamUseCase,
 		ResponseJoinTeamRequestUseCase,
+		CreateNewTournamentUseCase
 	],
 	exports: [
 		ApplicationFunction,
@@ -189,6 +191,7 @@ import {ResponseJoinTeamRequestUseCase} from "./usecases/team-leader/response-jo
 		ResponseLeaveTeamRequestUseCase,
 		RequestJoinTeamUseCase,
 		ResponseJoinTeamRequestUseCase,
+		CreateNewTournamentUseCase
 	],
 })
 export class ApplicationModule {}

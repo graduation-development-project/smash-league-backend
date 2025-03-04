@@ -172,6 +172,7 @@ model Tournament {
   shortName                String?
   organizerId              String
   mainColor                String?
+  backgroundTournament     String
   registrationOpeningDate  DateTime
   registrationClosingDate  DateTime
   drawDate                 DateTime
@@ -179,7 +180,6 @@ model Tournament {
   endDate                  DateTime
   checkInBeforeStart       DateTime
   umpirePerMatch           Int
-  linemanPerMatch          Int
   registrationFeePerPerson Int
   registrationFeePerPair   Int?
   maxEventPerPerson        Int

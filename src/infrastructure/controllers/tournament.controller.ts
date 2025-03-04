@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
 import { BadmintonParticipantType, Tournament } from "@prisma/client";
+import { CreateNewTournamentUseCase } from "src/application/usecases/tournament/create-new-tournament.useacase";
 import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/tournament/get-all-badminton-participant-type.usecase";
 import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
 import { GetAllTournamentUseCase } from "src/application/usecases/tournament/get-all-tournament.usecase";
@@ -11,7 +12,8 @@ export class TournamentController {
 	constructor(
 		private readonly getAllTournamentUseCase: GetAllTournamentUseCase,
 		private readonly getAllBadmintonParticipantTypeUseCase: GetAllBadmintonParticipantTypeUseCase,
-		private readonly getAllFormatTypeUseCase: GetAllFormatTypeUseCase
+		private readonly getAllFormatTypeUseCase: GetAllFormatTypeUseCase,
+		private readonly createNewTournamentUseCase: CreateNewTournamentUseCase
 	) {	
 	}
 
@@ -22,7 +24,7 @@ export class TournamentController {
 
 	@Post("/create-tournament")
 	async createNewTournament(@Body() createTournament: CreateTournament) : Promise<any> {
-		return createTournament;
+		return await this.createNewTournamentUseCase.execute(createTournament);
 	}
 
 	@Get("/get-all-badminton-participant-type")

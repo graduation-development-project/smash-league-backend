@@ -1,6 +1,6 @@
 import { Tournament } from "@prisma/client";
 import { Type } from "class-transformer";
-import { Allow, IS_ISO8601, IsArray, IsDateString, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateIf, ValidateNested } from "class-validator";
+import { Allow, IS_ISO8601, IsArray, IsBoolean, IsDateString, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateIf, ValidateNested } from "class-validator";
 
 
 export enum FormatType {
@@ -105,6 +105,8 @@ export class CreateTournament {
 	@Allow()
 	shortName?: string;
 	@IsString()
+	backgroundTournament: string;
+	@IsString()
 	mainColor: string;
 
 	@IsDateString()
@@ -126,6 +128,9 @@ export class CreateTournament {
 	@IsDateString()
 	@IsISO8601()
 	endDate: Date;
+
+	@IsNumber()
+	prizePool: number;
 
 	@IsString()
 	@IsNotEmpty()
@@ -162,6 +167,17 @@ export class CreateTournament {
 	@IsISO8601()
 	checkinTimeBeforeStart: Date;
 
+	@IsBoolean()
+	hasMerchandise: boolean;
+	@IsNumber()
+	numberOfMerchandise: number;
+	merchandiseImageContent: string[];
+	merchandise: string;
+	@IsNumber()
+	umpirePerMatch: number;
+	@IsNumber()
+	linemanPerMatch: number;
+
 	@IsArray()
 	@IsEnum(RequiredAttachment, {
 		message: "Required attachment must be one of the following: " + 
@@ -185,6 +201,7 @@ export interface ICreateTournament {
 	registrationFeePerPerson: number;
 	registrationFeePerPair: number | null;
 	maxEventPerPerson: number;
+	linemanPerMatch: number;	
 	protestFeePerTime: number;
 	prizePool: number;
 	hasMerchandise: boolean;
