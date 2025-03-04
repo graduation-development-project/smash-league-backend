@@ -117,9 +117,9 @@ model TeamInvitation {
   invitedUserId String
   status        InvitationStatus @default(PENDING)
 
-  team         Team          @relation("FK_Team_TeamInvitation", fields: [teamId], references: [id], onDelete: Cascade)
-  invitedUser  User          @relation("FK_User_TeamInvitation", fields: [invitedUserId], references: [id], onDelete: Cascade)
-  notification Notification? @relation("FK_TeamInvitation_Notification")
+  team         Team           @relation("FK_Team_TeamInvitation", fields: [teamId], references: [id], onDelete: Cascade)
+  invitedUser  User           @relation("FK_User_TeamInvitation", fields: [invitedUserId], references: [id], onDelete: Cascade)
+  notification Notification[] @relation("FK_TeamInvitation_Notification")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -144,9 +144,9 @@ model Notification {
   typeId           String
   type             NotificationType   @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
   userNotification UserNotification[] @relation("FK_UserNotification_Notification")
-  teamInvitationId String?            @unique
+  teamInvitationId String?
   teamInvitation   TeamInvitation?    @relation("FK_TeamInvitation_Notification", fields: [teamInvitationId], references: [id], onDelete: Cascade)
-  teamRequestId    String?            @unique
+  teamRequestId    String?
   teamRequest      TeamRequest?       @relation("FK_TeamRequest_Notification", fields: [teamRequestId], references: [id], onDelete: Cascade)
 }
 
@@ -290,7 +290,7 @@ model TeamRequest {
   team            Team?             @relation("FK_Team_TeamRequest", fields: [teamId], references: [id])
   leaveTeamReason String?
   rejectReason    Reason?           @relation("FK_TeamRequest_Reason")
-  Notification    Notification?     @relation("FK_TeamRequest_Notification")
+  Notification    Notification[]    @relation("FK_TeamRequest_Notification")
 }
 
 enum TeamRequestStatus {
