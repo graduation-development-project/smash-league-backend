@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { CreateTournament } from "src/domain/interfaces/tournament.class";
+import { CreateTournament } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { ParticipantType } from "src/domain/interfaces/tournament.class";
+import { ParticipantType } from "src/domain/interfaces/tournament/tournament.interface";
 
 @Injectable()
 export class GetAllBadmintonParticipantTypeUseCase {
