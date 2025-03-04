@@ -8,7 +8,9 @@ export class PrismaTournamentRepositorAdapter implements TournamentRepositoryPor
 	}
 
 	createTournament(): Promise<Tournament> {
-		throw new Error("Method not implemented.");
+		return await this.prisma.tournament.create({
+			data: null
+		})
 	}
 	async getAllTournament(): Promise<Tournament[]> {
 		const tournaments = await this.prisma.tournament.findMany();

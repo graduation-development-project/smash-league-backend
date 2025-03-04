@@ -1,5 +1,5 @@
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { FormatType } from "src/domain/interfaces/tournament.class";
+import { FormatType } from "src/domain/interfaces/tournament/tournament.interface";
 
 export class GetAllFormatTypeUseCase {
 	constructor() {}
