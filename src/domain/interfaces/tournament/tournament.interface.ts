@@ -104,6 +104,8 @@ export class CreateTournament {
 	@IsString()
 	@Allow()
 	shortName?: string;
+	@IsString()
+	mainColor: string;
 
 	@IsDateString()
 	@IsISO8601()
@@ -167,6 +169,28 @@ export class CreateTournament {
 		each: true
 	})
 	requiredAttachment: RequiredAttachment[];
+}
+
+export interface ICreateTournament {
+	id: string;
+	name: string;
+	shortName: string | null;
+	registrationOpeningDate: Date;
+	registrationClosingDate: Date;
+	drawDate: Date;
+	startDate: Date;
+	endDate: Date;
+	checkInBeforeStart: Date;
+	umpirePerMatch: number;
+	registrationFeePerPerson: number;
+	registrationFeePerPair: number | null;
+	maxEventPerPerson: number;
+	protestFeePerTime: number;
+	prizePool: number;
+	hasMerchandise: boolean;
+	numberOfMerchandise: number;
+	merchandiseImageContent: string[];
+	merchandise: string;
 }
 
 
