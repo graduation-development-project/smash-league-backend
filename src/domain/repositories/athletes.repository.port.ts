@@ -8,6 +8,7 @@ import { RegisterNewRoleDTO } from "../dtos/athletes/register-new-role.dto";
 import { ResponseToTeamInvitationDTO } from "../dtos/athletes/response-to-team-invitation.dto";
 import { LeaveTeamDTO } from "../dtos/athletes/leave-team.dto";
 import { RequestJoinTeamDTO } from "../dtos/athletes/request-join-team.dto";
+import {ResponseTeamLeaderTransferDTO} from "../dtos/athletes/response-team-leader-transfer.dto";
 
 export interface AthletesRepositoryPort {
 	registerTournament(
@@ -35,4 +36,8 @@ export interface AthletesRepositoryPort {
 	leaveTeam(leaveTeamDTO: LeaveTeamDTO): Promise<string>;
 
 	requestJoinTeam(requestJoinTeamDTO: RequestJoinTeamDTO): Promise<string>;
+
+	responseToTransferTeamLeader(
+		responseToTransferTeamLeaderDTO: ResponseTeamLeaderTransferDTO,
+	): Promise<string>;
 }

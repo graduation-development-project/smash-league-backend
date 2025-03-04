@@ -26,6 +26,7 @@ import { NotificationsRepositoryPort } from "../../domain/repositories/notificat
 import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
 import { request } from "express";
 import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
+import { ResponseTeamLeaderTransferDTO } from "../../domain/dtos/athletes/response-team-leader-transfer.dto";
 
 const streamifier = require("streamifier");
 
@@ -276,7 +277,9 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				{
 					title: option ? "Accept join team" : "Reject join team",
 					message: `${athleteName} ${option ? "accepted your invitation" : "rejected your invitation"}`,
-					type: NotificationTypeMap.Reject.id,
+					type: option
+						? NotificationTypeMap.Approve.id
+						: NotificationTypeMap.Reject.id,
 					teamInvitationId: teamInvitation.id,
 				},
 				[existedInvitation.team.teamLeaderId],
@@ -419,6 +422,76 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			return "Request to join team successfully";
 		} catch (e) {
 			console.error("Request join team failed", e.message, e.stack);
+			throw e;
+		}
+	}
+
+	async responseToTransferTeamLeader(
+		responseToTransferTeamLeaderDTO: ResponseTeamLeaderTransferDTO,
+	): Promise<string> {
+		const { requestId, option, user } = responseToTransferTeamLeaderDTO;
+
+		console.log(responseToTransferTeamLeaderDTO);
+		try {
+			const requestExisted: TeamRequest =
+				await this.prisma.teamRequest.findUnique({
+					where: {
+						id: requestId,
+						teamMemberId: user.id,
+					},
+				});
+
+			if (!requestExisted) {
+				throw new BadRequestException("Request not existed");
+			}
+
+			let athleteName: string = `${user.firstName} ${user.lastName}`;
+
+			const teamRequest = await this.prisma.teamRequest.update({
+				where: { id: requestId },
+				data: {
+					status: option
+						? TeamRequestStatus.APPROVED
+						: TeamRequestStatus.REJECTED,
+				},
+
+				include: {
+					team: true,
+				},
+			});
+
+			const oldTeamLeaderId: string = teamRequest.team.teamLeaderId;
+
+			if (option) {
+				await this.prisma.team.update({
+					where: {
+						id: requestExisted.teamId,
+					},
+					data: {
+						teamLeaderId: user.id,
+					},
+				});
+			}
+
+			await this.notificationsRepository.createNotification(
+				{
+					title: option
+						? "Accept become new team leader"
+						: "Reject become new team leader",
+					message: `${athleteName} ${option ? "accepted your transfer team leader request" : "rejected your transfer team leader request"}`,
+					type: option
+						? NotificationTypeMap.Approve.id
+						: NotificationTypeMap.Reject.id,
+					teamRequestId: requestId,
+				},
+				[oldTeamLeaderId],
+			);
+
+			return option
+				? "Accept transfer team leader request successfully"
+				: "Reject transfer team leader request successfully";
+		} catch (e) {
+			console.error("Response to transferTeamLeader", e.message, e.stack);
 			throw e;
 		}
 	}
