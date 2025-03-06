@@ -3,6 +3,6 @@ import { ICreateTournamentSerie } from "../interfaces/tournament/tournament.inte
 
 export interface TournamentSerieRepositoryPort {
 	getTournamentSeries() : Promise<TournamentSerie[]>;
-	getTournamentSerie(id: string) : Promise<TournamentSerie>;
+	getTournamentSerie(id: string) : Promise<TournamentSerie | null>;
 	createTournamentSerie(createTournamentSerie: ICreateTournamentSerie) : Promise<TournamentSerie>;
 }

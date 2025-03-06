@@ -82,7 +82,7 @@ export interface ICreateTournament {
 
 	maxEventPerPerson: number;
 
-	tournamentEventId?: string;
+	tournamentSerieId?: string;
 
 	protestFeePerTime: number | 0;
 
@@ -93,7 +93,6 @@ export interface ICreateTournament {
 	merchandiseImageContent: string[];
 	merchandise: string;
 	umpirePerMatch: number;
-	linemanPerMatch: number;
 	requiredAttachment: RequiredAttachment[];
 }
 
