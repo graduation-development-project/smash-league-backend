@@ -62,6 +62,10 @@ import { TransferTeamLeaderUseCase } from "./usecases/team-leader/transfer-team-
 import { ResponseTransferTeamLeaderUseCase } from "./usecases/athletes/response-transfer-team-leader.usecase";
 import {GetTeamDetailUseCase} from "./usecases/teams/get-team-detail.usecase";
 import {GetJoinedTeamsUseCase} from "./usecases/teams/get-joined-teams.usecase";
+import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tournament.useacase";
+import { GetPackageDetailUseCase } from "./usecases/packages/get-package-detail.usecase";
+import { CreatePackageUseCase } from "./usecases/packages/create-package.usecase";
+import { InactivatePackageUseCase } from "./usecases/packages/inactivate-package.usecase";
 import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 
 @Module({
@@ -74,11 +78,12 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 	],
 	controllers: [],
 	providers: [
+		//Prisma Client
 		{
 			provide: PrismaClient,
 			useValue: new PrismaClient(),
 		},
-
+		//Providers for Repository Adapter
 		{
 			provide: "AuthRepository",
 			useClass: PrismaAuthRepositoryAdapter,
@@ -118,19 +123,27 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 			provide: "TeamRepository",
 			useClass: PrismaTeamsRepositoryAdapter,
 		},
+		//Third Party Service
 		MailService,
 		UploadService,
 		PaymentPayOSService,
+		//Authentication Service
 		AuthService,
+		//Prisma Service
 		PrismaService,
 		ApplicationFunction,
+		//User use case
 		GetUserByIdUseCase,
 		GetAuthenticatedUserUseCase,
 		GetUserByEmailUseCase,
 		GetUserWithRefreshTokenUseCase,
 		CreateUserUseCase,
-		SignInUseCase,
+		EditUserProfileUseCase,
+		VerifyUserInformationUseCase,
+		//AuthenticationUseCase
+		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
+		SignInUseCase,
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
@@ -147,12 +160,12 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
 		ResendOtpUseCase,
-		GetAllTournamentUseCase,
+		//Role Use Case
+		RegisterNewRoleUseCase,
+		//Team Use Case
 		CreateTeamUseCase,
 		SendTeamInvitationUseCase,
 		ResponseToTeamInvitationUseCase,
-		GetAllBadmintonParticipantTypeUseCase,
-		GetAllFormatTypeUseCase,
 		RemoveTeamUseCase,
 		EditTeamUseCase,
 		RemoveTeamMemberUseCase,
@@ -165,17 +178,47 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		ResponseTransferTeamLeaderUseCase,
 		GetTeamDetailUseCase,
 		GetJoinedTeamsUseCase,
+		//Tournament Use Case
+		GetParticipatedTournamentsUseCase,
+		RegisterTournamentUseCase,
+		GetAllTournamentUseCase,
+		GetAllBadmintonParticipantTypeUseCase,
+		GetAllFormatTypeUseCase,
+		CreateNewTournamentUseCase,
+		// UploadVerificationImagesUseCase,
+
+		//Package Use Case
+		GetPackagesUseCase,
+		GetPackageDetailUseCase,
+		CreatePackageUseCase,
+		InactivatePackageUseCase,
+		//Payment Use Case
+		CreatePaymentLinkUseCase,
+
+		//Notification Use Case
+		GetNotificationByUserUseCase,
+		CreateNotificationUseCase,
+
+
 		GetTeamListUseCase,
 	],
 	exports: [
+		//Auth Service
+		AuthService,
+
 		ApplicationFunction,
+		//User use case
 		GetUserByIdUseCase,
 		GetAuthenticatedUserUseCase,
 		GetUserByEmailUseCase,
 		GetUserWithRefreshTokenUseCase,
 		CreateUserUseCase,
-		SignInUseCase,
+		EditUserProfileUseCase,
+		VerifyUserInformationUseCase,
+		//AuthenticationUseCase
+		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
+		SignInUseCase,
 		RefreshAccessTokenUseCase,
 		EditUserProfileUseCase,
 		RegisterTournamentUseCase,
@@ -184,7 +227,7 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		RegisterNewRoleUseCase,
 		// UploadVerificationImagesUseCase,
 		VerifyOTPUseCase,
-		VerifyUserInformationUseCase,
+		ChangePasswordUseCase,
 		SendResetPasswordLinkUseCase,
 		ResetPasswordUseCase,
 		GetNotificationByUserUseCase,
@@ -194,7 +237,9 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		PaymentPayOSService,
 		AuthService,
 		ResendOtpUseCase,
-		GetAllTournamentUseCase,
+		//Role Use Case
+		RegisterNewRoleUseCase,
+		//Team Use Case
 		CreateTeamUseCase,
 		SendTeamInvitationUseCase,
 		ResponseToTeamInvitationUseCase,
@@ -212,6 +257,26 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		ResponseTransferTeamLeaderUseCase,
 		GetTeamDetailUseCase,
 		GetJoinedTeamsUseCase,
+		//Tournament Use Case
+		GetParticipatedTournamentsUseCase,
+		RegisterTournamentUseCase,
+		GetAllTournamentUseCase,
+		GetAllBadmintonParticipantTypeUseCase,
+		GetAllFormatTypeUseCase,
+		CreateNewTournamentUseCase,
+		// UploadVerificationImagesUseCase,
+
+		//Package Use Case
+		GetPackagesUseCase,
+		GetPackageDetailUseCase,
+		CreatePackageUseCase,
+		InactivatePackageUseCase,
+		//Payment Use Case
+		CreatePaymentLinkUseCase,
+
+		//Notification Use Case
+		GetNotificationByUserUseCase,
+		CreateNotificationUseCase,
 		GetTeamListUseCase,
 	],
 })
