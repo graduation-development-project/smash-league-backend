@@ -1,7 +1,7 @@
 export interface ICreatePackage {
 	packageName: string;
 	packageDetail: string;
-	currentDiscountByPercent: number;
+	currentDiscountByAmount: number;
 	price: number;
 	credits: number;
 	advantages: string[];
