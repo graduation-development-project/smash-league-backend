@@ -10,13 +10,15 @@ import { ICreatePackage } from "src/domain/interfaces/package/package.interface"
 import { CreatePackageUseCase } from "src/application/usecases/packages/create-package.usecase";
 import { CreatePackageDto } from "src/domain/dtos/packages/package.dto";
 import { create } from "domain";
+import { InactivatePackageUseCase } from "src/application/usecases/packages/inactivate-package.usecase";
 
 @Controller("/package")
 export class PackageController {
 	constructor(
 		private getPackages: GetPackagesUseCase,
 		private getPackageDetailUseCase: GetPackageDetailUseCase,
-		private readonly createPackageUseCase: CreatePackageUseCase
+		private readonly createPackageUseCase: CreatePackageUseCase,
+		private readonly inactivatePackageUseCase: InactivatePackageUseCase
 	) {
 	}
 
@@ -40,5 +42,12 @@ export class PackageController {
 		return await this.createPackageUseCase.execute({
 			...createPackage
 		});
+	}
+
+	@Get("inactivate-package/:id")
+	@HttpCode(HttpStatus.OK)
+	@HttpCode(HttpStatus.BAD_REQUEST)
+	async inactivatePackage(@Param("id") id: string) : Promise<ApiResponse<Package>> {
+		return await this.inactivatePackageUseCase.execute(id);
 	}
 }

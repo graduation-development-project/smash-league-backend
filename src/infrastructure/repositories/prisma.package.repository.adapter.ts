@@ -8,6 +8,16 @@ import { PackageRepositoryPort } from "src/domain/repositories/package.repositor
 @Injectable()
 export class PrismaPackageRepositoryAdapter implements PackageRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
+	async inactivatePackage(id: string): Promise<Package> {
+		return await this.prisma.package.update({
+			where: {
+				id: id
+			},
+			data: {
+				isAvailable: false
+			}
+		});
+	}
 
 	getPackages(): Promise<PackageEntity[]> {
 		return this.prisma.package.findMany();
