@@ -23,3 +23,20 @@ export interface ISignUpResponse {
 export interface IRequestUser extends Request {
 	user: TUserWithRole;
 }
+
+export interface IPaginatedOutput<T> {
+	data: T[];
+	meta: {
+		total: number;
+		lastPage: number;
+		currentPage: number;
+		totalPerPage: number;
+		prevPage: number | null;
+		nextPage: number | null;
+	};
+}
+
+export interface IPaginateOptions {
+	page?: number;
+	perPage?: number;
+}
