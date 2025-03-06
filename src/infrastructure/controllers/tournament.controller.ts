@@ -5,7 +5,8 @@ import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/
 import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
 import { GetAllTournamentUseCase } from "src/application/usecases/tournament/get-all-tournament.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { CreateTournament, FormatType, ParticipantType } from "src/domain/interfaces/tournament/tournament.interface";
+import { FormatType, ParticipantType } from "src/domain/interfaces/tournament/tournament.interface";
+import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
 
 @Controller("/tournaments")
 export class TournamentController {

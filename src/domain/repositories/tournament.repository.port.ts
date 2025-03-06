@@ -3,7 +3,7 @@ import { Tournament } from "@prisma/client";
 import { ICreateTournament } from "../interfaces/tournament/tournament.interface";
 
 export interface TournamentRepositoryPort {
-	createTournament(tournament: ICreateTournament): Promise<ICreateTournament>;
+	createTournament(tournament: ICreateTournament): Promise<Tournament>;
 	getAllTournament(): Promise<Tournament[]>;
 	filterTournament(): Promise<Tournament[]>;
 	getTournamentDetail(tournamentId: string): Promise<Tournament>;
