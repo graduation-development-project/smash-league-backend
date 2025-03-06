@@ -163,7 +163,7 @@ model UserNotification {
 
 model TournamentSerie {
   id                      String       @id @default(uuid())
-  tournamentSerie         String
+  tournamentSerieName     String
   serieBackgroundImageURL String
   tournaments             Tournament[] @relation(name: "FK_Tournament_TournamentSerie")
 }
@@ -175,6 +175,7 @@ model Tournament {
   organizerId              String
   mainColor                String?
   backgroundTournament     String
+  location                 String
   registrationOpeningDate  DateTime
   registrationClosingDate  DateTime
   drawDate                 DateTime
@@ -201,6 +202,7 @@ model Tournament {
 }
 
 enum TournamentStatus {
+  CREATED
   OPENING
   OPENING_FOR_REGISTRATION
   DRAWING

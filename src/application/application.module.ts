@@ -66,6 +66,7 @@ import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tou
 import { GetPackageDetailUseCase } from "./usecases/packages/get-package-detail.usecase";
 import { CreatePackageUseCase } from "./usecases/packages/create-package.usecase";
 import { InactivatePackageUseCase } from "./usecases/packages/inactivate-package.usecase";
+import { PrismaTournamentSerieRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament-serie.repository.adapter";
 
 @Module({
 	imports: [
@@ -121,6 +122,10 @@ import { InactivatePackageUseCase } from "./usecases/packages/inactivate-package
 		{
 			provide: "TeamRepository",
 			useClass: PrismaTeamsRepositoryAdapter,
+		},
+		{
+			provide: "TournamentSerieRepository",
+			useClass: PrismaTournamentSerieRepositoryAdapter
 		},
 		//Third Party Service
 		MailService,
