@@ -6,7 +6,7 @@ import { Package } from "@prisma/client";
 export interface PackageRepositoryPort {
 	getPackages(): Promise<PackageEntity[]>;
 
-	getPackageDetail(id: string): Promise<PackageEntity>;
+	getPackageDetail(id: string): Promise<Package>;
 
 	createPackage(createPackageDto: ICreatePackage): Promise<Package>;
 

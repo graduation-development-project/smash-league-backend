@@ -12,6 +12,11 @@ export class CreatePackageDto {
 	@IsNotEmpty()
 	packageDetail: string;
 	@IsNumber()
+	@Min(0, {
+		message: "Current discount by percent must be positive value!"
+	})
+	currentDiscountByPercent: number;
+	@IsNumber()
 	@IsNotEmpty({
 		message: "Price of package must not be empty."
 	})
@@ -31,4 +36,8 @@ export class CreatePackageDto {
 		message: "Credits of package must be less than 10."
 	})
 	credits: number;
+	@IsNotEmpty()
+	advantages: string[];
+	@IsNotEmpty()
+	isRecommended: boolean;
 }

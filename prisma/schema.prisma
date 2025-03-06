@@ -206,7 +206,6 @@ enum TournamentStatus {
   DRAWING
   ON_GOING
   FINISHED
-  
 }
 
 model TournamentEvent {
@@ -347,12 +346,16 @@ model ContentImage {
 }
 
 model Package {
-  id            String     @id @default(uuid())
-  packageName   String
-  packageDetail String
-  price         Int
-  credits       Int
-  cartItems     CartItem[] @relation("FK_CartItem_PackageCartItem")
+  id                       String     @id @default(uuid())
+  packageName              String
+  packageDetail            String
+  currentDiscountByPercent Int
+  price                    Int
+  credits                  Int
+  advantages               String[]
+  isRecommended            Boolean
+  isAvailable              Boolean
+  cartItems                CartItem[] @relation("FK_CartItem_PackageCartItem")
 }
 
 model TransactionType {

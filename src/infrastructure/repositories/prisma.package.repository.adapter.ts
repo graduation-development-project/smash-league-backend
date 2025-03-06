@@ -12,7 +12,7 @@ export class PrismaPackageRepositoryAdapter implements PackageRepositoryPort {
 	getPackages(): Promise<PackageEntity[]> {
 		return this.prisma.package.findMany();
 	}
-	getPackageDetail(id: string): Promise<any> {
+	getPackageDetail(id: string): Promise<Package> {
 		return this.prisma.package.findUnique({
 			where: {
 				id: id
@@ -22,7 +22,8 @@ export class PrismaPackageRepositoryAdapter implements PackageRepositoryPort {
 	async createPackage(createPackageDto: ICreatePackage): Promise<Package> {
 		return await this.prisma.package.create({
 			data: {
-				...createPackageDto
+				...createPackageDto,
+				isAvailable: true
 			}
 		});
 	}	
