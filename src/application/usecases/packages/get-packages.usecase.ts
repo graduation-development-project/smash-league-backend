@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { PackageEntity } from "src/domain/entities/transaction/package.entity";
 import { PackageRepositoryPort } from "src/domain/repositories/package.repository.port";
@@ -14,12 +14,12 @@ export class GetPackagesUseCase {
 		const packages: PackageEntity[] | null = await this.packageRepository.getPackages();
 		if (packages.length > 0) {
 			return new ApiResponse<PackageEntity[]>(
-				200,
+				HttpStatus.OK,
 				"Get packages successfully!",
 				await this.packageRepository.getPackages()
 			);
 		} else return new ApiResponse<null>(
-			404,
+			HttpStatus.NOT_FOUND,
 			"",
 			null
 		);
