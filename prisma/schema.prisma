@@ -349,7 +349,7 @@ model Package {
   id                       String     @id @default(uuid())
   packageName              String
   packageDetail            String
-  currentDiscountByPercent Int
+  currentDiscountByAmount  Int
   price                    Int
   credits                  Int
   advantages               String[]
