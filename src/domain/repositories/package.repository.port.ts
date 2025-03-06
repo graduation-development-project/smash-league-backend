@@ -13,4 +13,6 @@ export interface PackageRepositoryPort {
 	modifyPackage(modifyPackageDto: any): Promise<any>;
 
 	deletePackage(id: string): Promise<any>;
+
+	inactivatePackage(id: string) : Promise<Package>;
 }

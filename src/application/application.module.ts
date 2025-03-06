@@ -65,6 +65,7 @@ import {GetJoinedTeamsUseCase} from "./usecases/teams/get-joined-teams.usecase";
 import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tournament.useacase";
 import { GetPackageDetailUseCase } from "./usecases/packages/get-package-detail.usecase";
 import { CreatePackageUseCase } from "./usecases/packages/create-package.usecase";
+import { InactivatePackageUseCase } from "./usecases/packages/inactivate-package.usecase";
 
 @Module({
 	imports: [
@@ -178,6 +179,7 @@ import { CreatePackageUseCase } from "./usecases/packages/create-package.usecase
 		GetPackagesUseCase,
 		GetPackageDetailUseCase,
 		CreatePackageUseCase,
+		InactivatePackageUseCase,
 		//Payment Use Case
 		CreatePaymentLinkUseCase,
 		
@@ -240,6 +242,7 @@ import { CreatePackageUseCase } from "./usecases/packages/create-package.usecase
 		GetPackagesUseCase,
 		GetPackageDetailUseCase,
 		CreatePackageUseCase,
+		InactivatePackageUseCase,
 		//Payment Use Case
 		CreatePaymentLinkUseCase,
 		
