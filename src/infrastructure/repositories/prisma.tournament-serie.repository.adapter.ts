@@ -12,7 +12,7 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 	async getTournamentSeries(): Promise<TournamentSerie[]> {
 		return await this.prisma.tournamentSerie.findMany();
 	}
-	async getTournamentSerie(id: string): Promise<TournamentSerie> {
+	async getTournamentSerie(id: string): Promise<TournamentSerie | null> {
 		return await this.prisma.tournamentSerie.findFirst({
 			where: {
 				id: id
