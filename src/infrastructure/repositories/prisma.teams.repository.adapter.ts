@@ -53,6 +53,7 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 		try {
 			const team: Team = await this.prismaService.team.findUnique({
 				where: { id: teamId },
+				include: { teamLeader: true },
 			});
 
 			if (!team) {
@@ -71,9 +72,12 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 				where: {
 					userId: user.id,
 				},
-
 				include: {
-					team: true,
+					team: {
+						include: {
+							teamLeader: true,
+						},
+					},
 				},
 			});
 
@@ -156,7 +160,6 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 		const lastPage: number = Math.ceil(total / perPage);
 		const nextPage: number = page < lastPage ? page + 1 : null;
 		const prevPage: number = page > 1 ? page - 1 : null;
-
 
 		return {
 			data: teams,
