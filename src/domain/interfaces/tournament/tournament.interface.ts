@@ -59,6 +59,7 @@ export interface ICreateTournament {
 	id: string; 
 	name: string;
 	shortName?: string;
+	organizerId: string;
 	backgroundTournament: string;
 	mainColor: string;
 
