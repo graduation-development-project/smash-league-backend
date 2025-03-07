@@ -5,7 +5,7 @@ import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/
 import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
 import { GetAllTournamentUseCase } from "src/application/usecases/tournament/get-all-tournament.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { FormatType, ParticipantType } from "src/domain/interfaces/tournament/tournament.interface";
+import { FormatType } from "src/domain/interfaces/tournament/tournament.interface";
 import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { IRequestUser } from "src/domain/interfaces/interfaces";
@@ -29,8 +29,7 @@ export class TournamentController {
 	}
 
 	@Post("/create-tournament")
-	@UseGuards(JwtAccessTokenGuard, RolesGuard)
-	@Roles(RoleMap.Organizer.id)
+	@UseGuards(JwtAccessTokenGuard)
 	@HttpCode(HttpStatus.OK)
 	@HttpCode(HttpStatus.BAD_REQUEST)
 	@HttpCode(HttpStatus.CREATED)
@@ -40,7 +39,7 @@ export class TournamentController {
 	}
 
 	@Get("/get-all-badminton-participant-type")
-	async getAllTournamentEvent() : Promise<ApiResponse<ParticipantType[]>> {
+	async getAllTournamentEvent() : Promise<ApiResponse<BadmintonParticipantType[]>> {
 		return await this.getAllBadmintonParticipantTypeUseCase.execute();
 	}
 
