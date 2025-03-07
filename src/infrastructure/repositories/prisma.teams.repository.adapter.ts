@@ -84,68 +84,69 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 		}
 	}
 
-	async getTeamList(
-		options: IPaginateOptions,
-	): Promise<IPaginatedOutput<Team>> {
-		try {
-			const page: number =
-				parseInt(options?.page?.toString()) || DEFAULT_PAGE_NUMBER;
-			const perPage: number =
-				parseInt(options?.perPage?.toString()) || DEFAULT_PAGE_SIZE;
-			const skip: number = (page - 1) * perPage;
-
-			const [total, teams] = await Promise.all([
-				this.prismaService.team.count({}),
-
-				this.prismaService.team.findMany({
-					orderBy: { teamName: "asc" },
-					take: perPage,
-					skip: skip,
-				}),
-			]);
-
-			const lastPage: number = Math.ceil(total / perPage);
-			const nextPage: number = page < lastPage ? page + 1 : null;
-			const prevPage: number = page > 1 ? page - 1 : null;
-
-			return {
-				data: teams,
-				meta: {
-					total,
-					lastPage,
-					currentPage: page,
-					totalPerPage: perPage,
-					prevPage,
-					nextPage,
-				},
-			};
-		} catch (e) {
-			console.error("Get Team list failed", e);
-			throw e;
-		}
-	}
+	// async getTeamList(
+	// 	options: IPaginateOptions,
+	// ): Promise<IPaginatedOutput<Team>> {
+	// 	try {
+	// 		const page: number =
+	// 			parseInt(options?.page?.toString()) || DEFAULT_PAGE_NUMBER;
+	// 		const perPage: number =
+	// 			parseInt(options?.perPage?.toString()) || DEFAULT_PAGE_SIZE;
+	// 		const skip: number = (page - 1) * perPage;
+	//
+	// 		const [total, teams] = await Promise.all([
+	// 			this.prismaService.team.count({}),
+	//
+	// 			this.prismaService.team.findMany({
+	// 				orderBy: { teamName: "asc" },
+	// 				take: perPage,
+	// 				skip: skip,
+	// 			}),
+	// 		]);
+	//
+	// 		const lastPage: number = Math.ceil(total / perPage);
+	// 		const nextPage: number = page < lastPage ? page + 1 : null;
+	// 		const prevPage: number = page > 1 ? page - 1 : null;
+	//
+	// 		return {
+	// 			data: teams,
+	// 			meta: {
+	// 				total,
+	// 				lastPage,
+	// 				currentPage: page,
+	// 				totalPerPage: perPage,
+	// 				prevPage,
+	// 				nextPage,
+	// 			},
+	// 		};
+	// 	} catch (e) {
+	// 		console.error("Get Team list failed", e);
+	// 		throw e;
+	// 	}
+	// }
 
 	async searchTeams(
-		searchTerm: string,
 		options: IPaginateOptions,
-	): Promise<IPaginatedOutput<Team>> {
+		searchTerm?: string,
+	): Promise<IPaginatedOutput<Team & { teamLeader: User }>> {
 		const page: number =
 			parseInt(options?.page?.toString()) || DEFAULT_PAGE_NUMBER;
 		const perPage: number =
 			parseInt(options?.perPage?.toString()) || DEFAULT_PAGE_SIZE;
 		const skip: number = (page - 1) * perPage;
 
+		const whereClause = searchTerm
+			? {
+					teamName: { contains: searchTerm, mode: "insensitive" as const },
+				}
+			: {};
+
 		const [total, teams] = await Promise.all([
-			this.prismaService.team.count({
-				where: {
-					teamName: { contains: searchTerm, mode: "insensitive" },
-				},
-			}),
+			this.prismaService.team.count({ where: whereClause }),
 
 			this.prismaService.team.findMany({
-				where: {
-					teamName: { contains: searchTerm, mode: "insensitive" },
-				},
+				where: whereClause,
+				include: { teamLeader: true },
 				orderBy: { teamName: "asc" },
 				take: perPage,
 				skip: skip,
@@ -155,6 +156,7 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 		const lastPage: number = Math.ceil(total / perPage);
 		const nextPage: number = page < lastPage ? page + 1 : null;
 		const prevPage: number = page > 1 ? page - 1 : null;
+
 
 		return {
 			data: teams,

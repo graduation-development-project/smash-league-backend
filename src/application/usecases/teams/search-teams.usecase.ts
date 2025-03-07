@@ -4,7 +4,7 @@ import {
 	IPaginatedOutput,
 	IPaginateOptions,
 } from "../../../domain/interfaces/interfaces";
-import { Team } from "@prisma/client";
+import {Team, User} from "@prisma/client";
 
 @Injectable()
 export class SearchTeamsUseCase {
@@ -13,9 +13,9 @@ export class SearchTeamsUseCase {
 	) {}
 
 	execute(
-		searchTerm: string,
 		options: IPaginateOptions,
-	): Promise<IPaginatedOutput<Team>> {
-		return this.teamRepository.searchTeams(searchTerm, options);
+		searchTerm?: string,
+	): Promise<IPaginatedOutput<Team & { teamLeader: User }>> {
+		return this.teamRepository.searchTeams(options, searchTerm);
 	}
 }

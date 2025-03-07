@@ -18,7 +18,7 @@ import {
 import { Team, User } from "@prisma/client";
 import { GetTeamDetailUseCase } from "../../application/usecases/teams/get-team-detail.usecase";
 import { GetJoinedTeamsUseCase } from "../../application/usecases/teams/get-joined-teams.usecase";
-import { GetTeamListUseCase } from "../../application/usecases/teams/get-team-list.usecase";
+// import { GetTeamListUseCase } from "../../application/usecases/teams/get-team-list.usecase";
 import { SearchTeamsUseCase } from "../../application/usecases/teams/search-teams.usecase";
 import * as sea from "node:sea";
 
@@ -28,17 +28,17 @@ export class TeamController {
 		private getTeamMembersUseCase: GetTeamMembersUseCase,
 		private getTeamDetailUseCase: GetTeamDetailUseCase,
 		private getJoinedTeamsUseCase: GetJoinedTeamsUseCase,
-		private getTeamListUseCase: GetTeamListUseCase,
+		// private getTeamListUseCase: GetTeamListUseCase,
 		private searchTeamsUseCase: SearchTeamsUseCase,
 	) {}
 
-	@Get("/")
-	@HttpCode(HttpStatus.OK)
-	getTeamList(
-		@Query() paginateOption: IPaginateOptions,
-	): Promise<IPaginatedOutput<Team>> {
-		return this.getTeamListUseCase.execute(paginateOption);
-	}
+	// @Get("/")
+	// @HttpCode(HttpStatus.OK)
+	// getTeamList(
+	// 	@Query() paginateOption: IPaginateOptions,
+	// ): Promise<IPaginatedOutput<Team>> {
+	// 	return this.getTeamListUseCase.execute(paginateOption);
+	// }
 
 	@Get("/members/:teamId")
 	@HttpCode(HttpStatus.OK)
@@ -56,10 +56,10 @@ export class TeamController {
 	@Get("/search")
 	@HttpCode(HttpStatus.OK)
 	searchTeams(
-		@Query("searchTerm") searchTerm: string,
 		@Query() paginateOption: IPaginateOptions,
-	): Promise<IPaginatedOutput<Team>> {
-		return this.searchTeamsUseCase.execute(searchTerm, paginateOption);
+		@Query("searchTerm") searchTerm?: string,
+	): Promise<IPaginatedOutput<Team & { teamLeader: User }>> {
+		return this.searchTeamsUseCase.execute(paginateOption,searchTerm );
 	}
 
 	@Get("/:teamId")

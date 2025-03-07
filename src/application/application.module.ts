@@ -66,7 +66,7 @@ import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tou
 import { GetPackageDetailUseCase } from "./usecases/packages/get-package-detail.usecase";
 import { CreatePackageUseCase } from "./usecases/packages/create-package.usecase";
 import { InactivatePackageUseCase } from "./usecases/packages/inactivate-package.usecase";
-import { GetTeamListUseCase } from "./usecases/teams/get-team-list.usecase";
+// import { GetTeamListUseCase } from "./usecases/teams/get-team-list.usecase";
 import { SearchTeamsUseCase } from "./usecases/teams/search-teams.usecase";
 import { PrismaTournamentSerieRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament-serie.repository.adapter";
 
@@ -191,7 +191,7 @@ import { PrismaTournamentSerieRepositoryAdapter } from "src/infrastructure/repos
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
-		GetTeamListUseCase,
+		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		// UploadVerificationImagesUseCase,
 
@@ -263,7 +263,7 @@ import { PrismaTournamentSerieRepositoryAdapter } from "src/infrastructure/repos
 		ResponseTransferTeamLeaderUseCase,
 		GetTeamDetailUseCase,
 		GetJoinedTeamsUseCase,
-		GetTeamListUseCase,
+		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		//Tournament Use Case
 		GetParticipatedTournamentsUseCase,
