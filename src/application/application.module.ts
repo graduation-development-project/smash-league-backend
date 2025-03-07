@@ -70,6 +70,7 @@ import { GetTeamListUseCase } from "./usecases/teams/get-team-list.usecase";
 import { SearchTeamsUseCase } from "./usecases/teams/search-teams.usecase";
 import { PrismaTournamentSerieRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament-serie.repository.adapter";
 import { PrismaTournamentEventRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament-event.repository.adapter";
+import { GetTournamentsOfTournamentSerieUseCase } from "./usecases/tournament-serie/get-tournaments-of-serie.usecase";
 
 @Module({
 	imports: [
@@ -198,6 +199,7 @@ import { PrismaTournamentEventRepositoryAdapter } from "src/infrastructure/repos
 		CreateNewTournamentUseCase,
 		GetTeamListUseCase,
 		SearchTeamsUseCase,
+		GetTournamentsOfTournamentSerieUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case
@@ -277,6 +279,7 @@ import { PrismaTournamentEventRepositoryAdapter } from "src/infrastructure/repos
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
+		GetTournamentsOfTournamentSerieUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case

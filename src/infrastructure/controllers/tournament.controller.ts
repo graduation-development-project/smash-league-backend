@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from "@nestjs/common";
-import { BadmintonParticipantType, Tournament } from "@prisma/client";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { BadmintonParticipantType, Tournament, TournamentSerie } from "@prisma/client";
 import { CreateNewTournamentUseCase } from "src/application/usecases/tournament/create-new-tournament.useacase";
 import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/tournament/get-all-badminton-participant-type.usecase";
 import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
@@ -12,6 +12,7 @@ import { IRequestUser } from "src/domain/interfaces/interfaces";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import { RolesGuard } from "../guards/auth/role.guard";
+import { GetTournamentsOfTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-tournaments-of-serie.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -19,13 +20,19 @@ export class TournamentController {
 		private readonly getAllTournamentUseCase: GetAllTournamentUseCase,
 		private readonly getAllBadmintonParticipantTypeUseCase: GetAllBadmintonParticipantTypeUseCase,
 		private readonly getAllFormatTypeUseCase: GetAllFormatTypeUseCase,
-		private readonly createNewTournamentUseCase: CreateNewTournamentUseCase
+		private readonly createNewTournamentUseCase: CreateNewTournamentUseCase,
+		private readonly getTournamentsOfSerieUseCase: GetTournamentsOfTournamentSerieUseCase
 	) {	
 	}
 
 	@Get("/get-all")
 	async getAllTournaments() : Promise<ApiResponse<Tournament[]>> {
 		return await this.getAllTournamentUseCase.execute();
+	}
+
+	@Get("/get-tournaments-of-serie/:id")
+	async getTournamentsOfSerie(@Param("id") id: string) : Promise<ApiResponse<TournamentSerie>> {
+		return await this.getTournamentsOfSerieUseCase.execute(id);
 	}
 
 	@Post("/create-tournament")
