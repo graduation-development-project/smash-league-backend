@@ -17,7 +17,6 @@ import { PrismaAthletesRepositoryAdapter } from "../infrastructure/repositories/
 import { RegisterTournamentUseCase } from "./usecases/athletes/register-tournament.usecase";
 import { GetParticipatedTournamentsUseCase } from "./usecases/athletes/get-participated-tournaments.usecase";
 import { RegisterNewRoleUseCase } from "./usecases/athletes/register-new-role.usecase";
-// import { UploadVerificationImagesUseCase } from "./usecases/athletes/upload-verification-images.usecase";
 import { MailService } from "../infrastructure/services/mail.service";
 import { VerifyOTPUseCase } from "./usecases/auth/verify-otp.usecase";
 import { ChangePasswordUseCase } from "./usecases/users/change-password.usecase";
@@ -38,7 +37,6 @@ import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
 import { PaymentPayOSService } from "./services/payment.service";
 import { ConfigModule } from "@nestjs/config";
 import { ResendOtpUseCase } from "./usecases/auth/resend-otp.usecase";
-import { GetAllTournamentUseCase } from "./usecases/tournament/get-all-tournament.usecase";
 import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositories/prisma.tournament.repository.adapter";
 import { UploadService } from "../infrastructure/services/upload.service";
 import { PrismaTeamLeadersRepositoryAdapter } from "../infrastructure/repositories/prisma.team-leaders.repository.adapter";
@@ -71,6 +69,7 @@ import { SearchTeamsUseCase } from "./usecases/teams/search-teams.usecase";
 import { PrismaTournamentSerieRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament-serie.repository.adapter";
 import { PrismaTournamentEventRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament-event.repository.adapter";
 import { GetTournamentsOfTournamentSerieUseCase } from "./usecases/tournament-serie/get-tournaments-of-serie.usecase";
+import {SearchTournamentUseCase} from "./usecases/tournament/search-tournament.usecase";
 
 @Module({
 	imports: [
@@ -193,7 +192,7 @@ import { GetTournamentsOfTournamentSerieUseCase } from "./usecases/tournament-se
 		//Tournament Use Case
 		GetParticipatedTournamentsUseCase,
 		RegisterTournamentUseCase,
-		GetAllTournamentUseCase,
+		SearchTournamentUseCase,
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
@@ -275,7 +274,7 @@ import { GetTournamentsOfTournamentSerieUseCase } from "./usecases/tournament-se
 		//Tournament Use Case
 		GetParticipatedTournamentsUseCase,
 		RegisterTournamentUseCase,
-		GetAllTournamentUseCase,
+		SearchTournamentUseCase,
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
