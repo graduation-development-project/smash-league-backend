@@ -124,4 +124,48 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 			throw e;
 		}
 	}
+
+	async searchTeams(
+		searchTerm: string,
+		options: IPaginateOptions,
+	): Promise<IPaginatedOutput<Team>> {
+		const page: number =
+			parseInt(options?.page?.toString()) || DEFAULT_PAGE_NUMBER;
+		const perPage: number =
+			parseInt(options?.perPage?.toString()) || DEFAULT_PAGE_SIZE;
+		const skip: number = (page - 1) * perPage;
+
+		const [total, teams] = await Promise.all([
+			this.prismaService.team.count({
+				where: {
+					teamName: { contains: searchTerm, mode: "insensitive" },
+				},
+			}),
+
+			this.prismaService.team.findMany({
+				where: {
+					teamName: { contains: searchTerm, mode: "insensitive" },
+				},
+				orderBy: { teamName: "asc" },
+				take: perPage,
+				skip: skip,
+			}),
+		]);
+
+		const lastPage: number = Math.ceil(total / perPage);
+		const nextPage: number = page < lastPage ? page + 1 : null;
+		const prevPage: number = page > 1 ? page - 1 : null;
+
+		return {
+			data: teams,
+			meta: {
+				total,
+				lastPage,
+				currentPage: page,
+				totalPerPage: perPage,
+				prevPage,
+				nextPage,
+			},
+		};
+	}
 }

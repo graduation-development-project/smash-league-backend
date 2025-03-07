@@ -60,13 +60,14 @@ import { GetTeamMembersUseCase } from "./usecases/teams/get-team-members.usecase
 import { PrismaTeamsRepositoryAdapter } from "../infrastructure/repositories/prisma.teams.repository.adapter";
 import { TransferTeamLeaderUseCase } from "./usecases/team-leader/transfer-team-leader.usecase";
 import { ResponseTransferTeamLeaderUseCase } from "./usecases/athletes/response-transfer-team-leader.usecase";
-import {GetTeamDetailUseCase} from "./usecases/teams/get-team-detail.usecase";
-import {GetJoinedTeamsUseCase} from "./usecases/teams/get-joined-teams.usecase";
+import { GetTeamDetailUseCase } from "./usecases/teams/get-team-detail.usecase";
+import { GetJoinedTeamsUseCase } from "./usecases/teams/get-joined-teams.usecase";
 import { CreateNewTournamentUseCase } from "./usecases/tournament/create-new-tournament.useacase";
 import { GetPackageDetailUseCase } from "./usecases/packages/get-package-detail.usecase";
 import { CreatePackageUseCase } from "./usecases/packages/create-package.usecase";
 import { InactivatePackageUseCase } from "./usecases/packages/inactivate-package.usecase";
-import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
+import { GetTeamListUseCase } from "./usecases/teams/get-team-list.usecase";
+import { SearchTeamsUseCase } from "./usecases/teams/search-teams.usecase";
 
 @Module({
 	imports: [
@@ -185,6 +186,8 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
+		GetTeamListUseCase,
+		SearchTeamsUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case
@@ -198,9 +201,6 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
-
-
-		GetTeamListUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -239,6 +239,7 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		ResendOtpUseCase,
 		//Role Use Case
 		RegisterNewRoleUseCase,
+
 		//Team Use Case
 		CreateTeamUseCase,
 		SendTeamInvitationUseCase,
@@ -257,6 +258,8 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		ResponseTransferTeamLeaderUseCase,
 		GetTeamDetailUseCase,
 		GetJoinedTeamsUseCase,
+		GetTeamListUseCase,
+		SearchTeamsUseCase,
 		//Tournament Use Case
 		GetParticipatedTournamentsUseCase,
 		RegisterTournamentUseCase,
@@ -277,7 +280,6 @@ import {GetTeamListUseCase} from "./usecases/teams/get-team-list.usecase";
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
-		GetTeamListUseCase,
 	],
 })
 export class ApplicationModule {}

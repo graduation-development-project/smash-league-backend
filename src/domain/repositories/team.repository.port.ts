@@ -9,4 +9,9 @@ export interface TeamRepositoryPort {
 	getJoinedTeam(user: User): Promise<Team[]>;
 
 	getTeamList(options: IPaginateOptions): Promise<IPaginatedOutput<Team>>;
+
+	searchTeams(
+		searchTerm: string,
+		options: IPaginateOptions,
+	): Promise<IPaginatedOutput<Team>>;
 }
