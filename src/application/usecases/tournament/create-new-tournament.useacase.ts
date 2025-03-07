@@ -1,9 +1,11 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { TournamentSerie } from "@prisma/client";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { Tournament, TournamentEvent, TournamentSerie, User } from "@prisma/client";
 import { create } from "domain";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { ICreateTournament } from "src/domain/interfaces/tournament/tournament.interface";
-import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
+import { IRequestUser } from "src/domain/interfaces/interfaces";
+import { ICreateTournament, ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
+import { CreateTournament, CreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.validation";
+import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 
@@ -11,17 +13,28 @@ import { TournamentRepositoryPort } from "src/domain/repositories/tournament.rep
 export class CreateNewTournamentUseCase {
 	constructor(
 		@Inject("TournamentRepository") private readonly tournamentRepository: TournamentRepositoryPort,
-		@Inject("TournamentSerieRepository") private readonly tournamentSerieRepository: TournamentSerieRepositoryPort
+		@Inject("TournamentSerieRepository") private readonly tournamentSerieRepository: TournamentSerieRepositoryPort,
+		@Inject("TournamentEventRepository") private readonly tournamentEventRepository: TournamentEventRepositoryPort
 	) {}
 
-	async execute(createTournament: CreateTournament) : Promise<ApiResponse<any>> {
+	async execute(request: IRequestUser, createTournament: CreateTournament) : Promise<ApiResponse<any>> {
+		console.log(request.user);
+		var tournament: Tournament;
+		if (await this.isExistTournament(createTournament.id) === true) return new ApiResponse<null | undefined>(
+			HttpStatus.BAD_REQUEST,
+			"Tournament ID exists!",
+			null
+		);
 		if (createTournament.tournamentSerieId === null) {
-			const tournamentSerie = await this.tournamentSerieRepository.createTournamentSerie({
-				...createTournament.createTournamentSerie,
-			});
-			const tournament = await this.createTournament(createTournament, tournamentSerie);
+			tournament = await this.createTournamentWithNoTournamentSerie(createTournament, request.user);
+		} else {
+			tournament = await this.createTournamentWithExistSerie(createTournament, request.user);
 		}
-		return null;
+		return new ApiResponse<Tournament>(
+			HttpStatus.OK,
+			"Create new tournament successfully!",
+			tournament
+		);
 		// return new ApiResponse<any>(
 		// 	200, 
 		// 	"Create tournament successfully!",
@@ -31,7 +44,46 @@ export class CreateNewTournamentUseCase {
 		// );
 	}
 
-	async createTournament(createTournament: CreateTournament, tournamentSerie: TournamentSerie) {
+	async isExistTournament(id: string) : Promise<boolean> {
+		const tournament = await this.tournamentRepository.getTournament(id);
+		console.log(tournament);
+		return false;
+	}
+
+	async createTournamentWithNoTournamentSerie(createTournament: CreateTournament,
+																							user: User
+	) : Promise<Tournament> {
+		const tournamentSerie = await this.tournamentSerieRepository.createTournamentSerie({
+			...createTournament.createTournamentSerie,
+		});
+		console.log(tournamentSerie);
+		const tournament = await this.createTournament(createTournament, tournamentSerie, user);
+		console.log(tournament)
+		const tournamentEvents = await this.createTournamentEvents(createTournament.createTournamentEvent, tournament.id)
+		return tournament;
+	}
+
+	async createTournamentEvents(createTournamentEvents: CreateTournamentEvent[], tournamentId: string) : Promise<TournamentEvent[]>{
+		const tournamentEvents = await this.tournamentEventRepository.createMultipleTournamentEvent({
+			...createTournamentEvents
+			
+		}, tournamentId);
+		return null;
+	}
+
+	async createTournamentWithExistSerie(createTournament: CreateTournament, user: User) : Promise<any> {
+		const tournamentSerie = await this.tournamentSerieRepository.getTournamentSerie(createTournament.tournamentSerieId);
+		console.log(tournamentSerie);
+		const tournament = await this.createTournament(createTournament, tournamentSerie, user);
+		console.log(tournament)
+		const tournamentEvents = await this.createTournamentEvents(createTournament.createTournamentEvent, tournament.id)
+		return tournament;
+	}
+
+	async createTournament(createTournament: CreateTournament, 
+												tournamentSerie: TournamentSerie,
+												organizer: User) : Promise<Tournament> {
+		console.log(tournamentSerie);											
 		const tournament = await this.tournamentRepository.createTournament({
 			id: createTournament.id,
 			name: createTournament.name,
@@ -56,8 +108,10 @@ export class CreateNewTournamentUseCase {
 			merchandiseImageContent: createTournament.merchandiseImageContent,
 			location: createTournament.location,
 			requiredAttachment: createTournament.requiredAttachment,
-			tournamentSerieId: tournamentSerie.id
+			tournamentSerieId: tournamentSerie.id,
+			organizerId: organizer.id
 		});
 		console.log(tournament);
+		return tournament
 	}
 }

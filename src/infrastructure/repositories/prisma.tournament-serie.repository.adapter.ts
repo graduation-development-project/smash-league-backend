@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaClient, TournamentSerie } from "@prisma/client";
+import { PrismaClient, Tournament, TournamentSerie } from "@prisma/client";
 import { ICreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 
@@ -19,6 +19,22 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 			}
 		});
 	}
+
+	async getAllTournamentOfTournamentSerie(tournamentSerieId: string) : Promise<TournamentSerie | null> {
+		return await this.prisma.tournamentSerie.findUnique({
+			where: {
+				id: tournamentSerieId
+			},
+			select: {
+				id: true,
+				tournamentSerieName: true, 
+				serieBackgroundImageURL: true,
+				tournaments: {
+				}
+			}
+		});
+	}
+
 	async createTournamentSerie(createTournamentSerie: ICreateTournamentSerie): Promise<TournamentSerie> {
 		// console.log({
 		// 	tournamentSerie: createTournamentSerie,

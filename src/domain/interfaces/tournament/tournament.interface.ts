@@ -1,4 +1,4 @@
-import { Tournament } from "@prisma/client";
+import { BadmintonParticipantType, Tournament } from "@prisma/client";
 import { Type } from "class-transformer";
 import { Allow, IS_ISO8601, IsArray, IsBoolean, IsDateString, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateIf, ValidateNested } from "class-validator";
 
@@ -6,14 +6,6 @@ import { Allow, IS_ISO8601, IsArray, IsBoolean, IsDateString, IsEnum, IsISO8601,
 export enum FormatType {
 	SINGLE_ELIMINATION = "SINGLE_ELIMINATION",
 	ROUND_ROBIN = "ROUND_ROBIN"
-}
-
-export enum ParticipantType {
-	Mens_Single = "MENS_SINGLE",
-	Womens_Single = "WOMENS_SINGLE",
-	Mens_Double = "MENS_DOUBLE",
-	Womens_Double = "WOMENS_DOUBLE",
-	Mixed_Double = "MIXED_DOUBLE"
 }
 
 export enum TournamentStatus {
@@ -37,28 +29,29 @@ export interface ICreateTournamentEvent {
 	fromAge?: number;
 
 	toAge?: number;
-	formatType: FormatType;
+	typeOfFormat: FormatType;
 
 	winningPoint?: number;
 
 	lastPoint: number;
 
 	numberOfGames: number;
-	
-	minimumParticipantToStart: number;
-
-	participantType: ParticipantType;
+	ruleOfEventExtension?: string;
+	maximumAthlete: number;
+	minimumAthlete: number;
+	tournamentEvent: BadmintonParticipantType;
 
 	championshipPrize: string[];
 	runnerUpPrize: string[];
-	thirdPrize?: string[];
-	jointThirdPrize?: string[];
+	thirdPlacePrize?: string[];
+	jointThirdPlacePrize?: string[];
 }
 
 export interface ICreateTournament {
 	id: string; 
 	name: string;
 	shortName?: string;
+	organizerId: string;
 	backgroundTournament: string;
 	mainColor: string;
 
