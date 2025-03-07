@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { BadmintonParticipantType } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { ParticipantType } from "src/domain/interfaces/tournament/tournament.interface";
 
 @Injectable()
 export class GetAllBadmintonParticipantTypeUseCase {
@@ -8,11 +8,11 @@ export class GetAllBadmintonParticipantTypeUseCase {
 
 	}
 
-	async execute() : Promise<ApiResponse<ParticipantType[]>> {
-		return await new ApiResponse<ParticipantType[]>(
+	async execute() : Promise<ApiResponse<BadmintonParticipantType[]>> {
+		return await new ApiResponse<BadmintonParticipantType[]>(
 			200, 
 			"Get all badminton participant type successfully!",
-			Object.values(ParticipantType)
+			Object.values(BadmintonParticipantType)
 		);
 	}
 }

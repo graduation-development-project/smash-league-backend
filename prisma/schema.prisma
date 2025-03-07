@@ -218,12 +218,12 @@ model TournamentEvent {
   toAge                 Int?                     @default(90)
   winningPoint          Int?                     @default(21)
   lastPoint             Int                      @default(31)
-  numberOfSets          Int                      @default(3)
+  numberOfGames         Int                      @default(3)
   typeOfFormat          TypeOfFormat
   ruleOfEventExtension  String?
   minimumAthlete        Int
   maximumAthlete        Int?
-  championPrize         String[]
+  championshipPrize     String[]
   runnerUpPrize         String[]
   thirdPlacePrize       String[]                 @default([])
   jointThirdPlacePrize  String[]                 @default([])
@@ -349,16 +349,16 @@ model ContentImage {
 }
 
 model Package {
-  id                       String     @id @default(uuid())
-  packageName              String
-  packageDetail            String
-  currentDiscountByAmount  Int
-  price                    Int
-  credits                  Int
-  advantages               String[]
-  isRecommended            Boolean
-  isAvailable              Boolean
-  cartItems                CartItem[] @relation("FK_CartItem_PackageCartItem")
+  id                      String     @id @default(uuid())
+  packageName             String
+  packageDetail           String
+  currentDiscountByAmount Int
+  price                   Int
+  credits                 Int
+  advantages              String[]
+  isRecommended           Boolean
+  isAvailable             Boolean
+  cartItems               CartItem[] @relation("FK_CartItem_PackageCartItem")
 }
 
 model TransactionType {
