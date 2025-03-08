@@ -85,7 +85,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				},
 			});
 			const roles = userSignIn.userRoles.map((item) => item.roleId);
-			console.log(roles);
+			console.log("roles");
 			const accessToken = this.generateAccessToken({
 				userID: user.id,
 				roles: user.userRoles,
@@ -101,7 +101,7 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 				refreshToken: refreshToken,
 				email: userSignIn.email,
 				name: userSignIn.firstName + " " + userSignIn.lastName,
-				roles: ["Athlete"],
+				roles,
 				id: userSignIn.id,
 			};
 		} catch (e) {
