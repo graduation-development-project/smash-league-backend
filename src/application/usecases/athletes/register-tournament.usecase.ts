@@ -1,7 +1,8 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
 import { RegisterTournamentDTO } from "../../../domain/dtos/athletes/register-tournament.dto";
 import { TournamentRegistration } from "@prisma/client";
+import { ApiResponse } from "../../../domain/dtos/api-response";
 
 @Injectable()
 export class RegisterTournamentUseCase {
@@ -10,9 +11,13 @@ export class RegisterTournamentUseCase {
 		private athletesRepository: AthletesRepositoryPort,
 	) {}
 
-	execute(
+	async execute(
 		registerTournamentDTO: RegisterTournamentDTO,
-	): Promise<TournamentRegistration> {
-		return this.athletesRepository.registerTournament(registerTournamentDTO);
+	): Promise<ApiResponse<TournamentRegistration>> {
+		return new ApiResponse<TournamentRegistration>(
+			HttpStatus.CREATED,
+			"Register to tournament successfully!",
+			await this.athletesRepository.registerTournament(registerTournamentDTO),
+		);
 	}
 }

@@ -1,10 +1,15 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {
+	IsEmail,
+	IsEnum,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+} from "class-validator";
 import { EventTypesEnum } from "../../../infrastructure/enums/event-types.enum";
 
 export class RegisterTournamentDTO {
-	@IsNotEmpty()
-	@IsString()
-	userId: string;
+	@IsOptional()
+	userId?: string;
 
 	@IsNotEmpty()
 	@IsString()
@@ -12,9 +17,9 @@ export class RegisterTournamentDTO {
 
 	@IsNotEmpty()
 	@IsString()
-	tournamentDisciplineId: string;
+	tournamentEventId: string;
 
 	@IsOptional()
-	@IsString()
-	partnerId: string;
+	@IsEmail()
+	partnerEmail?: string;
 }

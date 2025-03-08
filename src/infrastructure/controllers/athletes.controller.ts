@@ -37,6 +37,7 @@ import { RequestJoinTeamUseCase } from "../../application/usecases/athletes/requ
 import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
 import { ResponseTeamLeaderTransferDTO } from "../../domain/dtos/athletes/response-team-leader-transfer.dto";
 import { ResponseTransferTeamLeaderUseCase } from "../../application/usecases/athletes/response-transfer-team-leader.usecase";
+import { ApiResponse } from "../../domain/dtos/api-response";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -56,8 +57,12 @@ export class AthletesController {
 	@Post("register-tournament")
 	registerTournament(
 		@Body() registerTournamentDTO: RegisterTournamentDTO,
-	): Promise<TournamentRegistration> {
-		return this.registerTournamentUseCase.execute(registerTournamentDTO);
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<TournamentRegistration>> {
+		return this.registerTournamentUseCase.execute({
+			...registerTournamentDTO,
+			userId: user.id,
+		});
 	}
 
 	@Get("participated-tournament")
