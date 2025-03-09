@@ -6,6 +6,7 @@ import {
 	HttpStatus,
 	Param,
 	Post,
+	Put,
 	Query,
 	Req,
 	UseGuards,
@@ -32,6 +33,8 @@ import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { GetTournamentsOfTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-tournaments-of-serie.usecase";
+import { ModifyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/modify-tournament-serie.usecase";
+import { ModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.validation";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -41,7 +44,13 @@ export class TournamentController {
 		private readonly getAllFormatTypeUseCase: GetAllFormatTypeUseCase,
 		private readonly createNewTournamentUseCase: CreateNewTournamentUseCase,
 		private readonly getTournamentsOfSerieUseCase: GetTournamentsOfTournamentSerieUseCase,
+		private readonly modifyTournamentSerieUseCase: ModifyTournamentSerieUseCase 
 	) {}
+
+	@Put("/modify-tournament-serie")
+	async modifyTournamentSerie(@Body() modifyTournamentSerie: ModifyTournamentSerie) : Promise<ApiResponse<TournamentSerie>> {
+		return await this.modifyTournamentSerieUseCase.execute(modifyTournamentSerie);
+	}
 
 	@Get("/search")
 	async getAllTournaments(
