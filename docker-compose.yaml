@@ -35,10 +35,11 @@ services:
     container_name: redis
     image: redis:7.4
     restart: always
-    ports: 
-      - "6379:6379"
-    command: redis-server --save 20 1 --logLevel warning
+    expose:
+      - 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
       - redis_cache:/data
     networks:
       - smashleague
