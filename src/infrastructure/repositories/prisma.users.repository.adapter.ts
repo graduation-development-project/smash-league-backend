@@ -11,10 +11,30 @@ import { TUserWithRole } from "../types/users.type";
 import { RoleMap } from "../enums/role.enum";
 import { EditUserDTO } from "../../domain/dtos/users/edit-user.dto";
 import { ChangePasswordDTO } from "../../domain/dtos/users/change-password.dto";
+import { IUserResponse } from "src/domain/interfaces/user/user.interface";
 
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
+	async searchUserByEmail(email: string): Promise<IUserResponse[]> {
+		return await this.prisma.user.findMany({
+			where: {
+				email: {
+					contains: email
+				},
+				isVerified: true
+			},
+			select: {
+				id: true,
+				avatarURL: true,
+				firstName: true,
+				lastName: true,
+				email: true,
+				phoneNumber: true,
+				isVerified: true
+			}
+		});
+	}
 
 	async findUserById(userID: string): Promise<TUserWithRole> {
 		try {

@@ -71,6 +71,7 @@ import { PrismaTournamentEventRepositoryAdapter } from "src/infrastructure/repos
 import { GetTournamentsOfTournamentSerieUseCase } from "./usecases/tournament-serie/get-tournaments-of-serie.usecase";
 import {SearchTournamentUseCase} from "./usecases/tournament/search-tournament.usecase";
 import { ModifyTournamentSerieUseCase } from "./usecases/tournament-serie/modify-tournament-serie.usecase";
+import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.usecase";
 
 @Module({
 	imports: [
@@ -152,6 +153,7 @@ import { ModifyTournamentSerieUseCase } from "./usecases/tournament-serie/modify
 		CreateUserUseCase,
 		EditUserProfileUseCase,
 		VerifyUserInformationUseCase,
+		SearchUserByEmailUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -228,6 +230,7 @@ import { ModifyTournamentSerieUseCase } from "./usecases/tournament-serie/modify
 		CreateUserUseCase,
 		EditUserProfileUseCase,
 		VerifyUserInformationUseCase,
+		SearchUserByEmailUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
