@@ -6,6 +6,7 @@ import {
 	ParseIntPipe,
 	Patch,
 	Put,
+	Query,
 	Req,
 	UseGuards,
 } from "@nestjs/common";
@@ -20,6 +21,10 @@ import { EditUserDTO } from "../../domain/dtos/users/edit-user.dto";
 import { EditUserProfileUseCase } from "../../application/usecases/users/edit-user-profile.usecase";
 import { ChangePasswordDTO } from "../../domain/dtos/users/change-password.dto";
 import { ChangePasswordUseCase } from "../../application/usecases/users/change-password.usecase";
+import { ApiResponse } from "src/domain/dtos/api-response";
+import { SearchUserByEmailUseCase } from "src/application/usecases/users/search-user-by-email.usecase";
+import { User } from "@prisma/client";
+import { IUserResponse } from "src/domain/interfaces/user/user.interface";
 
 @Controller("/users")
 export class UsersController {
@@ -27,6 +32,7 @@ export class UsersController {
 		private getUserByIdUseCase: GetUserByIdUseCase,
 		private editUserProfileUseCase: EditUserProfileUseCase,
 		private changePasswordUseCase: ChangePasswordUseCase,
+		private searchUserByEmail: SearchUserByEmailUseCase
 	) {}
 
 	@Get("/id/:id")
@@ -53,5 +59,11 @@ export class UsersController {
 		@Body() changePasswordDTO: ChangePasswordDTO,
 	): Promise<TUserWithRole> {
 		return this.changePasswordUseCase.execute(user.id, changePasswordDTO);
+	}
+
+	@Get("search-users-by-email")
+	@UseGuards(JwtAccessTokenGuard)
+	async searchUsersByEmail(@Query("email") email: string) : Promise<ApiResponse<IUserResponse[] | null>> {
+		return await this.searchUserByEmail.execute(email);
 	}
 }

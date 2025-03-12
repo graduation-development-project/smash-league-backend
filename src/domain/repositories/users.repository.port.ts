@@ -3,6 +3,7 @@ import { CreateUserDTO } from "../dtos/users/create-user.dto";
 import { TUserWithRole } from "../../infrastructure/types/users.type";
 import { EditUserDTO } from "../dtos/users/edit-user.dto";
 import { ChangePasswordDTO } from "../dtos/users/change-password.dto";
+import { IUserResponse } from "../interfaces/user/user.interface";
 
 export interface UsersRepositoryPort {
 	findUserById(userID: string): Promise<TUserWithRole>;
@@ -24,4 +25,6 @@ export interface UsersRepositoryPort {
 		userID: string,
 		changePasswordDTO: ChangePasswordDTO,
 	): Promise<TUserWithRole>;
+
+	searchUserByEmail(email: string) : Promise<IUserResponse[]>;
 }
