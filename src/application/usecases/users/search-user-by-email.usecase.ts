@@ -12,7 +12,7 @@ export class SearchUserByEmailUseCase {
 	async execute(email: string) : Promise<ApiResponse<IUserResponse[] | null>> {
 		const users = await this.userRepository.searchUserByEmail(email);
 		if (users.length === 0) return new ApiResponse<null | undefined>(
-			HttpStatus.OK,
+			HttpStatus.NOT_FOUND,
 			"No users found!",
 			null
 		);

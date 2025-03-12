@@ -72,6 +72,7 @@ import { GetTournamentsOfTournamentSerieUseCase } from "./usecases/tournament-se
 import {SearchTournamentUseCase} from "./usecases/tournament/search-tournament.usecase";
 import { ModifyTournamentSerieUseCase } from "./usecases/tournament-serie/modify-tournament-serie.usecase";
 import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.usecase";
+import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
 
 @Module({
 	imports: [
@@ -199,7 +200,9 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
+		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
+		GetAllTournamentSeriesUseCase,
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
@@ -286,6 +289,7 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 		GetTournamentsOfTournamentSerieUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
+		GetAllTournamentSeriesUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case

@@ -9,4 +9,5 @@ export interface TournamentSerieRepositoryPort {
 	getAllTournamentOfTournamentSerie(tournamentSerieId: string) : Promise<TournamentSerie>;
 	modifyTournamentSerie(modifyTournamentSerie: IModifyTournamentSerie) : Promise<TournamentSerie>;
 
+	
 }
