@@ -1,20 +1,42 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {
+	IsArray,
+	IsEnum,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+} from "class-validator";
 import { EventTypesEnum } from "../../../infrastructure/enums/event-types.enum";
 
 export class RegisterTournamentDTO {
-	@IsNotEmpty()
-	@IsString()
+	@IsOptional()
 	userId: string;
 
 	@IsNotEmpty()
 	@IsString()
 	tournamentId: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
-	tournamentDisciplineId: string;
+	partnerEmail: string;
 
 	@IsOptional()
 	@IsString()
-	partnerId: string;
+	tournamentEventId: string;
+
+	// @IsNotEmpty()
+	// @IsArray()
+	// registrationDocumentCreator: string[];
+	//
+	// @IsOptional()
+	// registrationDocumentPartner: string[];
+
+	@IsNotEmpty()
+	@IsString()
+	registrationRole: string;
+
+	@IsOptional()
+	fromTeamId: string;
+
+	@IsOptional()
+	files: Express.Multer.File[];
 }

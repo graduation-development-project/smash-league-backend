@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearchPostgres"]
 }
 
@@ -247,21 +247,25 @@ enum BadmintonParticipantType {
 }
 
 model TournamentRegistration {
-  id                String                       @id @default(uuid())
-  tournamentId      String
-  userId            String
-  tournamentEventId String
-  tournamentEvent   TournamentEvent              @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
-  partnerId         String? // Nullable: Used only for doubles
-  status            TournamentRegistrationStatus @default(APPROVED) // "PENDING", "APPROVED", "REJECTED"
-  createdAt         DateTime                     @default(now())
-  tournament        Tournament                   @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
-  user              User                         @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
-  partner           User?                        @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
-  rejectReason      Reason?                      @relation("FK_TournamentRegistration_Reason")
-  fromTeamId        String?
-  fromTeam          Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
-  reasonId          String?                      @unique
+  id                          String                       @id @default(uuid())
+  tournamentId                String
+  userId                      String
+  tournamentEventId           String
+  tournamentEvent             TournamentEvent              @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
+  partnerId                   String? // Nullable: Used only for doubles
+  isPayForTheRegistrationFee  Boolean                      @default(false)
+  registrationDocumentCreator String[]
+  registrationDocumentPartner String[]                     @default([])
+  registrationRole            TournamentRegistrationRole
+  status                      TournamentRegistrationStatus @default(PENDING) // "PENDING", "APPROVED", "REJECTED"
+  createdAt                   DateTime                     @default(now())
+  tournament                  Tournament                   @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user                        User                         @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
+  partner                     User?                        @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  rejectReason                Reason?                      @relation("FK_TournamentRegistration_Reason")
+  fromTeamId                  String?
+  fromTeam                    Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
+  reasonId                    String?                      @unique
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
@@ -271,6 +275,11 @@ enum TournamentRegistrationStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum TournamentRegistrationRole {
+  ATHLETE
+  UMPIRE
 }
 
 model TournamentPost {
