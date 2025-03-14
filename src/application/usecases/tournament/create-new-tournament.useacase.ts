@@ -83,7 +83,7 @@ export class CreateNewTournamentUseCase {
 	async createTournament(createTournament: CreateTournament, 
 												tournamentSerie: TournamentSerie,
 												organizer: User) : Promise<Tournament> {
-		console.log(tournamentSerie);											
+		console.log(tournamentSerie.id);											
 		const tournament = await this.tournamentRepository.createTournament({
 			id: createTournament.id,
 			name: createTournament.name,
