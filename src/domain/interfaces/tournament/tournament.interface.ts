@@ -75,7 +75,7 @@ export interface ICreateTournament {
 
 	maxEventPerPerson: number;
 
-	tournamentSerieId?: string;
+	tournamentSerieId: string;
 
 	protestFeePerTime: number | 0;
 
