@@ -9,6 +9,8 @@ import { ResponseToTeamInvitationDTO } from "../dtos/athletes/response-to-team-i
 import { LeaveTeamDTO } from "../dtos/athletes/leave-team.dto";
 import { RequestJoinTeamDTO } from "../dtos/athletes/request-join-team.dto";
 import {ResponseTeamLeaderTransferDTO} from "../dtos/athletes/response-team-leader-transfer.dto";
+import {IPaginatedOutput, IPaginateOptions} from "../interfaces/interfaces";
+import {IParticipatedTournamentResponse} from "../interfaces/tournament/tournament.interface";
 
 export interface AthletesRepositoryPort {
 	registerTournament(
@@ -16,9 +18,10 @@ export interface AthletesRepositoryPort {
 	): Promise<TournamentRegistration>;
 
 	getParticipatedTournaments(
+		options: IPaginateOptions,
 		userID: string,
 		tournamentStatus: string,
-	): Promise<Tournament[]>;
+	): Promise<IPaginatedOutput<IParticipatedTournamentResponse>>;
 
 	// uploadVerificationImage(
 	// 	files: Express.Multer.File[],

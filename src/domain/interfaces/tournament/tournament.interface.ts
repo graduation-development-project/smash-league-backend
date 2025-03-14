@@ -1,11 +1,30 @@
-import { BadmintonParticipantType, Tournament } from "@prisma/client";
+import {
+	BadmintonParticipantType,
+	Tournament,
+	TournamentRegistration,
+} from "@prisma/client";
 import { Type } from "class-transformer";
-import { Allow, IS_ISO8601, IsArray, IsBoolean, IsDateString, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min, ValidateIf, ValidateNested } from "class-validator";
-
+import {
+	Allow,
+	IS_ISO8601,
+	IsArray,
+	IsBoolean,
+	IsDateString,
+	IsEnum,
+	IsISO8601,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+	Max,
+	Min,
+	ValidateIf,
+	ValidateNested,
+} from "class-validator";
 
 export enum FormatType {
 	SINGLE_ELIMINATION = "SINGLE_ELIMINATION",
-	ROUND_ROBIN = "ROUND_ROBIN"
+	ROUND_ROBIN = "ROUND_ROBIN",
 }
 
 export enum TournamentStatus {
@@ -13,12 +32,12 @@ export enum TournamentStatus {
 	Opening_For_Registration = "OPENING_FOR_REGISTRATION",
 	Drawing = "DRAWING",
 	On_Going = "ON_GOING",
-	Finished = "FINISHED"
+	Finished = "FINISHED",
 }
 
 export enum RequiredAttachment {
 	Identification_Card = "IDENTIFICATION_CARD",
-	Portrait_Photo = "PORTRAIT_PHOTO"
+	Portrait_Photo = "PORTRAIT_PHOTO",
 }
 
 export interface ICreateTournamentSerie {
@@ -48,7 +67,7 @@ export interface ICreateTournamentEvent {
 }
 
 export interface ICreateTournament {
-	id: string; 
+	id: string;
 	name: string;
 	shortName?: string;
 	organizerId: string;
@@ -89,10 +108,10 @@ export interface ICreateTournament {
 	requiredAttachment: RequiredAttachment[];
 }
 
-
-
-
-
+export interface IParticipatedTournamentResponse {
+	tournament: Tournament;
+	registrations: TournamentRegistration[];
+}
 
 
 // const ParticipantTypeMap = {

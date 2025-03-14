@@ -10,6 +10,7 @@ import {
 	Tournament,
 	TournamentRegistration,
 	TournamentRegistrationRole,
+	TournamentRegistrationStatus,
 	User,
 	UserRole,
 	UserTeam,
@@ -28,6 +29,15 @@ import { NotificationsRepositoryPort } from "../../domain/repositories/notificat
 import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
 import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
 import { ResponseTeamLeaderTransferDTO } from "../../domain/dtos/athletes/response-team-leader-transfer.dto";
+import {
+	IPaginatedOutput,
+	IPaginateOptions,
+} from "../../domain/interfaces/interfaces";
+import {
+	DEFAULT_PAGE_NUMBER,
+	DEFAULT_PAGE_SIZE,
+} from "../constant/pagination.constant";
+import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournament/tournament.interface";
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
@@ -204,26 +214,62 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 	}
 
 	async getParticipatedTournaments(
+		options: IPaginateOptions,
 		userID: string,
 		tournamentStatus: string,
-	): Promise<Tournament[]> {
+	): Promise<IPaginatedOutput<IParticipatedTournamentResponse>> {
 		try {
-			return this.prisma.tournament.findMany({
-				where: {
-					registrations: {
-						some: {
-							OR: [
-								{ userId: userID }, //* User participated as a player
-								{ partnerId: userID }, //* User participated as a partner
-							],
-						},
-					},
+			const page: number =
+				parseInt(options.page?.toString()) || DEFAULT_PAGE_NUMBER;
+			const perPage: number =
+				parseInt(options.perPage?.toString()) || DEFAULT_PAGE_SIZE;
+			const skip: number = (page - 1) * perPage;
 
-					...(tournamentStatus
-						? { status: TournamentStatusEnum[tournamentStatus] }
-						: {}),
+			const tournaments = await this.prisma.tournamentRegistration.findMany({
+				where: {
+					userId: userID,
+					status: TournamentRegistrationStatus.PENDING,
+				},
+
+				include: {
+					tournament: true,
 				},
 			});
+
+			const groupedData = tournaments.reduce((acc, registration) => {
+				const tournamentId = registration.tournament.id;
+
+				if (!acc[tournamentId]) {
+					acc[tournamentId] = {
+						tournament: registration.tournament,
+						registrations: [],
+					};
+				}
+				delete registration.tournament;
+				acc[tournamentId].registrations.push(registration);
+
+				return acc;
+			}, {});
+
+			// Convert object to array
+			const result: IParticipatedTournamentResponse[] =
+				Object.values(groupedData);
+
+			const lastPage: number = Math.ceil(result.length / perPage);
+			const nextPage: number = page < lastPage ? page + 1 : null;
+			const prevPage: number = page > 1 ? page - 1 : null;
+
+			return {
+				data: result,
+				meta: {
+					total: result.length,
+					lastPage,
+					currentPage: page,
+					totalPerPage: perPage,
+					prevPage,
+					nextPage,
+				},
+			};
 		} catch (e) {
 			throw e;
 		}

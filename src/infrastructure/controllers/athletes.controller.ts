@@ -22,7 +22,11 @@ import {
 	UserVerification,
 } from "@prisma/client";
 import { GetParticipatedTournamentsUseCase } from "../../application/usecases/athletes/get-participated-tournaments.usecase";
-import { IRequestUser } from "../../domain/interfaces/interfaces";
+import {
+	IPaginatedOutput,
+	IPaginateOptions,
+	IRequestUser,
+} from "../../domain/interfaces/interfaces";
 import { RegisterNewRoleUseCase } from "../../application/usecases/athletes/register-new-role.usecase";
 import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
 import { TUserWithRole } from "../types/users.type";
@@ -37,7 +41,8 @@ import { RequestJoinTeamUseCase } from "../../application/usecases/athletes/requ
 import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
 import { ResponseTeamLeaderTransferDTO } from "../../domain/dtos/athletes/response-team-leader-transfer.dto";
 import { ResponseTransferTeamLeaderUseCase } from "../../application/usecases/athletes/response-transfer-team-leader.usecase";
-import {ApiResponse} from "../../domain/dtos/api-response";
+import { ApiResponse } from "../../domain/dtos/api-response";
+import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournament/tournament.interface";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -71,9 +76,11 @@ export class AthletesController {
 	@Get("participated-tournament")
 	getParticipatedTournaments(
 		@Req() { user }: IRequestUser,
+		@Query() paginateOption: IPaginateOptions,
 		@Query("status") tournamentStatus: string,
-	): Promise<Tournament[]> {
+	): Promise<ApiResponse<IPaginatedOutput<IParticipatedTournamentResponse>>> {
 		return this.getParticipatedTournamentsUseCase.execute(
+			paginateOption,
 			user.id,
 			tournamentStatus,
 		);
