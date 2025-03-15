@@ -29,6 +29,7 @@ import { TeamLeaderController } from "./controllers/team-leader.controller";
 import { TeamQueueModule } from "./background-jobs/team/team.queue.module";
 import {GoogleStrategy} from "./strategies/auth/google.strategy";
 import {TeamController} from "./controllers/team.controller";
+import {OrganizerController} from "./controllers/organizers.controller";
 
 @Module({
 	imports: [
@@ -78,6 +79,7 @@ import {TeamController} from "./controllers/team.controller";
 		TournamentController,
 		TeamLeaderController,
 		TeamController,
+		OrganizerController
 	],
 	providers: [
 		LocalStrategy,

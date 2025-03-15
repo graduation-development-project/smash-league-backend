@@ -38,8 +38,14 @@ export class PrismaNotificationsRepositoryAdapter
 		createNotificationDTO: CreateNotificationDTO,
 		receiverList: string[],
 	): Promise<string> {
-		const { title, message, type, teamRequestId, teamInvitationId } =
-			createNotificationDTO;
+		const {
+			title,
+			message,
+			type,
+			teamRequestId,
+			teamInvitationId,
+			tournamentRegistrationId,
+		} = createNotificationDTO;
 
 		try {
 			if (!receiverList || receiverList.length === 0) {
@@ -55,6 +61,7 @@ export class PrismaNotificationsRepositoryAdapter
 					title,
 					...(teamRequestId && { teamRequestId }),
 					...(teamInvitationId && { teamInvitationId }),
+					...(tournamentRegistrationId && { tournamentRegistrationId }),
 				},
 			});
 

@@ -18,4 +18,7 @@ export class CreateNotificationDTO {
 
 	@IsOptional()
 	teamRequestId?: string;
+
+	@IsOptional()
+	tournamentRegistrationId?: string
 }
