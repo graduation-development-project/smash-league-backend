@@ -38,6 +38,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 } from "../constant/pagination.constant";
 import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournament/tournament.interface";
+import { TournamentStatus } from "../enums/tournament/tournament-status.enum";
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
@@ -74,6 +75,12 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 			if (!tournament) {
 				throw new BadRequestException("Tournament not found");
+			}
+
+			if (tournament.status !== TournamentStatus.OPENING_FOR_REGISTRATION) {
+				throw new BadRequestException(
+					"This tournament is not open for registration",
+				);
 			}
 
 			if (!event) {
