@@ -34,8 +34,9 @@ import { RoleMap } from "../enums/role.enum";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { GetTournamentsOfTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-tournaments-of-serie.usecase";
 import { ModifyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/modify-tournament-serie.usecase";
-import { ModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.validation";
+import { CreateTournamentSerie, ModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.validation";
 import { GetAllTournamentSeriesUseCase } from "src/application/usecases/tournament-serie/get-all-tournament-series.usecase";
+import { CreateTournamentSerieUseCase } from "src/application/usecases/tournament-serie/create-tournament-serie.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -46,7 +47,8 @@ export class TournamentController {
 		private readonly createNewTournamentUseCase: CreateNewTournamentUseCase,
 		private readonly getTournamentsOfSerieUseCase: GetTournamentsOfTournamentSerieUseCase,
 		private readonly modifyTournamentSerieUseCase: ModifyTournamentSerieUseCase,
-		private readonly getAllTournamentSeriesUseCase: GetAllTournamentSeriesUseCase
+		private readonly getAllTournamentSeriesUseCase: GetAllTournamentSeriesUseCase,
+		private readonly createTournamentSerieUseCase: CreateTournamentSerieUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -102,5 +104,11 @@ export class TournamentController {
 	@Get("/get-all-format-types")
 	async getAllFormatTypes(): Promise<ApiResponse<FormatType[]>> {
 		return await this.getAllFormatTypeUseCase.execute();
+	}
+	
+	@Post("/create-tournament-serie")
+	@UseGuards(JwtAccessTokenGuard)
+	async createTournamentSerie(@Body() tournamentSerie: CreateTournamentSerie) : Promise<ApiResponse<TournamentSerie>>{
+		return await this.createTournamentSerieUseCase.execute(tournamentSerie);
 	}
 }

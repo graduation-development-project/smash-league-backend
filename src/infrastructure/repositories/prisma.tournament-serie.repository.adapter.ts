@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient, Tournament, TournamentSerie } from "@prisma/client";
-import { IModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
+import { ICreateTournamentSerieOnly, IModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 import { ICreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 
@@ -9,6 +9,22 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 	constructor(
 		private prisma: PrismaClient
 	) {
+	}
+	async getTournamentSerieByName(name: string): Promise<TournamentSerie> {
+		return await this.prisma.tournamentSerie.findFirst({
+			where: {
+				tournamentSerieName: {
+					equals: name
+				}
+			}
+		});
+	}
+	async createTournamentSerieOnly(createTournamentSerie: ICreateTournamentSerieOnly) : Promise<TournamentSerie> {
+		return await this.prisma.tournamentSerie.create({
+			data: {
+				...createTournamentSerie
+			}
+		});
 	}
 	async modifyTournamentSerie(modifyTournamentSerie: IModifyTournamentSerie): Promise<TournamentSerie> {
 		return await this.prisma.tournamentSerie.update({

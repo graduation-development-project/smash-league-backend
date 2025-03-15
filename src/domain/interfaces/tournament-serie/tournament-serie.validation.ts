@@ -11,3 +11,12 @@ export class ModifyTournamentSerie {
 	@IsUrl()
 	serieBackgroundImageURL: string;
 }
+
+export class CreateTournamentSerie {
+	@IsString()
+	@IsNotEmpty()
+	tournamentSerieName: string;
+	@IsNotEmpty()
+	@IsUrl()
+	serieBackgroundImageURL: string;
+}
