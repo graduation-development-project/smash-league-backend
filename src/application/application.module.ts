@@ -75,6 +75,8 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
 import {PrismaOrganizersRepositoryAdapter} from "../infrastructure/repositories/prisma.organizers.repository.adapter";
 import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/response-tournament-registration.usecase";
+import { CreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.validation";
+import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
 
 @Module({
 	imports: [
@@ -210,6 +212,7 @@ import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/respo
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
+		CreateTournamentSerieUseCase,
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
@@ -300,6 +303,7 @@ import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/respo
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
+		CreateTournamentSerieUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case
