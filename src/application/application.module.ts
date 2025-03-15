@@ -73,6 +73,8 @@ import {SearchTournamentUseCase} from "./usecases/tournament/search-tournament.u
 import { ModifyTournamentSerieUseCase } from "./usecases/tournament-serie/modify-tournament-serie.usecase";
 import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.usecase";
 import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
+import {PrismaOrganizersRepositoryAdapter} from "../infrastructure/repositories/prisma.organizers.repository.adapter";
+import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/response-tournament-registration.usecase";
 
 @Module({
 	imports: [
@@ -136,6 +138,11 @@ import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-a
 		{
 			provide: "TournamentEventRepository",
 			useClass: PrismaTournamentEventRepositoryAdapter
+		},
+
+		{
+			provide: "OrganizerRepository",
+			useClass: PrismaOrganizersRepositoryAdapter
 		},
 		//Third Party Service
 		MailService,
@@ -219,6 +226,9 @@ import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-a
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
+
+		//Organizer Use Case
+		ResponseTournamentRegistrationUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -303,6 +313,9 @@ import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-a
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
+
+		//Organizer Use Case
+		ResponseTournamentRegistrationUseCase,
 	],
 })
 export class ApplicationModule {}
