@@ -1,6 +1,7 @@
 import { HttpStatus, Inject } from "@nestjs/common";
-import { TournamentSerie } from "@prisma/client";
+import { Tournament, TournamentSerie } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
+import { IPaginatedOutput, IPaginateOptions } from "src/domain/interfaces/interfaces";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 
 export class GetTournamentsOfTournamentSerieUseCase {
@@ -9,19 +10,19 @@ export class GetTournamentsOfTournamentSerieUseCase {
 	) {
 	}
 
-	async execute(id: string) : Promise<ApiResponse<TournamentSerie>> {
-		const tournamentSerie = await this.tournamentSerieRepository.getAllTournamentOfTournamentSerie(id);
-		if (tournamentSerie === null) {
+	async execute(id: string, options: IPaginateOptions) : Promise<ApiResponse<IPaginatedOutput<Tournament>>> {
+		const data = await this.tournamentSerieRepository.queryTournamentByTournamentSerie(id, options);
+		if (data.data.length === 0) {
 			return new ApiResponse<null | undefined>(
 				HttpStatus.NOT_FOUND,
 				"Not found any tournament serie",
 				null
 			);
 		}
-		return new ApiResponse<TournamentSerie>(
+		return new ApiResponse<IPaginatedOutput<Tournament>>(
 			HttpStatus.OK,
 			"Get all tournaments of a serie successfully!",
-			tournamentSerie
+			data
 		);
 	}
 }
