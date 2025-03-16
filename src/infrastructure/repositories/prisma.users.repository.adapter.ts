@@ -27,8 +27,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			select: {
 				id: true,
 				avatarURL: true,
-				firstName: true,
-				lastName: true,
+				name: true,
 				email: true,
 				phoneNumber: true,
 				isVerified: true

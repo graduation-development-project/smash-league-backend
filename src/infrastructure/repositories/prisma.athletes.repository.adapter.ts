@@ -400,7 +400,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("This invitation does not exist");
 			}
 
-			let athleteName: string = `${existedInvitation.invitedUser.firstName} ${existedInvitation.invitedUser.lastName}`;
+			let athleteName: string = existedInvitation.invitedUser.name;
 
 			const teamInvitation: TeamInvitation =
 				await this.prisma.teamInvitation.update({
@@ -483,7 +483,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("User not in this team");
 			}
 
-			const userName = `${user.firstName} ${user.lastName}`;
+			const userName = user.name;
 
 			const teamRequest: TeamRequest = await this.prisma.teamRequest.create({
 				data: {
@@ -553,7 +553,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				},
 			});
 
-			const userName = `${user.firstName} ${user.lastName}`;
+			const userName = user.name;
 
 			const createNotificationDTO: CreateNotificationDTO = {
 				message: `${userName} want to join team`,
@@ -593,7 +593,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("Request not existed");
 			}
 
-			let athleteName: string = `${user.firstName} ${user.lastName}`;
+			let athleteName: string = user.name;
 
 			const teamRequest = await this.prisma.teamRequest.update({
 				where: { id: requestId },

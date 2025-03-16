@@ -213,7 +213,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 				subject: `You have an invitation from team ${teamExisted.teamName}`,
 				template: "team-invitation.hbs",
 				context: {
-					teamLeader: `${teamExisted.teamLeader.firstName} ${teamExisted.teamLeader.lastName}`,
+					teamLeader: teamExisted.teamLeader.name,
 					teamName: teamExisted.teamName,
 				},
 			});
