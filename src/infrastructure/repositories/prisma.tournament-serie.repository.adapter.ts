@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient, Tournament, TournamentSerie } from "@prisma/client";
+import { IPaginatedOutput, IPaginateOptions } from "src/domain/interfaces/interfaces";
 import { ICreateTournamentSerieOnly, IModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 import { ICreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
@@ -9,6 +10,30 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 	constructor(
 		private prisma: PrismaClient
 	) {
+	}
+	async countPageTournament(options: IPaginateOptions): Promise<number> {
+		return await this.prisma.tournament.count() / options.perPage;
+	}
+	async queryTournamentByTournamentSerie(id: string, options: IPaginateOptions): Promise<IPaginatedOutput<Tournament>> {
+		const tournaments = await this.prisma.tournament.findMany({
+			where: {
+				tournamentSerieId: id
+			},
+			skip: (options.page - 1) * options.perPage,
+			take: options.perPage
+		});
+		const lastPage = await this.countPageTournament(options);
+		return {
+			data: tournaments,
+			meta: {
+				currentPage: options.page,
+				lastPage: lastPage,
+				nextPage: (options.page + 1 >= lastPage) ? lastPage: options.page + 1,
+				prevPage: (options.page - 1 <= 1) ? 1: options.page - 1,
+				totalPerPage: options.perPage,
+				total: tournaments.length
+			}
+		};
 	}
 	async getTournamentSerieByName(name: string): Promise<TournamentSerie> {
 		return await this.prisma.tournamentSerie.findFirst({

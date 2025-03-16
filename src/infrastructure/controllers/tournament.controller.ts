@@ -75,8 +75,9 @@ export class TournamentController {
 	@Get("/get-tournaments-of-serie/:id")
 	async getTournamentsOfSerie(
 		@Param("id") id: string,
-	): Promise<ApiResponse<TournamentSerie>> {
-		return await this.getTournamentsOfSerieUseCase.execute(id);
+		@Body() options: IPaginateOptions
+	): Promise<ApiResponse<IPaginatedOutput<Tournament>>> {
+		return await this.getTournamentsOfSerieUseCase.execute(id, options);
 	}
 
 	@Post("/create-tournament")
