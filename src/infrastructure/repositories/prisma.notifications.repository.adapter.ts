@@ -28,7 +28,10 @@ export class PrismaNotificationsRepositoryAdapter
 				},
 			});
 
-			return notifications.map((notification) => notification.notification);
+			return notifications.map((notification) => ({
+				...notification.notification,
+				createdAt: notification.createdAt,
+			}));
 		} catch (e) {
 			throw e;
 		}
