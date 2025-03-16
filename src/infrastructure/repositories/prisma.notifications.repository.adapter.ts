@@ -24,7 +24,11 @@ export class PrismaNotificationsRepositoryAdapter
 				},
 
 				include: {
-					notification: true,
+					notification: {
+						include: {
+							type: true,
+						},
+					},
 				},
 			});
 
