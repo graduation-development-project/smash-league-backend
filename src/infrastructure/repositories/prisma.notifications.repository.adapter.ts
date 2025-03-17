@@ -27,11 +27,26 @@ export class PrismaNotificationsRepositoryAdapter
 					notification: {
 						include: {
 							type: true,
+							teamInvitation: {
+								select: {
+									status: true,
+								},
+							},
+
+							teamRequest: {
+								select: {
+									status: true,
+								},
+							},
+							tournamentRegistration: {
+								select: {
+									status: true,
+								},
+							},
 						},
 					},
 				},
 			});
-
 			return notifications.map((notification) => ({
 				...notification.notification,
 				createdAt: notification.createdAt,
