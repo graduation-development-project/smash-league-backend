@@ -78,6 +78,7 @@ import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/respo
 import { CreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.validation";
 import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
+import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
 
 @Module({
 	imports: [
@@ -211,6 +212,7 @@ import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exis
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
 		CheckExistTournamentURLUseCase,
+		CreateRandomURLUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -303,6 +305,7 @@ import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exis
 		CreateNewTournamentUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
 		CheckExistTournamentURLUseCase,
+		CreateRandomURLUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
