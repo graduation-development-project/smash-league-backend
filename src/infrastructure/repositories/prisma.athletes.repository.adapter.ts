@@ -48,6 +48,16 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		@Inject("NotificationRepository")
 		private notificationsRepository: NotificationsRepositoryPort,
 	) {}
+	// async registerTournament(registerTournamentDTO: RegisterTournamentDTO): Promise<TournamentRegistration> {
+	// 	return await this.prisma.tournamentRegistration.create({
+	// 		data: {
+	// 			tournamentId: "abc",
+	// 			tournamentEventId: "e34478ab-92fa-4c7a-996e-52d6adae406a",
+	// 			registrationRole: "ATHLETE",
+	// 			userId: "1002ee23-744f-43ac-9462-6f6bf7368fd6"
+	// 		}
+	// 	});
+	// }
 
 	async registerTournament(
 		registerTournamentDTO: RegisterTournamentDTO,
@@ -151,6 +161,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 						"Partner is required to register for double match",
 					);
 				}
+				
 
 				const partner: User = await this.prisma.user.findUnique({
 					where: { email: partnerEmail },
@@ -184,6 +195,8 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 					imageUrls[4].secure_url,
 					imageUrls[5].secure_url,
 				];
+				console.log(registrationDocumentCreator);
+				console.log(registrationDocumentPartner);
 
 				if (
 					!registrationDocumentPartner ||
@@ -195,22 +208,40 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				}
 			}
 
-			return this.prisma.tournamentRegistration.create({
-				data: {
-					tournamentId,
-					userId,
-					tournamentEventId,
-					partnerId: isDoubleEvent ? partnerId : null,
-					registrationDocumentCreator,
-					registrationDocumentPartner,
-					registrationRole:
-						registrationRole.toUpperCase() ===
-						TournamentRegistrationRole.ATHLETE
-							? TournamentRegistrationRole.ATHLETE
-							: TournamentRegistrationRole.UMPIRE,
-					fromTeamId: fromTeamId ? fromTeamId : null,
-				},
-			});
+
+			return await this.prisma.tournamentRegistration.create({
+						data: {
+							tournamentId: "abc",
+							tournamentEventId: "e34478ab-92fa-4c7a-996e-52d6adae406a",
+							registrationDocumentCreator: registrationDocumentCreator === null? []: registrationDocumentCreator,
+							registrationDocumentPartner: registrationDocumentPartner === null? []: registrationDocumentPartner,
+							registrationRole:
+								registrationRole.toUpperCase() ===
+								TournamentRegistrationRole.ATHLETE
+									? TournamentRegistrationRole.ATHLETE
+									: TournamentRegistrationRole.UMPIRE,
+							userId: "1002ee23-744f-43ac-9462-6f6bf7368fd6",
+							fromTeamId: fromTeamId ? fromTeamId : null,
+
+						}
+					});
+
+			// return await this.prisma.tournamentRegistration.create({
+			// 	data: {
+			// 		tournamentId: "abc",
+			// 		userId,
+			// 		tournamentEventId,
+			// 		partnerId: isDoubleEvent ? partnerId : null,
+			// 		registrationDocumentCreator,
+			// 		registrationDocumentPartner,
+			// 		registrationRole:
+			// 			registrationRole.toUpperCase() ===
+			// 			TournamentRegistrationRole.ATHLETE
+			// 				? TournamentRegistrationRole.ATHLETE
+			// 				: TournamentRegistrationRole.UMPIRE,
+			// 		fromTeamId: fromTeamId ? fromTeamId : null,
+			// 	},
+			// });
 		} catch (e) {
 			throw e;
 		}
