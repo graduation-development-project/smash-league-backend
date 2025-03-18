@@ -8,21 +8,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                  String    @id @default(uuid())
-  email               String    @unique
-  password            String
-  name                String
-  phoneNumber         String    @unique
-  avatarURL           String?
-  currentRefreshToken String?
-  creditsRemain       Int?
-  otp                 String?
-  otpExpiresTime      DateTime?
-  isVerified          Boolean   @default(false)
-  teamId              String?
-  height              Int?
+enum Hands {
+  LEFT
+  RIGHT
+}
 
+model User {
+  id                            String                   @id @default(uuid())
+  email                         String                   @unique
+  password                      String
+  name                          String
+  phoneNumber                   String                   @unique
+  avatarURL                     String?
+  currentRefreshToken           String?
+  creditsRemain                 Int?
+  otp                           String?
+  otpExpiresTime                DateTime?
+  isVerified                    Boolean                  @default(false)
+  teamId                        String?
+  height                        Int?
+  hands                         Hands?
+  dateOfBirth                   DateTime
   teamLeaderOf                  Team[]                   @relation("FK_User_TeamLeader")
   tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
   userRoles                     UserRole[]               @relation(name: "FK_User_UserRole")
@@ -194,8 +200,8 @@ model Tournament {
   protestFeePerTime        Int
   prizePool                Int
   hasMerchandise           Boolean
-  numberOfMerchandise      Int
-  merchandiseImageContent  String[]
+  numberOfMerchandise      Int?
+  merchandiseImageContent  String[]                 @default([])
   merchandise              String
   requiredAttachment       String[]
   tournamentSerieId        String
