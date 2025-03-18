@@ -37,6 +37,7 @@ import { ModifyTournamentSerieUseCase } from "src/application/usecases/tournamen
 import { CreateTournamentSerie, ModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.validation";
 import { GetAllTournamentSeriesUseCase } from "src/application/usecases/tournament-serie/get-all-tournament-series.usecase";
 import { CreateTournamentSerieUseCase } from "src/application/usecases/tournament-serie/create-tournament-serie.usecase";
+import { CheckExistTournamentURLUseCase } from "src/application/usecases/tournament/check-exist-tournament-url.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -48,12 +49,19 @@ export class TournamentController {
 		private readonly getTournamentsOfSerieUseCase: GetTournamentsOfTournamentSerieUseCase,
 		private readonly modifyTournamentSerieUseCase: ModifyTournamentSerieUseCase,
 		private readonly getAllTournamentSeriesUseCase: GetAllTournamentSeriesUseCase,
-		private readonly createTournamentSerieUseCase: CreateTournamentSerieUseCase
+		private readonly createTournamentSerieUseCase: CreateTournamentSerieUseCase,
+		private readonly checkExistTournamentURLUseCase: CheckExistTournamentURLUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
 	async modifyTournamentSerie(@Body() modifyTournamentSerie: ModifyTournamentSerie) : Promise<ApiResponse<TournamentSerie>> {
 		return await this.modifyTournamentSerieUseCase.execute(modifyTournamentSerie);
+	}
+
+	@Get("/check-exist-tournament-url/:url")
+	async checkExistTournamentURL(@Param("url") url: string): Promise<ApiResponse<boolean>> {
+		console.log(url);
+		return await this.checkExistTournamentURLUseCase.execute(url);
 	}
 
 	@Get("get-all-tournament-serie")

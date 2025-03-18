@@ -18,17 +18,28 @@ export class PrismaTournamentRepositorAdapter
 {
 	constructor(private prisma: PrismaClient) {}
 	calculateTimeLeft(date: Date): string {
-		const currentTime = new Date();
+		const now = new Date();
+		const currentTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+		console.log(currentTime);
 
 		const timeLeft = date.getTime() - currentTime.getTime(); // Difference in milliseconds
 
-		const seconds = Math.floor((timeLeft / 1000) % 60) === 1? "1 second": Math.floor((timeLeft / 1000) % 60) + " seconds";
-		const minutes = Math.floor((timeLeft / 1000 / 60) % 60) === 1? "1 minute": Math.floor((timeLeft / 1000 / 60) % 60) + " minutes";
-		const hours = Math.floor((timeLeft / 1000 / 60 / 60) % 24) === 1? "1 hour": Math.floor((timeLeft / 1000 / 60 / 60) % 24) + " hours";
-		const days = Math.floor(timeLeft / 1000 / 60 / 60 / 24) === 1? "1 day": Math.floor((timeLeft / 1000 / 60 / 60 / 24)) + " days";
+		const seconds = Math.floor((timeLeft / 1000) % 60);
+		const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+		const hours = Math.floor((timeLeft / 1000 / 60 / 60) % 24);
+		const days = Math.floor(timeLeft / 1000 / 60 / 60 / 24);
 
-		console.log(`Time left: ${days} ${hours} ${minutes} ${seconds}`);
-		return `${days} ${hours} ${minutes} ${seconds}`;
+		let result = "";
+		if (days > 0) {
+			result = days === 1 ? "1 day" : `${days} days`;
+		} else if (hours > 0) {
+			result = hours === 1 ? "1 hour" : `${hours} hours`;
+		} else if (minutes > 0) {
+			result = minutes === 1 ? "1 minute" : `${minutes} minutes`;
+		} else {
+			result = seconds === 1 ? "1 second" : `${seconds} seconds`;
+		}
+		return result;
 	}
 
 	async getTournament(id: string): Promise<Tournament | null> {
