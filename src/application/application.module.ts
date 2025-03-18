@@ -77,6 +77,7 @@ import {PrismaOrganizersRepositoryAdapter} from "../infrastructure/repositories/
 import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/response-tournament-registration.usecase";
 import { CreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.validation";
 import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
+import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
 
 @Module({
 	imports: [
@@ -209,6 +210,7 @@ import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
+		CheckExistTournamentURLUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -300,6 +302,7 @@ import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
+		CheckExistTournamentURLUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
