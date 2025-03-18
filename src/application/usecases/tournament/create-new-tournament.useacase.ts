@@ -8,19 +8,31 @@ import { CreateTournament, CreateTournamentEvent } from "src/domain/interfaces/t
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
+import { UploadService } from "src/infrastructure/services/upload.service";
 
 @Injectable()
 export class CreateNewTournamentUseCase {
 	constructor(
 		@Inject("TournamentRepository") private readonly tournamentRepository: TournamentRepositoryPort,
 		@Inject("TournamentSerieRepository") private readonly tournamentSerieRepository: TournamentSerieRepositoryPort,
-		@Inject("TournamentEventRepository") private readonly tournamentEventRepository: TournamentEventRepositoryPort
+		@Inject("TournamentEventRepository") private readonly tournamentEventRepository: TournamentEventRepositoryPort,
+		private readonly uploadService: UploadService
 	) {}
 
-	async execute(request: IRequestUser, createTournament: CreateTournament) : Promise<ApiResponse<Tournament>> {
-		console.log(request.user);
+	async execute(request: IRequestUser, createTournament: CreateTournament, 
+			) : Promise<ApiResponse<Tournament>> {
 		var tournament: Tournament;
-		if (await this.isExistTournament(createTournament.id) === true) return new ApiResponse<null | undefined>(
+		// const folderName = `tournament-merchandise/${new Date().toISOString().split("T")[0]}`;
+
+		// const imageUrls = await this.uploadService.uploadFiles(
+		// 	merchandiseImages,
+		// 	folderName,
+		// 	""
+		// );
+		// console.log(merchandiseImages);
+		const isExistTournament = await this.isExistTournament(createTournament.id);
+		console.log(isExistTournament);
+		if (isExistTournament === true) return new ApiResponse<null | undefined>(
 			HttpStatus.BAD_REQUEST,
 			"Tournament ID exists!",
 			null
@@ -46,8 +58,7 @@ export class CreateNewTournamentUseCase {
 
 	async isExistTournament(id: string) : Promise<boolean> {
 		const tournament = await this.tournamentRepository.getTournament(id);
-		console.log(tournament);
-		return false;
+		return tournament !== null;
 	}
 
 	async createTournamentWithNoTournamentSerie(createTournament: CreateTournament,
@@ -105,11 +116,19 @@ export class CreateNewTournamentUseCase {
 			hasMerchandise: createTournament.hasMerchandise,
 			merchandise: createTournament.merchandise,
 			numberOfMerchandise: createTournament.numberOfMerchandise,
-			merchandiseImageContent: createTournament.merchandiseImageContent,
+			merchandiseImageContent: [],
 			location: createTournament.location,
 			requiredAttachment: createTournament.requiredAttachment,
 			tournamentSerieId: tournamentSerie.id,
-			organizerId: organizer.id
+			organizerId: organizer.id,
+			contactEmail: createTournament.contactEmail,
+			contactPhone: createTournament.contactPhone,
+			description: createTournament.description,
+			isRecruit: createTournament.isRecruit,
+			isLiveDraw: createTournament.isLiveDraw,
+			isPrivate: createTournament.isPrivate,
+			isRegister: createTournament.isRegister,
+			hasLiveStream: createTournament.hasLiveStream	
 		});
 		console.log(tournament);
 		return tournament

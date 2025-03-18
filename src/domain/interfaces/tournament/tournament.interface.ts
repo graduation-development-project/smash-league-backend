@@ -72,7 +72,10 @@ export interface ICreateTournament {
 	id: string;
 	name: string;
 	shortName?: string;
+	description: string;
 	organizerId: string;
+	contactPhone: string;
+	contactEmail: string;
 	backgroundTournament: string;
 	mainColor: string;
 
@@ -108,6 +111,11 @@ export interface ICreateTournament {
 	merchandise: string;
 	umpirePerMatch: number;
 	requiredAttachment: RequiredAttachment[];
+	isRecruit: boolean;
+	isPrivate: boolean;
+	isRegister: boolean;
+	isLiveDraw: boolean;
+	hasLiveStream: boolean;
 }
 
 export interface IParticipatedTournamentResponse {
