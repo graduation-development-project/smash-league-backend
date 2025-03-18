@@ -1,5 +1,5 @@
 import { Tournament } from "@prisma/client";
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config"; // ✅ Import ConfigModule
 import { ApplicationController } from "./controllers/application.controller";
 import { ApplicationModule } from "src/application/application.module";
@@ -33,7 +33,7 @@ import {OrganizerController} from "./controllers/organizers.controller";
 
 @Module({
 	imports: [
-		ApplicationModule,
+		forwardRef(() => ApplicationModule),
 		PassportModule,
 		JwtModule.register({}),
 		ConfigModule,

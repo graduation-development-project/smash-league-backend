@@ -107,8 +107,7 @@ export interface ICreateTournament {
 
 	hasMerchandise: boolean;
 	numberOfMerchandise: number;
-	merchandiseImageContent: string[];
-	merchandise: string;
+	merchandiseImages: string[];
 	umpirePerMatch: number;
 	requiredAttachment: RequiredAttachment[];
 	isRecruit: boolean;
@@ -155,8 +154,7 @@ export interface ITournamentResponse {
 	protestFeePerTime: number;
 	hasMerchandise: boolean;
 	numberOfMerchandise: number;
-	merchandiseImageContent: string[];
-	merchandise: string;
+	merchandiseImages: string[];
 	requiredAttachment: string[];
 	tournamentSerie: ITournamentSerieResponse;
 }

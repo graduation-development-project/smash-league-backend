@@ -204,8 +204,7 @@ model Tournament {
   prizePool                Int
   hasMerchandise           Boolean
   numberOfMerchandise      Int?
-  merchandiseImageContent  String[]                 @default([])
-  merchandise              String
+  merchandiseImages        String[]                 @default([])
   requiredAttachment       String[]
   isRecruit                Boolean
   isPrivate                Boolean
