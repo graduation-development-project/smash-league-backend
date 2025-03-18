@@ -93,6 +93,13 @@ export class CreateTournament {
 	@Allow()
 	shortName?: string;
 	@IsString()
+	description: string;
+	@IsString()
+	contactPhone: string;
+	@IsString()
+	contactEmail: string;
+
+	@IsString()
 	backgroundTournament: string;
 	@IsString()
 	mainColor: string;
@@ -159,12 +166,9 @@ export class CreateTournament {
 	hasMerchandise: boolean;
 	@IsNumber()
 	numberOfMerchandise: number;
-	merchandiseImageContent: string[];
 	merchandise: string;
 	@IsNumber()
 	umpirePerMatch: number;
-	@IsNumber()
-	linemanPerMatch: number;
 
 	@IsArray()
 	@IsEnum(RequiredAttachment, {
@@ -173,4 +177,9 @@ export class CreateTournament {
 		each: true
 	})
 	requiredAttachment: RequiredAttachment[];
+	isRecruit: boolean;
+	isPrivate: boolean;
+	isRegister: boolean;
+	isLiveDraw: boolean;
+	hasLiveStream: boolean;
 }

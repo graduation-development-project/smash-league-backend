@@ -9,7 +9,9 @@ import {
 	Put,
 	Query,
 	Req,
+	UploadedFile,
 	UseGuards,
+	UseInterceptors,
 } from "@nestjs/common";
 import {
 	BadmintonParticipantType,
@@ -39,6 +41,8 @@ import { GetAllTournamentSeriesUseCase } from "src/application/usecases/tourname
 import { CreateTournamentSerieUseCase } from "src/application/usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "src/application/usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "src/application/usecases/tournament/create-random-url.usecase";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
+import { create } from "domain";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -71,6 +75,20 @@ export class TournamentController {
 		return await this.createRandomURLUseCase.execute();
 	}
 
+	@Post("/demo")
+	@UseInterceptors(AnyFilesInterceptor())
+	async getData(
+		@Body() data: {
+			demo
+		},
+		@UploadedFile() files: Express.Multer.File[]
+	) {
+		return {
+			data: JSON.parse(data.demo),
+			files: files
+		};
+	}
+
 	@Get("get-all-tournament-serie")
 	async getAllTournamentSerie() : Promise<ApiResponse<any>> {
 		return await this.getAllTournamentSeriesUseCase.execute();
@@ -95,18 +113,26 @@ export class TournamentController {
 		return await this.getTournamentsOfSerieUseCase.execute(id, options);
 	}
 
+	// @Post("upload-background-tournament")
+	// @UseInterceptors(AnyFilesInterceptor)
+	// async 
+
 	@Post("/create-tournament")
 	@UseGuards(JwtAccessTokenGuard)
+	@UseInterceptors(AnyFilesInterceptor())
 	@HttpCode(HttpStatus.OK)
 	@HttpCode(HttpStatus.BAD_REQUEST)
 	@HttpCode(HttpStatus.CREATED)
 	async createNewTournament(
 		@Req() request: IRequestUser,
 		@Body() createTournament: CreateTournament,
+		// @UploadedFile() backgroundImage: Express.Multer.File,
+		// @UploadedFile() merchandiseImages: Express.Multer.File[]
 	): Promise<ApiResponse<Tournament>> {
+
 		return await this.createNewTournamentUseCase.execute(
 			request,
-			createTournament,
+			createTournament
 		);
 	}
 
