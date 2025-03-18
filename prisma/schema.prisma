@@ -28,7 +28,7 @@ model User {
   teamId                        String?
   height                        Int?
   hands                         Hands?
-  dateOfBirth                   DateTime
+  dateOfBirth                   DateTime?
   teamLeaderOf                  Team[]                   @relation("FK_User_TeamLeader")
   tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
   userRoles                     UserRole[]               @relation(name: "FK_User_UserRole")
@@ -182,7 +182,10 @@ model Tournament {
   id                       String                   @id
   name                     String
   shortName                String?
+  description              String
   organizerId              String
+  contactPhone             String
+  contactEmail             String
   mainColor                String?
   backgroundTournament     String
   location                 String
@@ -204,6 +207,11 @@ model Tournament {
   merchandiseImageContent  String[]                 @default([])
   merchandise              String
   requiredAttachment       String[]
+  isRecruit                Boolean
+  isPrivate                Boolean
+  isRegister               Boolean
+  isLiveDraw               Boolean
+  hasLiveStream            Boolean
   tournamentSerieId        String
   tournamentSerie          TournamentSerie          @relation(name: "FK_Tournament_TournamentSerie", fields: [tournamentSerieId], references: [id], onDelete: Cascade)
   organizer                User                     @relation(name: "FK_Tournament_User", fields: [organizerId], references: [id], onDelete: Cascade)
