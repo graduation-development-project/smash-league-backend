@@ -38,6 +38,7 @@ import { CreateTournamentSerie, ModifyTournamentSerie } from "src/domain/interfa
 import { GetAllTournamentSeriesUseCase } from "src/application/usecases/tournament-serie/get-all-tournament-series.usecase";
 import { CreateTournamentSerieUseCase } from "src/application/usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "src/application/usecases/tournament/check-exist-tournament-url.usecase";
+import { CreateRandomURLUseCase } from "src/application/usecases/tournament/create-random-url.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -50,7 +51,8 @@ export class TournamentController {
 		private readonly modifyTournamentSerieUseCase: ModifyTournamentSerieUseCase,
 		private readonly getAllTournamentSeriesUseCase: GetAllTournamentSeriesUseCase,
 		private readonly createTournamentSerieUseCase: CreateTournamentSerieUseCase,
-		private readonly checkExistTournamentURLUseCase: CheckExistTournamentURLUseCase
+		private readonly checkExistTournamentURLUseCase: CheckExistTournamentURLUseCase,
+		private readonly createRandomURLUseCase: CreateRandomURLUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -62,6 +64,11 @@ export class TournamentController {
 	async checkExistTournamentURL(@Param("url") url: string): Promise<ApiResponse<boolean>> {
 		console.log(url);
 		return await this.checkExistTournamentURLUseCase.execute(url);
+	}
+
+	@Get("/create-random-url")
+	async createRandomURL() : Promise<ApiResponse<string>> {
+		return await this.createRandomURLUseCase.execute();
 	}
 
 	@Get("get-all-tournament-serie")
