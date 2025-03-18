@@ -29,12 +29,12 @@ model User {
   height                        Int?
   hands                         Hands?
   dateOfBirth                   DateTime?
-  teamLeaderOf                  Team[]                   @relation("FK_User_TeamLeader")
+  orders                        Order[]                  @relation(name: "FK_Order_User")
+  teamLeaderOf                  Team[]                   @relation(name: "FK_User_TeamLeader")
   tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
   userRoles                     UserRole[]               @relation(name: "FK_User_UserRole")
   userTeams                     UserTeam[]               @relation(name: "FK_User_UserTeam")
   verifications                 UserVerification[]       @relation(name: "FK_User_UserVerification")
-  transactions                  Transaction[]            @relation(name: "FK_Transaction_UserTransaction")
   notifications                 UserNotification[]       @relation(name: "FK_UserNotification_User")
   tournamentRegistrations       TournamentRegistration[] @relation(name: "FK_TournamentRegistration_User")
   tournamentRegistrationPartner TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Partner")
@@ -399,7 +399,7 @@ model Package {
   advantages              String[]
   isRecommended           Boolean
   isAvailable             Boolean
-  cartItems               CartItem[] @relation("FK_CartItem_PackageCartItem")
+  orders                  Order[]   @relation(name: "FK_Order_Package")
 }
 
 model TransactionType {
@@ -411,13 +411,11 @@ model TransactionType {
 model Transaction {
   id                String            @id @default(uuid())
   transactionDetail String
-  userId            String
-  user              User              @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
   transactionTypeId String
   transactionType   TransactionType   @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
+  orderId           String
+  order             Order             @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
   value             Int
-  cartId            String
-  cart              Cart              @relation(name: "FK_Transaction_TransactionCart", fields: [cartId], references: [id], onDelete: Cascade)
   status            TransactionStatus
   cancelledReason   String?
 }
@@ -428,24 +426,19 @@ enum TransactionStatus {
   FAILED
 }
 
-model CartItem {
-  id        String  @id @default(uuid())
-  packageId String
-  package   Package @relation(name: "FK_CartItem_PackageCartItem", fields: [packageId], references: [id], onDelete: Cascade)
-  quantity  Int
-  cartId    String
-  cart      Cart    @relation(name: "FK_CartItem_CartItemCart", fields: [cartId], references: [id], onDelete: Cascade)
-}
 
-model Cart {
+model Order {
   id           String        @id @default(uuid())
   total        Int
-  cartItems    CartItem[]    @relation("FK_CartItem_CartItemCart")
-  transactions Transaction[] @relation("FK_Transaction_TransactionCart")
-  cartStatus   CartStatus
+  packageId    String
+  userId       String
+  user         User          @relation(name: "FK_Order_User", fields: [userId], references: [id], onDelete: Cascade)
+  package      Package       @relation(name: "FK_Order_Package", fields: [packageId], references: [id], onDelete: Cascade)
+  transactions Transaction[] @relation(name: "FK_Order_Transaction")
+  cartStatus   OrderStatus
 }
 
-enum CartStatus {
+enum OrderStatus {
   PAID
   PENDING
   FAILED
