@@ -21,7 +21,7 @@ import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/
 import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
 import { SearchTournamentUseCase } from "src/application/usecases/tournament/search-tournament.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { FormatType } from "src/domain/interfaces/tournament/tournament.interface";
+import { FormatType, ITournamentResponse } from "src/domain/interfaces/tournament/tournament.interface";
 import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
 import {
 	IPaginatedOutput,
@@ -65,7 +65,7 @@ export class TournamentController {
 	async getAllTournaments(
 		@Query() paginateOption: IPaginateOptions,
 		@Query("searchTerm") searchTerm: string,
-	): Promise<ApiResponse<IPaginatedOutput<Tournament>>> {
+	): Promise<ApiResponse<IPaginatedOutput<ITournamentResponse>>> {
 		return await this.searchTournamentUseCase.execute(
 			paginateOption,
 			searchTerm,
@@ -88,7 +88,7 @@ export class TournamentController {
 	async createNewTournament(
 		@Req() request: IRequestUser,
 		@Body() createTournament: CreateTournament,
-	): Promise<any> {
+	): Promise<ApiResponse<Tournament>> {
 		return await this.createNewTournamentUseCase.execute(
 			request,
 			createTournament,

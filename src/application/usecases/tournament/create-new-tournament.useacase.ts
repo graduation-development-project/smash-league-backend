@@ -17,7 +17,7 @@ export class CreateNewTournamentUseCase {
 		@Inject("TournamentEventRepository") private readonly tournamentEventRepository: TournamentEventRepositoryPort
 	) {}
 
-	async execute(request: IRequestUser, createTournament: CreateTournament) : Promise<ApiResponse<any>> {
+	async execute(request: IRequestUser, createTournament: CreateTournament) : Promise<ApiResponse<Tournament>> {
 		console.log(request.user);
 		var tournament: Tournament;
 		if (await this.isExistTournament(createTournament.id) === true) return new ApiResponse<null | undefined>(

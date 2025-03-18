@@ -21,6 +21,8 @@ import {
 	ValidateIf,
 	ValidateNested,
 } from "class-validator";
+import { IOrganizerResponse } from "../user/organizer.interface";
+import { ITournamentSerieResponse } from "../tournament-serie/tournament-serie.interface";
 
 export enum FormatType {
 	SINGLE_ELIMINATION = "SINGLE_ELIMINATION",
@@ -122,3 +124,31 @@ export interface IParticipatedTournamentResponse {
 // 	MIXED_DOUBLE: "MIXED_DOUBLE"
 // } as const;
 // type ParticipantType = (typeof ParticipantTypeMap)[keyof typeof ParticipantTypeMap];
+
+export interface ITournamentResponse {
+	id: string;
+	name: string;
+	shortName: string;
+	organizer: IOrganizerResponse;
+	mainColor: string;
+	backgroundTournament: string;
+	location: string;
+	registrationOpeningDate: Date;
+	expiredTimeLeft: string;
+	registrationClosingDate: Date;
+	drawDate: Date;
+	startDate: Date;
+	endDate: Date;
+	checkInBeforeStart: Date;
+	umpirePerMatch: number;
+	registrationFeePerPerson: number;
+	registrationFeePerPair: number;
+	maxEventPerPerson: number;
+	protestFeePerTime: number;
+	hasMerchandise: boolean;
+	numberOfMerchandise: number;
+	merchandiseImageContent: string[];
+	merchandise: string;
+	requiredAttachment: string[];
+	tournamentSerie: ITournamentSerieResponse;
+}

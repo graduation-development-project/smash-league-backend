@@ -6,6 +6,7 @@ import {
 	IPaginatedOutput,
 	IPaginateOptions,
 } from "../../../domain/interfaces/interfaces";
+import { ITournamentResponse } from "src/domain/interfaces/tournament/tournament.interface";
 
 @Injectable()
 export class SearchTournamentUseCase {
@@ -17,8 +18,8 @@ export class SearchTournamentUseCase {
 	async execute(
 		options: IPaginateOptions,
 		searchTerm?: string,
-	): Promise<ApiResponse<IPaginatedOutput<Tournament>>> {
-		return new ApiResponse<IPaginatedOutput<Tournament>>(
+	): Promise<ApiResponse<IPaginatedOutput<ITournamentResponse>>> {
+		return new ApiResponse<IPaginatedOutput<ITournamentResponse>>(
 			HttpStatus.OK,
 			"Get all tournaments successful!",
 			await this.tournamentRepository.searchTournament(options, searchTerm),
