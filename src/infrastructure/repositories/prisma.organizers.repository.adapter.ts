@@ -56,6 +56,17 @@ export class PrismaOrganizersRepositoryAdapter
 				},
 			});
 
+			if (option) {
+				await this.prismaService.tournamentParticipants.create({
+					data: {
+						tournamentId: existedRegistration.tournamentId,
+						userId: existedRegistration.userId,
+						tournamentEventId: existedRegistration.tournamentEventId,
+						partnerId: existedRegistration.partnerId || null,
+					},
+				});
+			}
+
 			if (!option) {
 				await this.prismaService.reason.create({
 					data: {

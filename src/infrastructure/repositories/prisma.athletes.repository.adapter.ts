@@ -127,10 +127,6 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				userId,
 			);
 
-			if (imageUrls.length < 6) {
-				throw new BadRequestException("Please submit full information");
-			}
-
 			registrationDocumentCreator = [
 				imageUrls[0].secure_url,
 				imageUrls[1].secure_url,
