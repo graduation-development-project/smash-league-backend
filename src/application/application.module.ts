@@ -75,6 +75,11 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
 import {PrismaOrganizersRepositoryAdapter} from "../infrastructure/repositories/prisma.organizers.repository.adapter";
 import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/response-tournament-registration.usecase";
+import { CreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.validation";
+import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
+import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
+import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
+import { UploadBackgroundImageUseCase } from "./usecases/tournament/upload-background-image.usecase";
 import {
 	GetTournamentRegistrationByTournamentIdUseCase
 } from "./usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
@@ -86,6 +91,7 @@ import {
 		NotificationQueueModule,
 		TeamQueueModule,
 		ConfigModule,
+		forwardRef(() => InfrastructureModule)
 	],
 	controllers: [],
 	providers: [
@@ -210,9 +216,13 @@ import {
 		GetAllBadmintonParticipantTypeUseCase,
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
+		CheckExistTournamentURLUseCase,
+		CreateRandomURLUseCase,
+		UploadBackgroundImageUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
+		CreateTournamentSerieUseCase,
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
@@ -301,9 +311,13 @@ import {
 		GetAllFormatTypeUseCase,
 		CreateNewTournamentUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
+		CheckExistTournamentURLUseCase,
+		CreateRandomURLUseCase,
+		UploadBackgroundImageUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
+		CreateTournamentSerieUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case

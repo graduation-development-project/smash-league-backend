@@ -1,6 +1,6 @@
 import {
 	BadmintonParticipantType,
-	Tournament,
+	Tournament, TournamentEvent,
 	TournamentRegistration,
 } from "@prisma/client";
 import { Type } from "class-transformer";
@@ -21,6 +21,8 @@ import {
 	ValidateIf,
 	ValidateNested,
 } from "class-validator";
+import { IOrganizerResponse } from "../user/organizer.interface";
+import { ITournamentSerieResponse } from "../tournament-serie/tournament-serie.interface";
 
 export enum FormatType {
 	SINGLE_ELIMINATION = "SINGLE_ELIMINATION",
@@ -70,7 +72,10 @@ export interface ICreateTournament {
 	id: string;
 	name: string;
 	shortName?: string;
+	description: string;
 	organizerId: string;
+	contactPhone: string;
+	contactEmail: string;
 	backgroundTournament: string;
 	mainColor: string;
 
@@ -102,14 +107,23 @@ export interface ICreateTournament {
 
 	hasMerchandise: boolean;
 	numberOfMerchandise: number;
-	merchandiseImageContent: string[];
-	merchandise: string;
+	merchandiseImages: string[];
 	umpirePerMatch: number;
 	requiredAttachment: RequiredAttachment[];
+	isRecruit: boolean;
+	isPrivate: boolean;
+	isRegister: boolean;
+	isLiveDraw: boolean;
+	hasLiveStream: boolean;
 }
 
 export interface IParticipatedTournamentResponse {
 	tournament: Tournament;
+	registrations: TournamentRegistration[];
+}
+
+export interface ITournamentRegistrationResponse {
+	tournamentEvent: TournamentEvent;
 	registrations: TournamentRegistration[];
 }
 
@@ -122,3 +136,30 @@ export interface IParticipatedTournamentResponse {
 // 	MIXED_DOUBLE: "MIXED_DOUBLE"
 // } as const;
 // type ParticipantType = (typeof ParticipantTypeMap)[keyof typeof ParticipantTypeMap];
+
+export interface ITournamentResponse {
+	id: string;
+	name: string;
+	shortName: string;
+	organizer: IOrganizerResponse;
+	mainColor: string;
+	backgroundTournament: string;
+	location: string;
+	registrationOpeningDate: Date;
+	expiredTimeLeft: string;
+	registrationClosingDate: Date;
+	drawDate: Date;
+	startDate: Date;
+	endDate: Date;
+	checkInBeforeStart: Date;
+	umpirePerMatch: number;
+	registrationFeePerPerson: number;
+	registrationFeePerPair: number;
+	maxEventPerPerson: number;
+	protestFeePerTime: number;
+	hasMerchandise: boolean;
+	numberOfMerchandise: number;
+	merchandiseImages: string[];
+	requiredAttachment: string[];
+	tournamentSerie: ITournamentSerieResponse;
+}

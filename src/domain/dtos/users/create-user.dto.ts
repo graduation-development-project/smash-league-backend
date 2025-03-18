@@ -10,12 +10,8 @@ import {
 
 export class CreateUserDTO {
 	@IsNotEmpty()
-	@MaxLength(50)
-	firstName: string;
-
-	@IsNotEmpty()
-	@MaxLength(50)
-	lastName: string;
+	@MaxLength(120)
+	name: string;
 
 	@IsNotEmpty()
 	@MaxLength(50)

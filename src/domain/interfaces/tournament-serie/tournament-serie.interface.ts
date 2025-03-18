@@ -4,3 +4,14 @@ export interface IModifyTournamentSerie {
 	serieBackgroundImageURL: string;
 	
 }
+
+export interface ICreateTournamentSerieOnly {
+	tournamentSerieName: string;
+	serieBackgroundImageURL: string;
+}
+
+export interface ITournamentSerieResponse {
+	id: string;
+	tournamentSerieName: string;
+	serieBackgroundImageURL: string;
+}

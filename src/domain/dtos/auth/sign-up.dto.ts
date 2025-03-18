@@ -10,12 +10,8 @@ import { CreateUserDTO } from "../users/create-user.dto";
 
 export class SignUpDTO extends PartialType(CreateUserDTO) {
 	@IsNotEmpty()
-	@MaxLength(50)
-	firstName: string;
-
-	@IsNotEmpty()
-	@MaxLength(50)
-	lastName: string;
+	@MaxLength(120)
+	name: string;
 
 	@IsNotEmpty()
 	@MaxLength(50)

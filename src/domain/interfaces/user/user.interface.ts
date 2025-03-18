@@ -1,8 +1,7 @@
 export interface IUserResponse {
 	id: string;
 	email: string;
-	firstName: string;
-	lastName: string;
+	name: string;
 	phoneNumber: string;
 	avatarURL: string;
 	isVerified: boolean;

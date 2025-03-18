@@ -8,31 +8,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                  String    @id @default(uuid())
-  email               String    @unique
-  password            String
-  firstName           String
-  lastName            String
-  phoneNumber         String    @unique
-  avatarURL           String?
-  currentRefreshToken String?
-  creditsRemain       Int?
-  otp                 String?
-  otpExpiresTime      DateTime?
-  isVerified          Boolean   @default(false)
-  teamId              String?
-  height              Int?
+enum Hands {
+  LEFT
+  RIGHT
+}
 
-  teamLeaderOf                  Team[]                   @relation("FK_User_TeamLeader")
+model User {
+  id                            String                   @id @default(uuid())
+  email                         String                   @unique
+  password                      String
+  name                          String
+  phoneNumber                   String                   @unique
+  avatarURL                     String?
+  currentRefreshToken           String?
+  creditsRemain                 Int?
+  otp                           String?
+  otpExpiresTime                DateTime?
+  isVerified                    Boolean                  @default(false)
+  teamId                        String?
+  height                        Int?
+  hands                         Hands?
+  dateOfBirth                   DateTime?
+  orders                        Order[]                  @relation(name: "FK_Order_User")
+  teamLeaderOf                  Team[]                   @relation(name: "FK_User_TeamLeader")
   tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
   userRoles                     UserRole[]               @relation(name: "FK_User_UserRole")
   userTeams                     UserTeam[]               @relation(name: "FK_User_UserTeam")
   verifications                 UserVerification[]       @relation(name: "FK_User_UserVerification")
-  transactions                  Transaction[]            @relation(name: "FK_Transaction_UserTransaction")
   notifications                 UserNotification[]       @relation(name: "FK_UserNotification_User")
   tournamentRegistrations       TournamentRegistration[] @relation(name: "FK_TournamentRegistration_User")
-  TournamentRegistrationPartner TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Partner")
+  tournamentRegistrationPartner TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Partner")
+  tournamentParticipants        TournamentParticipants[] @relation(name: "FK_TournamentParticipants_User")
+  tournamentParticipantsPartner TournamentParticipants[] @relation(name: "FK_TournamentParticipants_Partner")
   teamInvitation                TeamInvitation[]         @relation("FK_User_TeamInvitation")
   Reason                        Reason[]                 @relation("FK_TeamMember_Reason")
   TeamRequest                   TeamRequest[]            @relation("FK_TeamMember_TeamRequest")
@@ -175,7 +182,10 @@ model Tournament {
   id                       String                   @id
   name                     String
   shortName                String?
+  description              String
   organizerId              String
+  contactPhone             String
+  contactEmail             String
   mainColor                String?
   backgroundTournament     String
   location                 String
@@ -193,16 +203,21 @@ model Tournament {
   protestFeePerTime        Int
   prizePool                Int
   hasMerchandise           Boolean
-  numberOfMerchandise      Int
-  merchandiseImageContent  String[]
-  merchandise              String
+  numberOfMerchandise      Int?
+  merchandiseImages        String[]                 @default([])
   requiredAttachment       String[]
+  isRecruit                Boolean
+  isPrivate                Boolean
+  isRegister               Boolean
+  isLiveDraw               Boolean
+  hasLiveStream            Boolean
   tournamentSerieId        String
   tournamentSerie          TournamentSerie          @relation(name: "FK_Tournament_TournamentSerie", fields: [tournamentSerieId], references: [id], onDelete: Cascade)
   organizer                User                     @relation(name: "FK_Tournament_User", fields: [organizerId], references: [id], onDelete: Cascade)
   tournamentPosts          TournamentPost[]         @relation(name: "FK_TournamentPost_Tournament")
   registrations            TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Tournament")
   tournamentEvents         TournamentEvent[]        @relation(name: "FK_Tournament_TournamentEvent")
+  TournamentParticipants   TournamentParticipants[] @relation(name: "FK_TournamentParticipants_Tournament")
 }
 
 enum TournamentStatus {
@@ -215,24 +230,25 @@ enum TournamentStatus {
 }
 
 model TournamentEvent {
-  id                    String                   @id @default(uuid())
-  tournamentEvent       BadmintonParticipantType
-  fromAge               Int?                     @default(6)
-  toAge                 Int?                     @default(90)
-  winningPoint          Int?                     @default(21)
-  lastPoint             Int                      @default(31)
-  numberOfGames         Int                      @default(3)
-  typeOfFormat          TypeOfFormat
-  ruleOfEventExtension  String?
-  minimumAthlete        Int
-  maximumAthlete        Int?
-  championshipPrize     String[]
-  runnerUpPrize         String[]
-  thirdPlacePrize       String[]                 @default([])
-  jointThirdPlacePrize  String[]                 @default([])
-  tournamentId          String
-  tournament            Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade)
-  tournamenRegistration TournamentRegistration[] @relation(name: "FK_TournamentRegistration_TournamentEvent")
+  id                     String                   @id @default(uuid())
+  tournamentEvent        BadmintonParticipantType
+  fromAge                Int?                     @default(6)
+  toAge                  Int?                     @default(90)
+  winningPoint           Int?                     @default(21)
+  lastPoint              Int                      @default(31)
+  numberOfGames          Int                      @default(3)
+  typeOfFormat           TypeOfFormat
+  ruleOfEventExtension   String?
+  minimumAthlete         Int
+  maximumAthlete         Int?
+  championshipPrize      String[]
+  runnerUpPrize          String[]
+  thirdPlacePrize        String[]                 @default([])
+  jointThirdPlacePrize   String[]                 @default([])
+  tournamentId           String
+  tournament             Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournamentRegistration TournamentRegistration[] @relation(name: "FK_TournamentRegistration_TournamentEvent")
+  TournamentParticipants TournamentParticipants[] @relation(name: "FK_TournamentParticipants_TournamentEvent")
 }
 
 enum TypeOfFormat {
@@ -251,27 +267,39 @@ enum BadmintonParticipantType {
 model TournamentRegistration {
   id                          String                       @id @default(uuid())
   tournamentId                String
-  userId                      String
+  userId                      String?
   tournamentEventId           String
-  tournamentEvent             TournamentEvent              @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
+  tournamentEvent             TournamentEvent?             @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
   partnerId                   String? // Nullable: Used only for doubles
   isPayForTheRegistrationFee  Boolean                      @default(false)
-  registrationDocumentCreator String[]
+  registrationDocumentCreator String[]                     @default([])
   registrationDocumentPartner String[]                     @default([])
   registrationRole            TournamentRegistrationRole
   status                      TournamentRegistrationStatus @default(PENDING) // "PENDING", "APPROVED", "REJECTED"
   createdAt                   DateTime                     @default(now())
-  tournament                  Tournament                   @relation("FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
-  user                        User                         @relation("FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
-  partner                     User?                        @relation("FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
-  rejectReason                Reason?                      @relation("FK_TournamentRegistration_Reason")
+  tournament                  Tournament?                  @relation(name: "FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user                        User?                        @relation(name: "FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
+  partner                     User?                        @relation(name: "FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  rejectReason                Reason?                      @relation(name: "FK_TournamentRegistration_Reason")
   fromTeamId                  String?
   fromTeam                    Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
   reasonId                    String?                      @unique
-  Notification                Notification[]               @relation("FK_TournamentRegistration_Notification")
+  Notification                Notification[]               @relation(name: "FK_TournamentRegistration_Notification")
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
+}
+
+model TournamentParticipants {
+  id                String          @id @default(uuid())
+  tournamentId      String
+  userId            String
+  user              User            @relation("FK_TournamentParticipants_User", fields: [userId], references: [id], onDelete: Cascade)
+  tournamentEventId String
+  partnerId         String?
+  partner           User?           @relation("FK_TournamentParticipants_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  tournamentEvent   TournamentEvent @relation(name: "FK_TournamentParticipants_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
+  tournament        Tournament      @relation(name: "FK_TournamentParticipants_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
 }
 
 enum TournamentRegistrationStatus {
@@ -371,7 +399,7 @@ model Package {
   advantages              String[]
   isRecommended           Boolean
   isAvailable             Boolean
-  cartItems               CartItem[] @relation("FK_CartItem_PackageCartItem")
+  orders                  Order[]   @relation(name: "FK_Order_Package")
 }
 
 model TransactionType {
@@ -383,13 +411,11 @@ model TransactionType {
 model Transaction {
   id                String            @id @default(uuid())
   transactionDetail String
-  userId            String
-  user              User              @relation(name: "FK_Transaction_UserTransaction", fields: [userId], references: [id], onDelete: Cascade)
   transactionTypeId String
   transactionType   TransactionType   @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
+  orderId           String
+  order             Order             @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
   value             Int
-  cartId            String
-  cart              Cart              @relation(name: "FK_Transaction_TransactionCart", fields: [cartId], references: [id], onDelete: Cascade)
   status            TransactionStatus
   cancelledReason   String?
 }
@@ -400,24 +426,19 @@ enum TransactionStatus {
   FAILED
 }
 
-model CartItem {
-  id        String  @id @default(uuid())
-  packageId String
-  package   Package @relation(name: "FK_CartItem_PackageCartItem", fields: [packageId], references: [id], onDelete: Cascade)
-  quantity  Int
-  cartId    String
-  cart      Cart    @relation(name: "FK_CartItem_CartItemCart", fields: [cartId], references: [id], onDelete: Cascade)
-}
 
-model Cart {
+model Order {
   id           String        @id @default(uuid())
   total        Int
-  cartItems    CartItem[]    @relation("FK_CartItem_CartItemCart")
-  transactions Transaction[] @relation("FK_Transaction_TransactionCart")
-  cartStatus   CartStatus
+  packageId    String
+  userId       String
+  user         User          @relation(name: "FK_Order_User", fields: [userId], references: [id], onDelete: Cascade)
+  package      Package       @relation(name: "FK_Order_Package", fields: [packageId], references: [id], onDelete: Cascade)
+  transactions Transaction[] @relation(name: "FK_Order_Transaction")
+  cartStatus   OrderStatus
 }
 
-enum CartStatus {
+enum OrderStatus {
   PAID
   PENDING
   FAILED

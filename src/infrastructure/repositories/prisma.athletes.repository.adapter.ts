@@ -38,6 +38,7 @@ import {
 	DEFAULT_PAGE_SIZE,
 } from "../constant/pagination.constant";
 import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournament/tournament.interface";
+import { TournamentStatus } from "../enums/tournament/tournament-status.enum";
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
@@ -47,6 +48,17 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		@Inject("NotificationRepository")
 		private notificationsRepository: NotificationsRepositoryPort,
 	) {}
+
+	// async registerTournament(registerTournamentDTO: RegisterTournamentDTO): Promise<TournamentRegistration> {
+	// 	return await this.prisma.tournamentRegistration.create({
+	// 		data: {
+	// 			tournamentId: "abc",
+	// 			tournamentEventId: "e34478ab-92fa-4c7a-996e-52d6adae406a",
+	// 			registrationRole: "ATHLETE",
+	// 			userId: "1002ee23-744f-43ac-9462-6f6bf7368fd6"
+	// 		}
+	// 	});
+	// }
 
 	async registerTournament(
 		registerTournamentDTO: RegisterTournamentDTO,
@@ -61,8 +73,8 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			files,
 		} = registerTournamentDTO;
 
-		let registrationDocumentPartner: string[] | null = null;
-		let registrationDocumentCreator: string[] | null = null;
+		let registrationDocumentPartner: string[] = [];
+		let registrationDocumentCreator: string[] = [];
 
 		try {
 			const [tournament, event] = await Promise.all([
@@ -76,9 +88,17 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("Tournament not found");
 			}
 
+			if (tournament.status !== TournamentStatus.OPENING_FOR_REGISTRATION) {
+				throw new BadRequestException(
+					"This tournament is not open for registration",
+				);
+			}
+
 			if (!event) {
 				throw new BadRequestException("Tournament event not found");
 			}
+
+			console.log("event", event);
 
 			const isDoubleEvent: boolean = event.tournamentEvent
 				.toUpperCase()
@@ -119,10 +139,6 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				folderName,
 				userId,
 			);
-
-			if (imageUrls.length < 6) {
-				throw new BadRequestException("Please submit full information");
-			}
 
 			registrationDocumentCreator = [
 				imageUrls[0].secure_url,
@@ -181,6 +197,8 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 					imageUrls[4].secure_url,
 					imageUrls[5].secure_url,
 				];
+				console.log(registrationDocumentCreator);
+				console.log(registrationDocumentPartner);
 
 				if (
 					!registrationDocumentPartner ||
@@ -393,7 +411,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("This invitation does not exist");
 			}
 
-			let athleteName: string = `${existedInvitation.invitedUser.firstName} ${existedInvitation.invitedUser.lastName}`;
+			let athleteName: string = existedInvitation.invitedUser.name;
 
 			const teamInvitation: TeamInvitation =
 				await this.prisma.teamInvitation.update({
@@ -476,7 +494,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("User not in this team");
 			}
 
-			const userName = `${user.firstName} ${user.lastName}`;
+			const userName = user.name;
 
 			const teamRequest: TeamRequest = await this.prisma.teamRequest.create({
 				data: {
@@ -546,7 +564,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				},
 			});
 
-			const userName = `${user.firstName} ${user.lastName}`;
+			const userName = user.name;
 
 			const createNotificationDTO: CreateNotificationDTO = {
 				message: `${userName} want to join team`,
@@ -586,7 +604,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("Request not existed");
 			}
 
-			let athleteName: string = `${user.firstName} ${user.lastName}`;
+			let athleteName: string = user.name;
 
 			const teamRequest = await this.prisma.teamRequest.update({
 				where: { id: requestId },

@@ -2,13 +2,10 @@ import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { OrganizersRepositoryPort } from "../../domain/repositories/organizers.repository.port";
 import { ResponseTournamentRegistrationDTO } from "../../domain/dtos/organizers/response-tournament-registration.dto";
 import { PrismaService } from "../services/prisma.service";
-import {
-	ReasonType,
-	TournamentRegistration,
-	TournamentRegistrationStatus,
-} from "@prisma/client";
+import { ReasonType, TournamentRegistrationStatus } from "@prisma/client";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
+import { ITournamentRegistrationResponse } from "../../domain/interfaces/tournament/tournament.interface";
 
 @Injectable()
 export class PrismaOrganizersRepositoryAdapter
@@ -60,6 +57,17 @@ export class PrismaOrganizersRepositoryAdapter
 				},
 			});
 
+			if (option) {
+				await this.prismaService.tournamentParticipants.create({
+					data: {
+						tournamentId: existedRegistration.tournamentId,
+						userId: existedRegistration.userId,
+						tournamentEventId: existedRegistration.tournamentEventId,
+						partnerId: existedRegistration.partnerId || null,
+					},
+				});
+			}
+
 			if (!option) {
 				await this.prismaService.reason.create({
 					data: {
@@ -95,7 +103,7 @@ export class PrismaOrganizersRepositoryAdapter
 	async getTournamentRegistrationByTournamentId(
 		tournamentId: string,
 		organizerId: string,
-	): Promise<TournamentRegistration[]> {
+	): Promise<ITournamentRegistrationResponse[]> {
 		try {
 			const isTournamentOrganizer =
 				await this.prismaService.tournament.findUnique({
@@ -111,11 +119,37 @@ export class PrismaOrganizersRepositoryAdapter
 				);
 			}
 
-			return this.prismaService.tournamentRegistration.findMany({
-				where: {
-					tournamentId,
+			const tournamentRegistrations =
+				await this.prismaService.tournamentRegistration.findMany({
+					where: {
+						tournamentId,
+					},
+
+					include: {
+						tournamentEvent: true,
+					},
+				});
+
+			const groupedData = tournamentRegistrations.reduce(
+				(acc, registration) => {
+					const tournamentEventId = registration.tournamentEventId;
+
+					if (!acc[tournamentEventId]) {
+						acc[tournamentEventId] = {
+							tournamentEvent: registration.tournamentEvent,
+							registrations: [],
+						};
+					}
+					delete registration.tournamentEvent;
+					acc[tournamentEventId].registrations.push(registration);
+
+					return acc;
 				},
-			});
+				{},
+			);
+
+			// Convert object to array
+			return Object.values(groupedData);
 		} catch (e) {
 			console.error("Get Tournament Registration Error", e);
 			throw e;
