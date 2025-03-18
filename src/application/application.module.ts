@@ -75,6 +75,9 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
 import {PrismaOrganizersRepositoryAdapter} from "../infrastructure/repositories/prisma.organizers.repository.adapter";
 import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/response-tournament-registration.usecase";
+import {
+	GetTournamentRegistrationByTournamentIdUseCase
+} from "./usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
 
 @Module({
 	imports: [
@@ -229,6 +232,7 @@ import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/respo
 
 		//Organizer Use Case
 		ResponseTournamentRegistrationUseCase,
+		GetTournamentRegistrationByTournamentIdUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -316,6 +320,7 @@ import {ResponseTournamentRegistrationUseCase} from "./usecases/organizers/respo
 
 		//Organizer Use Case
 		ResponseTournamentRegistrationUseCase,
+		GetTournamentRegistrationByTournamentIdUseCase,
 	],
 })
 export class ApplicationModule {}
