@@ -79,6 +79,7 @@ import { CreateTournamentSerie } from "src/domain/interfaces/tournament/tourname
 import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
+import { UploadBackgroundImageUseCase } from "./usecases/tournament/upload-background-image.usecase";
 
 @Module({
 	imports: [
@@ -87,6 +88,7 @@ import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.
 		NotificationQueueModule,
 		TeamQueueModule,
 		ConfigModule,
+		forwardRef(() => InfrastructureModule)
 	],
 	controllers: [],
 	providers: [
@@ -213,6 +215,7 @@ import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.
 		CreateNewTournamentUseCase,
 		CheckExistTournamentURLUseCase,
 		CreateRandomURLUseCase,
+		UploadBackgroundImageUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -306,6 +309,7 @@ import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.
 		GetTournamentsOfTournamentSerieUseCase,
 		CheckExistTournamentURLUseCase,
 		CreateRandomURLUseCase,
+		UploadBackgroundImageUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

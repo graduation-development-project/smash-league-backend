@@ -10,6 +10,7 @@ import {
 	Query,
 	Req,
 	UploadedFile,
+	UploadedFiles,
 	UseGuards,
 	UseInterceptors,
 } from "@nestjs/common";
@@ -23,7 +24,10 @@ import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/
 import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
 import { SearchTournamentUseCase } from "src/application/usecases/tournament/search-tournament.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { FormatType, ITournamentResponse } from "src/domain/interfaces/tournament/tournament.interface";
+import {
+	FormatType,
+	ITournamentResponse,
+} from "src/domain/interfaces/tournament/tournament.interface";
 import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
 import {
 	IPaginatedOutput,
@@ -36,13 +40,17 @@ import { RoleMap } from "../enums/role.enum";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { GetTournamentsOfTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-tournaments-of-serie.usecase";
 import { ModifyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/modify-tournament-serie.usecase";
-import { CreateTournamentSerie, ModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.validation";
+import {
+	CreateTournamentSerie,
+	ModifyTournamentSerie,
+} from "src/domain/interfaces/tournament-serie/tournament-serie.validation";
 import { GetAllTournamentSeriesUseCase } from "src/application/usecases/tournament-serie/get-all-tournament-series.usecase";
 import { CreateTournamentSerieUseCase } from "src/application/usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "src/application/usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "src/application/usecases/tournament/create-random-url.usecase";
-import { AnyFilesInterceptor } from "@nestjs/platform-express";
+import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { create } from "domain";
+import { UploadBackgroundImageUseCase } from "src/application/usecases/tournament/upload-background-image.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -56,41 +64,49 @@ export class TournamentController {
 		private readonly getAllTournamentSeriesUseCase: GetAllTournamentSeriesUseCase,
 		private readonly createTournamentSerieUseCase: CreateTournamentSerieUseCase,
 		private readonly checkExistTournamentURLUseCase: CheckExistTournamentURLUseCase,
-		private readonly createRandomURLUseCase: CreateRandomURLUseCase
+		private readonly createRandomURLUseCase: CreateRandomURLUseCase,
+		private readonly uploadBackgroundImageUseCase: UploadBackgroundImageUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
-	async modifyTournamentSerie(@Body() modifyTournamentSerie: ModifyTournamentSerie) : Promise<ApiResponse<TournamentSerie>> {
-		return await this.modifyTournamentSerieUseCase.execute(modifyTournamentSerie);
+	async modifyTournamentSerie(
+		@Body() modifyTournamentSerie: ModifyTournamentSerie,
+	): Promise<ApiResponse<TournamentSerie>> {
+		return await this.modifyTournamentSerieUseCase.execute(
+			modifyTournamentSerie,
+		);
 	}
 
 	@Get("/check-exist-tournament-url/:url")
-	async checkExistTournamentURL(@Param("url") url: string): Promise<ApiResponse<boolean>> {
+	async checkExistTournamentURL(
+		@Param("url") url: string,
+	): Promise<ApiResponse<boolean>> {
 		console.log(url);
 		return await this.checkExistTournamentURLUseCase.execute(url);
 	}
 
 	@Get("/create-random-url")
-	async createRandomURL() : Promise<ApiResponse<string>> {
+	async createRandomURL(): Promise<ApiResponse<string>> {
 		return await this.createRandomURLUseCase.execute();
 	}
 
 	@Post("/demo")
 	@UseInterceptors(AnyFilesInterceptor())
 	async getData(
-		@Body() data: {
-			demo
+		@Body()
+		data: {
+			demo;
 		},
-		@UploadedFile() files: Express.Multer.File[]
+		@UploadedFile() files: Express.Multer.File[],
 	) {
 		return {
 			data: JSON.parse(data.demo),
-			files: files
+			files: files,
 		};
 	}
 
 	@Get("get-all-tournament-serie")
-	async getAllTournamentSerie() : Promise<ApiResponse<any>> {
+	async getAllTournamentSerie(): Promise<ApiResponse<any>> {
 		return await this.getAllTournamentSeriesUseCase.execute();
 	}
 
@@ -108,14 +124,18 @@ export class TournamentController {
 	@Get("/get-tournaments-of-serie/:id")
 	async getTournamentsOfSerie(
 		@Param("id") id: string,
-		@Body() options: IPaginateOptions
+		@Body() options: IPaginateOptions,
 	): Promise<ApiResponse<IPaginatedOutput<Tournament>>> {
 		return await this.getTournamentsOfSerieUseCase.execute(id, options);
 	}
 
-	// @Post("upload-background-tournament")
-	// @UseInterceptors(AnyFilesInterceptor)
-	// async 
+	@UseInterceptors(AnyFilesInterceptor())
+	@Post("upload-images")
+	async uploadBackgroundImage(
+		@UploadedFiles() files: Express.Multer.File[],
+	): Promise<ApiResponse<string[]>> {
+		return await this.uploadBackgroundImageUseCase.execute(files);
+	}
 
 	@Post("/create-tournament")
 	@UseGuards(JwtAccessTokenGuard)
@@ -129,10 +149,9 @@ export class TournamentController {
 		// @UploadedFile() backgroundImage: Express.Multer.File,
 		// @UploadedFile() merchandiseImages: Express.Multer.File[]
 	): Promise<ApiResponse<Tournament>> {
-
 		return await this.createNewTournamentUseCase.execute(
 			request,
-			createTournament
+			createTournament,
 		);
 	}
 
@@ -147,10 +166,12 @@ export class TournamentController {
 	async getAllFormatTypes(): Promise<ApiResponse<FormatType[]>> {
 		return await this.getAllFormatTypeUseCase.execute();
 	}
-	
+
 	@Post("/create-tournament-serie")
 	@UseGuards(JwtAccessTokenGuard)
-	async createTournamentSerie(@Body() tournamentSerie: CreateTournamentSerie) : Promise<ApiResponse<TournamentSerie>>{
+	async createTournamentSerie(
+		@Body() tournamentSerie: CreateTournamentSerie,
+	): Promise<ApiResponse<TournamentSerie>> {
 		return await this.createTournamentSerieUseCase.execute(tournamentSerie);
 	}
 }

@@ -166,7 +166,7 @@ export class CreateTournament {
 	hasMerchandise: boolean;
 	@IsNumber()
 	numberOfMerchandise: number;
-	merchandise: string;
+	merchandiseImages: string[];
 	@IsNumber()
 	umpirePerMatch: number;
 
