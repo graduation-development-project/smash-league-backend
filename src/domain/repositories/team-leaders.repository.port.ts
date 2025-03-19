@@ -1,4 +1,4 @@
-import { Team } from "@prisma/client";
+import {Team, TeamRequest} from "@prisma/client";
 import { SendInvitationDTO } from "../dtos/team-leaders/send-invitation.dto";
 import { CreateTeamDTO } from "../dtos/team-leaders/create-team.dto";
 import { EditTeamDTO } from "../dtos/team-leaders/edit-team.dto";
@@ -27,5 +27,5 @@ export interface TeamLeadersRepositoryPort {
 
 	transferTeamLeaderRole(
 		transferTeamLeaderRoleDTO: TransferTeamLeaderRoleDTO,
-	): Promise<string>;
+	): Promise<TeamRequest>;
 }

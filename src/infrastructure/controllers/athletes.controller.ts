@@ -141,7 +141,7 @@ export class AthletesController {
 	responseTransferTeamLeader(
 		@Body() responseTeamLeaderTransferDTO: ResponseTeamLeaderTransferDTO,
 		@Req() { user }: IRequestUser,
-	): Promise<string> {
+	): Promise<ApiResponse<null>> {
 		return this.responseTransferTeamLeaderUseCase.execute({
 			...responseTeamLeaderTransferDTO,
 			user,

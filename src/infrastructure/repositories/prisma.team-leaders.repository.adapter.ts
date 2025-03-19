@@ -10,6 +10,7 @@ import {
 	TeamRequest,
 	TeamRequestStatus,
 	TeamRequestType,
+	TeamRole,
 	TeamStatus,
 	UserTeam,
 } from "@prisma/client";
@@ -89,6 +90,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 					data: {
 						teamId: createdTeam.id,
 						userId: teamLeader.id,
+						role: TeamRole.LEADER,
 					},
 				});
 
@@ -544,7 +546,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 
 	async transferTeamLeaderRole(
 		transferTeamLeaderRoleDTO: TransferTeamLeaderRoleDTO,
-	): Promise<string> {
+	): Promise<TeamRequest> {
 		const { teamId, newTeamLeaderId, user } = transferTeamLeaderRoleDTO;
 
 		try {
@@ -554,6 +556,25 @@ export class PrismaTeamLeadersRepositoryAdapter
 					teamLeaderId: user.id,
 				},
 			});
+
+			const requestExisted = await this.prismaService.teamRequest.findFirst({
+				where: {
+					teamId,
+					teamMemberId: newTeamLeaderId,
+					type: TeamRequestType.TRANSFER_TEAM_LEADER,
+					status: "PENDING",
+				},
+			});
+
+			if (requestExisted) {
+				throw new BadRequestException("This request is already existed");
+			}
+
+			if (newTeamLeaderId === user.id) {
+				throw new BadRequestException(
+					"You are already team leader of this team",
+				);
+			}
 
 			if (!teamExisted) {
 				throw new BadRequestException("You are not team leader of this team");
@@ -573,18 +594,13 @@ export class PrismaTeamLeadersRepositoryAdapter
 				throw new BadRequestException("This user is not in this team");
 			}
 
-			const teamRequest: { id: string } =
-				await this.prismaService.teamRequest.create({
-					data: {
-						teamMemberId: newTeamLeaderId,
-						type: TeamRequestType.TRANSFER_TEAM_LEADER,
-						teamId,
-					},
-
-					select: {
-						id: true,
-					},
-				});
+			const teamRequest = await this.prismaService.teamRequest.create({
+				data: {
+					teamMemberId: newTeamLeaderId,
+					type: TeamRequestType.TRANSFER_TEAM_LEADER,
+					teamId,
+				},
+			});
 
 			const createNotificationDTO = {
 				title: `You are requested to be new team leader of team ${teamExisted.teamName}`,
@@ -598,7 +614,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 				[newTeamLeaderId],
 			);
 
-			return "Transfer team leader successfully";
+			return teamRequest;
 		} catch (e) {
 			console.error("Transfer team leader role failed", e.message, e.stack);
 			throw e;

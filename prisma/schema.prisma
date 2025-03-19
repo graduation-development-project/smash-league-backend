@@ -119,10 +119,16 @@ enum TeamStatus {
 model UserTeam {
   userId String
   teamId String
-  team   Team   @relation("FK_Team_UserTeam", fields: [teamId], references: [id], onDelete: Cascade)
-  user   User   @relation("FK_User_UserTeam", fields: [userId], references: [id], onDelete: Cascade)
+  team   Team     @relation("FK_Team_UserTeam", fields: [teamId], references: [id], onDelete: Cascade)
+  user   User     @relation("FK_User_UserTeam", fields: [userId], references: [id], onDelete: Cascade)
+  role   TeamRole @default(MEMBER)
 
   @@id([userId, teamId])
+}
+
+enum TeamRole {
+  LEADER
+  MEMBER
 }
 
 model TeamInvitation {

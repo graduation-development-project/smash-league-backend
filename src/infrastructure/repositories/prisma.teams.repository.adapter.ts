@@ -212,6 +212,9 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 					include: {
 						user: true,
 					},
+					orderBy: {
+						role: "asc",
+					},
 					take: perPage,
 					skip: skip,
 				}),
@@ -221,9 +224,9 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 			const nextPage: number = page < lastPage ? page + 1 : null;
 			const prevPage: number = page > 1 ? page - 1 : null;
 
-			const memberData: User[] = memberList.map((user: { user: User }) => {
+			const memberData: User[] = memberList.map((user) => {
 				delete user.user.password;
-				return user.user;
+				return { ...user.user, teamRole: user.role };
 			});
 
 			return {

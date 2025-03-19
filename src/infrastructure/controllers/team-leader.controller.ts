@@ -14,7 +14,7 @@ import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import { CreateTeamDTO } from "../../domain/dtos/team-leaders/create-team.dto";
 import { CreateTeamUseCase } from "../../application/usecases/team-leader/create-team.usecase";
-import { Team } from "@prisma/client";
+import { Team, TeamRequest } from "@prisma/client";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { SendTeamInvitationUseCase } from "../../application/usecases/team-leader/send-team-invitation.usecase";
 import { Send } from "express";
@@ -30,6 +30,7 @@ import { ResponseLeaveTeamRequestDTO } from "../../domain/dtos/team-leaders/resp
 import { ResponseJoinTeamRequestUseCase } from "../../application/usecases/team-leader/response-join-team-request.usecase";
 import { TransferTeamLeaderRoleDTO } from "../../domain/dtos/team-leaders/transfer-team-leader-role.dto";
 import { TransferTeamLeaderUseCase } from "../../application/usecases/team-leader/transfer-team-leader.usecase";
+import { ApiResponse } from "../../domain/dtos/api-response";
 
 @Controller("/team-leaders")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -129,7 +130,7 @@ export class TeamLeaderController {
 	transferTeamLeader(
 		@Body() transferTeamLeaderRoleDTO: TransferTeamLeaderRoleDTO,
 		@Req() { user }: IRequestUser,
-	): Promise<string> {
+	): Promise<ApiResponse<TeamRequest>> {
 		return this.transferTeamLeaderUseCase.execute({
 			...transferTeamLeaderRoleDTO,
 			user,
