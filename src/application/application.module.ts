@@ -80,6 +80,9 @@ import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create
 import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
 import { UploadBackgroundImageUseCase } from "./usecases/tournament/upload-background-image.usecase";
+import {
+	GetTournamentRegistrationByTournamentIdUseCase
+} from "./usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
 import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament-detail.usecase";
 
 @Module({
@@ -241,6 +244,7 @@ import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament
 
 		//Organizer Use Case
 		ResponseTournamentRegistrationUseCase,
+		GetTournamentRegistrationByTournamentIdUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -333,6 +337,7 @@ import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament
 
 		//Organizer Use Case
 		ResponseTournamentRegistrationUseCase,
+		GetTournamentRegistrationByTournamentIdUseCase,
 	],
 })
 export class ApplicationModule {}

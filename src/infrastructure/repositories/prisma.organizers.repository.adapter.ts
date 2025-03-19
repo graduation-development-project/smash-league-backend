@@ -5,6 +5,7 @@ import { PrismaService } from "../services/prisma.service";
 import { ReasonType, TournamentRegistrationStatus } from "@prisma/client";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
+import { ITournamentRegistrationResponse } from "../../domain/interfaces/tournament/tournament.interface";
 
 @Injectable()
 export class PrismaOrganizersRepositoryAdapter
@@ -96,6 +97,62 @@ export class PrismaOrganizersRepositoryAdapter
 				error,
 			);
 			throw error;
+		}
+	}
+
+	async getTournamentRegistrationByTournamentId(
+		tournamentId: string,
+		organizerId: string,
+	): Promise<ITournamentRegistrationResponse[]> {
+		try {
+			const isTournamentOrganizer =
+				await this.prismaService.tournament.findUnique({
+					where: {
+						id: tournamentId,
+						organizerId,
+					},
+				});
+
+			if (!isTournamentOrganizer) {
+				throw new BadRequestException(
+					"You are not organizer of this tournament",
+				);
+			}
+
+			const tournamentRegistrations =
+				await this.prismaService.tournamentRegistration.findMany({
+					where: {
+						tournamentId,
+					},
+
+					include: {
+						tournamentEvent: true,
+					},
+				});
+
+			const groupedData = tournamentRegistrations.reduce(
+				(acc, registration) => {
+					const tournamentEventId = registration.tournamentEventId;
+
+					if (!acc[tournamentEventId]) {
+						acc[tournamentEventId] = {
+							tournamentEvent: registration.tournamentEvent,
+							registrations: [],
+						};
+					}
+					delete registration.tournamentEvent;
+					acc[tournamentEventId].registrations.push(registration);
+
+					return acc;
+				},
+				{},
+			);
+
+			// Convert object to array
+			return Object.values(groupedData);
+		} catch (e) {
+			console.error("Get Tournament Registration Error", e);
+			throw e;
 		}
 	}
 }

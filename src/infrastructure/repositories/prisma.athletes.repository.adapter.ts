@@ -48,6 +48,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		@Inject("NotificationRepository")
 		private notificationsRepository: NotificationsRepositoryPort,
 	) {}
+
 	// async registerTournament(registerTournamentDTO: RegisterTournamentDTO): Promise<TournamentRegistration> {
 	// 	return await this.prisma.tournamentRegistration.create({
 	// 		data: {
@@ -72,8 +73,8 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			files,
 		} = registerTournamentDTO;
 
-		let registrationDocumentPartner: string[] | null = null;
-		let registrationDocumentCreator: string[] | null = null;
+		let registrationDocumentPartner: string[] = [];
+		let registrationDocumentCreator: string[] = [];
 
 		try {
 			const [tournament, event] = await Promise.all([
@@ -85,6 +86,19 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 			if (!tournament) {
 				throw new BadRequestException("Tournament not found");
+			}
+
+			const tournamentOrganizer = await this.prisma.tournament.findUnique({
+				where: {
+					id: tournamentId,
+					organizerId: userId,
+				},
+			});
+
+			if (tournamentOrganizer) {
+				throw new BadRequestException(
+					"You cannot participate your own tournament",
+				);
 			}
 
 			if (tournament.status !== TournamentStatus.OPENING_FOR_REGISTRATION) {
@@ -161,7 +175,6 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 						"Partner is required to register for double match",
 					);
 				}
-				
 
 				const partner: User = await this.prisma.user.findUnique({
 					where: { email: partnerEmail },
@@ -208,40 +221,22 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				}
 			}
 
-
-			return await this.prisma.tournamentRegistration.create({
-						data: {
-							tournamentId: "abc",
-							tournamentEventId: "e34478ab-92fa-4c7a-996e-52d6adae406a",
-							registrationDocumentCreator: registrationDocumentCreator === null? []: registrationDocumentCreator,
-							registrationDocumentPartner: registrationDocumentPartner === null? []: registrationDocumentPartner,
-							registrationRole:
-								registrationRole.toUpperCase() ===
-								TournamentRegistrationRole.ATHLETE
-									? TournamentRegistrationRole.ATHLETE
-									: TournamentRegistrationRole.UMPIRE,
-							userId: "1002ee23-744f-43ac-9462-6f6bf7368fd6",
-							fromTeamId: fromTeamId ? fromTeamId : null,
-
-						}
-					});
-
-			// return await this.prisma.tournamentRegistration.create({
-			// 	data: {
-			// 		tournamentId: "abc",
-			// 		userId,
-			// 		tournamentEventId,
-			// 		partnerId: isDoubleEvent ? partnerId : null,
-			// 		registrationDocumentCreator,
-			// 		registrationDocumentPartner,
-			// 		registrationRole:
-			// 			registrationRole.toUpperCase() ===
-			// 			TournamentRegistrationRole.ATHLETE
-			// 				? TournamentRegistrationRole.ATHLETE
-			// 				: TournamentRegistrationRole.UMPIRE,
-			// 		fromTeamId: fromTeamId ? fromTeamId : null,
-			// 	},
-			// });
+			return this.prisma.tournamentRegistration.create({
+				data: {
+					tournamentId,
+					userId,
+					tournamentEventId,
+					partnerId: isDoubleEvent ? partnerId : null,
+					registrationDocumentCreator,
+					registrationDocumentPartner,
+					registrationRole:
+						registrationRole.toUpperCase() ===
+						TournamentRegistrationRole.ATHLETE
+							? TournamentRegistrationRole.ATHLETE
+							: TournamentRegistrationRole.UMPIRE,
+					fromTeamId: fromTeamId ? fromTeamId : null,
+				},
+			});
 		} catch (e) {
 			throw e;
 		}
