@@ -30,20 +30,19 @@ export class PrismaNotificationsRepositoryAdapter
 							teamInvitation: {
 								select: {
 									status: true,
-									id: true,
+									teamId: true,
 								},
 							},
 
 							teamRequest: {
 								select: {
 									status: true,
-									id: true,
+									teamId: true,
 								},
 							},
 							tournamentRegistration: {
 								select: {
 									status: true,
-									id: true,
 								},
 							},
 						},
