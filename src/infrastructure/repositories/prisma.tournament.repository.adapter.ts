@@ -1,4 +1,4 @@
-import { ITournamentResponse } from './../../domain/interfaces/tournament/tournament.interface';
+import { ITournamentDetailResponse, ITournamentResponse } from './../../domain/interfaces/tournament/tournament.interface';
 import { PrismaClient, Tournament, TournamentStatus } from "@prisma/client";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { Injectable } from "@nestjs/common";
@@ -17,6 +17,22 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	calculateTimeDetailLeft(date: Date): string {
+		const now = new Date();
+		const currentTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+		if (date.getTime() < currentTime.getTime()) return "Expired!"
+		const timeLeft = date.getTime() - currentTime.getTime(); // Difference in milliseconds
+
+		const seconds = Math.floor((timeLeft / 1000) % 60);
+		const secondsString = seconds > 1 ? seconds + " seconds" : seconds === 0? "": "1 second";
+		const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+		const minutesString = minutes > 1 ? minutes + " minutes " : minutes === 0? "": "1 minute ";
+		const hours = Math.floor((timeLeft / 1000 / 60 / 60) % 24);
+		const hoursString = hours > 1 ? hours + " hours " : hours === 0? "": "1 hour ";
+		const days = Math.floor(timeLeft / 1000 / 60 / 60 / 24);
+		const daysString = days > 1 ? days + " days " : days === 0? "": "1 day ";
+		return `${daysString}${hoursString}${minutesString}${secondsString} left`;
+	}
 	calculateTimeLeft(date: Date): string {
 		const now = new Date();
 		const currentTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
@@ -39,7 +55,7 @@ export class PrismaTournamentRepositorAdapter
 		} else {
 			result = seconds === 1 ? "1 second" : `${seconds} seconds`;
 		}
-		return result;
+		return result + " left";
 	}
 
 	async getTournament(id: string): Promise<Tournament | null> {
@@ -162,11 +178,70 @@ export class PrismaTournamentRepositorAdapter
 		return await this.prisma.tournament.findMany();
 	}
 
-	async getTournamentDetail(tournamentId: string): Promise<Tournament> {
-		return await this.prisma.tournament.findUnique({
+	async getTournamentDetail(tournamentId: string): Promise<ITournamentDetailResponse> {
+		const tournament = await this.prisma.tournament.findUnique({
 			where: {
-				id: tournamentId,
+				id: tournamentId
 			},
+			select: {
+				id: true,
+				backgroundTournament: true,
+				checkInBeforeStart: true,
+				registrationOpeningDate: true,
+				registrationClosingDate: true,
+				drawDate: true,
+				startDate: true,
+				endDate: true,
+				name: true,
+				shortName: true,
+				mainColor: true,
+				organizer: {
+					select: {
+						id: true,
+						name: true,
+						avatarURL: true,
+						phoneNumber: true,
+						email: true,
+					}
+				},
+				contactEmail: true,
+				contactPhone: true,
+				numberOfMerchandise: true,
+				hasMerchandise: true,
+				location: true,
+				registrationFeePerPerson: true,
+				registrationFeePerPair: true,
+				merchandiseImages: true,
+				maxEventPerPerson: true,
+				prizePool: true,
+				requiredAttachment: true,
+				umpirePerMatch: true,
+				protestFeePerTime: true,
+				tournamentSerie: true,
+				tournamentEvents: {
+					select: {
+						fromAge: true,
+						toAge: true,
+						id: true,
+						tournamentEvent: true,
+						numberOfGames: true,
+						typeOfFormat: true,
+						winningPoint: true,
+						lastPoint: true,
+						championshipPrize: true,
+						runnerUpPrize: true,
+						thirdPlacePrize: true,
+						jointThirdPlacePrize: true,
+						ruleOfEventExtension: true
+					}
+				}
+			}
 		});
+		if (tournament === null) return null;
+		const tournamentResponse: ITournamentDetailResponse = {
+			...tournament,
+			expiredTimeLeft: (tournament === null)? "" : this.calculateTimeDetailLeft(tournament.registrationClosingDate)
+		};
+		return tournamentResponse;
 	}
 }

@@ -80,6 +80,7 @@ import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create
 import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
 import { UploadBackgroundImageUseCase } from "./usecases/tournament/upload-background-image.usecase";
+import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament-detail.usecase";
 
 @Module({
 	imports: [
@@ -216,6 +217,7 @@ import { UploadBackgroundImageUseCase } from "./usecases/tournament/upload-backg
 		CheckExistTournamentURLUseCase,
 		CreateRandomURLUseCase,
 		UploadBackgroundImageUseCase,
+		GetTournamentDetailUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -310,6 +312,7 @@ import { UploadBackgroundImageUseCase } from "./usecases/tournament/upload-backg
 		CheckExistTournamentURLUseCase,
 		CreateRandomURLUseCase,
 		UploadBackgroundImageUseCase,
+		GetTournamentDetailUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
