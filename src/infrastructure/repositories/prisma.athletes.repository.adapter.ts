@@ -88,6 +88,19 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				throw new BadRequestException("Tournament not found");
 			}
 
+			const tournamentOrganizer = await this.prisma.tournament.findUnique({
+				where: {
+					id: tournamentId,
+					organizerId: userId,
+				},
+			});
+
+			if (tournamentOrganizer) {
+				throw new BadRequestException(
+					"You cannot participate your own tournament",
+				);
+			}
+
 			if (tournament.status !== TournamentStatus.OPENING_FOR_REGISTRATION) {
 				throw new BadRequestException(
 					"This tournament is not open for registration",
@@ -97,8 +110,6 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			if (!event) {
 				throw new BadRequestException("Tournament event not found");
 			}
-
-			console.log("event", event);
 
 			const isDoubleEvent: boolean = event.tournamentEvent
 				.toUpperCase()
