@@ -26,6 +26,7 @@ import { SearchTournamentUseCase } from "src/application/usecases/tournament/sea
 import { ApiResponse } from "src/domain/dtos/api-response";
 import {
 	FormatType,
+	ITournamentDetailResponse,
 	ITournamentResponse,
 } from "src/domain/interfaces/tournament/tournament.interface";
 import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
@@ -51,6 +52,7 @@ import { CreateRandomURLUseCase } from "src/application/usecases/tournament/crea
 import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { create } from "domain";
 import { UploadBackgroundImageUseCase } from "src/application/usecases/tournament/upload-background-image.usecase";
+import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/get-tournament-detail.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -65,7 +67,8 @@ export class TournamentController {
 		private readonly createTournamentSerieUseCase: CreateTournamentSerieUseCase,
 		private readonly checkExistTournamentURLUseCase: CheckExistTournamentURLUseCase,
 		private readonly createRandomURLUseCase: CreateRandomURLUseCase,
-		private readonly uploadBackgroundImageUseCase: UploadBackgroundImageUseCase
+		private readonly uploadBackgroundImageUseCase: UploadBackgroundImageUseCase,
+		private readonly getTournamentDetailUseCase: GetTournamentDetailUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -173,5 +176,10 @@ export class TournamentController {
 		@Body() tournamentSerie: CreateTournamentSerie,
 	): Promise<ApiResponse<TournamentSerie>> {
 		return await this.createTournamentSerieUseCase.execute(tournamentSerie);
+	}
+
+	@Get("get-tournament-detail/:id")
+	async getTournamentDetail(@Param("id") id: string): Promise<ApiResponse<ITournamentDetailResponse>> {
+		return await this.getTournamentDetailUseCase.execute(id);
 	}
 }

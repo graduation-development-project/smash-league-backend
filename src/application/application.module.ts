@@ -83,6 +83,7 @@ import { UploadBackgroundImageUseCase } from "./usecases/tournament/upload-backg
 import {
 	GetTournamentRegistrationByTournamentIdUseCase
 } from "./usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
+import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament-detail.usecase";
 
 @Module({
 	imports: [
@@ -219,6 +220,7 @@ import {
 		CheckExistTournamentURLUseCase,
 		CreateRandomURLUseCase,
 		UploadBackgroundImageUseCase,
+		GetTournamentDetailUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -314,6 +316,7 @@ import {
 		CheckExistTournamentURLUseCase,
 		CreateRandomURLUseCase,
 		UploadBackgroundImageUseCase,
+		GetTournamentDetailUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

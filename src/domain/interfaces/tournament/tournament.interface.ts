@@ -163,3 +163,49 @@ export interface ITournamentResponse {
 	requiredAttachment: string[];
 	tournamentSerie: ITournamentSerieResponse;
 }
+
+export interface ITournamentEventDetail {
+	fromAge: number;
+	toAge: number;
+	id: string;
+	tournamentEvent: string,
+	numberOfGames: number,
+	typeOfFormat: string,
+	winningPoint: number;
+	lastPoint: number;
+	championshipPrize: string[];
+	runnerUpPrize: string[];
+	thirdPlacePrize: string[];
+	jointThirdPlacePrize: string[];
+	ruleOfEventExtension: string;
+}
+
+export interface ITournamentDetailResponse {
+	id: string;
+	name: string;
+	shortName: string;
+	organizer: IOrganizerResponse;
+	contactPhone: string;
+	contactEmail: string;
+	mainColor: string;
+	backgroundTournament: string;
+	location: string;
+	registrationOpeningDate: Date;
+	expiredTimeLeft: string;
+	registrationClosingDate: Date;
+	drawDate: Date;
+	startDate: Date;
+	endDate: Date;
+	checkInBeforeStart: Date;
+	umpirePerMatch: number;
+	registrationFeePerPerson: number;
+	registrationFeePerPair: number;
+	maxEventPerPerson: number;
+	protestFeePerTime: number;
+	hasMerchandise: boolean;
+	numberOfMerchandise: number;
+	merchandiseImages: string[];
+	requiredAttachment: string[];
+	tournamentSerie: ITournamentSerieResponse;
+	tournamentEvents: ITournamentEventDetail[];
+}

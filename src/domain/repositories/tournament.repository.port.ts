@@ -1,5 +1,5 @@
 import { Tournament } from "@prisma/client";
-import { ICreateTournament, ITournamentResponse } from "../interfaces/tournament/tournament.interface";
+import { ICreateTournament, ITournamentDetailResponse, ITournamentResponse } from "../interfaces/tournament/tournament.interface";
 import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
 
 export interface TournamentRepositoryPort {
@@ -7,6 +7,7 @@ export interface TournamentRepositoryPort {
 
 	getTournament(id: string): Promise<Tournament | null>;
 	calculateTimeLeft(date: Date): string;
+	calculateTimeDetailLeft(date: Date): string;
 
 	searchTournament(
 		options: IPaginateOptions,
@@ -15,5 +16,5 @@ export interface TournamentRepositoryPort {
 
 	filterTournament(): Promise<Tournament[]>;
 
-	getTournamentDetail(tournamentId: string): Promise<Tournament>;
+	getTournamentDetail(tournamentId: string): Promise<ITournamentDetailResponse>;
 }
