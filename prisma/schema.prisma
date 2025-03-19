@@ -23,6 +23,7 @@ model User {
   currentRefreshToken           String?
   creditsRemain                 Int?
   otp                           String?
+  gender                        Gender?
   otpExpiresTime                DateTime?
   isVerified                    Boolean                  @default(false)
   teamId                        String?
@@ -43,6 +44,11 @@ model User {
   teamInvitation                TeamInvitation[]         @relation("FK_User_TeamInvitation")
   Reason                        Reason[]                 @relation("FK_TeamMember_Reason")
   TeamRequest                   TeamRequest[]            @relation("FK_TeamMember_TeamRequest")
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
 
 model UserVerification {
@@ -390,7 +396,7 @@ model ContentImage {
 }
 
 model Package {
-  id                      String     @id @default(uuid())
+  id                      String   @id @default(uuid())
   packageName             String
   packageDetail           String
   currentDiscountByAmount Int
@@ -399,7 +405,7 @@ model Package {
   advantages              String[]
   isRecommended           Boolean
   isAvailable             Boolean
-  orders                  Order[]   @relation(name: "FK_Order_Package")
+  orders                  Order[]  @relation(name: "FK_Order_Package")
 }
 
 model TransactionType {
@@ -425,7 +431,6 @@ enum TransactionStatus {
   SUCCESSFUL
   FAILED
 }
-
 
 model Order {
   id           String        @id @default(uuid())
