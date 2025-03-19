@@ -2,7 +2,7 @@ import { Team, User } from "@prisma/client";
 import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
 
 export interface TeamRepositoryPort {
-	getTeamMemberByTeamId(teamId: string): Promise<User[]>;
+	// getTeamMemberByTeamId(teamId: string): Promise<User[]>;
 
 	getTeamDetails(teamId: string): Promise<Team>;
 
@@ -14,4 +14,10 @@ export interface TeamRepositoryPort {
 		options: IPaginateOptions,
 		searchTerm?: string,
 	): Promise<IPaginatedOutput<Team & { teamLeader: User }>>;
+
+	searchTeamMember(
+		options: IPaginateOptions,
+		teamId: string,
+		searchTerm?: string,
+	): Promise<IPaginatedOutput<User>>;
 }

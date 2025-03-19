@@ -15,39 +15,39 @@ import {
 export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 	constructor(private prismaService: PrismaService) {}
 
-	async getTeamMemberByTeamId(teamId: string): Promise<User[]> {
-		try {
-			// const userInTeam: UserTeam = await this.prismaService.userTeam.findUnique(
-			// 	{
-			// 		where: {
-			// 			userId_teamId: {
-			// 				userId: user.id,
-			// 				teamId,
-			// 			},
-			// 		},
-			// 	},
-			// );
-			//
-			// if (!userInTeam) {
-			// 	throw new BadRequestException("You are not a member of this teams!");
-			// }
-
-			const memberList: { user: User }[] =
-				await this.prismaService.userTeam.findMany({
-					where: {
-						teamId,
-					},
-					select: {
-						user: true,
-					},
-				});
-
-			return memberList.map((user: { user: User }) => user.user);
-		} catch (e) {
-			console.error("Get Team member failed", e);
-			throw e;
-		}
-	}
+	// async getTeamMemberByTeamId(teamId: string): Promise<User[]> {
+	// 	try {
+	// 		// const userInTeam: UserTeam = await this.prismaService.userTeam.findUnique(
+	// 		// 	{
+	// 		// 		where: {
+	// 		// 			userId_teamId: {
+	// 		// 				userId: user.id,
+	// 		// 				teamId,
+	// 		// 			},
+	// 		// 		},
+	// 		// 	},
+	// 		// );
+	// 		//
+	// 		// if (!userInTeam) {
+	// 		// 	throw new BadRequestException("You are not a member of this teams!");
+	// 		// }
+	//
+	// 		const memberList: { user: User }[] =
+	// 			await this.prismaService.userTeam.findMany({
+	// 				where: {
+	// 					teamId,
+	// 				},
+	// 				select: {
+	// 					user: true,
+	// 				},
+	// 			});
+	//
+	// 		return memberList.map((user: { user: User }) => user.user);
+	// 	} catch (e) {
+	// 		console.error("Get Team member failed", e);
+	// 		throw e;
+	// 	}
+	// }
 
 	async getTeamDetails(teamId: string): Promise<Team> {
 		try {
@@ -172,5 +172,74 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 				nextPage,
 			},
 		};
+	}
+
+	async searchTeamMember(
+		options: IPaginateOptions,
+		teamId: string,
+		searchTerm?: string,
+	): Promise<IPaginatedOutput<User>> {
+		try {
+			const isTeamExisted = await this.prismaService.team.findUnique({
+				where: { id: teamId },
+			});
+
+			if (!isTeamExisted) {
+				throw new BadRequestException("Team not found.");
+			}
+			const page: number =
+				parseInt(options?.page?.toString()) || DEFAULT_PAGE_NUMBER;
+			const perPage: number =
+				parseInt(options?.perPage?.toString()) || DEFAULT_PAGE_SIZE;
+			const skip: number = (page - 1) * perPage;
+
+			const whereClause = searchTerm
+				? {
+						teamId,
+						user: {
+							name: { contains: searchTerm, mode: "insensitive" as const },
+						},
+					}
+				: {
+						teamId,
+					};
+
+			const [total, memberList] = await Promise.all([
+				this.prismaService.userTeam.count({ where: whereClause }),
+
+				this.prismaService.userTeam.findMany({
+					where: whereClause,
+					include: {
+						user: true,
+					},
+					take: perPage,
+					skip: skip,
+				}),
+			]);
+
+			const lastPage: number = Math.ceil(total / perPage);
+			const nextPage: number = page < lastPage ? page + 1 : null;
+			const prevPage: number = page > 1 ? page - 1 : null;
+
+			const memberData: User[] = memberList.map((user: { user: User }) => {
+				delete user.user.password;
+				return user.user;
+			});
+
+			return {
+				data: memberData,
+				meta: {
+					total,
+					lastPage,
+					currentPage: page,
+					totalPerPage: perPage,
+					prevPage,
+					nextPage,
+				},
+			};
+		} catch (e) {
+			console.error("Search team members failed: ", e);
+			throw e;
+		}
 	}
 }
