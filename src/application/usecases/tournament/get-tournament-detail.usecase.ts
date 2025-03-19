@@ -10,6 +10,7 @@ export class GetTournamentDetailUseCase {
 		@Inject("TournamentRepository") 
 		private readonly tournamentRepository: TournamentRepositoryPort
 	) {
+		
 	}
 	
 	async execute(id: string) : Promise<ApiResponse<ITournamentDetailResponse>> {
