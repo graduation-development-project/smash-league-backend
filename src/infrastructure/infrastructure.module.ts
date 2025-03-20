@@ -30,6 +30,7 @@ import { TeamQueueModule } from "./background-jobs/team/team.queue.module";
 import {GoogleStrategy} from "./strategies/auth/google.strategy";
 import {TeamController} from "./controllers/team.controller";
 import {OrganizerController} from "./controllers/organizers.controller";
+import { PaymentPayOSService } from "./services/payment.service";
 
 @Module({
 	imports: [
@@ -100,7 +101,8 @@ import {OrganizerController} from "./controllers/organizers.controller";
 			},
 			inject: [ConfigService],
 		},
+		PaymentPayOSService
 	],
-	exports: [MailService, UploadService],
+	exports: [MailService, UploadService, PaymentPayOSService],
 })
 export class InfrastructureModule {}

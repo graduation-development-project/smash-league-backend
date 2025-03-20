@@ -7,3 +7,12 @@ export interface ICreatePackage {
 	advantages: string[];
 	isRecommended: boolean;
 }
+
+export interface IPackageDefaultResponse {
+	id: string;
+	packageName: string;
+	packageDetail: string;
+	currentDiscountByAmount: number;
+	price: number;
+	credits: number;
+}

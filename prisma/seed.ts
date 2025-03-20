@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
@@ -94,11 +95,38 @@ async function main() {
 		},
 	];
 
-	roles.map(async (role) => {
+	let accounts : Prisma.UserCreateInput[] = [
+		{
+			name: "Admin",
+			email: "admin@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0123456789"
+		}
+	];
+	
+	// const user: User = await prisma.user.create({ data: userData });
+	// await prisma.userRole.create({
+	// 	data: { roleId: RoleMap.Athlete.id.toString(), userId: user.id },
+	// });
+
+	
+	await roles.map(async (role) => {
 		await prisma.role.create({
 			data: role,
 		});
-	});
+	})
+
+	// accounts.map(async (account) => {
+	// 	const user = await prisma.user.create({
+	// 		data: account
+	// 	});
+	// 	const userRole = await prisma.userRole.create({
+	// 		data: {
+	// 			userId: user.id,
+	// 			roleId: 
+	// 		}
+	// 	})
+	// });
 
 	notificationType.map(async (type) => {
 		await prisma.notificationType.create({
