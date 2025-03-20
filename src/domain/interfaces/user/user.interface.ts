@@ -6,3 +6,10 @@ export interface IUserResponse {
 	avatarURL: string;
 	isVerified: boolean;
 }
+
+export interface IUserDefaultResponse {
+	id: string;
+	name: string;
+	phoneNumber: string;
+	email: string;
+}

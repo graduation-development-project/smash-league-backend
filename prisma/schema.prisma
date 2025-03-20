@@ -403,9 +403,9 @@ model Package {
 }
 
 model TransactionType {
-  id              String        @id @default(uuid())
-  transactionName String
-  transactions    Transaction[] @relation("FK_Transaction_TransactionTransactionType")
+  id                  String        @id @default(uuid())
+  transactionTypeName String
+  transactions        Transaction[] @relation("FK_Transaction_TransactionTransactionType")
 }
 
 model Transaction {
@@ -435,7 +435,7 @@ model Order {
   user         User          @relation(name: "FK_Order_User", fields: [userId], references: [id], onDelete: Cascade)
   package      Package       @relation(name: "FK_Order_Package", fields: [packageId], references: [id], onDelete: Cascade)
   transactions Transaction[] @relation(name: "FK_Order_Transaction")
-  cartStatus   OrderStatus
+  orderStatus  OrderStatus
 }
 
 enum OrderStatus {

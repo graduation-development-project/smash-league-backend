@@ -34,7 +34,7 @@ import { CreateNotificationUseCase } from "./usecases/notification/create-notifi
 import { PrismaService } from "../infrastructure/services/prisma.service";
 import { CreatePaymentLinkUseCase } from "./usecases/payment/create-payment-link.usecase";
 import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
-import { PaymentPayOSService } from "./services/payment.service";
+import { PaymentPayOSService } from "../infrastructure/services/payment.service";
 import { ConfigModule } from "@nestjs/config";
 import { ResendOtpUseCase } from "./usecases/auth/resend-otp.usecase";
 import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositories/prisma.tournament.repository.adapter";
