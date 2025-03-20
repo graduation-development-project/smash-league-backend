@@ -44,6 +44,7 @@ export enum RequiredAttachment {
 
 export interface ICreateTournamentSerie {
 	tournamentSerieName: string;
+	belongsToUserId: string;
 }
 
 export interface ICreateTournamentEvent {

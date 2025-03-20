@@ -141,7 +141,21 @@ export class PrismaTournamentRepositorAdapter
 						requiredAttachment: true,
 						umpirePerMatch: true,
 						protestFeePerTime: true,
-						tournamentSerie: true
+						tournamentSerie: {
+							select: {
+								id: true,
+								belongsToUser: {
+									select: {
+										id: true,
+										name: true,
+										email: true,
+										phoneNumber: true
+									}
+								},
+								tournamentSerieName: true,
+								serieBackgroundImageURL: true
+							}
+						}
 					}
 				}),
 			]);
@@ -217,7 +231,21 @@ export class PrismaTournamentRepositorAdapter
 				requiredAttachment: true,
 				umpirePerMatch: true,
 				protestFeePerTime: true,
-				tournamentSerie: true,
+				tournamentSerie: {
+					select: {
+						id: true,
+						tournamentSerieName: true,
+						serieBackgroundImageURL: true,
+						belongsToUser: {
+							select: {
+								id: true,
+								email: true,
+								phoneNumber: true,
+								name: true
+							}
+						}
+					}
+				},
 				tournamentEvents: {
 					select: {
 						fromAge: true,

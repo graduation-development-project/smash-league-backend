@@ -84,6 +84,7 @@ import {
 	GetTournamentRegistrationByTournamentIdUseCase
 } from "./usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
 import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament-detail.usecase";
+import { GetMyTournamentSerieUseCase } from "./usecases/tournament-serie/get-my-tournament-serie.usecase";
 
 @Module({
 	imports: [
@@ -225,6 +226,7 @@ import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
 		CreateTournamentSerieUseCase,
+		GetMyTournamentSerieUseCase,
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
@@ -321,6 +323,7 @@ import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
 		CreateTournamentSerieUseCase,
+		GetMyTournamentSerieUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case

@@ -147,10 +147,6 @@ export class CreateTournament {
 
 	tournamentSerieId?: string;
 
-	@ValidateNested()
-	@Type(() => CreateTournamentSerie)
-	createTournamentSerie: CreateTournamentSerie;
-
 	@ValidateNested({ each: true })
 	@Type(() => CreateTournamentEvent)
 	createTournamentEvent: CreateTournamentEvent[];

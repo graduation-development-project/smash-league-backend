@@ -30,6 +30,7 @@ model User {
   height                        Int?
   hands                         Hands?
   dateOfBirth                   DateTime?
+  tournamentSeries              TournamentSerie[]        @relation(name: "FK_TournamentSerie_User")
   orders                        Order[]                  @relation(name: "FK_Order_User")
   teamLeaderOf                  Team[]                   @relation(name: "FK_User_TeamLeader")
   tournaments                   Tournament[]             @relation(name: "FK_Tournament_User")
@@ -187,6 +188,8 @@ model TournamentSerie {
   id                      String       @id @default(uuid())
   tournamentSerieName     String
   serieBackgroundImageURL String
+  belongsToUserId         String
+  belongsToUser           User         @relation(name: "FK_TournamentSerie_User", fields: [belongsToUserId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tournaments             Tournament[] @relation(name: "FK_Tournament_TournamentSerie")
 }
 
@@ -223,8 +226,8 @@ model Tournament {
   isRegister               Boolean
   isLiveDraw               Boolean
   hasLiveStream            Boolean
-  tournamentSerieId        String
-  tournamentSerie          TournamentSerie          @relation(name: "FK_Tournament_TournamentSerie", fields: [tournamentSerieId], references: [id], onDelete: Cascade)
+  tournamentSerieId        String?
+  tournamentSerie          TournamentSerie?         @relation(name: "FK_Tournament_TournamentSerie", fields: [tournamentSerieId], references: [id], onDelete: Cascade)
   organizer                User                     @relation(name: "FK_Tournament_User", fields: [organizerId], references: [id], onDelete: Cascade)
   tournamentPosts          TournamentPost[]         @relation(name: "FK_TournamentPost_Tournament")
   registrations            TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Tournament")

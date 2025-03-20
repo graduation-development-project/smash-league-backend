@@ -37,11 +37,7 @@ export class CreateNewTournamentUseCase {
 			"Tournament ID exists!",
 			null
 		);
-		if (createTournament.tournamentSerieId === null) {
-			tournament = await this.createTournamentWithNoTournamentSerie(createTournament, request.user);
-		} else {
-			tournament = await this.createTournamentWithExistSerie(createTournament, request.user);
-		}
+		tournament = await this.createTournamentWithNoTournamentSerie(createTournament, request.user);
 		return new ApiResponse<Tournament>(
 			HttpStatus.OK,
 			"Create new tournament successfully!",
@@ -64,11 +60,7 @@ export class CreateNewTournamentUseCase {
 	async createTournamentWithNoTournamentSerie(createTournament: CreateTournament,
 																							user: User
 	) : Promise<Tournament> {
-		const tournamentSerie = await this.tournamentSerieRepository.createTournamentSerie({
-			...createTournament.createTournamentSerie,
-		});
-		console.log(tournamentSerie);
-		const tournament = await this.createTournament(createTournament, tournamentSerie, user);
+		const tournament = await this.createTournament(createTournament, user);
 		console.log(tournament)
 		const tournamentEvents = await this.createTournamentEvents(createTournament.createTournamentEvent, tournament.id)
 		return tournament;
@@ -82,19 +74,8 @@ export class CreateNewTournamentUseCase {
 		return null;
 	}
 
-	async createTournamentWithExistSerie(createTournament: CreateTournament, user: User) : Promise<any> {
-		const tournamentSerie = await this.tournamentSerieRepository.getTournamentSerie(createTournament.tournamentSerieId);
-		console.log(tournamentSerie);
-		const tournament = await this.createTournament(createTournament, tournamentSerie, user);
-		console.log(tournament)
-		const tournamentEvents = await this.createTournamentEvents(createTournament.createTournamentEvent, tournament.id)
-		return tournament;
-	}
-
 	async createTournament(createTournament: CreateTournament, 
-												tournamentSerie: TournamentSerie,
 												organizer: User) : Promise<Tournament> {
-		console.log(tournamentSerie.id);											
 		const tournament = await this.tournamentRepository.createTournament({
 			id: createTournament.id,
 			name: createTournament.name,
@@ -118,7 +99,7 @@ export class CreateNewTournamentUseCase {
 			numberOfMerchandise: createTournament.numberOfMerchandise,
 			location: createTournament.location,
 			requiredAttachment: createTournament.requiredAttachment,
-			tournamentSerieId: tournamentSerie.id,
+			tournamentSerieId: createTournament.tournamentSerieId,
 			organizerId: organizer.id,
 			contactEmail: createTournament.contactEmail,
 			contactPhone: createTournament.contactPhone,
@@ -129,7 +110,6 @@ export class CreateNewTournamentUseCase {
 			isRegister: createTournament.isRegister,
 			hasLiveStream: createTournament.hasLiveStream	
 		});
-		console.log(tournament);
-		return tournament
+		return tournament;
 	}
 }
