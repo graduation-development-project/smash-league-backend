@@ -4,7 +4,7 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from "@nestjs/common";
-import { PrismaClient, User } from "@prisma/client";
+import { Gender, PrismaClient, User } from "@prisma/client";
 import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
 import { CreateUserDTO } from "../../domain/dtos/users/create-user.dto";
 import { TUserWithRole } from "../types/users.type";
@@ -16,13 +16,14 @@ import { IUserResponse } from "src/domain/interfaces/user/user.interface";
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
+
 	async searchUserByEmail(email: string): Promise<IUserResponse[]> {
 		return await this.prisma.user.findMany({
 			where: {
 				email: {
-					contains: email
+					contains: email,
 				},
-				isVerified: true
+				isVerified: true,
 			},
 			select: {
 				id: true,
@@ -30,8 +31,8 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				name: true,
 				email: true,
 				phoneNumber: true,
-				isVerified: true
-			}
+				isVerified: true,
+			},
 		});
 	}
 
@@ -126,7 +127,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	async createUser(createUserDTO: CreateUserDTO): Promise<User> {
 		try {
 			// console.log(createUserDTO)
-			const { avatarURL, currentRefreshToken, provider, ...rest } =
+			const { avatarURL, currentRefreshToken, provider, gender, ...rest } =
 				createUserDTO;
 
 			//* Set default data for user avatar, currentRefreshToken, CreditsRemain
@@ -138,6 +139,8 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				currentRefreshToken: currentRefreshToken ?? null,
 				creditsRemain: 0,
 				isVerified: provider === "google",
+				gender:
+					gender.toUpperCase() === Gender.MALE ? Gender.MALE : Gender.FEMALE,
 			};
 
 			return await this.prisma.$transaction(async (prisma): Promise<User> => {

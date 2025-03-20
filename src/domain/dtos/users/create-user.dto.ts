@@ -1,12 +1,15 @@
 import {
 	IsDate,
 	IsEmail,
+	IsEnum,
 	IsNotEmpty,
 	IsOptional,
 	IsString,
 	IsStrongPassword,
 	MaxLength,
 } from "class-validator";
+import { Gender } from "@prisma/client";
+import {Transform} from "class-transformer";
 
 export class CreateUserDTO {
 	@IsNotEmpty()
@@ -44,4 +47,13 @@ export class CreateUserDTO {
 
 	@IsOptional()
 	provider?: String;
+
+	@IsEnum([Gender.MALE, Gender.FEMALE])
+	@IsNotEmpty()
+	gender: Gender;
+
+	@Transform(({ value }) => new Date(value))
+	@IsDate()
+	@IsNotEmpty()
+	dateOfBirth: Date;
 }
