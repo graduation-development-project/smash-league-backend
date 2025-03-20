@@ -30,7 +30,7 @@ import { TeamQueueModule } from "./background-jobs/team/team.queue.module";
 import {GoogleStrategy} from "./strategies/auth/google.strategy";
 import {TeamController} from "./controllers/team.controller";
 import {OrganizerController} from "./controllers/organizers.controller";
-import { PaymentPayOSService } from "./services/payment.service";
+import { PaymentPayOSService } from "../application/services/payment.service";
 
 @Module({
 	imports: [
@@ -90,6 +90,7 @@ import { PaymentPayOSService } from "./services/payment.service";
 		MailService,
 		PrismaService,
 		UploadService,
+		ConfigService,
 		{
 			provide: "CLOUDINARY",
 			useFactory: (configService: ConfigService) => {

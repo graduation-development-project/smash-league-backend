@@ -34,7 +34,7 @@ import { CreateNotificationUseCase } from "./usecases/notification/create-notifi
 import { PrismaService } from "../infrastructure/services/prisma.service";
 import { CreatePaymentLinkUseCase } from "./usecases/payment/create-payment-link.usecase";
 import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
-import { PaymentPayOSService } from "../infrastructure/services/payment.service";
+import { PaymentPayOSService } from "./services/payment.service";
 import { ConfigModule } from "@nestjs/config";
 import { ResendOtpUseCase } from "./usecases/auth/resend-otp.usecase";
 import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositories/prisma.tournament.repository.adapter";
@@ -85,6 +85,9 @@ import {
 } from "./usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
 import { GetTournamentDetailUseCase } from "./usecases/tournament/get-tournament-detail.usecase";
 import { GetMyTournamentSerieUseCase } from "./usecases/tournament-serie/get-my-tournament-serie.usecase";
+import { BuyPackageUseCase } from "./usecases/payment/buy-package.usecase";
+import { PrismaOrderRepositoryAdapter } from "src/infrastructure/repositories/prisma.order.repository.adapter";
+import { PrismaTransactionRepositoryAdapter } from "src/infrastructure/repositories/prisma.transaction.repository.adapter";
 
 @Module({
 	imports: [
@@ -154,6 +157,14 @@ import { GetMyTournamentSerieUseCase } from "./usecases/tournament-serie/get-my-
 		{
 			provide: "OrganizerRepository",
 			useClass: PrismaOrganizersRepositoryAdapter
+		},
+		{
+			provide: "OrderRepository",
+			useClass: PrismaOrderRepositoryAdapter
+		},
+		{
+			provide: "TransactionRepository",
+			useClass: PrismaTransactionRepositoryAdapter
 		},
 		//Third Party Service
 		MailService,
@@ -239,7 +250,7 @@ import { GetMyTournamentSerieUseCase } from "./usecases/tournament-serie/get-my-
 		InactivatePackageUseCase,
 		//Payment Use Case
 		CreatePaymentLinkUseCase,
-
+		BuyPackageUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -333,7 +344,7 @@ import { GetMyTournamentSerieUseCase } from "./usecases/tournament-serie/get-my-
 		InactivatePackageUseCase,
 		//Payment Use Case
 		CreatePaymentLinkUseCase,
-
+		BuyPackageUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,

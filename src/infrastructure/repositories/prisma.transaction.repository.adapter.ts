@@ -1,0 +1,38 @@
+import { Injectable } from "@nestjs/common";
+import { PrismaClient, Transaction, TransactionStatus, TransactionType } from "@prisma/client";
+import { create } from "domain";
+import { ICreateTransactionRequest } from "src/domain/interfaces/payment/transaction.interface";
+import { TransactionRepositoryPort } from "src/domain/repositories/transaction.repository.port";
+
+@Injectable()
+export class PrismaTransactionRepositoryAdapter implements TransactionRepositoryPort {
+	constructor(
+		private readonly prisma: PrismaClient
+	) {
+	}
+	async getTransaction(id: string): Promise<Transaction> {
+		return await this.prisma.transaction.findUnique({
+			where: {
+				id: id
+			}
+		});
+	}
+	async getTransactionOfOrder(orderId: number): Promise<Transaction[]> {
+		return await this.prisma.transaction.findMany({
+			where: {
+				orderId: {
+					equals: orderId
+				}
+			}
+		});
+	}
+	async createTransactionForBuyingPackage(createTransaction: ICreateTransactionRequest): Promise<any> {
+		return await this.prisma.transaction.create({
+			data: {
+				...createTransaction,
+				transactionType: TransactionType.BUYING_PAKCKAGE,
+				status: TransactionStatus.PENDING,
+			}
+		});
+	}	
+}

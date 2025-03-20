@@ -2,13 +2,14 @@ import { IPackageDefaultResponse } from "../package/package.interface";
 import { IUserDefaultResponse } from "../user/user.interface";
 
 export interface IOrderDetailResponse {
-	id: string;
+	id: number;
 	total: number;
 	user: IUserDefaultResponse;
 	package: IPackageDefaultResponse;
 }
 
-export interface ICreateOrderResponse {
+export interface ICreateOrderRequest {
 	packageId: string;
 	userId: string;
+	total: number;
 }

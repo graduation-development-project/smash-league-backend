@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CheckoutResponseDataType } from "@payos/node/lib/type";
-import { PaymentPayOSService } from "src/infrastructure/services/payment.service";
+import { PaymentPayOSService } from "src/application/services/payment.service";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IPayOSPaymentResponse } from "src/domain/interfaces/payment/payos.payment.interface";
 
@@ -11,17 +11,17 @@ export class CreatePaymentLinkUseCase {
 	) {
 	}
 
-	async execute(packageId: string) : Promise<ApiResponse<IPayOSPaymentResponse>> {
-		try {
-			const order = null;
-			return new ApiResponse<IPayOSPaymentResponse>(
-				200,
-				"Create payment link successful!",
-				await this.paymentPayOsService.createPaymentLink("a1asd")
-			);
-		} catch(ex) {
-			return ex;
-		}
-		
-	}
+	async execute() : Promise<ApiResponse<IPayOSPaymentResponse>> {
+		// try {
+		// 	const order = await this.paymentPayOsService.createPaymentLink();
+		// 	return new ApiResponse<IPayOSPaymentResponse>(
+		// 		200,
+		// 		"Create payment link successful!",
+		// 		order
+		// 	);
+		// } catch(ex) {
+		// 	return ex;
+		// }
+		return;
+	}	
 }

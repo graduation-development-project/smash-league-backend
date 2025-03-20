@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { Order } from "@prisma/client";
-import { IOrderDetailResponse } from "../interfaces/payment/order.payment.interface";
+import { ICreateOrderRequest, IOrderDetailResponse } from "../interfaces/payment/order.payment.interface";
 
 export interface OrderRepositoryPort {
-	createOrder(): Promise<any>;
-	getOrder(orderId: string): Promise<IOrderDetailResponse>;
+	createOrder(createOrderRequest: ICreateOrderRequest): Promise<IOrderDetailResponse>;
+	getOrder(orderId: number): Promise<IOrderDetailResponse>;
 	getOrdersOfUser(userId: string): Promise<IOrderDetailResponse[]>;
 }

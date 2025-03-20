@@ -417,22 +417,29 @@ model Package {
   orders                  Order[]  @relation(name: "FK_Order_Package")
 }
 
-model TransactionType {
-  id                  String        @id @default(uuid())
-  transactionTypeName String
-  transactions        Transaction[] @relation("FK_Transaction_TransactionTransactionType")
+// model TransactionType {
+//   id                  String        @id @default(uuid())
+//   transactionTypeName String
+//   transactions        Transaction[] @relation("FK_Transaction_TransactionTransactionType")
+// }
+
+enum TransactionType {
+  BUYING_PAKCKAGE
+  PAY_REGISTRATION_FEE
+  PAYBACK_REGISTRATION_FEE
 }
 
 model Transaction {
-  id                String            @id @default(uuid())
-  transactionDetail String
-  transactionTypeId String
-  transactionType   TransactionType   @relation(name: "FK_Transaction_TransactionTransactionType", fields: [transactionTypeId], references: [id], onDelete: Cascade)
-  orderId           String
-  order             Order             @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
-  value             Int
-  status            TransactionStatus
-  cancelledReason   String?
+  id                     String            @id @default(uuid())
+  transactionDetail      String
+  transactionPaymentLink String
+  transactionImage       String
+  transactionType        TransactionType
+  orderId                Int
+  order                  Order             @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
+  value                  Int
+  status                 TransactionStatus
+  cancelledReason        String?
 }
 
 enum TransactionStatus {
@@ -442,7 +449,7 @@ enum TransactionStatus {
 }
 
 model Order {
-  id           String        @id @default(uuid())
+  id           Int          @id @default(autoincrement())
   total        Int
   packageId    String
   userId       String
