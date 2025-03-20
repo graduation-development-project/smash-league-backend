@@ -6,10 +6,11 @@ import {
 	IsString,
 } from "class-validator";
 import { EventTypesEnum } from "../../../infrastructure/enums/event-types.enum";
+import {User} from "@prisma/client";
 
 export class RegisterTournamentDTO {
 	@IsOptional()
-	userId: string;
+	user: User;
 
 	@IsNotEmpty()
 	@IsString()

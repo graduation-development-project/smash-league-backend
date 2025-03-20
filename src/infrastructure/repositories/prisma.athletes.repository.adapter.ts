@@ -39,6 +39,7 @@ import {
 } from "../constant/pagination.constant";
 import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournament/tournament.interface";
 import { TournamentStatus } from "../enums/tournament/tournament-status.enum";
+import { calculateAgeUtil } from "../util/calculate-age.util";
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
@@ -66,7 +67,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		const {
 			tournamentId,
 			partnerEmail,
-			userId,
+			user,
 			tournamentEventId,
 			registrationRole,
 			fromTeamId,
@@ -91,7 +92,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			const tournamentOrganizer = await this.prisma.tournament.findUnique({
 				where: {
 					id: tournamentId,
-					organizerId: userId,
+					organizerId: user.id,
 				},
 			});
 
@@ -121,7 +122,10 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				await this.prisma.tournamentRegistration.findFirst({
 					where: {
 						tournamentId,
-						OR: [{ userId, tournamentEventId }, { partnerId: userId }],
+						OR: [
+							{ userId: user.id, tournamentEventId },
+							{ partnerId: user.id },
+						],
 					},
 				});
 
@@ -143,12 +147,22 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				}
 			}
 
-			const folderName = `tournament-registration/${new Date().toISOString().split("T")[0]}/${userId}`;
+			let userAge = calculateAgeUtil(user.dateOfBirth);
+
+			console.log("age: ", userAge);
+
+			if (userAge < event.fromAge || userAge > event.toAge) {
+				throw new BadRequestException(
+					"Your age is not suitable for this event",
+				);
+			}
+
+			const folderName = `tournament-registration/${tournamentId}/${tournamentEventId}/${user.id}`;
 
 			const imageUrls = await this.uploadService.uploadFiles(
 				files,
 				folderName,
-				userId,
+				user.id,
 			);
 
 			registrationDocumentCreator = [
@@ -224,7 +238,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			return this.prisma.tournamentRegistration.create({
 				data: {
 					tournamentId,
-					userId,
+					userId: user.id,
 					tournamentEventId,
 					partnerId: isDoubleEvent ? partnerId : null,
 					registrationDocumentCreator,
