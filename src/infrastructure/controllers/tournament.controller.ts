@@ -53,6 +53,8 @@ import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { create } from "domain";
 import { UploadBackgroundImageUseCase } from "src/application/usecases/tournament/upload-background-image.usecase";
 import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/get-tournament-detail.usecase";
+import { GetMyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-my-tournament-serie.usecase";
+import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -68,7 +70,8 @@ export class TournamentController {
 		private readonly checkExistTournamentURLUseCase: CheckExistTournamentURLUseCase,
 		private readonly createRandomURLUseCase: CreateRandomURLUseCase,
 		private readonly uploadBackgroundImageUseCase: UploadBackgroundImageUseCase,
-		private readonly getTournamentDetailUseCase: GetTournamentDetailUseCase
+		private readonly getTournamentDetailUseCase: GetTournamentDetailUseCase,
+		private readonly getMyTournamentSerieUseCase: GetMyTournamentSerieUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -108,9 +111,25 @@ export class TournamentController {
 		};
 	}
 
+	@Get("get-all-tournament-serie/:userId")
+	async getAllTournamentSerieByUser(@Param("userId") userId: string): Promise<ApiResponse<TournamentSerie>> {
+		return;
+	}
+
 	@Get("get-all-tournament-serie")
-	async getAllTournamentSerie(): Promise<ApiResponse<any>> {
+	@UseGuards(JwtAccessTokenGuard)
+	async getAllTournamentSerie(
+		@Req() request: IRequestUser,
+	): Promise<ApiResponse<ITournamentSerieResponse[]>> {
 		return await this.getAllTournamentSeriesUseCase.execute();
+	}
+
+	@Get("/get-my-tournament-series")
+	@UseGuards(JwtAccessTokenGuard)
+	async getMyTournamentSeries(
+		@Req() request: IRequestUser
+	) {
+		return await this.getMyTournamentSerieUseCase.execute(request);
 	}
 
 	@Get("/search")
@@ -173,9 +192,10 @@ export class TournamentController {
 	@Post("/create-tournament-serie")
 	@UseGuards(JwtAccessTokenGuard)
 	async createTournamentSerie(
+		@Req() request: IRequestUser,
 		@Body() tournamentSerie: CreateTournamentSerie,
 	): Promise<ApiResponse<TournamentSerie>> {
-		return await this.createTournamentSerieUseCase.execute(tournamentSerie);
+		return await this.createTournamentSerieUseCase.execute(request, tournamentSerie);
 	}
 
 	@Get("get-tournament-detail/:id")

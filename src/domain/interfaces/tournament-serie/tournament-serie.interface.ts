@@ -1,3 +1,5 @@
+import { IUserDefaultResponse } from "../user/user.interface";
+
 export interface IModifyTournamentSerie {
 	id: string;
 	tournamentSerieName: string;
@@ -8,10 +10,12 @@ export interface IModifyTournamentSerie {
 export interface ICreateTournamentSerieOnly {
 	tournamentSerieName: string;
 	serieBackgroundImageURL: string;
+	belongsToUserId: string;
 }
 
 export interface ITournamentSerieResponse {
 	id: string;
 	tournamentSerieName: string;
 	serieBackgroundImageURL: string;
+	belongsToUser: IUserDefaultResponse
 }

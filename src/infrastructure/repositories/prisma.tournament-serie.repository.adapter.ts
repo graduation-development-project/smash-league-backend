@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient, Tournament, TournamentSerie } from "@prisma/client";
 import { IPaginatedOutput, IPaginateOptions } from "src/domain/interfaces/interfaces";
-import { ICreateTournamentSerieOnly, IModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
+import { ICreateTournamentSerieOnly, IModifyTournamentSerie, ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 import { ICreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 
@@ -10,6 +10,28 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 	constructor(
 		private prisma: PrismaClient
 	) {
+	}
+	async getTournamentSerieByUserId(userId: string): Promise<ITournamentSerieResponse[]> {
+		return await this.prisma.tournamentSerie.findMany({
+			where: {
+				belongsToUserId: {
+					equals: userId
+				}
+			},
+			select: {
+				id: true,
+				tournamentSerieName: true,
+				serieBackgroundImageURL: true,
+				belongsToUser: {
+					select: {
+						id: true,
+						name: true,
+						email: true,
+						phoneNumber: true
+					}
+				}
+			}
+		})
 	}
 	async countPageTournament(options: IPaginateOptions): Promise<number> {
 		return await this.prisma.tournament.count() / options.perPage;
@@ -35,11 +57,14 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 			}
 		};
 	}
-	async getTournamentSerieByName(name: string): Promise<TournamentSerie> {
+	async getTournamentSerieByName(userId: string, name: string): Promise<TournamentSerie> {
 		return await this.prisma.tournamentSerie.findFirst({
 			where: {
 				tournamentSerieName: {
 					equals: name
+				},
+				belongsToUserId: {
+					equals: userId
 				}
 			}
 		});
@@ -61,8 +86,22 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 			}
 		});
 	}
-	async getTournamentSeries(): Promise<TournamentSerie[]> {
-		return await this.prisma.tournamentSerie.findMany();
+	async getTournamentSeries(): Promise<ITournamentSerieResponse[]> {
+		return await this.prisma.tournamentSerie.findMany({
+			select: {
+				id: true,
+				tournamentSerieName: true,
+				serieBackgroundImageURL: true,
+				belongsToUser: {
+					select: {
+						id: true,
+						name: true,
+						phoneNumber: true,
+						email: true
+					}
+				}
+			}
+		});
 	}
 	async getTournamentSerie(id: string): Promise<TournamentSerie | null> {
 		return await this.prisma.tournamentSerie.findFirst({
@@ -72,7 +111,7 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 		});
 	}
 
-	async getAllTournamentOfTournamentSerie(tournamentSerieId: string) : Promise<TournamentSerie | null> {
+	async getAllTournamentOfTournamentSerie(tournamentSerieId: string) : Promise<ITournamentSerieResponse | null> {
 		return await this.prisma.tournamentSerie.findUnique({
 			where: {
 				id: tournamentSerieId
@@ -82,6 +121,14 @@ export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRe
 				tournamentSerieName: true, 
 				serieBackgroundImageURL: true,
 				tournaments: {
+				},
+				belongsToUser: {
+					select: {
+						id: true,
+						name: true,
+						phoneNumber: true,
+						email: true
+					}
 				}
 			}
 		});

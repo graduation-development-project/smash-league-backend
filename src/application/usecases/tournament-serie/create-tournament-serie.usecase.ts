@@ -1,3 +1,4 @@
+import { IRequestUser } from './../../../domain/interfaces/interfaces';
 import { HttpStatus, Inject } from "@nestjs/common";
 import { TournamentSerie } from "@prisma/client";
 import { create } from "domain";
@@ -11,8 +12,8 @@ export class CreateTournamentSerieUseCase {
 	) {
 	}
 
-	async execute(createTournamentSerie: CreateTournamentSerie) : Promise<ApiResponse<TournamentSerie>> {
-		const isExist = await this.tournamentSerieRepository.getTournamentSerieByName(createTournamentSerie.tournamentSerieName) !== null;
+	async execute(request: IRequestUser, createTournamentSerie: CreateTournamentSerie) : Promise<ApiResponse<TournamentSerie>> {
+		const isExist = await this.tournamentSerieRepository.getTournamentSerieByName(request.user.id, createTournamentSerie.tournamentSerieName) !== null;
 		if (isExist) return new ApiResponse<null | undefined>(
 			HttpStatus.BAD_REQUEST,
 			"Tournament Serie exist!",
@@ -22,7 +23,8 @@ export class CreateTournamentSerieUseCase {
 			HttpStatus.CREATED,
 			"Create tournament successful!",
 			await this.tournamentSerieRepository.createTournamentSerieOnly({
-				...createTournamentSerie
+				...createTournamentSerie,
+				belongsToUserId: request.user.id
 			})
 		);
 	}
