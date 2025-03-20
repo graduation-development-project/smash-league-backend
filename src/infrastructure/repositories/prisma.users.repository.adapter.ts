@@ -127,7 +127,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	async createUser(createUserDTO: CreateUserDTO): Promise<User> {
 		try {
 			// console.log(createUserDTO)
-			const { avatarURL, currentRefreshToken, provider, gender, ...rest } =
+			const { avatarURL, currentRefreshToken, provider, ...rest } =
 				createUserDTO;
 
 			//* Set default data for user avatar, currentRefreshToken, CreditsRemain
@@ -139,8 +139,6 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				currentRefreshToken: currentRefreshToken ?? null,
 				creditsRemain: 0,
 				isVerified: provider === "google",
-				gender:
-					gender.toUpperCase() === Gender.MALE ? Gender.MALE : Gender.FEMALE,
 			};
 
 			return await this.prisma.$transaction(async (prisma): Promise<User> => {
