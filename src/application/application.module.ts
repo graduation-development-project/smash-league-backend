@@ -88,6 +88,8 @@ import { GetMyTournamentSerieUseCase } from "./usecases/tournament-serie/get-my-
 import { BuyPackageUseCase } from "./usecases/payment/buy-package.usecase";
 import { PrismaOrderRepositoryAdapter } from "src/infrastructure/repositories/prisma.order.repository.adapter";
 import { PrismaTransactionRepositoryAdapter } from "src/infrastructure/repositories/prisma.transaction.repository.adapter";
+import { AcceptPaymentUseCase } from "./usecases/payment/accept-payment.usecase";
+import { RejectPaymentUseCase } from "./usecases/payment/reject-payment.usecase";
 
 @Module({
 	imports: [
@@ -251,6 +253,8 @@ import { PrismaTransactionRepositoryAdapter } from "src/infrastructure/repositor
 		//Payment Use Case
 		CreatePaymentLinkUseCase,
 		BuyPackageUseCase,
+		AcceptPaymentUseCase,
+		RejectPaymentUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -345,6 +349,8 @@ import { PrismaTransactionRepositoryAdapter } from "src/infrastructure/repositor
 		//Payment Use Case
 		CreatePaymentLinkUseCase,
 		BuyPackageUseCase,
+		AcceptPaymentUseCase,
+		RejectPaymentUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,

@@ -16,6 +16,31 @@ import { IUserResponse } from "src/domain/interfaces/user/user.interface";
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
+	async addCreditForUser(userId: string, credit: number): Promise<any> {
+		const creditsRemain = await this.prisma.user.findUnique({
+			where: {
+				id: userId
+			},
+			select: {
+				creditsRemain: true
+			}
+		});
+		return await this.prisma.user.update({
+			where: {
+				id: userId
+			},
+			data: {
+				creditsRemain: creditsRemain.creditsRemain + credit
+			},
+			select: {
+				id: true,
+				name: true,
+				phoneNumber: true,
+				email: true,
+				creditsRemain: true
+			}
+		});
+	}
 
 	async searchUserByEmail(email: string): Promise<IUserResponse[]> {
 		return await this.prisma.user.findMany({

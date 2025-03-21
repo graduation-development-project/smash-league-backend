@@ -36,7 +36,7 @@ export class BuyPackageUseCase {
 		console.log(payment);
 		const transaction = await this.transactionRepository.createTransactionForBuyingPackage({
 			orderId: order.id,
-			transactionDetail: "Payment for " + order.package.packageName,
+			transactionDetail: "Payment for package " + order.package.packageName,
 			transactionImage: payment.paymentImagePaymentLinkResponse,
 			transactionPaymentLink: payment.checkoutDataResponse.checkoutUrl,
 			value: order.total

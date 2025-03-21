@@ -10,6 +10,26 @@ export class PrismaTransactionRepositoryAdapter implements TransactionRepository
 		private readonly prisma: PrismaClient
 	) {
 	}
+	async acceptTransaction(transactionId: string): Promise<Transaction> {
+		return await this.prisma.transaction.update({
+			where: {
+				id: transactionId
+			},
+			data: {
+				status: TransactionStatus.SUCCESSFUL
+			}
+		});
+	}
+	async rejectTransaction(transactionId: string): Promise<Transaction> {
+		return await this.prisma.transaction.update({
+			where: {
+				id: transactionId
+			},
+			data: {
+				status: TransactionStatus.FAILED
+			}
+		});
+	}
 	async getTransaction(id: string): Promise<Transaction> {
 		return await this.prisma.transaction.findUnique({
 			where: {
