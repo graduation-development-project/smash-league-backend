@@ -27,4 +27,5 @@ export interface UsersRepositoryPort {
 	): Promise<TUserWithRole>;
 
 	searchUserByEmail(email: string) : Promise<IUserResponse[]>;
+	addCreditForUser(userId: string, credit: number): Promise<any>;
 }

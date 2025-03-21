@@ -10,12 +10,17 @@ import { Roles } from "../decorators/roles.decorator";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { RoleMap } from "../enums/role.enum";
 import { IRequestUser } from "src/domain/interfaces/interfaces";
+import { AcceptPaymentUseCase } from "src/application/usecases/payment/accept-payment.usecase";
+import { Transaction } from "@prisma/client";
+import { RejectPaymentUseCase } from "src/application/usecases/payment/reject-payment.usecase";
 
 @Controller("/payment")
 export class PaymentController {
 	constructor(
 		private createPaymentLinkUseCase: CreatePaymentLinkUseCase,
-		private readonly buyPackageUseCase: BuyPackageUseCase
+		private readonly buyPackageUseCase: BuyPackageUseCase,
+		private readonly acceptPaymentUseCase: AcceptPaymentUseCase,
+		private readonly rejectPaymentUseCase: RejectPaymentUseCase
 	) {}
 	
 	@Get("/buy-package/:packageId")
@@ -35,5 +40,25 @@ export class PaymentController {
 	@Get("/generate-qr-code")
 	async generateQrCode() : Promise<any> {
 		return await QRCode.toDataURL("00020101021238570010A000000727012700069704220113VQRQABSEF60540208QRIBFTTA5303704540420005802VN62230819Thanh toan don hang63048AE7");
+	}
+
+	@Get("/accept-payment/:transactionId")
+	@UseGuards(JwtAccessTokenGuard)
+	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
+	async acceptPayment(
+		@Req() user: IRequestUser,
+		@Param("transactionId") transactionId: string
+	): Promise<ApiResponse<Transaction>> {
+		return await this.acceptPaymentUseCase.execute(user, transactionId);
+	}
+
+	@Get("/reject-payment/:transactionId")
+	@UseGuards(JwtAccessTokenGuard)
+	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
+	async rejectPayment(
+		@Req() user: IRequestUser,
+		@Param("transactionId") transactionId: string
+	): Promise<ApiResponse<Transaction>> {
+		return await this.rejectPaymentUseCase.execute(user, transactionId);
 	}
 }
