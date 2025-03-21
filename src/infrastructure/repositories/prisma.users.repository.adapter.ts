@@ -4,7 +4,7 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from "@nestjs/common";
-import { PrismaClient, User } from "@prisma/client";
+import { Gender, PrismaClient, User } from "@prisma/client";
 import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
 import { CreateUserDTO } from "../../domain/dtos/users/create-user.dto";
 import { TUserWithRole } from "../types/users.type";
@@ -46,9 +46,9 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 		return await this.prisma.user.findMany({
 			where: {
 				email: {
-					contains: email
+					contains: email,
 				},
-				isVerified: true
+				isVerified: true,
 			},
 			select: {
 				id: true,
@@ -56,8 +56,8 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				name: true,
 				email: true,
 				phoneNumber: true,
-				isVerified: true
-			}
+				isVerified: true,
+			},
 		});
 	}
 

@@ -68,7 +68,7 @@ export class AthletesController {
 	): Promise<ApiResponse<TournamentRegistration>> {
 		return this.registerTournamentUseCase.execute({
 			...registerTournamentDTO,
-			userId: user.id,
+			user,
 			files,
 		});
 	}

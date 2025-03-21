@@ -28,6 +28,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
 	): Promise<any> {
 		const { name, emails, photos } = profile;
 
+		console.log(profile)
+
 		const userGoogle = {
 			name: `${String(name.givenName)} ${String(name.familyName)}`,
 			avatarURL: String(photos[0].value),
@@ -35,6 +37,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
 			email: String(emails[0].value),
 			phoneNumber: "",
 			provider: "google",
+			gender: null,
+			dateOfBirth: null,
 		};
 
 		return await this.authService.validateGoogleAccount(userGoogle);
