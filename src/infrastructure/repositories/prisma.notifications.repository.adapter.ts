@@ -22,7 +22,6 @@ export class PrismaNotificationsRepositoryAdapter
 				where: {
 					userId: userID,
 				},
-
 				include: {
 					notification: {
 						include: {
@@ -30,14 +29,23 @@ export class PrismaNotificationsRepositoryAdapter
 							teamInvitation: {
 								select: {
 									status: true,
-									teamId: true,
+									team: {
+										select: {
+											id: true,
+											logo: true,
+										},
+									},
 								},
 							},
-
 							teamRequest: {
 								select: {
 									status: true,
-									teamId: true,
+									team: {
+										select: {
+											id: true,
+											logo: true,
+										},
+									},
 								},
 							},
 							tournamentRegistration: {
