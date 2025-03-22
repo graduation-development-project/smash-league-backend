@@ -5,7 +5,10 @@ import { PrismaService } from "../services/prisma.service";
 import { ReasonType, TournamentRegistrationStatus } from "@prisma/client";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
-import { ITournamentRegistrationResponse } from "../../domain/interfaces/tournament/tournament.interface";
+import {
+	ITournamentParticipantsResponse,
+	ITournamentRegistrationResponse
+} from "../../domain/interfaces/tournament/tournament.interface";
 
 @Injectable()
 export class PrismaOrganizersRepositoryAdapter
@@ -142,6 +145,64 @@ export class PrismaOrganizersRepositoryAdapter
 					}
 					delete registration.tournamentEvent;
 					acc[tournamentEventId].registrations.push(registration);
+
+					return acc;
+				},
+				{},
+			);
+
+			// Convert object to array
+			return Object.values(groupedData);
+		} catch (e) {
+			console.error("Get Tournament Registration Error", e);
+			throw e;
+		}
+	}
+
+	async getTournamentParticipantsByTournamentId(
+		tournamentId: string,
+		organizerId: string,
+	): Promise<ITournamentParticipantsResponse[]> {
+		try {
+			const isTournamentOrganizer =
+				await this.prismaService.tournament.findUnique({
+					where: {
+						id: tournamentId,
+						organizerId,
+					},
+				});
+
+			if (!isTournamentOrganizer) {
+				throw new BadRequestException(
+					"You are not organizer of this tournament",
+				);
+			}
+
+			const tournamentParticipants =
+				await this.prismaService.tournamentParticipants.findMany({
+					where: {
+						tournamentId,
+					},
+
+					include: {
+						tournamentEvent: true,
+					},
+				});
+
+			console.log(tournamentParticipants)
+
+			const groupedData = tournamentParticipants.reduce(
+				(acc, participant) => {
+					const tournamentEventId = participant.tournamentEventId;
+
+					if (!acc[tournamentEventId]) {
+						acc[tournamentEventId] = {
+							tournamentEvent: participant.tournamentEvent,
+							participants: [],
+						};
+					}
+					delete participant.tournamentEvent;
+					acc[tournamentEventId].participants.push(participant);
 
 					return acc;
 				},

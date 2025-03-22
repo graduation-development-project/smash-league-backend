@@ -1,6 +1,6 @@
 import {
 	BadmintonParticipantType,
-	Tournament, TournamentEvent,
+	Tournament, TournamentEvent, TournamentParticipants,
 	TournamentRegistration,
 } from "@prisma/client";
 import { Type } from "class-transformer";
@@ -126,6 +126,10 @@ export interface IParticipatedTournamentResponse {
 export interface ITournamentRegistrationResponse {
 	tournamentEvent: TournamentEvent;
 	registrations: TournamentRegistration[];
+}
+export interface ITournamentParticipantsResponse {
+	tournamentEvent: TournamentEvent;
+	participants: TournamentParticipants[];
 }
 
 

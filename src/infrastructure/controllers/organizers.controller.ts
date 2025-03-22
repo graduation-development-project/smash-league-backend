@@ -17,7 +17,11 @@ import { ResponseTournamentRegistrationUseCase } from "../../application/usecase
 import { ApiResponse } from "../../domain/dtos/api-response";
 import { ResponseTournamentRegistrationDTO } from "../../domain/dtos/organizers/response-tournament-registration.dto";
 import { GetTournamentRegistrationByTournamentIdUseCase } from "../../application/usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
-import {ITournamentRegistrationResponse} from "../../domain/interfaces/tournament/tournament.interface";
+import {
+	ITournamentParticipantsResponse,
+	ITournamentRegistrationResponse
+} from "../../domain/interfaces/tournament/tournament.interface";
+import { GetTournamentParticipantsByTournamentIdUseCase } from "../../application/usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -26,6 +30,7 @@ export class OrganizerController {
 	constructor(
 		private responseTournamentRegistrationUseCase: ResponseTournamentRegistrationUseCase,
 		private getTournamentRegistrationByTournamentIdUseCase: GetTournamentRegistrationByTournamentIdUseCase,
+		private getTournamentParticipantsByTournamentIdUseCase: GetTournamentParticipantsByTournamentIdUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentId")
@@ -34,6 +39,17 @@ export class OrganizerController {
 		@Req() { user }: IRequestUser,
 	): Promise<ApiResponse<ITournamentRegistrationResponse[]>> {
 		return this.getTournamentRegistrationByTournamentIdUseCase.execute(
+			tournamentId,
+			user.id,
+		);
+	}
+
+	@Get("/tournament-participants/:tournamentId")
+	getTournamentParticipantsTournamentId(
+		@Param("tournamentId") tournamentId: string,
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<ITournamentParticipantsResponse[]>> {
+		return this.getTournamentParticipantsByTournamentIdUseCase.execute(
 			tournamentId,
 			user.id,
 		);
