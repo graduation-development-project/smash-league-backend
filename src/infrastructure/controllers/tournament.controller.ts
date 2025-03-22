@@ -57,6 +57,8 @@ import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/
 import { GetMyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-my-tournament-serie.usecase";
 import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 import { UpdateTournamentUseCase } from 'src/application/usecases/tournament/update-tournament.usecase';
+import { ITournamentEventParticipants } from 'src/domain/interfaces/tournament/tournament-event/tournament-event.interface';
+import { GetParticipantsOfTournamentEventUseCase } from 'src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -74,7 +76,8 @@ export class TournamentController {
 		private readonly uploadBackgroundImageUseCase: UploadBackgroundImageUseCase,
 		private readonly getTournamentDetailUseCase: GetTournamentDetailUseCase,
 		private readonly getMyTournamentSerieUseCase: GetMyTournamentSerieUseCase,
-		private readonly updateTournamentUseCase: UpdateTournamentUseCase
+		private readonly updateTournamentUseCase: UpdateTournamentUseCase,
+		private readonly getParticipantsOfTournamentEvent: GetParticipantsOfTournamentEventUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -208,10 +211,14 @@ export class TournamentController {
 
 	@Put("update-tournament")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
-	@UseInterceptors(AnyFilesInterceptor())
 	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
 	async updateTournament(@Body() updateTournament: UpdateTournament) : Promise<ApiResponse<Tournament | null>> {
 		console.log(updateTournament.merchandiseImages);
 		return await this.updateTournamentUseCase.execute(updateTournament);
+	}
+
+	@Get("/get-participants-of-tournament-event/:tournamentEventId")
+	async getAllParticipantsOfTournamentEvent(@Param("tournamentEventId") tournamentEventId: string) : Promise<ApiResponse<ITournamentEventParticipants>> {
+		return this.getParticipantsOfTournamentEvent.execute(tournamentEventId);
 	}
 }
