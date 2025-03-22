@@ -50,7 +50,7 @@ import { GetAllTournamentSeriesUseCase } from "src/application/usecases/tourname
 import { CreateTournamentSerieUseCase } from "src/application/usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "src/application/usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "src/application/usecases/tournament/create-random-url.usecase";
-import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
+import { AnyFilesInterceptor, FileFieldsInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { create } from "domain";
 import { UploadBackgroundImageUseCase } from "src/application/usecases/tournament/upload-background-image.usecase";
 import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/get-tournament-detail.usecase";
@@ -59,6 +59,7 @@ import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie
 import { UpdateTournamentUseCase } from 'src/application/usecases/tournament/update-tournament.usecase';
 import { ITournamentEventParticipants } from 'src/domain/interfaces/tournament/tournament-event/tournament-event.interface';
 import { GetParticipantsOfTournamentEventUseCase } from 'src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase';
+import { UploadMerchandiseImagesUseCase } from 'src/application/usecases/tournament/upload-merchandise-images.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -77,7 +78,8 @@ export class TournamentController {
 		private readonly getTournamentDetailUseCase: GetTournamentDetailUseCase,
 		private readonly getMyTournamentSerieUseCase: GetMyTournamentSerieUseCase,
 		private readonly updateTournamentUseCase: UpdateTournamentUseCase,
-		private readonly getParticipantsOfTournamentEvent: GetParticipantsOfTournamentEventUseCase
+		private readonly getParticipantsOfTournamentEvent: GetParticipantsOfTournamentEventUseCase,
+		private readonly uploadMerchandiseImagesUseCase: UploadMerchandiseImagesUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -158,11 +160,29 @@ export class TournamentController {
 	}
 
 	@UseInterceptors(AnyFilesInterceptor())
-	@Post("upload-images")
+	@Post("upload-background-image")
 	async uploadBackgroundImage(
+		@UploadedFiles() backgroundImage: Express.Multer.File[],
+	): Promise<ApiResponse<string>> {
+		return await this.uploadBackgroundImageUseCase.execute(backgroundImage);
+	}
+
+	// @UseInterceptors(FileFieldsInterceptor([
+	// 	{
+	// 		name: 'files', maxCount: 2
+	// 	}
+	// ]))
+	@UseInterceptors(AnyFilesInterceptor())
+	@Post("/upload-merchandise-images")
+	async uploadMerchandiseImages(
 		@UploadedFiles() files: Express.Multer.File[],
 	): Promise<ApiResponse<string[]>> {
-		return await this.uploadBackgroundImageUseCase.execute(files);
+		if (files.length > 5) return new ApiResponse<null | undefined>(
+			HttpStatus.BAD_REQUEST,
+			"Files limit to 5.",
+			null
+		);
+		return await this.uploadMerchandiseImagesUseCase.execute(files);
 	}
 
 	@Post("/create-tournament")

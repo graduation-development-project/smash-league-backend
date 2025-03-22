@@ -95,6 +95,7 @@ import { UpdateTournamentUseCase } from "./usecases/tournament/update-tournament
 import {
 	GetTournamentParticipantsByTournamentIdUseCase
 } from "./usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
+import { UploadMerchandiseImagesUseCase } from './usecases/tournament/upload-merchandise-images.usecase';
 
 @Module({
 	imports: [
@@ -239,6 +240,7 @@ import {
 		CheckExistTournamentURLUseCase,
 		CreateRandomURLUseCase,
 		UploadBackgroundImageUseCase,
+		UploadMerchandiseImagesUseCase,
 		GetTournamentDetailUseCase,
 		UpdateTournamentUseCase,
 		GetParticipantsOfTournamentEventUseCase,
@@ -341,6 +343,7 @@ import {
 		CheckExistTournamentURLUseCase,
 		CreateRandomURLUseCase,
 		UploadBackgroundImageUseCase,
+		UploadMerchandiseImagesUseCase,
 		GetTournamentDetailUseCase,
 		UpdateTournamentUseCase,
 		GetParticipantsOfTournamentEventUseCase,
