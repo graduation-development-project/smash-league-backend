@@ -279,6 +279,44 @@ enum BadmintonParticipantType {
   MIXED_DOUBLE
 }
 
+model Stage {
+  id        String  @id @default(uuid())
+  stageName String
+  matches   Match[] @relation("FK_Match_Stage")
+}
+
+model Match {
+  id                        String      @id @default(uuid())
+  matchStatus               MatchStatus
+  leftCompetitor            String
+  rightCompetitor           String
+  leftCompetitorAttendance  Boolean
+  rightCompetitorAttendance Boolean
+  startedWhen               DateTime
+  forfeitCompetitor         String
+  matchWonByCompetitor      String
+  umpireId                  String
+  stageId                   String
+  stage                     Stage       @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  games                     Game[]      @relation(name: "FK_Game_Match")
+}
+
+model Game {
+  id      String        @id @default(uuid())
+  leftCompetitorPoint     Int
+  rightCompetitorPoint    Int
+  gameNumber              Int
+  matchId         String
+  match           Match       @relation(name: "FK_Game_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum MatchStatus {
+  NOT_STARTED
+  ON_GOING
+  INTERVAL
+  ENDED
+}
+
 model TournamentRegistration {
   id                          String                       @id @default(uuid())
   tournamentId                String
@@ -449,7 +487,7 @@ enum TransactionStatus {
 }
 
 model Order {
-  id           Int          @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   total        Int
   packageId    String
   userId       String
