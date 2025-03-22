@@ -9,18 +9,23 @@ export class UploadBackgroundImageUseCase {
 	) {
 	}
 
-	async execute(files: Express.Multer.File[]) : Promise<ApiResponse<string[]>> {
+	async execute(backgroundImage: Express.Multer.File[]) : Promise<ApiResponse<string>> {
+		if (backgroundImage.length > 1) return new ApiResponse<null | undefined>(
+			HttpStatus.BAD_REQUEST,
+			"Cannot upload more than 1 image.",
+			null
+		);
 		const folderName = `tournament-background/${new Date().toISOString().split("T")[0]}`;
 
 			const imageUrls = await this.uploadService.uploadFiles(
-				files,
+				backgroundImage,
 				folderName,
 				""
 			);
-		return new ApiResponse<string[]>(
+		return new ApiResponse<string>(
 			HttpStatus.OK,
 			"Upload background image of tournament successful!",
-			imageUrls.map(image => image.secure_url)
+			imageUrls[0].secure_url
 		);
 	}
 }
