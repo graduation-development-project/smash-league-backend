@@ -90,6 +90,9 @@ import { PrismaOrderRepositoryAdapter } from "src/infrastructure/repositories/pr
 import { PrismaTransactionRepositoryAdapter } from "src/infrastructure/repositories/prisma.transaction.repository.adapter";
 import { AcceptPaymentUseCase } from "./usecases/payment/accept-payment.usecase";
 import { RejectPaymentUseCase } from "./usecases/payment/reject-payment.usecase";
+import {
+	GetTournamentParticipantsByTournamentIdUseCase
+} from "./usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
 
 @Module({
 	imports: [
@@ -262,6 +265,7 @@ import { RejectPaymentUseCase } from "./usecases/payment/reject-payment.usecase"
 		//Organizer Use Case
 		ResponseTournamentRegistrationUseCase,
 		GetTournamentRegistrationByTournamentIdUseCase,
+		GetTournamentParticipantsByTournamentIdUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -358,6 +362,7 @@ import { RejectPaymentUseCase } from "./usecases/payment/reject-payment.usecase"
 		//Organizer Use Case
 		ResponseTournamentRegistrationUseCase,
 		GetTournamentRegistrationByTournamentIdUseCase,
+		GetTournamentParticipantsByTournamentIdUseCase,
 	],
 })
 export class ApplicationModule {}

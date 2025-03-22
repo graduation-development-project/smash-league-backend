@@ -1,6 +1,9 @@
 import { ResponseTournamentRegistrationDTO } from "../dtos/organizers/response-tournament-registration.dto";
 import { TournamentRegistration } from "@prisma/client";
-import { ITournamentRegistrationResponse } from "../interfaces/tournament/tournament.interface";
+import {
+	ITournamentParticipantsResponse,
+	ITournamentRegistrationResponse
+} from "../interfaces/tournament/tournament.interface";
 
 export interface OrganizersRepositoryPort {
 	responseTournamentRegistration(
@@ -11,4 +14,9 @@ export interface OrganizersRepositoryPort {
 		tournamentId: string,
 		organizerId: string,
 	): Promise<ITournamentRegistrationResponse[]>;
+
+	getTournamentParticipantsByTournamentId(
+		tournamentId: string,
+		organizerId: string,
+	): Promise<ITournamentParticipantsResponse[]>;
 }
