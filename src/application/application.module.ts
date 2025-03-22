@@ -1,3 +1,4 @@
+import { GetParticipantsOfTournamentEventUseCase } from './usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase';
 import { forwardRef, Module } from "@nestjs/common";
 import { ApplicationFunction } from "./usecases/application.function";
 import { PrismaClient } from "@prisma/client";
@@ -240,6 +241,7 @@ import {
 		UploadBackgroundImageUseCase,
 		GetTournamentDetailUseCase,
 		UpdateTournamentUseCase,
+		GetParticipantsOfTournamentEventUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -341,6 +343,7 @@ import {
 		UploadBackgroundImageUseCase,
 		GetTournamentDetailUseCase,
 		UpdateTournamentUseCase,
+		GetParticipantsOfTournamentEventUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

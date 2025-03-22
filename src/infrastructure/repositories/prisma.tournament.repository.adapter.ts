@@ -170,7 +170,7 @@ export class PrismaTournamentRepositorAdapter
 				}),
 			]);
 
-			const timeLeft = this.calculateTimeLeft(tournaments[0].registrationClosingDate);
+			// const timeLeft = this.calculateTimeLeft(tournaments[0].registrationClosingDate);
 
 			const tournamentsResponse = Object.values(tournaments).map((tournament) => ({
 				...tournament,
