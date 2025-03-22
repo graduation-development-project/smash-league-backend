@@ -1,3 +1,4 @@
+import { UpdateTournament } from './../../domain/interfaces/tournament/tournament.validation';
 import {
 	Body,
 	Controller,
@@ -55,6 +56,7 @@ import { UploadBackgroundImageUseCase } from "src/application/usecases/tournamen
 import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/get-tournament-detail.usecase";
 import { GetMyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-my-tournament-serie.usecase";
 import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
+import { UpdateTournamentUseCase } from 'src/application/usecases/tournament/update-tournament.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -71,7 +73,8 @@ export class TournamentController {
 		private readonly createRandomURLUseCase: CreateRandomURLUseCase,
 		private readonly uploadBackgroundImageUseCase: UploadBackgroundImageUseCase,
 		private readonly getTournamentDetailUseCase: GetTournamentDetailUseCase,
-		private readonly getMyTournamentSerieUseCase: GetMyTournamentSerieUseCase
+		private readonly getMyTournamentSerieUseCase: GetMyTournamentSerieUseCase,
+		private readonly updateTournamentUseCase: UpdateTournamentUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -201,5 +204,14 @@ export class TournamentController {
 	@Get("get-tournament-detail/:id")
 	async getTournamentDetail(@Param("id") id: string): Promise<ApiResponse<ITournamentDetailResponse>> {
 		return await this.getTournamentDetailUseCase.execute(id);
+	}
+
+	@Put("update-tournament")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@UseInterceptors(AnyFilesInterceptor())
+	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
+	async updateTournament(@Body() updateTournament: UpdateTournament) : Promise<ApiResponse<Tournament | null>> {
+		console.log(updateTournament.merchandiseImages);
+		return await this.updateTournamentUseCase.execute(updateTournament);
 	}
 }

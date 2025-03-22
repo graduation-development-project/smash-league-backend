@@ -1,4 +1,4 @@
-import { ITournamentDetailResponse, ITournamentResponse } from './../../domain/interfaces/tournament/tournament.interface';
+import { ITournamentDetailResponse, ITournamentResponse, IUpdateTournament } from './../../domain/interfaces/tournament/tournament.interface';
 import { PrismaClient, Tournament, TournamentStatus } from "@prisma/client";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { Injectable } from "@nestjs/common";
@@ -17,6 +17,16 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async updateTournament(updateTournament: IUpdateTournament): Promise<Tournament> {
+		return await this.prisma.tournament.update({
+			where: {
+				id: updateTournament.id
+			},
+			data: {
+				...updateTournament,
+			}
+		});
+	}
 	calculateTimeDetailLeft(date: Date): string {
 		const now = new Date();
 		const currentTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);

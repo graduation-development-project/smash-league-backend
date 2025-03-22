@@ -179,3 +179,97 @@ export class CreateTournament {
 	isLiveDraw: boolean;
 	hasLiveStream: boolean;
 }
+
+export class UpdateTournament {
+	@IsString()
+	@IsNotEmpty()
+	id: string; 
+
+	@IsString()
+	@IsNotEmpty()
+	name: string;
+
+	@IsString()
+	@Allow()
+	shortName: string;
+	@IsString()
+	description: string;
+	@IsString()
+	contactPhone: string;
+	@IsString()
+	contactEmail: string;
+
+	@IsString()
+	backgroundTournament: string;
+	@IsString()
+	mainColor: string;
+
+	@IsDateString()
+	@IsISO8601()
+	registrationOpeningDate: Date;
+
+	@IsDateString()
+	@IsISO8601()
+	registrationClosingDate: Date;
+
+	@IsDateString()
+	@IsISO8601()
+	drawDate: Date;
+
+	@IsDateString()
+	@IsISO8601()
+	startDate: Date;
+
+	@IsDateString()
+	@IsISO8601()
+	endDate: Date;
+
+	@IsNumber()
+	prizePool: number;
+
+	@IsString()
+	@IsNotEmpty()
+	location: string;
+
+	@IsNumber()
+	@Min(0)
+	@Max(100000000)
+	registrationFeePerPerson: number;
+
+	@IsNumber()
+	@Min(0)
+	@Max(100000000)
+	registrationFeePerPair: number;
+
+	@IsNumber()
+	@Min(1)
+	maxEventPerPerson: number;
+
+	@IsNumber()
+	protestFeePerTime: number | 0;
+
+	@IsDateString()
+	@IsISO8601()
+	checkInBeforeStart: Date;
+
+	@IsBoolean()
+	hasMerchandise: boolean;
+	@IsNumber()
+	numberOfMerchandise: number;
+	merchandiseImages: string[];
+	@IsNumber()
+	umpirePerMatch: number;
+
+	@IsArray()
+	@IsEnum(RequiredAttachment, {
+		message: "Required attachment must be one of the following: " + 
+		"IDENTIFICATION_CARD, " + "PORTRAIT_PHOTO",
+		each: true
+	})
+	requiredAttachment: RequiredAttachment[];
+	isRecruit: boolean;
+	isPrivate: boolean;
+	isRegister: boolean;
+	isLiveDraw: boolean;
+	hasLiveStream: boolean;
+}

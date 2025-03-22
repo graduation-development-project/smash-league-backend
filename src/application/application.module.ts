@@ -90,6 +90,7 @@ import { PrismaOrderRepositoryAdapter } from "src/infrastructure/repositories/pr
 import { PrismaTransactionRepositoryAdapter } from "src/infrastructure/repositories/prisma.transaction.repository.adapter";
 import { AcceptPaymentUseCase } from "./usecases/payment/accept-payment.usecase";
 import { RejectPaymentUseCase } from "./usecases/payment/reject-payment.usecase";
+import { UpdateTournamentUseCase } from "./usecases/tournament/update-tournament.usecase";
 import {
 	GetTournamentParticipantsByTournamentIdUseCase
 } from "./usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
@@ -238,6 +239,7 @@ import {
 		CreateRandomURLUseCase,
 		UploadBackgroundImageUseCase,
 		GetTournamentDetailUseCase,
+		UpdateTournamentUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -338,6 +340,7 @@ import {
 		CreateRandomURLUseCase,
 		UploadBackgroundImageUseCase,
 		GetTournamentDetailUseCase,
+		UpdateTournamentUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

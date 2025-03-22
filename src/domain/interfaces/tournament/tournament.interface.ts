@@ -214,3 +214,30 @@ export interface ITournamentDetailResponse {
 	tournamentSerie: ITournamentSerieResponse;
 	tournamentEvents: ITournamentEventDetail[];
 }
+
+
+export interface IUpdateTournament {
+	id: string;
+	name: string;
+	shortName: string;
+	contactPhone: string;
+	contactEmail: string;
+	mainColor: string;
+	backgroundTournament: string;
+	location: string;
+	registrationOpeningDate: Date;
+	registrationClosingDate: Date;
+	drawDate: Date;
+	startDate: Date;
+	endDate: Date;
+	checkInBeforeStart: Date;
+	umpirePerMatch: number;
+	registrationFeePerPerson: number;
+	registrationFeePerPair: number;
+	maxEventPerPerson: number;
+	protestFeePerTime: number;
+	hasMerchandise: boolean;
+	numberOfMerchandise: number;
+	merchandiseImages: string[];
+	requiredAttachment: string[];
+}
