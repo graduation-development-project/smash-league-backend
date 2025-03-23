@@ -438,7 +438,9 @@ export class PrismaTeamLeadersRepositoryAdapter
 
 			if (option) {
 				await this.prismaService.userTeam.delete({
-					where: { userId_teamId: { userId: user.id, teamId } },
+					where: {
+						userId_teamId: { userId: requestExisted.teamMemberId, teamId },
+					},
 				});
 			} else {
 				await this.prismaService.reason.create({
