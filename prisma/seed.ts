@@ -154,8 +154,9 @@ async function main() {
 	const roleNameMapping = {
 		"Team Leader": "Team_Leader",
 	};
+	const roleFromDBs = await prisma.role.findMany();
 	
-	roles.forEach((role) => {
+	roleFromDBs.forEach((role) => {
 		const mappedRoleName = roleNameMapping[role.roleName] || role.roleName;
 		if (RoleMap[mappedRoleName]) {
 			RoleMap[mappedRoleName].id = role.id;
@@ -470,11 +471,7 @@ async function main() {
 				gender: "FEMALE",
 			},
 		];
-	// accounts.map(async (account) => {
-	// 	await prisma.user.create({
-	// 		data: account
-	// 	});
-	// })	
+
 	await accounts.forEach(async (account) => {
 		const accountCreate = await prisma.user.create({
 			data: account
@@ -496,20 +493,32 @@ async function main() {
 		console.log(userRole);
 	});
 
-	//organizer.seed
-	await accounts.forEach(async (account) => {
-		const accountCreate = await prisma.user.create({
-			data: account
-		});
+	// //organizer.seed
+
+	// let organizers : Prisma.UserCreateInput[] = [
+	// 		{
+	// 			name: "Organizer",
+	// 			email: "organizer@gmail.com",
+	// 			password: await bcrypt.hash("12345678", 10),
+	// 			phoneNumber: "0123812837",
+	// 			isVerified: true,
+	// 			gender: "MALE"							
+	// 		},
+	// 	];
+
+	// await organizers.forEach(async (account) => {
+	// 	const accountCreate = await prisma.user.create({
+	// 		data: account
+	// 	});
 		
-		const userRole = await prisma.userRole.create({
-			data: {
-				userId: accountCreate.id,
-				roleId: RoleMap["Organizer"].id
-			}
-		});
-		console.log(userRole);
-	});
+	// 	const userRole = await prisma.userRole.create({
+	// 		data: {
+	// 			userId: accountCreate.id,
+	// 			roleId: RoleMap["Organizer"].id
+	// 		}
+	// 	});
+	// 	console.log(userRole);
+	// });
 }
 
 main()
