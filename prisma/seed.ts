@@ -60,8 +60,8 @@ async function main() {
 			credits: 3,
 			isAvailable: true,
 			isRecommended: false,
-			currentDiscountByAmount: 30000,
-			price: 100000,
+			currentDiscountByAmount: 100,
+			price: 2000,
 			advantages: [
 				"Have 3 times to host a tournament with full options.",
 				"Not availability to live stream."
@@ -73,8 +73,8 @@ async function main() {
 			credits: 10,
 			isAvailable: true,
 			isRecommended: true,
-			currentDiscountByAmount: 100000,
-			price: 300000,
+			currentDiscountByAmount: 200,
+			price: 4000,
 			advantages: [
 				"Have 10 times to host a tournament with full options.",
 				"Availability to live stream."
@@ -86,8 +86,8 @@ async function main() {
 			credits: 50,
 			isAvailable: true,
 			isRecommended: false,
-			currentDiscountByAmount: 300000,
-			price: 1000000,
+			currentDiscountByAmount: 300,
+			price: 5000,
 			advantages: [
 				"Have 50 times to host a tournament with full options.",
 				"Availability to live stream."
