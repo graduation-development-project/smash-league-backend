@@ -40,6 +40,7 @@ import {
 import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournament/tournament.interface";
 import { TournamentStatus } from "../enums/tournament/tournament-status.enum";
 import { calculateAgeUtil } from "../util/calculate-age.util";
+import { RoleMap } from "../enums/role.enum";
 
 @Injectable()
 export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
@@ -360,11 +361,15 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			console.log(registerNewRoleDTO);
 			const { files, role, userId } = registerNewRoleDTO;
 
+			const roleId: string = RoleMap[role].id;
+
+			console.log(roleId);
+
 			const roleExisted: UserRole = await this.prisma.userRole.findUnique({
 				where: {
 					userId_roleId: {
 						userId,
-						roleId: role,
+						roleId,
 					},
 				},
 			});
@@ -376,7 +381,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			const verificationExisted = await this.prisma.userVerification.findFirst({
 				where: {
 					userId,
-					role,
+					role: roleId,
 				},
 			});
 
@@ -401,7 +406,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			return this.prisma.userVerification.create({
 				data: {
 					userId,
-					role,
+					role: roleId,
 					IDCardFront: imageUrls[0].secure_url,
 					IDCardBack: imageUrls[1].secure_url,
 					cardPhoto: imageUrls[2].secure_url,

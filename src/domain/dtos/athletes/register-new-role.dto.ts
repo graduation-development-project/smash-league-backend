@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class RegisterNewRoleDTO {
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
 	userId: string;
 
@@ -9,6 +9,6 @@ export class RegisterNewRoleDTO {
 	@IsString()
 	role: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	files: Express.Multer.File[];
 }
