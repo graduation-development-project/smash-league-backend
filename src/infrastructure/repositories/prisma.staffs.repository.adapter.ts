@@ -8,12 +8,12 @@ import { PrismaService } from "../services/prisma.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
-import {ReasonType} from "@prisma/client";
+import { ReasonType, UserVerification } from "@prisma/client";
 
 @Injectable()
 export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 	constructor(
-		private prisma: PrismaService,
+		private prismaService: PrismaService,
 		@InjectQueue("notificationQueue") private notificationQueue: Queue,
 	) {}
 
@@ -22,14 +22,14 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 		option: boolean,
 		rejectionReason?: string,
 	): Promise<string> {
-		const verificationExisted = await this.prisma.userVerification.findUnique({
+		const verificationExisted = await this.prismaService.userVerification.findUnique({
 			where: { id: verificationID },
 		});
 		if (!verificationExisted) {
 			throw new NotFoundException("Verification record not found");
 		}
 
-		await this.prisma.$transaction(async (prisma) => {
+		await this.prismaService.$transaction(async (prisma) => {
 			await prisma.userVerification.update({
 				where: { id: verificationID },
 				data: { isVerified: option },
@@ -84,5 +84,14 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 		});
 
 		return option ? "Approve Successfully" : "Reject Successfully";
+	}
+
+	async getAllVerificationRequest(): Promise<UserVerification[]> {
+		try {
+			return this.prismaService.userVerification.findMany();
+		} catch (e) {
+			console.error("Get all Verification request failed", e);
+			throw e;
+		}
 	}
 }

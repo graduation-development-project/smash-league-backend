@@ -97,6 +97,7 @@ import {
 } from "./usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
 import { UploadMerchandiseImagesUseCase } from './usecases/tournament/upload-merchandise-images.usecase';
 import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.usecase';
+import {GetAllVerificationRequestUseCase} from "./usecases/staffs/get-all-verification-request.usecase";
 
 @Module({
 	imports: [
@@ -191,7 +192,6 @@ import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.u
 		GetUserWithRefreshTokenUseCase,
 		CreateUserUseCase,
 		EditUserProfileUseCase,
-		VerifyUserInformationUseCase,
 		SearchUserByEmailUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
@@ -274,6 +274,10 @@ import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.u
 		ResponseTournamentRegistrationUseCase,
 		GetTournamentRegistrationByTournamentIdUseCase,
 		GetTournamentParticipantsByTournamentIdUseCase,
+
+		//Staff Use Case
+		VerifyUserInformationUseCase,
+		GetAllVerificationRequestUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -287,7 +291,6 @@ import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.u
 		GetUserWithRefreshTokenUseCase,
 		CreateUserUseCase,
 		EditUserProfileUseCase,
-		VerifyUserInformationUseCase,
 		SearchUserByEmailUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
@@ -375,6 +378,10 @@ import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.u
 		ResponseTournamentRegistrationUseCase,
 		GetTournamentRegistrationByTournamentIdUseCase,
 		GetTournamentParticipantsByTournamentIdUseCase,
+
+		//Staff Use Case
+		VerifyUserInformationUseCase,
+		GetAllVerificationRequestUseCase,
 	],
 })
 export class ApplicationModule {}
