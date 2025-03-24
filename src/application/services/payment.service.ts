@@ -30,8 +30,8 @@ export class PaymentPayOSService {
 						price: order.total,
 					},
 				],
-				cancelUrl: "http://localhost:3000/cancel.html",
-				returnUrl: "http://localhost:3000/success.html",
+				cancelUrl: this.configService.get<string>("PAYOS_CANCEL_URL"),
+				returnUrl: this.configService.get<string>("PAYOS_RETURN_URL"),
 			};
 			try {
 				const data = await payOS.createPaymentLink(body);
