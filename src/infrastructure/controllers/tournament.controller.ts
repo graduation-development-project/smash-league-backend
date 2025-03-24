@@ -1,3 +1,4 @@
+import { GenerateBracketUseCase } from './../../application/usecases/tournament/generate-bracket.usecase';
 import { UpdateTournament } from './../../domain/interfaces/tournament/tournament.validation';
 import {
 	Body,
@@ -79,7 +80,8 @@ export class TournamentController {
 		private readonly getMyTournamentSerieUseCase: GetMyTournamentSerieUseCase,
 		private readonly updateTournamentUseCase: UpdateTournamentUseCase,
 		private readonly getParticipantsOfTournamentEvent: GetParticipantsOfTournamentEventUseCase,
-		private readonly uploadMerchandiseImagesUseCase: UploadMerchandiseImagesUseCase
+		private readonly uploadMerchandiseImagesUseCase: UploadMerchandiseImagesUseCase,
+		private readonly generateBracketUseCase: GenerateBracketUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -240,5 +242,11 @@ export class TournamentController {
 	@Get("/get-participants-of-tournament-event/:tournamentEventId")
 	async getAllParticipantsOfTournamentEvent(@Param("tournamentEventId") tournamentEventId: string) : Promise<ApiResponse<ITournamentEventParticipants>> {
 		return this.getParticipantsOfTournamentEvent.execute(tournamentEventId);
+	}
+
+	@Get("/generate-brackets/:tournamentEventId")
+	async generateBrackets(
+		@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<number>> {
+		return await this.generateBracketUseCase.execute(tournamentEventId);
 	}
 }
