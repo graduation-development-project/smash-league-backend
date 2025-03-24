@@ -8,7 +8,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: sh -c "npx prisma migrate deploy && npx prisma generate && npx prisma db seed && npm run build && npm run start:prod"
+    command: sh -c "npx prisma migrate deploy && npx prisma generate && npx prisma db seed && npm run account-seed && npm run organizer-seed && npm run build && npm run start:prod"
     # command: bash -c "npx prisma migrate resolve --applied 20250201055158_init_db && node dist/main.js"
     volumes:
       - backend_service:/usr/src/app

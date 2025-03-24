@@ -96,6 +96,7 @@ import {
 	GetTournamentParticipantsByTournamentIdUseCase
 } from "./usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
 import { UploadMerchandiseImagesUseCase } from './usecases/tournament/upload-merchandise-images.usecase';
+import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.usecase';
 
 @Module({
 	imports: [
@@ -244,6 +245,7 @@ import { UploadMerchandiseImagesUseCase } from './usecases/tournament/upload-mer
 		GetTournamentDetailUseCase,
 		UpdateTournamentUseCase,
 		GetParticipantsOfTournamentEventUseCase,
+		GenerateBracketUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -347,6 +349,7 @@ import { UploadMerchandiseImagesUseCase } from './usecases/tournament/upload-mer
 		GetTournamentDetailUseCase,
 		UpdateTournamentUseCase,
 		GetParticipantsOfTournamentEventUseCase,
+		GenerateBracketUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
