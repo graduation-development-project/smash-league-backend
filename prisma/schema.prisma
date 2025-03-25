@@ -304,6 +304,7 @@ model Match {
   umpire                    User?                   @relation(name: "FK_Match_Umpire", fields: [umpireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stageId                   String
   stage                     Stage                   @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  matchNumber               Int 
   nextMatchId               String?
   nextMatch                 Match?                  @relation(name: "FK_Match_NextMatch", fields: [nextMatchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   games                     Game[]                  @relation(name: "FK_Game_Match")
