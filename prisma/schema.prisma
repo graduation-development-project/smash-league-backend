@@ -313,7 +313,7 @@ model Game {
   rightCompetitorPoint  Int
   gameNumber            Int
   currentServerId       String
-  currentServer         TournamentParticipants    @relation(name: "FK_Game_CurrentServer", fields: [currentServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  currentServer         TournamentParticipants @relation(name: "FK_Game_CurrentServer", fields: [currentServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   matchId               String
   gameWonByCompetitorId String
   gameWonByCompetitor   TournamentParticipants @relation(name: "FK_Game_GameWonByCompetitor", fields: [gameWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)

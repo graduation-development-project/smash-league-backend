@@ -17,7 +17,6 @@ import {
 	UseInterceptors,
 } from "@nestjs/common";
 import {
-	BadmintonParticipantType,
 	Tournament,
 	TournamentSerie,
 } from "@prisma/client";
@@ -61,6 +60,8 @@ import { UpdateTournamentUseCase } from 'src/application/usecases/tournament/upd
 import { ITournamentEventParticipants } from 'src/domain/interfaces/tournament/tournament-event/tournament-event.interface';
 import { GetParticipantsOfTournamentEventUseCase } from 'src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase';
 import { UploadMerchandiseImagesUseCase } from 'src/application/usecases/tournament/upload-merchandise-images.usecase';
+import { BadmintonParticipantType } from 'src/domain/interfaces/tournament/badminton-participant-type.interface';
+import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -207,13 +208,13 @@ export class TournamentController {
 
 	@Get("/get-all-badminton-participant-type")
 	async getAllTournamentEvent(): Promise<
-		ApiResponse<BadmintonParticipantType[]>
+		ApiResponse<KeyValueType<string>[]>
 	> {
 		return await this.getAllBadmintonParticipantTypeUseCase.execute();
 	}
 
 	@Get("/get-all-format-types")
-	async getAllFormatTypes(): Promise<ApiResponse<FormatType[]>> {
+	async getAllFormatTypes(): Promise<ApiResponse<KeyValueType<string>[]>> {
 		return await this.getAllFormatTypeUseCase.execute();
 	}
 
