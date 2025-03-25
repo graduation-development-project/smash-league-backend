@@ -289,35 +289,38 @@ model Stage {
 model Match {
   id                        String                  @id @default(uuid())
   matchStatus               MatchStatus
-  leftCompetitorId          String
-  leftCompetitor            TournamentParticipants  @relation(name: "FK_Match_LeftCompetitor", fields: [leftCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  rightCompetitorId         String
-  rightCompetitor           TournamentParticipants  @relation(name: "FK_Match_RightCompetitor", fields: [rightCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  leftCompetitorId          String?
+  leftCompetitor            TournamentParticipants? @relation(name: "FK_Match_LeftCompetitor", fields: [leftCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rightCompetitorId         String?
+  rightCompetitor           TournamentParticipants? @relation(name: "FK_Match_RightCompetitor", fields: [rightCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   leftCompetitorAttendance  Boolean?                @default(false)
   rightCompetitorAttendance Boolean?                @default(false)
   startedWhen               DateTime?
   forfeitCompetitorId       String?
   forfeitCompetitor         TournamentParticipants? @relation(name: "FK_Match_TournamentParticipants", fields: [forfeitCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  matchWonByCompetitorId    String
-  matchWonByCompetitor      TournamentParticipants  @relation(name: "FK_Match_MatchWonByCompetitor", fields: [matchWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  umpireId                  String
-  umpire                    User                    @relation(name: "FK_Match_Umpire", fields: [umpireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  matchWonByCompetitorId    String?
+  matchWonByCompetitor      TournamentParticipants? @relation(name: "FK_Match_MatchWonByCompetitor", fields: [matchWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  umpireId                  String?
+  umpire                    User?                   @relation(name: "FK_Match_Umpire", fields: [umpireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stageId                   String
   stage                     Stage                   @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  nextMatchId               String
+  nextMatch                 Match                   @relation(name: "FK_Match_NextMatch", fields: [nextMatchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   games                     Game[]                  @relation(name: "FK_Game_Match")
+  matchesPrevious           Match[]                 @relation(name: "FK_Match_NextMatch")
 }
 
 model Game {
-  id                    String                 @id @default(uuid())
+  id                    String                  @id @default(uuid())
   leftCompetitorPoint   Int
   rightCompetitorPoint  Int
   gameNumber            Int
-  currentServerId       String
-  currentServer         TournamentParticipants @relation(name: "FK_Game_CurrentServer", fields: [currentServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  currentServerId       String?
+  currentServer         TournamentParticipants? @relation(name: "FK_Game_CurrentServer", fields: [currentServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   matchId               String
-  gameWonByCompetitorId String
-  gameWonByCompetitor   TournamentParticipants @relation(name: "FK_Game_GameWonByCompetitor", fields: [gameWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  match                 Match                  @relation(name: "FK_Game_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  gameWonByCompetitorId String?
+  gameWonByCompetitor   TournamentParticipants? @relation(name: "FK_Game_GameWonByCompetitor", fields: [gameWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  match                 Match                   @relation(name: "FK_Game_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Point {
