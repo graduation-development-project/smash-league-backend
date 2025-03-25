@@ -22,7 +22,7 @@ export class PaymentPayOSService {
 			const body = {
 				orderCode: order.id,
 				amount: order.total,
-				description: "Payment for package " + order.package.packageName,
+				description: "Payment " + order.package.packageName,
 				items: [
 					{
 						name: "Package " + order.package.packageName,
