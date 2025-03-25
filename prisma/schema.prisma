@@ -45,6 +45,7 @@ model User {
   teamInvitation                TeamInvitation[]         @relation("FK_User_TeamInvitation")
   Reason                        Reason[]                 @relation("FK_TeamMember_Reason")
   TeamRequest                   TeamRequest[]            @relation("FK_TeamMember_TeamRequest")
+  matchHosts                    Match[]                  @relation(name: "FK_Match_Umpire")
 }
 
 enum Gender {
@@ -286,28 +287,41 @@ model Stage {
 }
 
 model Match {
-  id                        String      @id @default(uuid())
+  id                        String                  @id @default(uuid())
   matchStatus               MatchStatus
-  leftCompetitor            String
-  rightCompetitor           String
-  leftCompetitorAttendance  Boolean
-  rightCompetitorAttendance Boolean
-  startedWhen               DateTime
-  forfeitCompetitor         String
-  matchWonByCompetitor      String
+  leftCompetitorId          String
+  leftCompetitor            TournamentParticipants  @relation(name: "FK_Match_LeftCompetitor", fields: [leftCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rightCompetitorId         String
+  rightCompetitor           TournamentParticipants  @relation(name: "FK_Match_RightCompetitor", fields: [rightCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  leftCompetitorAttendance  Boolean?                @default(false)
+  rightCompetitorAttendance Boolean?                @default(false)
+  startedWhen               DateTime?
+  forfeitCompetitorId       String?
+  forfeitCompetitor         TournamentParticipants? @relation(name: "FK_Match_TournamentParticipants", fields: [forfeitCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  matchWonByCompetitorId    String
+  matchWonByCompetitor      TournamentParticipants  @relation(name: "FK_Match_MatchWonByCompetitor", fields: [matchWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   umpireId                  String
+  umpire                    User                    @relation(name: "FK_Match_Umpire", fields: [umpireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stageId                   String
-  stage                     Stage       @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  games                     Game[]      @relation(name: "FK_Game_Match")
+  stage                     Stage                   @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  games                     Game[]                  @relation(name: "FK_Game_Match")
 }
 
 model Game {
-  id      String        @id @default(uuid())
-  leftCompetitorPoint     Int
-  rightCompetitorPoint    Int
-  gameNumber              Int
-  matchId         String
-  match           Match       @relation(name: "FK_Game_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                    String                 @id @default(uuid())
+  leftCompetitorPoint   Int
+  rightCompetitorPoint  Int
+  gameNumber            Int
+  currentServerId       String
+  currentServer         TournamentParticipants    @relation(name: "FK_Game_CurrentServer", fields: [currentServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  matchId               String
+  gameWonByCompetitorId String
+  gameWonByCompetitor   TournamentParticipants @relation(name: "FK_Game_GameWonByCompetitor", fields: [gameWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  match                 Match                  @relation(name: "FK_Game_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Point {
+  id String @id @default(uuid())
 }
 
 enum MatchStatus {
@@ -353,6 +367,12 @@ model TournamentParticipants {
   partner           User?           @relation("FK_TournamentParticipants_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
   tournamentEvent   TournamentEvent @relation(name: "FK_TournamentParticipants_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
   tournament        Tournament      @relation(name: "FK_TournamentParticipants_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  matches           Match[]         @relation(name: "FK_Match_TournamentParticipants")
+  matchesWon        Match[]         @relation(name: "FK_Match_MatchWonByCompetitor")
+  leftCompetitors   Match[]         @relation(name: "FK_Match_LeftCompetitor")
+  rightCompetitors  Match[]         @relation(name: "FK_Match_RightCompetitor")
+  gamesWon          Game[]          @relation(name: "FK_Game_GameWonByCompetitor")
+  serverInGame      Game[]          @relation(name: "FK_Game_CurrentServer")
 }
 
 enum TournamentRegistrationStatus {
