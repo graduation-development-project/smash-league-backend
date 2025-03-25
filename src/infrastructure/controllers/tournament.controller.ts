@@ -250,4 +250,11 @@ export class TournamentController {
 		@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<number>> {
 		return await this.generateBracketUseCase.execute(tournamentEventId);
 	}
+
+	@Get("/get-matches-of-stage/:stageId")
+	async getMatchesOfStage(
+		@Param("stageId") stageId: string
+	) : Promise<ApiResponse<any>> {
+		return;
+	}
 }

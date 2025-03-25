@@ -98,6 +98,8 @@ import {
 import { UploadMerchandiseImagesUseCase } from './usecases/tournament/upload-merchandise-images.usecase';
 import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.usecase';
 import {GetAllVerificationRequestUseCase} from "./usecases/staffs/get-all-verification-request.usecase";
+import { PrismaStageRepositoryAdapTer } from 'src/infrastructure/repositories/prisma.stage.repository.adapter';
+import { GetMatchesOfStageUseCase } from './usecases/tournament/tournament-event/get-matches-of-stage.usecase';
 
 @Module({
 	imports: [
@@ -176,6 +178,10 @@ import {GetAllVerificationRequestUseCase} from "./usecases/staffs/get-all-verifi
 			provide: "TransactionRepository",
 			useClass: PrismaTransactionRepositoryAdapter
 		},
+		{
+			provide: "StageRepository",
+			useClass: PrismaStageRepositoryAdapTer
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -246,6 +252,7 @@ import {GetAllVerificationRequestUseCase} from "./usecases/staffs/get-all-verifi
 		UpdateTournamentUseCase,
 		GetParticipantsOfTournamentEventUseCase,
 		GenerateBracketUseCase,
+		GetMatchesOfStageUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -353,6 +360,7 @@ import {GetAllVerificationRequestUseCase} from "./usecases/staffs/get-all-verifi
 		UpdateTournamentUseCase,
 		GetParticipantsOfTournamentEventUseCase,
 		GenerateBracketUseCase,
+		GetMatchesOfStageUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

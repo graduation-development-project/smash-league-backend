@@ -1,4 +1,4 @@
-import { Allow, IsArray, IsBoolean, IsDateString, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsString, Max, Min, ValidateNested } from "class-validator";
+import { Allow, IsArray, IsBoolean, IsDateString, IsEmail, IsEnum, IsISO8601, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
 import { FormatType, RequiredAttachment } from "./tournament.interface";
 import { Type } from "class-transformer";
 import { BadmintonParticipantType } from "@prisma/client";
@@ -93,10 +93,15 @@ export class CreateTournament {
 	@Allow()
 	shortName?: string;
 	@IsString()
+	@MaxLength(512, {
+		message: "Description maximum is under 512 characters."
+	})
 	description: string;
 	@IsString()
+	@IsPhoneNumber("VN")
 	contactPhone: string;
 	@IsString()
+	@IsEmail()
 	contactEmail: string;
 
 	@IsString()
@@ -125,6 +130,12 @@ export class CreateTournament {
 	endDate: Date;
 
 	@IsNumber()
+	@Min(0, {
+		message: "Prize pool must be positive value!"
+	})
+	@Max(1000000000, {
+		message: "Prize pool must be under 1.000.000.000VND!"
+	})
 	prizePool: number;
 
 	@IsString()
@@ -132,13 +143,21 @@ export class CreateTournament {
 	location: string;
 
 	@IsNumber()
-	@Min(0)
-	@Max(100000000)
+	@Min(0, {
+		message: "Registration fee per person must be positive value!"
+	})
+	@Max(1000000000, {
+		message: "Registration fee per person must be under 1.000.000.000VND!"
+	})
 	registrationFeePerPerson: number;
 
 	@IsNumber()
-	@Min(0)
-	@Max(100000000)
+	@Min(0, {
+		message: "Registration fee per pair must be positive value!"
+	})
+	@Max(1000000000, {
+		message: "Registration fee per pair must be under 1.000.000.000VND!"
+	})
 	registrationFeePerPair: number;
 
 	@IsNumber()
@@ -152,6 +171,9 @@ export class CreateTournament {
 	createTournamentEvent: CreateTournamentEvent[];
 
 	@IsNumber()
+	@Max(1000000000, {
+		message: "Protest fee per time must be under 1.000.000.000VND."
+	})
 	protestFeePerTime: number | 0;
 
 	@IsDateString()
@@ -161,9 +183,18 @@ export class CreateTournament {
 	@IsBoolean()
 	hasMerchandise: boolean;
 	@IsNumber()
+	@Min(0, {
+		message: "Number of merchandise must be positive value!"
+	})
+	@Max(1000000, {
+		message: "Number of merchandises must be under 1.000.000!"
+	})
 	numberOfMerchandise: number;
 	merchandiseImages: string[];
 	@IsNumber()
+	@Min(1, {
+		message: "Umpire per match must be more than 1."
+	})
 	umpirePerMatch: number;
 
 	@IsArray()
@@ -193,10 +224,15 @@ export class UpdateTournament {
 	@Allow()
 	shortName: string;
 	@IsString()
+	@MaxLength(512, {
+		message: "Description maximum is under 512 characters."
+	})
 	description: string;
 	@IsString()
+	@IsPhoneNumber("VN")
 	contactPhone: string;
 	@IsString()
+	@IsEmail()
 	contactEmail: string;
 
 	@IsString()
@@ -225,6 +261,9 @@ export class UpdateTournament {
 	endDate: Date;
 
 	@IsNumber()
+	@Max(1000000000, {
+		message: "Prize pool must be smaller than 1.000.000.000VND."
+	})
 	prizePool: number;
 
 	@IsString()
@@ -232,13 +271,21 @@ export class UpdateTournament {
 	location: string;
 
 	@IsNumber()
-	@Min(0)
-	@Max(100000000)
+	@Min(0, {
+		message: "Registration fee per person must be positive value!"
+	})
+	@Max(1000000000, {
+		message: "Registration fee per person must be under 1.000.000.000VND!"
+	})
 	registrationFeePerPerson: number;
 
 	@IsNumber()
-	@Min(0)
-	@Max(100000000)
+	@Min(0, {
+		message: "Registration fee per pair must be positive value!"
+	})
+	@Max(1000000000, {
+		message: "Registration fee per pair must be under 1.000.000.000VND!"
+	})
 	registrationFeePerPair: number;
 
 	@IsNumber()
@@ -246,6 +293,9 @@ export class UpdateTournament {
 	maxEventPerPerson: number;
 
 	@IsNumber()
+	@Max(1000000000, {
+		message: "Protest fee per time must be under 1.000.000.000VND."
+	})
 	protestFeePerTime: number | 0;
 
 	@IsDateString()
@@ -255,9 +305,18 @@ export class UpdateTournament {
 	@IsBoolean()
 	hasMerchandise: boolean;
 	@IsNumber()
+	@Min(0, {
+		message: "Number of merchandise must be positive value!"
+	})
+	@Max(1000000, {
+		message: "Number of merchandise must be under 1.000.000!"
+	})
 	numberOfMerchandise: number;
 	merchandiseImages: string[];
 	@IsNumber()
+	@Min(1, {
+		message: "Umpire per match must be more than 1."
+	})
 	umpirePerMatch: number;
 
 	@IsArray()
