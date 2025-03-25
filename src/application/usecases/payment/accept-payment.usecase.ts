@@ -32,7 +32,7 @@ export class AcceptPaymentUseCase {
 		const packageDetail = await this.packageRepository.getPackageDetail(order.package.id);
 		const creditRemains = await this.userRepository.addCreditForUser(user.user.id, packageDetail.credits);
 		const updateTransaction = await this.transactionRepository.acceptTransaction(transactionId);
-		console.log(updateTransaction);		
+		const updateOrder = await this.orderRepository.acceptOrder(transaction.orderId);
 		return new ApiResponse<Transaction>(
 			HttpStatus.OK,
 			"Accept payment successful!",

@@ -6,4 +6,6 @@ export interface OrderRepositoryPort {
 	createOrder(createOrderRequest: ICreateOrderRequest): Promise<IOrderDetailResponse>;
 	getOrder(orderId: number): Promise<IOrderDetailResponse>;
 	getOrdersOfUser(userId: string): Promise<IOrderDetailResponse[]>;
+	acceptOrder(orderId: number): Promise<Order>;
+	cancelOrder(orderId: number): Promise<Order>;
 }

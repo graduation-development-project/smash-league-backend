@@ -9,6 +9,26 @@ export class PrismaOrderRepositoryAdapter implements OrderRepositoryPort {
 		private readonly prisma: PrismaClient
 	) {
 	}
+	async cancelOrder(orderId: number): Promise<Order> {
+		return await this.prisma.order.update({
+			where: {
+				id: orderId
+			},
+			data: {
+				orderStatus: OrderStatus.FAILED
+			}
+		});
+	}
+	async acceptOrder(orderId: number): Promise<Order> {
+		return await this.prisma.order.update({
+			where: {
+				id: orderId
+			},
+			data: {
+				orderStatus: OrderStatus.PAID
+			}
+		});
+	}
 	async createOrder(createOrderRequest: ICreateOrderRequest): Promise<IOrderDetailResponse> {
 		return await this.prisma.order.create({
 			data: {
