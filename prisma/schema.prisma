@@ -263,6 +263,7 @@ model TournamentEvent {
   jointThirdPlacePrize   String[]                 @default([])
   tournamentId           String
   tournament             Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade)
+  stages                 Stage[]                  @relation(name: "FK_Stage_TournamentEvent")
   tournamentRegistration TournamentRegistration[] @relation(name: "FK_TournamentRegistration_TournamentEvent")
   TournamentParticipants TournamentParticipants[] @relation(name: "FK_TournamentParticipants_TournamentEvent")
 }
@@ -281,9 +282,11 @@ enum BadmintonParticipantType {
 }
 
 model Stage {
-  id        String  @id @default(uuid())
-  stageName String
-  matches   Match[] @relation("FK_Match_Stage")
+  id                String          @id @default(uuid())
+  stageName         String
+  tournamentEventId String
+  tournamentEvent   TournamentEvent @relation(name: "FK_Stage_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  matches           Match[]         @relation("FK_Match_Stage")
 }
 
 model Match {
@@ -304,7 +307,7 @@ model Match {
   umpire                    User?                   @relation(name: "FK_Match_Umpire", fields: [umpireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stageId                   String
   stage                     Stage                   @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  matchNumber               Int 
+  matchNumber               Int
   nextMatchId               String?
   nextMatch                 Match?                  @relation(name: "FK_Match_NextMatch", fields: [nextMatchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   games                     Game[]                  @relation(name: "FK_Game_Match")
