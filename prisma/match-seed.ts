@@ -5,8 +5,16 @@ import * as bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
+	const tournamentEvent = await prisma.tournamentEvent.findFirst({
+		where: {
+			typeOfFormat: "SINGLE_ELIMINATION"
+		}
+	});
+	console.log(tournamentEvent);
+
 	
 }
+
 main()
 	.then(async () => {
 		await prisma.$disconnect();

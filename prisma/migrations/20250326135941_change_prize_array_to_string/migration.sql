@@ -1,0 +1,11 @@
+-- AlterTable
+ALTER TABLE "TournamentEvent" ALTER COLUMN "championshipPrize" SET NOT NULL,
+ALTER COLUMN "championshipPrize" SET DATA TYPE TEXT,
+ALTER COLUMN "runnerUpPrize" SET NOT NULL,
+ALTER COLUMN "runnerUpPrize" SET DATA TYPE TEXT,
+ALTER COLUMN "thirdPlacePrize" SET NOT NULL,
+ALTER COLUMN "thirdPlacePrize" DROP DEFAULT,
+ALTER COLUMN "thirdPlacePrize" SET DATA TYPE TEXT,
+ALTER COLUMN "jointThirdPlacePrize" SET NOT NULL,
+ALTER COLUMN "jointThirdPlacePrize" DROP DEFAULT,
+ALTER COLUMN "jointThirdPlacePrize" SET DATA TYPE TEXT;

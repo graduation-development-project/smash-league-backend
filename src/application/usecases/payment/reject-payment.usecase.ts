@@ -28,10 +28,11 @@ export class RejectPaymentUseCase {
 			null
 		);
 		const updateTransaction = await this.transactionRepository.rejectTransaction(transactionId);
+		const updateOrder = await this.orderRepository.acceptOrder(transaction.orderId);
 		return new ApiResponse<null | undefined>(
 			HttpStatus.OK,
 			"Reject payment successful!",
 			null
-		);11
+		);
 	}
 }

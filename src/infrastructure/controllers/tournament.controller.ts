@@ -17,7 +17,6 @@ import {
 	UseInterceptors,
 } from "@nestjs/common";
 import {
-	BadmintonParticipantType,
 	Tournament,
 	TournamentSerie,
 } from "@prisma/client";
@@ -61,6 +60,9 @@ import { UpdateTournamentUseCase } from 'src/application/usecases/tournament/upd
 import { ITournamentEventParticipants } from 'src/domain/interfaces/tournament/tournament-event/tournament-event.interface';
 import { GetParticipantsOfTournamentEventUseCase } from 'src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase';
 import { UploadMerchandiseImagesUseCase } from 'src/application/usecases/tournament/upload-merchandise-images.usecase';
+import { BadmintonParticipantType } from 'src/domain/interfaces/tournament/badminton-participant-type.interface';
+import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
+import { GetMatchesOfStageUseCase } from 'src/application/usecases/tournament/tournament-event/get-matches-of-stage.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -81,7 +83,8 @@ export class TournamentController {
 		private readonly updateTournamentUseCase: UpdateTournamentUseCase,
 		private readonly getParticipantsOfTournamentEvent: GetParticipantsOfTournamentEventUseCase,
 		private readonly uploadMerchandiseImagesUseCase: UploadMerchandiseImagesUseCase,
-		private readonly generateBracketUseCase: GenerateBracketUseCase
+		private readonly generateBracketUseCase: GenerateBracketUseCase,
+		private readonly getMatchesOfStageUseCase: GetMatchesOfStageUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -207,13 +210,13 @@ export class TournamentController {
 
 	@Get("/get-all-badminton-participant-type")
 	async getAllTournamentEvent(): Promise<
-		ApiResponse<BadmintonParticipantType[]>
+		ApiResponse<KeyValueType<string>[]>
 	> {
 		return await this.getAllBadmintonParticipantTypeUseCase.execute();
 	}
 
 	@Get("/get-all-format-types")
-	async getAllFormatTypes(): Promise<ApiResponse<FormatType[]>> {
+	async getAllFormatTypes(): Promise<ApiResponse<KeyValueType<string>[]>> {
 		return await this.getAllFormatTypeUseCase.execute();
 	}
 
@@ -248,5 +251,12 @@ export class TournamentController {
 	async generateBrackets(
 		@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<number>> {
 		return await this.generateBracketUseCase.execute(tournamentEventId);
+	}
+
+	@Get("/get-matches-of-stage/:stageId")
+	async getMatchesOfStage(
+		@Param("stageId") stageId: string
+	) : Promise<ApiResponse<any>> {
+		return await this.getMatchesOfStageUseCase.execute();
 	}
 }
