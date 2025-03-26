@@ -95,13 +95,13 @@ export class CreateTournamentEvent {
 	@IsNotEmpty({
 		message: "Championship prize must exist!",
 	})
-	championshipPrize: string[];
+	championshipPrize: string;
 	@IsNotEmpty({
 		message: "Runner-up prize must exist!",
 	})
-	runnerUpPrize: string[];
-	thirdPlacePrize?: string[];
-	jointThirdPlacePrize?: string[];
+	runnerUpPrize: string;
+	thirdPlacePrize?: string;
+	jointThirdPlacePrize?: string;
 }
 
 export class CreateTournamentEventsDTO {

@@ -257,10 +257,10 @@ model TournamentEvent {
   ruleOfEventExtension   String?
   minimumAthlete         Int
   maximumAthlete         Int?
-  championshipPrize      String[]
-  runnerUpPrize          String[]
-  thirdPlacePrize        String[]                 @default([])
-  jointThirdPlacePrize   String[]                 @default([])
+  championshipPrize      String
+  runnerUpPrize          String
+  thirdPlacePrize        String?
+  jointThirdPlacePrize   String?
   tournamentId           String
   tournament             Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade)
   stages                 Stage[]                  @relation(name: "FK_Stage_TournamentEvent")
