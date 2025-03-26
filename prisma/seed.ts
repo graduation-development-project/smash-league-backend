@@ -56,7 +56,8 @@ async function main() {
 	let packages: Prisma.PackageCreateManyInput[] = [
 		{
 			packageName: "Starter",
-			packageDetail: "Package for starter with limited number of tournament to host!!",
+			packageDetail:
+				"Package for starter with limited number of tournament to host!!",
 			credits: 3,
 			isAvailable: true,
 			isRecommended: false,
@@ -64,12 +65,13 @@ async function main() {
 			price: 2000,
 			advantages: [
 				"Have 3 times to host a tournament with full options.",
-				"Not availability to live stream."
-			]
+				"Not availability to live stream.",
+			],
 		},
 		{
 			packageName: "Pro",
-			packageDetail: "Package for pro organizers with limited time of tournament hosting and unlimited functions.",
+			packageDetail:
+				"Package for pro organizers with limited time of tournament hosting and unlimited functions.",
 			credits: 10,
 			isAvailable: true,
 			isRecommended: true,
@@ -77,12 +79,13 @@ async function main() {
 			price: 4000,
 			advantages: [
 				"Have 10 times to host a tournament with full options.",
-				"Availability to live stream."
-			]
+				"Availability to live stream.",
+			],
 		},
 		{
 			packageName: "Advanced",
-			packageDetail: "Package for advanced organizers with amount number of tournaments to host!!",
+			packageDetail:
+				"Package for advanced organizers with amount number of tournaments to host!!",
 			credits: 50,
 			isAvailable: true,
 			isRecommended: false,
@@ -90,30 +93,29 @@ async function main() {
 			price: 5000,
 			advantages: [
 				"Have 50 times to host a tournament with full options.",
-				"Availability to live stream."
-			]
+				"Availability to live stream.",
+			],
 		},
 	];
 
-	let accountAdmin : Prisma.UserCreateInput[] = [
+	let accountAdmin: Prisma.UserCreateInput[] = [
 		{
 			name: "Admin",
 			email: "admin@gmail.com",
 			password: await bcrypt.hash("12345678", 10),
 			phoneNumber: "0123456789",
 			isVerified: true,
-			gender: "MALE"
-		}
+			gender: "MALE",
+		},
 	];
-	
+
 	// const user: User = await prisma.user.create({ data: userData });
 	// await prisma.userRole.create({
 	// 	data: { roleId: RoleMap.Athlete.id.toString(), userId: user.id },
 	// });
 
-	
-	const rolesCreate = await prisma.role.createManyAndReturn({ 
-		data: roles
+	const rolesCreate = await prisma.role.createManyAndReturn({
+		data: roles,
 	});
 	console.log(rolesCreate);
 	// await roles.map(async (role) => {
@@ -131,7 +133,7 @@ async function main() {
 	// 	const userRole = await prisma.userRole.create({
 	// 		data: {
 	// 			userId: user.id,
-	// 			roleId: 
+	// 			roleId:
 	// 		}
 	// 	})
 	// });
@@ -141,12 +143,13 @@ async function main() {
 	// 		data: type,
 	// 	});
 	// });
-	const notificationTypesCreate = await prisma.notificationType.createManyAndReturn({
-		data: notificationTypes
-	});
+	const notificationTypesCreate =
+		await prisma.notificationType.createManyAndReturn({
+			data: notificationTypes,
+		});
 
 	const packagesCreate = await prisma.package.createManyAndReturn({
-		data: packages
+		data: packages,
 	});
 
 	// packages.map(async (item) => {
@@ -171,12 +174,12 @@ async function main() {
 	const roleFromDBs = await prisma.role.findMany({
 		select: {
 			id: true,
-			roleName: true
-		}
+			roleName: true,
+		},
 	});
-	await new Promise(resolve => setTimeout(resolve, 5000));
+	await new Promise((resolve) => setTimeout(resolve, 5000));
 	console.log(roleFromDBs);
-	
+
 	await roleFromDBs.forEach((role) => {
 		const mappedRoleName = roleNameMapping[role.roleName] || role.roleName;
 		if (RoleMap[mappedRoleName]) {
@@ -186,303 +189,303 @@ async function main() {
 
 	console.log(RoleMap);
 
-	let accounts : Prisma.UserCreateManyInput[] = [
-			{
-				name: "Trần Ánh Minh",
-				email: "trananhminh@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "+84 9122792308",
-				isVerified: true,
-				gender: "FEMALE"
-			},
-			{
-				name: "Phạm Vĩnh Sơn",
-				email: "phamvinhson@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "018238102",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Hồ Dương Trung Nguyên",
-				email: "hoduongtrungnguyen@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "7051174663",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Trần Nguyệt Ánh",
-				email: "trannguyetanh@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "8886135433",
-				isVerified: true,
-				gender: "FEMALE"
-			},
-			{
-				name: "Nguyễn Ngọc Nghi",
-				email: "nguyenngocnghi@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "1972443218",
-				isVerified: true,
-				gender: "FEMALE"
-			},
-			{
-				name: "Nguyễn Hoàng Lam",
-				email: "nguyenhoanglam@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "2667227290",
-				isVerified: true,
-				gender: "FEMALE"
-			},
-			{
-				name: "Đỗ Đặng Phúc Anh",
-				email: "dodangphucanh@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "7376821154",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Vũ Tùng Linh",
-				email: "vutunglinh@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "3584872509",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Nguyễn Bùi Hải Anh",
-				email: "nguyenbuihaianh@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "8536919478",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Phạm Hữu Anh Tài",
-				email: "phamhuuanhtai@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0808269019",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Trần Đình Thiên Tân",
-				email: "trandinhthientan@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "2546213970",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Tống Trần Lê Huy",
-				email: "tongtranlehuy@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "4714673332",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Nguyễn Nhật Đức",
-				email: "nguyennhatduc@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0100916254",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Nguyễn Thái Trung Kiên",
-				email: "nguyenthaitrungkien@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "9674026073",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Nguyễn Trà My",
-				email: "nguyentramy@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "5732109235",
-				isVerified: true,
-				gender: "FEMALE"
-			},
-			{
-				name: "Nguyễn Khánh Linh",
-				email: "nguyenkhanhlinh@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "5157185361",
-				isVerified: true,
-				gender: "FEMALE"
-			},
-			{
-				name: "Võ Quốc Huy",
-				email: "voquochuy@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "8847881723",
-				isVerified: true,
-				gender: "MALE"
-			},
-			{
-				name: "Phạm Thùy Linh",
-				email: "phamthuylinh@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0981122334",
-				isVerified: false,
-				gender: "FEMALE",
-			},
-			{
-				name: "Đỗ Quốc Bảo",
-				email: "doquocbao@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0977654321",
-				isVerified: true,
-				gender: "MALE",
-			},
-			{
-				name: "Bùi Thị Cẩm Tiên",
-				email: "buicamptien@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0934567890",
-				isVerified: false,
-				gender: "FEMALE",
-			},
-			{
-				name: "Hoàng Tuấn Kiệt",
-				email: "hoangtuanbiet@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0965432109",
-				isVerified: true,
-				gender: "MALE",
-			},
-			{
-				name: "Võ Hồng Nhung",
-				email: "vohongnhung@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0943210987",
-				isVerified: false,
-				gender: "FEMALE",
-			},
-			{
-				name: "Trịnh Công Thành",
-				email: "trinhcongthanh@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0919988776",
-				isVerified: true,
-				gender: "MALE",
-			},
-			{
-				name: "Dương Thị Mỹ Hạnh",
-				email: "duongmyhanh@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0977123456",
-				isVerified: false,
-				gender: "FEMALE",
-			},
-			{
-				name: "Lý Văn Phúc",
-				email: "lyvanphuc@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0922233445",
-				isVerified: true,
-				gender: "MALE",
-			},
-			{
-				name: "Ngô Minh Châu",
-				email: "ngominhchau@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0933344556",
-				isVerified: false,
-				gender: "FEMALE",
-			},
-			{
-				name: "Đặng Tiến Dũng",
-				email: "dangtiendung@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0944455667",
-				isVerified: true,
-				gender: "MALE",
-			},
-			{
-				name: "Lâm Tấn Phát",
-				email: "lamtanphat@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0955566778",
-				isVerified: false,
-				gender: "MALE",
-			},
-			{
-				name: "Mai Thanh Hằng",
-				email: "maithanhhang@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0966677889",
-				isVerified: true,
-				gender: "FEMALE",
-			},
-			{
-				name: "Hồ Trọng Nhân",
-				email: "hotrongnhan@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0977788990",
-				isVerified: false,
-				gender: "MALE",
-			},
-			{
-				name: "Cao Thị Thu Hà",
-				email: "caothithuha@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0988899001",
-				isVerified: true,
-				gender: "FEMALE",
-			},
-			{
-				name: "Lương Nhật Quang",
-				email: "luongnhatquang@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0999900112",
-				isVerified: false,
-				gender: "MALE",
-			},
-			{
-				name: "Tống Gia Bảo",
-				email: "tonggiabao@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0910111213",
-				isVerified: true,
-				gender: "MALE",
-			},
-			{
-				name: "Vương Thanh Trúc",
-				email: "vuongthanhtruc@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0921222324",
-				isVerified: false,
-				gender: "FEMALE",
-			},
-		];
+	let accounts: Prisma.UserCreateManyInput[] = [
+		{
+			name: "Trần Ánh Minh",
+			email: "trananhminh@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 9122792308",
+			isVerified: true,
+			gender: "FEMALE",
+		},
+		{
+			name: "Phạm Vĩnh Sơn",
+			email: "phamvinhson@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "018238102",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Hồ Dương Trung Nguyên",
+			email: "hoduongtrungnguyen@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "7051174663",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Trần Nguyệt Ánh",
+			email: "trannguyetanh@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "8886135433",
+			isVerified: true,
+			gender: "FEMALE",
+		},
+		{
+			name: "Nguyễn Ngọc Nghi",
+			email: "nguyenngocnghi@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "1972443218",
+			isVerified: true,
+			gender: "FEMALE",
+		},
+		{
+			name: "Nguyễn Hoàng Lam",
+			email: "nguyenhoanglam@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "2667227290",
+			isVerified: true,
+			gender: "FEMALE",
+		},
+		{
+			name: "Đỗ Đặng Phúc Anh",
+			email: "dodangphucanh@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "7376821154",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Vũ Tùng Linh",
+			email: "vutunglinh@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "3584872509",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Nguyễn Bùi Hải Anh",
+			email: "nguyenbuihaianh@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "8536919478",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Phạm Hữu Anh Tài",
+			email: "phamhuuanhtai@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0808269019",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Trần Đình Thiên Tân",
+			email: "trandinhthientan@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "2546213970",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Tống Trần Lê Huy",
+			email: "tongtranlehuy@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "4714673332",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Nguyễn Nhật Đức",
+			email: "nguyennhatduc@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0100916254",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Nguyễn Thái Trung Kiên",
+			email: "nguyenthaitrungkien@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "9674026073",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Nguyễn Trà My",
+			email: "nguyentramy@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "5732109235",
+			isVerified: true,
+			gender: "FEMALE",
+		},
+		{
+			name: "Nguyễn Khánh Linh",
+			email: "nguyenkhanhlinh@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "5157185361",
+			isVerified: true,
+			gender: "FEMALE",
+		},
+		{
+			name: "Võ Quốc Huy",
+			email: "voquochuy@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "8847881723",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Phạm Thùy Linh",
+			email: "phamthuylinh@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0981122334",
+			isVerified: false,
+			gender: "FEMALE",
+		},
+		{
+			name: "Đỗ Quốc Bảo",
+			email: "doquocbao@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0977654321",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Bùi Thị Cẩm Tiên",
+			email: "buicamptien@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0934567890",
+			isVerified: false,
+			gender: "FEMALE",
+		},
+		{
+			name: "Hoàng Tuấn Kiệt",
+			email: "hoangtuanbiet@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0965432109",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Võ Hồng Nhung",
+			email: "vohongnhung@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0943210987",
+			isVerified: false,
+			gender: "FEMALE",
+		},
+		{
+			name: "Trịnh Công Thành",
+			email: "trinhcongthanh@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0919988776",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Dương Thị Mỹ Hạnh",
+			email: "duongmyhanh@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0977123456",
+			isVerified: false,
+			gender: "FEMALE",
+		},
+		{
+			name: "Lý Văn Phúc",
+			email: "lyvanphuc@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0922233445",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Ngô Minh Châu",
+			email: "ngominhchau@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0933344556",
+			isVerified: false,
+			gender: "FEMALE",
+		},
+		{
+			name: "Đặng Tiến Dũng",
+			email: "dangtiendung@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0944455667",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Lâm Tấn Phát",
+			email: "lamtanphat@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0955566778",
+			isVerified: false,
+			gender: "MALE",
+		},
+		{
+			name: "Mai Thanh Hằng",
+			email: "maithanhhang@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0966677889",
+			isVerified: true,
+			gender: "FEMALE",
+		},
+		{
+			name: "Hồ Trọng Nhân",
+			email: "hotrongnhan@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0977788990",
+			isVerified: false,
+			gender: "MALE",
+		},
+		{
+			name: "Cao Thị Thu Hà",
+			email: "caothithuha@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0988899001",
+			isVerified: true,
+			gender: "FEMALE",
+		},
+		{
+			name: "Lương Nhật Quang",
+			email: "luongnhatquang@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0999900112",
+			isVerified: false,
+			gender: "MALE",
+		},
+		{
+			name: "Tống Gia Bảo",
+			email: "tonggiabao@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0910111213",
+			isVerified: true,
+			gender: "MALE",
+		},
+		{
+			name: "Vương Thanh Trúc",
+			email: "vuongthanhtruc@example.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0921222324",
+			isVerified: false,
+			gender: "FEMALE",
+		},
+	];
 
 	// const accountCreates = accounts.forEach(async (account) => {
-		
+
 	// });
 	var accountCreates = [];
 	for (const account of accounts) {
 		const accountCreate = await prisma.user.create({
-			data: account
+			data: account,
 		});
 		accountCreates.push(accountCreate);
 		if (accountCreate.name === "Admin") {
 			const userRole = await prisma.userRole.create({
 				data: {
 					userId: accountCreate.id,
-					roleId: RoleMap["Admin"].id
-				}
+					roleId: RoleMap["Admin"].id,
+				},
 			});
 		} else {
 			const userRole = await prisma.userRole.create({
 				data: {
 					userId: accountCreate.id,
-					roleId: RoleMap["Athlete"].id
-				}
+					roleId: RoleMap["Athlete"].id,
+				},
 			});
 			console.log(userRole);
 		}
@@ -498,7 +501,7 @@ async function main() {
 	// 			password: await bcrypt.hash("12345678", 10),
 	// 			phoneNumber: "0123812837",
 	// 			isVerified: true,
-	// 			gender: "MALE"							
+	// 			gender: "MALE"
 	// 		},
 	// 	];
 
@@ -506,7 +509,7 @@ async function main() {
 	// 	const accountCreate = await prisma.user.create({
 	// 		data: account
 	// 	});
-		
+
 	// 	const userRole = await prisma.userRole.create({
 	// 		data: {
 	// 			userId: accountCreate.id,
@@ -517,8 +520,8 @@ async function main() {
 	// });
 	const user = await prisma.user.findUnique({
 		where: {
-			email: "hoduongtrungnguyen@gmail.com"
-		}
+			email: "hoduongtrungnguyen@gmail.com",
+		},
 	});
 	console.log(user);
 
@@ -526,23 +529,24 @@ async function main() {
 		{
 			tournamentSerieName: "2025",
 			serieBackgroundImageURL: "",
-			belongsToUserId: user.id
+			belongsToUserId: user.id,
 		},
 		{
 			tournamentSerieName: "2024",
 			serieBackgroundImageURL: "",
-			belongsToUserId: user.id
-		}
+			belongsToUserId: user.id,
+		},
 	];
 
-	const tournamentSeriesCreate = await prisma.tournamentSerie.createManyAndReturn({
-		data: tournamentSeries
-	});
+	const tournamentSeriesCreate =
+		await prisma.tournamentSerie.createManyAndReturn({
+			data: tournamentSeries,
+		});
 
 	const tournamentSerie = await prisma.tournamentSerie.findFirst({
 		where: {
-			tournamentSerieName: "2025"
-		}
+			tournamentSerieName: "2025",
+		},
 	});
 
 	const tournaments: Prisma.TournamentCreateManyInput[] = [
@@ -574,7 +578,7 @@ async function main() {
 			numberOfMerchandise: 500,
 			merchandiseImages: [
 				"https://example.com/images/merch_vno_1.jpg",
-				"https://example.com/images/merch_vno_2.jpg"
+				"https://example.com/images/merch_vno_2.jpg",
 			],
 			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
 			isRecruit: false,
@@ -612,7 +616,7 @@ async function main() {
 			numberOfMerchandise: 300,
 			merchandiseImages: [
 				"https://example.com/images/merch_abc_1.jpg",
-				"https://example.com/images/merch_abc_2.jpg"
+				"https://example.com/images/merch_abc_2.jpg",
 			],
 			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
 			isRecruit: true,
@@ -626,7 +630,8 @@ async function main() {
 			id: "european-badminton-masters-2025",
 			name: "European Badminton Masters 2025",
 			shortName: "EBM 2025",
-			description: "Giải cầu lông đẳng cấp dành cho các tay vợt chuyên nghiệp châu Âu",
+			description:
+				"Giải cầu lông đẳng cấp dành cho các tay vợt chuyên nghiệp châu Âu",
 			organizerId: user.id,
 			contactPhone: "+44 123456789",
 			contactEmail: "support@europeanmasters.com",
@@ -650,7 +655,7 @@ async function main() {
 			numberOfMerchandise: 400,
 			merchandiseImages: [
 				"https://example.com/images/merch_ebm_1.jpg",
-				"https://example.com/images/merch_ebm_2.jpg"
+				"https://example.com/images/merch_ebm_2.jpg",
 			],
 			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
 			isRecruit: false,
@@ -688,7 +693,7 @@ async function main() {
 			numberOfMerchandise: 350,
 			merchandiseImages: [
 				"https://example.com/images/merch_jpo_1.jpg",
-				"https://example.com/images/merch_jpo_2.jpg"
+				"https://example.com/images/merch_jpo_2.jpg",
 			],
 			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
 			isRecruit: false,
@@ -697,17 +702,17 @@ async function main() {
 			isLiveDraw: true,
 			hasLiveStream: true,
 			tournamentSerieId: tournamentSerie.id,
-		}
+		},
 	];
 
 	const tournamentCreates = await prisma.tournament.createManyAndReturn({
-		data: tournaments
+		data: tournaments,
 	});
 
 	const tournament = await prisma.tournament.findFirst({
 		where: {
-			status: "CREATED"
-		}
+			status: "CREATED",
+		},
 	});
 
 	const tournamentEvents: Prisma.TournamentEventCreateManyInput[] = [
@@ -722,10 +727,10 @@ async function main() {
 			ruleOfEventExtension: "Players must reach 2 winning sets to advance.",
 			minimumAthlete: 8,
 			maximumAthlete: 64,
-			championshipPrize: ["Gold Medal", "10,000 USD"],
-			runnerUpPrize: ["Silver Medal", "5,000 USD"],
-			thirdPlacePrize: ["Bronze Medal", "2,000 USD"],
-			jointThirdPlacePrize: ["Consolation Prize", "1,000 USD"],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -736,13 +741,14 @@ async function main() {
 			lastPoint: 31,
 			numberOfGames: 3,
 			typeOfFormat: "ROUND_ROBIN",
-			ruleOfEventExtension: "Top 2 players from each group advance to knockout stage.",
+			ruleOfEventExtension:
+				"Top 2 players from each group advance to knockout stage.",
 			minimumAthlete: 6,
 			maximumAthlete: 32,
-			championshipPrize: ["Gold Medal", "8,000 USD"],
-			runnerUpPrize: ["Silver Medal", "4,000 USD"],
-			thirdPlacePrize: ["Bronze Medal", "2,000 USD"],
-			jointThirdPlacePrize: [],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -756,10 +762,10 @@ async function main() {
 			ruleOfEventExtension: "Matches are best of 3 sets.",
 			minimumAthlete: 4,
 			maximumAthlete: 32,
-			championshipPrize: ["Gold Medal", "15,000 USD"],
-			runnerUpPrize: ["Silver Medal", "7,500 USD"],
-			thirdPlacePrize: ["Bronze Medal", "3,000 USD"],
-			jointThirdPlacePrize: [],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -770,13 +776,14 @@ async function main() {
 			lastPoint: 31,
 			numberOfGames: 3,
 			typeOfFormat: "ROUND_ROBIN",
-			ruleOfEventExtension: "Each team must play all group matches before knockout stage.",
+			ruleOfEventExtension:
+				"Each team must play all group matches before knockout stage.",
 			minimumAthlete: 4,
 			maximumAthlete: 16,
-			championshipPrize: ["Gold Medal", "12,000 USD"],
-			runnerUpPrize: ["Silver Medal", "6,000 USD"],
-			thirdPlacePrize: ["Bronze Medal", "3,000 USD"],
-			jointThirdPlacePrize: ["Consolation Prize", "1,500 USD"],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -787,13 +794,14 @@ async function main() {
 			lastPoint: 31,
 			numberOfGames: 3,
 			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension: "Mixed teams must consist of 1 male and 1 female player.",
+			ruleOfEventExtension:
+				"Mixed teams must consist of 1 male and 1 female player.",
 			minimumAthlete: 8,
 			maximumAthlete: 32,
-			championshipPrize: ["Gold Medal", "9,000 USD"],
-			runnerUpPrize: ["Silver Medal", "4,500 USD"],
-			thirdPlacePrize: ["Bronze Medal", "2,000 USD"],
-			jointThirdPlacePrize: [],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -804,13 +812,14 @@ async function main() {
 			lastPoint: 31,
 			numberOfGames: 3,
 			typeOfFormat: "ROUND_ROBIN",
-			ruleOfEventExtension: "Youth players are allowed to compete in 2 events max.",
+			ruleOfEventExtension:
+				"Youth players are allowed to compete in 2 events max.",
 			minimumAthlete: 6,
 			maximumAthlete: 20,
-			championshipPrize: ["Trophy", "1,500 USD"],
-			runnerUpPrize: ["Medal", "1,000 USD"],
-			thirdPlacePrize: ["Medal", "500 USD"],
-			jointThirdPlacePrize: [],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -824,10 +833,10 @@ async function main() {
 			ruleOfEventExtension: "Junior category follows simplified rules.",
 			minimumAthlete: 8,
 			maximumAthlete: 24,
-			championshipPrize: ["Trophy", "2,000 USD"],
-			runnerUpPrize: ["Medal", "1,000 USD"],
-			thirdPlacePrize: ["Medal", "500 USD"],
-			jointThirdPlacePrize: [],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -841,10 +850,10 @@ async function main() {
 			ruleOfEventExtension: "Top 2 pairs in each group qualify for playoffs.",
 			minimumAthlete: 4,
 			maximumAthlete: 16,
-			championshipPrize: ["Gold Medal", "10,000 USD"],
-			runnerUpPrize: ["Silver Medal", "5,000 USD"],
-			thirdPlacePrize: ["Bronze Medal", "2,500 USD"],
-			jointThirdPlacePrize: [],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -858,10 +867,10 @@ async function main() {
 			ruleOfEventExtension: "Only national-ranked players are eligible.",
 			minimumAthlete: 6,
 			maximumAthlete: 16,
-			championshipPrize: ["Gold Medal", "12,000 USD"],
-			runnerUpPrize: ["Silver Medal", "6,000 USD"],
-			thirdPlacePrize: ["Bronze Medal", "3,000 USD"],
-			jointThirdPlacePrize: ["Consolation Prize", "1,500 USD"],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
 		},
 		{
@@ -875,17 +884,18 @@ async function main() {
 			ruleOfEventExtension: "Mixed doubles require pre-registered pairs.",
 			minimumAthlete: 8,
 			maximumAthlete: 24,
-			championshipPrize: ["Gold Medal", "8,000 USD"],
-			runnerUpPrize: ["Silver Medal", "4,000 USD"],
-			thirdPlacePrize: ["Bronze Medal", "2,000 USD"],
-			jointThirdPlacePrize: ["Consolation Prize", "1,000 USD"],
+			championshipPrize: "Gold Medal, 8,000 USD",
+			runnerUpPrize: "Silver Medal 4,000 USD",
+			thirdPlacePrize: "Bronze Medal, 2,000 USD",
+			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
 			tournamentId: tournament.id,
-		}
+		},
 	];
 
-	const tournamentEventCreates = await prisma.tournamentEvent.createManyAndReturn({
-		data: tournamentEvents
-	});
+	const tournamentEventCreates =
+		await prisma.tournamentEvent.createManyAndReturn({
+			data: tournamentEvents,
+		});
 	console.log(tournamentEventCreates);
 }
 
