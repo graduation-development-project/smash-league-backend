@@ -42,9 +42,9 @@ model User {
   tournamentRegistrationPartner TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Partner")
   tournamentParticipants        TournamentParticipants[] @relation(name: "FK_TournamentParticipants_User")
   tournamentParticipantsPartner TournamentParticipants[] @relation(name: "FK_TournamentParticipants_Partner")
-  teamInvitation                TeamInvitation[]         @relation("FK_User_TeamInvitation")
-  Reason                        Reason[]                 @relation("FK_TeamMember_Reason")
-  TeamRequest                   TeamRequest[]            @relation("FK_TeamMember_TeamRequest")
+  teamInvitation                TeamInvitation[]         @relation(name: "FK_User_TeamInvitation")
+  Reason                        Reason[]                 @relation(name: "FK_TeamMember_Reason")
+  TeamRequest                   TeamRequest[]            @relation(name: "FK_TeamMember_TeamRequest")
   matchHosts                    Match[]                  @relation(name: "FK_Match_Umpire")
 }
 
@@ -63,7 +63,7 @@ model UserVerification {
   role         String
   isVerified   Boolean  @default(false)
   createdAt    DateTime @default(now())
-  rejectReason Reason?  @relation("FK_UserVerification_Reason")
+  rejectReason Reason?  @relation(name: "FK_UserVerification_Reason")
 }
 
 model Role {
@@ -262,10 +262,10 @@ model TournamentEvent {
   thirdPlacePrize        String?
   jointThirdPlacePrize   String?
   tournamentId           String
-  tournament             Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournament             Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stages                 Stage[]                  @relation(name: "FK_Stage_TournamentEvent")
   tournamentRegistration TournamentRegistration[] @relation(name: "FK_TournamentRegistration_TournamentEvent")
-  TournamentParticipants TournamentParticipants[] @relation(name: "FK_TournamentParticipants_TournamentEvent")
+  tournamentParticipants TournamentParticipants[] @relation(name: "FK_TournamentParticipants_TournamentEvent")
 }
 
 enum TypeOfFormat {
