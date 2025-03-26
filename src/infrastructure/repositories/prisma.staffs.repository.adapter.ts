@@ -93,7 +93,7 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 				include: {
 					user: {
 						select: {
-							name,
+							name: true,
 						},
 					},
 				},
