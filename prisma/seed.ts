@@ -5,7 +5,7 @@ import * as bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-	let roles: Prisma.RoleCreateInput[] = [
+	let roles: Prisma.RoleCreateManyInput[] = [
 		{
 			roleName: "Admin",
 		},
@@ -26,7 +26,7 @@ async function main() {
 		},
 	];
 
-	let notificationType: Prisma.NotificationTypeCreateInput[] = [
+	let notificationTypes: Prisma.NotificationTypeCreateManyInput[] = [
 		{
 			typeOfNotification: "Reject",
 		},
@@ -53,7 +53,7 @@ async function main() {
 			typeOfNotification: "Transfer Team Leader",
 		},
 	];
-	let packages : Prisma.PackageCreateInput[] = [
+	let packages: Prisma.PackageCreateManyInput[] = [
 		{
 			packageName: "Starter",
 			packageDetail: "Package for starter with limited number of tournament to host!!",
@@ -81,7 +81,7 @@ async function main() {
 			]
 		},
 		{
-			packageName: "Starter",
+			packageName: "Advanced",
 			packageDetail: "Package for advanced organizers with amount number of tournaments to host!!",
 			credits: 50,
 			isAvailable: true,
@@ -100,7 +100,9 @@ async function main() {
 			name: "Admin",
 			email: "admin@gmail.com",
 			password: await bcrypt.hash("12345678", 10),
-			phoneNumber: "0123456789"
+			phoneNumber: "0123456789",
+			isVerified: true,
+			gender: "MALE"
 		}
 	];
 	
@@ -110,11 +112,17 @@ async function main() {
 	// });
 
 	
-	await roles.map(async (role) => {
-		await prisma.role.create({
-			data: role,
-		});
-	})
+	const rolesCreate = await prisma.role.createManyAndReturn({ 
+		data: roles
+	});
+	console.log(rolesCreate);
+	// await roles.map(async (role) => {
+	// 	await prisma.role.create({
+	// 		data: {
+	// 			...role
+	// 		}
+	// 	});
+	// });
 
 	// accounts.map(async (account) => {
 	// 	const user = await prisma.user.create({
@@ -128,20 +136,26 @@ async function main() {
 	// 	})
 	// });
 
-	notificationType.map(async (type) => {
-		await prisma.notificationType.create({
-			data: type,
-		});
+	// notificationType.map(async (type) => {
+	// 	await prisma.notificationType.create({
+	// 		data: type,
+	// 	});
+	// });
+	const notificationTypesCreate = await prisma.notificationType.createManyAndReturn({
+		data: notificationTypes
 	});
 
-	packages.map(async (item) => {
-		await prisma.package.create({
-			data: item,
-		});
+	const packagesCreate = await prisma.package.createManyAndReturn({
+		data: packages
 	});
+
+	// packages.map(async (item) => {
+	// 	await prisma.package.create({
+	// 		data: item,
+	// 	});
+	// });
 
 	//account.seed
-	const getRoles = await prisma.role.findMany();
 	const RoleMap = {
 		Admin: { id: null, name: "Admin" },
 		Organizer: { id: null, name: "Organizer" },
@@ -154,9 +168,16 @@ async function main() {
 	const roleNameMapping = {
 		"Team Leader": "Team_Leader",
 	};
-	const roleFromDBs = await prisma.role.findMany();
+	const roleFromDBs = await prisma.role.findMany({
+		select: {
+			id: true,
+			roleName: true
+		}
+	});
+	await new Promise(resolve => setTimeout(resolve, 5000));
+	console.log(roleFromDBs);
 	
-	roleFromDBs.forEach((role) => {
+	await roleFromDBs.forEach((role) => {
 		const mappedRoleName = roleNameMapping[role.roleName] || role.roleName;
 		if (RoleMap[mappedRoleName]) {
 			RoleMap[mappedRoleName].id = role.id;
@@ -165,7 +186,7 @@ async function main() {
 
 	console.log(RoleMap);
 
-	let accounts : Prisma.UserCreateInput[] = [
+	let accounts : Prisma.UserCreateManyInput[] = [
 			{
 				name: "Trần Ánh Minh",
 				email: "trananhminh@gmail.com",
@@ -301,38 +322,6 @@ async function main() {
 				phoneNumber: "8847881723",
 				isVerified: true,
 				gender: "MALE"
-			},
-			{
-				name: "Trần Hoàng Bảo Quyên",
-				email: "tranhoangbaoquyen@gmail.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "1071048493",
-				isVerified: true,
-				gender: "FEMALE"
-			},
-			{
-				name: "Nguyễn Văn An",
-				email: "nguyenvanan@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0987654321",
-				isVerified: true,
-				gender: "MALE",
-			},
-			{
-				name: "Trần Thị Bích Ngọc",
-				email: "tranbichngoc@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0912345678",
-				isVerified: false,
-				gender: "FEMALE",
-			},
-			{
-				name: "Lê Hoàng Minh",
-				email: "lehoangminh@example.com",
-				password: await bcrypt.hash("12345678", 10),
-				phoneNumber: "0908765432",
-				isVerified: true,
-				gender: "MALE",
 			},
 			{
 				name: "Phạm Thùy Linh",
@@ -472,10 +461,15 @@ async function main() {
 			},
 		];
 
-	await accounts.forEach(async (account) => {
+	// const accountCreates = accounts.forEach(async (account) => {
+		
+	// });
+	var accountCreates = [];
+	for (const account of accounts) {
 		const accountCreate = await prisma.user.create({
 			data: account
 		});
+		accountCreates.push(accountCreate);
 		if (accountCreate.name === "Admin") {
 			const userRole = await prisma.userRole.create({
 				data: {
@@ -483,15 +477,17 @@ async function main() {
 					roleId: RoleMap["Admin"].id
 				}
 			});
+		} else {
+			const userRole = await prisma.userRole.create({
+				data: {
+					userId: accountCreate.id,
+					roleId: RoleMap["Athlete"].id
+				}
+			});
+			console.log(userRole);
 		}
-		const userRole = await prisma.userRole.create({
-			data: {
-				userId: accountCreate.id,
-				roleId: RoleMap["Athlete"].id
-			}
-		});
-		console.log(userRole);
-	});
+	}
+	console.log(accountCreates);
 
 	// //organizer.seed
 
@@ -519,6 +515,195 @@ async function main() {
 	// 	});
 	// 	console.log(userRole);
 	// });
+	const user = await prisma.user.findUnique({
+		where: {
+			email: "hoduongtrungnguyen@gmail.com"
+		}
+	});
+	console.log(user);
+
+	const tournamentSeries: Prisma.TournamentSerieCreateManyInput[] = [
+		{
+			tournamentSerieName: "2025",
+			serieBackgroundImageURL: "",
+			belongsToUserId: user.id
+		},
+		{
+			tournamentSerieName: "2024",
+			serieBackgroundImageURL: "",
+			belongsToUserId: user.id
+		}
+	];
+
+	const tournamentSeriesCreate = await prisma.tournamentSerie.createManyAndReturn({
+		data: tournamentSeries
+	});
+
+	const tournamentSerie = await prisma.tournamentSerie.findFirst({
+		where: {
+			tournamentSerieName: "2025"
+		}
+	});
+
+	const tournaments: Prisma.TournamentCreateManyInput[] = [
+		{
+			id: "vietnam-open-2025",
+			name: "Vietnam Open 2025",
+			shortName: "VNO 2025",
+			description: "Giải cầu lông quốc tế tổ chức tại Việt Nam",
+			organizerId: user.id,
+			contactPhone: "+84 912345678",
+			contactEmail: "contact@vietnamopen.com",
+			mainColor: "#FF5733",
+			backgroundTournament: "https://example.com/images/vno_2025.jpg",
+			location: "Hà Nội, Việt Nam",
+			registrationOpeningDate: "2025-06-01T00:00:00Z",
+			registrationClosingDate: "2025-06-30T23:59:59Z",
+			drawDate: "2025-07-05T12:00:00Z",
+			startDate: "2025-07-10T08:00:00Z",
+			endDate: "2025-07-15T20:00:00Z",
+			checkInBeforeStart: "2025-07-10T07:00:00Z",
+			umpirePerMatch: 2,
+			registrationFeePerPerson: 500000,
+			registrationFeePerPair: 900000,
+			maxEventPerPerson: 3,
+			status: "OPENING_FOR_REGISTRATION",
+			protestFeePerTime: 200000,
+			prizePool: 50000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 500,
+			merchandiseImages: [
+				"https://example.com/images/merch_vno_1.jpg",
+				"https://example.com/images/merch_vno_2.jpg"
+			],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
+			isRecruit: false,
+			isPrivate: false,
+			isRegister: true,
+			isLiveDraw: true,
+			hasLiveStream: true,
+			tournamentSerieId: tournamentSerie.id,
+		},
+		{
+			id: "asia-badminton-championship-2025",
+			name: "Asia Badminton Championship 2025",
+			shortName: "ABC 2025",
+			description: "Giải vô địch cầu lông châu Á",
+			organizerId: user.id,
+			contactPhone: "+65 98765432",
+			contactEmail: "info@asiabadminton.com",
+			mainColor: "#4287F5",
+			backgroundTournament: "https://example.com/images/abc_2025.jpg",
+			location: "Singapore Indoor Stadium",
+			registrationOpeningDate: "2025-08-01T00:00:00Z",
+			registrationClosingDate: "2025-08-20T23:59:59Z",
+			drawDate: "2025-08-25T12:00:00Z",
+			startDate: "2025-09-01T08:00:00Z",
+			endDate: "2025-09-07T20:00:00Z",
+			checkInBeforeStart: "2025-09-01T07:00:00Z",
+			umpirePerMatch: 3,
+			registrationFeePerPerson: 800000,
+			registrationFeePerPair: 1500000,
+			maxEventPerPerson: 2,
+			status: "ON_GOING",
+			protestFeePerTime: 300000,
+			prizePool: 100000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 300,
+			merchandiseImages: [
+				"https://example.com/images/merch_abc_1.jpg",
+				"https://example.com/images/merch_abc_2.jpg"
+			],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
+			isRecruit: true,
+			isPrivate: true,
+			isRegister: true,
+			isLiveDraw: false,
+			hasLiveStream: true,
+			tournamentSerieId: tournamentSerie.id,
+		},
+		{
+			id: "european-badminton-masters-2025",
+			name: "European Badminton Masters 2025",
+			shortName: "EBM 2025",
+			description: "Giải cầu lông đẳng cấp dành cho các tay vợt chuyên nghiệp châu Âu",
+			organizerId: user.id,
+			contactPhone: "+44 123456789",
+			contactEmail: "support@europeanmasters.com",
+			mainColor: "#12A345",
+			backgroundTournament: "https://example.com/images/ebm_2025.jpg",
+			location: "London, UK",
+			registrationOpeningDate: "2025-09-10T00:00:00Z",
+			registrationClosingDate: "2025-09-30T23:59:59Z",
+			drawDate: "2025-10-05T12:00:00Z",
+			startDate: "2025-10-10T08:00:00Z",
+			endDate: "2025-10-15T20:00:00Z",
+			checkInBeforeStart: "2025-10-10T07:00:00Z",
+			umpirePerMatch: 3,
+			registrationFeePerPerson: 700000,
+			registrationFeePerPair: 1300000,
+			maxEventPerPerson: 3,
+			status: "CREATED",
+			protestFeePerTime: 250000,
+			prizePool: 75000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 400,
+			merchandiseImages: [
+				"https://example.com/images/merch_ebm_1.jpg",
+				"https://example.com/images/merch_ebm_2.jpg"
+			],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
+			isRecruit: false,
+			isPrivate: false,
+			isRegister: false,
+			isLiveDraw: false,
+			hasLiveStream: true,
+			tournamentSerieId: tournamentSerie.id,
+		},
+		{
+			id: "japan-open-2025",
+			name: "Japan Open 2025",
+			shortName: "JPO 2025",
+			description: "Giải cầu lông quốc tế diễn ra tại Nhật Bản",
+			organizerId: user.id,
+			contactPhone: "+81 987654321",
+			contactEmail: "support@japanopen.com",
+			mainColor: "#F54242",
+			backgroundTournament: "https://example.com/images/jpo_2025.jpg",
+			location: "Tokyo, Nhật Bản",
+			registrationOpeningDate: "2025-04-01T00:00:00Z",
+			registrationClosingDate: "2025-04-20T23:59:59Z",
+			drawDate: "2025-04-25T12:00:00Z",
+			startDate: "2025-05-01T08:00:00Z",
+			endDate: "2025-05-07T20:00:00Z",
+			checkInBeforeStart: "2025-05-01T07:00:00Z",
+			umpirePerMatch: 3,
+			registrationFeePerPerson: 600000,
+			registrationFeePerPair: 1100000,
+			maxEventPerPerson: 3,
+			status: "DRAWING",
+			protestFeePerTime: 250000,
+			prizePool: 85000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 350,
+			merchandiseImages: [
+				"https://example.com/images/merch_jpo_1.jpg",
+				"https://example.com/images/merch_jpo_2.jpg"
+			],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
+			isRecruit: false,
+			isPrivate: false,
+			isRegister: true,
+			isLiveDraw: true,
+			hasLiveStream: true,
+			tournamentSerieId: tournamentSerie.id,
+		}
+	];
+
+	const tournamentCreates = await prisma.tournament.createManyAndReturn({
+		data: tournaments
+	});
+
 }
 
 main()
