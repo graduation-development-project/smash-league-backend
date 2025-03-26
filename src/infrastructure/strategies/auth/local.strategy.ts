@@ -22,7 +22,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 		// console.log(email, password);
 
 		const user: User = await this.getAuthenticatedUserUseCase.execute(
-			email,
+			email.toLowerCase(),
 			password,
 		);
 

@@ -1,10 +1,22 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { Tournament, TournamentEvent, TournamentSerie, User } from "@prisma/client";
+import {
+	BadmintonParticipantType,
+	Tournament,
+	TournamentEvent,
+	TournamentSerie,
+	User,
+} from "@prisma/client";
 import { create } from "domain";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IRequestUser } from "src/domain/interfaces/interfaces";
-import { ICreateTournament, ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
-import { CreateTournament, CreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.validation";
+import {
+	ICreateTournament,
+	ICreateTournamentEvent,
+} from "src/domain/interfaces/tournament/tournament.interface";
+import {
+	CreateTournament,
+	CreateTournamentEvent, CreateTournamentEventsDTO,
+} from "src/domain/interfaces/tournament/tournament.validation";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
@@ -13,14 +25,19 @@ import { UploadService } from "src/infrastructure/services/upload.service";
 @Injectable()
 export class CreateNewTournamentUseCase {
 	constructor(
-		@Inject("TournamentRepository") private readonly tournamentRepository: TournamentRepositoryPort,
-		@Inject("TournamentSerieRepository") private readonly tournamentSerieRepository: TournamentSerieRepositoryPort,
-		@Inject("TournamentEventRepository") private readonly tournamentEventRepository: TournamentEventRepositoryPort,
-		private readonly uploadService: UploadService
+		@Inject("TournamentRepository")
+		private readonly tournamentRepository: TournamentRepositoryPort,
+		@Inject("TournamentSerieRepository")
+		private readonly tournamentSerieRepository: TournamentSerieRepositoryPort,
+		@Inject("TournamentEventRepository")
+		private readonly tournamentEventRepository: TournamentEventRepositoryPort,
+		private readonly uploadService: UploadService,
 	) {}
 
-	async execute(request: IRequestUser, createTournament: CreateTournament, 
-			) : Promise<ApiResponse<Tournament>> {
+	async execute(
+		request: IRequestUser,
+		createTournament: CreateTournament,
+	): Promise<ApiResponse<Tournament>> {
 		var tournament: Tournament;
 		// const folderName = `tournament-merchandise/${new Date().toISOString().split("T")[0]}`;
 
@@ -32,19 +49,23 @@ export class CreateNewTournamentUseCase {
 		// console.log(merchandiseImages);
 		const isExistTournament = await this.isExistTournament(createTournament.id);
 		console.log(isExistTournament);
-		if (isExistTournament === true) return new ApiResponse<null | undefined>(
-			HttpStatus.BAD_REQUEST,
-			"Tournament ID exists!",
-			null
+		if (isExistTournament === true)
+			return new ApiResponse<null | undefined>(
+				HttpStatus.BAD_REQUEST,
+				"Tournament ID exists!",
+				null,
+			);
+		tournament = await this.createTournamentWithNoTournamentSerie(
+			createTournament,
+			request.user,
 		);
-		tournament = await this.createTournamentWithNoTournamentSerie(createTournament, request.user);
 		return new ApiResponse<Tournament>(
 			HttpStatus.OK,
 			"Create new tournament successfully!",
-			tournament
+			tournament,
 		);
 		// return new ApiResponse<any>(
-		// 	200, 
+		// 	200,
 		// 	"Create tournament successfully!",
 		// 	await this.tournamentRepository.createTournament({
 		// 		...createTournament
@@ -52,30 +73,116 @@ export class CreateNewTournamentUseCase {
 		// );
 	}
 
-	async isExistTournament(id: string) : Promise<boolean> {
+	async isExistTournament(id: string): Promise<boolean> {
 		const tournament = await this.tournamentRepository.getTournament(id);
 		return tournament !== null;
 	}
 
-	async createTournamentWithNoTournamentSerie(createTournament: CreateTournament,
-																							user: User
-	) : Promise<Tournament> {
+	async createTournamentWithNoTournamentSerie(
+		createTournament: CreateTournament,
+		user: User,
+	): Promise<Tournament> {
 		const tournament = await this.createTournament(createTournament, user);
-		console.log(tournament)
-		const tournamentEvents = await this.createTournamentEvents(createTournament.createTournamentEvent, tournament.id)
+		console.log(tournament);
+		const tournamentEvents = await this.createTournamentEvents(
+			createTournament.createTournamentEvent,
+			tournament.id,
+		);
 		return tournament;
 	}
 
-	async createTournamentEvents(createTournamentEvents: CreateTournamentEvent[], tournamentId: string) : Promise<TournamentEvent[]>{
-		const tournamentEvents = await this.tournamentEventRepository.createMultipleTournamentEvent({
-			...createTournamentEvents
-			
-		}, tournamentId);
-		return null;
+	transformTournamentEvents = (data: any, tournamentId: string): any[] => {
+		const tournamentEvents: any[] = [];
+
+		console.log(data)
+
+		data.forEach((event: any) => {
+			for (const eventType in event) {
+				console.log(eventType);
+				if (eventType !== "tournamentId") {
+					if (Array.isArray(event[eventType])) {
+						event[eventType].forEach((item: any) => {
+							if (item) {
+								let tournamentEventEnum: BadmintonParticipantType;
+								switch (eventType) {
+									case "MENS_SINGLE":
+										tournamentEventEnum = BadmintonParticipantType.MENS_SINGLE;
+										break;
+									case "WOMEN_SINGLE":
+										tournamentEventEnum = BadmintonParticipantType.WOMEN_SINGLE;
+										break;
+
+									case "MENS_DOUBLE":
+										tournamentEventEnum = BadmintonParticipantType.MENS_DOUBLE;
+										break;
+
+									case "WOMENS_DOUBLE":
+										tournamentEventEnum =
+											BadmintonParticipantType.WOMENS_DOUBLE;
+										break;
+
+									case "MIXED_DOUBLE":
+										tournamentEventEnum = BadmintonParticipantType.MIXED_DOUBLE;
+										break;
+									default:
+										console.error(`Invalid eventType: ${eventType}`);
+										return [];
+								}
+
+								tournamentEvents.push({
+									tournamentId: tournamentId,
+									tournamentEvent: eventType as BadmintonParticipantType,
+									fromAge: item.fromAge,
+									toAge: item.toAge,
+									winningPoint: item.winningPoint,
+									lastPoint: item.lastPoint,
+									numberOfGames: parseInt(item.numberOfGames, 10),
+									typeOfFormat: item.typeOfFormat,
+									ruleOfEventExtension: item.ruleOfEventExtension,
+									minimumAthlete: item.minimumAthlete,
+									maximumAthlete: item.maximumAthlete,
+									championshipPrize: item.championshipPrize,
+									runnerUpPrize: item.runnerUpPrize,
+									thirdPlacePrize: item.thirdPlacePrize,
+									jointThirdPlacePrize: item.jointThirdPlacePrize,
+								});
+							}
+						});
+					}
+				}
+			}
+		});
+
+		console.log(tournamentEvents)
+
+		return tournamentEvents;
+	};
+
+	async createTournamentEvents(
+		createTournamentEvents: CreateTournamentEventsDTO,
+		tournamentId: string,
+	): Promise<TournamentEvent[]> {
+		const tournamentEvents: TournamentEvent[] = [];
+
+		const transformedData = this.transformTournamentEvents(
+			createTournamentEvents,
+			tournamentId,
+		);
+
+		console.log("transformedData", transformedData);
+
+		const createdTournamentEvents =
+			await this.tournamentEventRepository.createMultipleTournamentEvent(
+				transformedData,
+				tournamentId,
+			);
+		return createdTournamentEvents;
 	}
 
-	async createTournament(createTournament: CreateTournament, 
-												organizer: User) : Promise<Tournament> {
+	async createTournament(
+		createTournament: CreateTournament,
+		organizer: User,
+	): Promise<Tournament> {
 		const tournament = await this.tournamentRepository.createTournament({
 			id: createTournament.id,
 			name: createTournament.name,
@@ -108,7 +215,7 @@ export class CreateNewTournamentUseCase {
 			isLiveDraw: createTournament.isLiveDraw,
 			isPrivate: createTournament.isPrivate,
 			isRegister: createTournament.isRegister,
-			hasLiveStream: createTournament.hasLiveStream	
+			hasLiveStream: createTournament.hasLiveStream,
 		});
 		return tournament;
 	}
