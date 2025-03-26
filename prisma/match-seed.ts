@@ -11,8 +11,24 @@ async function main() {
 		}
 	});
 	console.log(tournamentEvent);
-
-	
+	const participants = await prisma.user.findMany({
+		where: {
+			gender: "MALE"
+		}
+	});
+	console.log(participants.length);
+	let tournamentParticipants = [];
+	for (const participant of participants) {
+		const account = await prisma.tournamentParticipants.create({
+			data: {
+				userId: participant.id,
+				tournamentEventId: tournamentEvent.id,
+				tournamentId: tournamentEvent.tournamentId,
+			}
+		});
+		tournamentParticipants.push(account);
+	}
+	console.log(tournamentParticipants);
 }
 
 main()
