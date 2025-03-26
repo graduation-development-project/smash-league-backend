@@ -63,10 +63,10 @@ export interface ICreateTournamentEvent {
 	minimumAthlete: number;
 	tournamentEvent: BadmintonParticipantType;
 
-	championshipPrize: string[];
-	runnerUpPrize: string[];
-	thirdPlacePrize?: string[];
-	jointThirdPlacePrize?: string[];
+	championshipPrize: string;
+	runnerUpPrize: string;
+	thirdPlacePrize?: string;
+	jointThirdPlacePrize?: string;
 }
 
 export interface ICreateTournament {
@@ -178,10 +178,10 @@ export interface ITournamentEventDetail {
 	typeOfFormat: string,
 	winningPoint: number;
 	lastPoint: number;
-	championshipPrize: string[];
-	runnerUpPrize: string[];
-	thirdPlacePrize: string[];
-	jointThirdPlacePrize: string[];
+	championshipPrize: string;
+	runnerUpPrize: string;
+	thirdPlacePrize?: string;
+	jointThirdPlacePrize?: string;
 	ruleOfEventExtension: string;
 }
 
