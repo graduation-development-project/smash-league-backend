@@ -120,11 +120,11 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 
 			const phoneNumberExisted = await this.prisma.user.findUnique({
 				where: {
-					phoneNumber: signUpDTO.phoneNumber
-				}
-			})
+					phoneNumber: signUpDTO.phoneNumber,
+				},
+			});
 
-			if(phoneNumberExisted) {
+			if (phoneNumberExisted) {
 				throw new BadRequestException("phone number already exists");
 			}
 
