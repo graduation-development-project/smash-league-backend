@@ -264,6 +264,7 @@ model TournamentEvent {
   tournamentId           String
   tournament             Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stages                 Stage[]                  @relation(name: "FK_Stage_TournamentEvent")
+  matches                Match[]                  @relation(name: "FK_Match_TournamentEvent")
   tournamentRegistration TournamentRegistration[] @relation(name: "FK_TournamentRegistration_TournamentEvent")
   tournamentParticipants TournamentParticipants[] @relation(name: "FK_TournamentParticipants_TournamentEvent")
 }
@@ -308,6 +309,9 @@ model Match {
   stageId                   String
   stage                     Stage                   @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   matchNumber               Int
+  isByeMatch                Boolean
+  tournamentEventId         String
+  tournamentEvent           TournamentEvent         @relation(name: "FK_Match_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade, onUpdate: Cascade)                
   nextMatchId               String?
   nextMatch                 Match?                  @relation(name: "FK_Match_NextMatch", fields: [nextMatchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   games                     Game[]                  @relation(name: "FK_Game_Match")
@@ -497,8 +501,8 @@ enum TransactionType {
 model Transaction {
   id                     String            @id @default(uuid())
   transactionDetail      String
-  transactionPaymentLink String
-  transactionImage       String
+  transactionPaymentLink String?
+  transactionImage       String?
   transactionType        TransactionType
   orderId                Int
   order                  Order             @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)

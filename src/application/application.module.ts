@@ -100,6 +100,7 @@ import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.u
 import {GetAllVerificationRequestUseCase} from "./usecases/staffs/get-all-verification-request.usecase";
 import { PrismaStageRepositoryAdapTer } from 'src/infrastructure/repositories/prisma.stage.repository.adapter';
 import { GetMatchesOfStageUseCase } from './usecases/tournament/tournament-event/get-matches-of-stage.usecase';
+import { PrismaMatchRepositoryAdapter } from 'src/infrastructure/repositories/prisma.match.repository.adapter';
 
 @Module({
 	imports: [
@@ -181,6 +182,10 @@ import { GetMatchesOfStageUseCase } from './usecases/tournament/tournament-event
 		{
 			provide: "StageRepository",
 			useClass: PrismaStageRepositoryAdapTer
+		},
+		{
+			provide: "MatchRepository",
+			useClass: PrismaMatchRepositoryAdapter
 		},
 		//Third Party Service
 		MailService,

@@ -5,4 +5,4 @@ export interface StageRepositoryPort {
 	getStagesOfTournamentEvent(tournamentEventId: string): Promise<Stage[]>;
 	createStage(createStage: ICreateStage): Promise<Stage>;
 	getMatchesOfStage(stageId: string): Promise<IStageResponse>;
-}
+} 
