@@ -22,9 +22,10 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 		option: boolean,
 		rejectionReason?: string,
 	): Promise<string> {
-		const verificationExisted = await this.prismaService.userVerification.findUnique({
-			where: { id: verificationID },
-		});
+		const verificationExisted =
+			await this.prismaService.userVerification.findUnique({
+				where: { id: verificationID },
+			});
 		if (!verificationExisted) {
 			throw new NotFoundException("Verification record not found");
 		}
@@ -88,7 +89,15 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 
 	async getAllVerificationRequest(): Promise<UserVerification[]> {
 		try {
-			return this.prismaService.userVerification.findMany();
+			return this.prismaService.userVerification.findMany({
+				include: {
+					user: {
+						select: {
+							name,
+						},
+					},
+				},
+			});
 		} catch (e) {
 			console.error("Get all Verification request failed", e);
 			throw e;
