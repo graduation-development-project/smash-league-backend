@@ -1,7 +1,8 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
 import { UserVerification } from "@prisma/client";
 import { RegisterNewRoleDTO } from "../../../domain/dtos/athletes/register-new-role.dto";
+import { ApiResponse } from "../../../domain/dtos/api-response";
 
 @Injectable()
 export class RegisterNewRoleUseCase {
@@ -10,7 +11,13 @@ export class RegisterNewRoleUseCase {
 		private athletesRepository: AthletesRepositoryPort,
 	) {}
 
-	execute(registerNewRoleDTO: RegisterNewRoleDTO): Promise<UserVerification> {
-		return this.athletesRepository.registerNewRole(registerNewRoleDTO);
+	async execute(
+		registerNewRoleDTO: RegisterNewRoleDTO,
+	): Promise<ApiResponse<UserVerification>> {
+		return new ApiResponse<UserVerification>(
+			HttpStatus.CREATED,
+			"Create role registration successfully",
+			await this.athletesRepository.registerNewRole(registerNewRoleDTO),
+		);
 	}
 }

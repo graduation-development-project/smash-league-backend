@@ -102,7 +102,7 @@ export class AthletesController {
 		@Req() { user }: IRequestUser,
 		@UploadedFiles() files: Express.Multer.File[],
 		@Body() registerNewRoleDTO: RegisterNewRoleDTO,
-	): Promise<UserVerification> {
+	): Promise<ApiResponse<UserVerification>> {
 		return this.registerNewRoleUseCase.execute({
 			...registerNewRoleDTO,
 			userId: user.id,
