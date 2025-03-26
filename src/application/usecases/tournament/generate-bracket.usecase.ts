@@ -18,6 +18,7 @@ export class GenerateBracketUseCase {
 		const listParticipants = await this.tournamentEventRepository.getParticipantsOfTournamentEvent(tournamentEventId);
 		const logarit = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1);
 		const numberOfByeParticipants = logarit - listParticipants.numberOfParticipants;
+		
 		console.log(listParticipants.numberOfParticipants);
 		return new ApiResponse<number>(
 			HttpStatus.OK,
