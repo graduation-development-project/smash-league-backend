@@ -62,6 +62,7 @@ import { GetParticipantsOfTournamentEventUseCase } from 'src/application/usecase
 import { UploadMerchandiseImagesUseCase } from 'src/application/usecases/tournament/upload-merchandise-images.usecase';
 import { BadmintonParticipantType } from 'src/domain/interfaces/tournament/badminton-participant-type.interface';
 import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
+import { GetMatchesOfStageUseCase } from 'src/application/usecases/tournament/tournament-event/get-matches-of-stage.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -82,7 +83,8 @@ export class TournamentController {
 		private readonly updateTournamentUseCase: UpdateTournamentUseCase,
 		private readonly getParticipantsOfTournamentEvent: GetParticipantsOfTournamentEventUseCase,
 		private readonly uploadMerchandiseImagesUseCase: UploadMerchandiseImagesUseCase,
-		private readonly generateBracketUseCase: GenerateBracketUseCase
+		private readonly generateBracketUseCase: GenerateBracketUseCase,
+		private readonly getMatchesOfStageUseCase: GetMatchesOfStageUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -255,6 +257,6 @@ export class TournamentController {
 	async getMatchesOfStage(
 		@Param("stageId") stageId: string
 	) : Promise<ApiResponse<any>> {
-		return;
+		return await this.getMatchesOfStageUseCase.execute();
 	}
 }
