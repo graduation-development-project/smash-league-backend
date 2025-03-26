@@ -13,7 +13,7 @@ export class PaymentPayOSService {
 		private readonly configService: ConfigService
 	) {
 	}
-	async createPaymentLink(order: IOrderDetailResponse) : Promise<IPayOSPaymentResponse> {
+	async createPaymentLink(order: IOrderDetailResponse, transactionId: string) : Promise<IPayOSPaymentResponse> {
 			const payOS = new PayOS(
 				this.configService.get<string>("PAYOS_CLIENT_ID"),
 				this.configService.get<string>("PAYOS_API_KEY"),
@@ -30,8 +30,8 @@ export class PaymentPayOSService {
 						price: order.total,
 					},
 				],
-				cancelUrl: this.configService.get<string>("PAYOS_CANCEL_URL"),
-				returnUrl: this.configService.get<string>("PAYOS_RETURN_URL"),
+				cancelUrl: this.configService.get<string>("PAYOS_CANCEL_URL") + "?transactionId=" + transactionId,
+				returnUrl: this.configService.get<string>("PAYOS_RETURN_URL") + "?transactionId=" + transactionId,
 			};
 			try {
 				const data = await payOS.createPaymentLink(body);

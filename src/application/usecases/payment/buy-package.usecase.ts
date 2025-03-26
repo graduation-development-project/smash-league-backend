@@ -32,15 +32,14 @@ export class BuyPackageUseCase {
 			total: packageDetail.price - packageDetail.currentDiscountByAmount
 		});
 		console.log(order);
-		const payment = await this.payosPaymentService.createPaymentLink(order);
-		console.log(payment);
 		const transaction = await this.transactionRepository.createTransactionForBuyingPackage({
 			orderId: order.id,
 			transactionDetail: "Payment for package " + order.package.packageName,
-			transactionImage: payment.paymentImagePaymentLinkResponse,
-			transactionPaymentLink: payment.checkoutDataResponse.checkoutUrl,
 			value: order.total
 		});
+		const payment = await this.payosPaymentService.createPaymentLink(order, transaction.id);
+		console.log(payment);
+		const updateTransaction = await this.transactionRepository.updatePaymentForTransaction(transaction.id, payment.paymentImagePaymentLinkResponse, payment.checkoutDataResponse.checkoutUrl);
 		return new ApiResponse<any>(
 			HttpStatus.OK,
 			"Create payment successful!",

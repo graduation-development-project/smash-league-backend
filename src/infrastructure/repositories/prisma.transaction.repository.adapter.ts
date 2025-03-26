@@ -10,6 +10,17 @@ export class PrismaTransactionRepositoryAdapter implements TransactionRepository
 		private readonly prisma: PrismaClient
 	) {
 	}
+	async updatePaymentForTransaction(transactionId: string, transactionImage: string, transactionPaymentLink: string): Promise<Transaction> {
+		return await this.prisma.transaction.update({
+			where: {
+				id: transactionId
+			}, 
+			data: {
+				transactionImage: transactionImage,
+				transactionPaymentLink: transactionPaymentLink
+			}
+		});
+	}
 	async acceptTransaction(transactionId: string): Promise<Transaction> {
 		return await this.prisma.transaction.update({
 			where: {
@@ -46,7 +57,7 @@ export class PrismaTransactionRepositoryAdapter implements TransactionRepository
 			}
 		});
 	}
-	async createTransactionForBuyingPackage(createTransaction: ICreateTransactionRequest): Promise<any> {
+	async createTransactionForBuyingPackage(createTransaction: ICreateTransactionRequest): Promise<Transaction> {
 		return await this.prisma.transaction.create({
 			data: {
 				...createTransaction,
