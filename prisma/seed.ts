@@ -887,12 +887,6 @@ async function main() {
 		data: tournamentEvents
 	});
 	console.log(tournamentEventCreates);
-	const tournamentEvent = await prisma.tournamentEvent.findFirst({
-		where: {
-			typeOfFormat: "SINGLE_ELIMINATION"
-		}
-	});	
-	console.log()
 }
 
 main()
