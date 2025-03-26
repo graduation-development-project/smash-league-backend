@@ -46,6 +46,7 @@ model User {
   Reason                        Reason[]                 @relation(name: "FK_TeamMember_Reason")
   TeamRequest                   TeamRequest[]            @relation(name: "FK_TeamMember_TeamRequest")
   matchHosts                    Match[]                  @relation(name: "FK_Match_Umpire")
+  TournamentUmpires             TournamentUmpires[]      @relation(name: "FK_TournamentUmpires_User")
 }
 
 enum Gender {
@@ -234,6 +235,7 @@ model Tournament {
   registrations            TournamentRegistration[] @relation(name: "FK_TournamentRegistration_Tournament")
   tournamentEvents         TournamentEvent[]        @relation(name: "FK_Tournament_TournamentEvent")
   TournamentParticipants   TournamentParticipants[] @relation(name: "FK_TournamentParticipants_Tournament")
+  TournamentUmpires        TournamentUmpires[]      @relation(name: "FK_TournamentUmpires_Tournament")
 }
 
 enum TournamentStatus {
@@ -380,6 +382,14 @@ model TournamentParticipants {
   rightCompetitors  Match[]         @relation(name: "FK_Match_RightCompetitor")
   gamesWon          Game[]          @relation(name: "FK_Game_GameWonByCompetitor")
   serverInGame      Game[]          @relation(name: "FK_Game_CurrentServer")
+}
+
+model TournamentUmpires {
+  id           String     @id @default(uuid())
+  tournamentId String
+  userId       String
+  tournament   Tournament @relation(name: "FK_TournamentUmpires_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user         User       @relation(name: "FK_TournamentUmpires_User", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum TournamentRegistrationStatus {

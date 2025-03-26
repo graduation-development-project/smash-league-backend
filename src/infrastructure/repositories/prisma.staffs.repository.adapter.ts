@@ -9,6 +9,7 @@ import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { ReasonType, UserVerification } from "@prisma/client";
+import { RoleMap } from "../enums/role.enum";
 
 @Injectable()
 export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
@@ -89,14 +90,32 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 
 	async getAllVerificationRequest(): Promise<UserVerification[]> {
 		try {
-			return this.prismaService.userVerification.findMany({
-				include: {
-					user: {
-						select: {
-							name: true,
+			const verificationData =
+				await this.prismaService.userVerification.findMany({
+					include: {
+						user: {
+							select: {
+								name: true,
+							},
 						},
 					},
-				},
+				});
+
+			return verificationData.map((verification) => {
+				let roleName = "";
+
+				if (verification.role) {
+					const foundRole = Object.values(RoleMap).find(
+						(role) => role.id === verification.role,
+					);
+					if (foundRole) {
+						roleName = foundRole.name;
+					}
+				}
+				return {
+					...verification,
+					role: roleName,
+				};
 			});
 		} catch (e) {
 			console.error("Get all Verification request failed", e);
