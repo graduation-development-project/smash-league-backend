@@ -6,6 +6,7 @@ import {
 	Match,
 	MatchStatus,
 	ReasonType,
+	TournamentRegistrationRole,
 	TournamentRegistrationStatus,
 } from "@prisma/client";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
@@ -67,14 +68,26 @@ export class PrismaOrganizersRepositoryAdapter
 			});
 
 			if (option) {
-				await this.prismaService.tournamentParticipants.create({
-					data: {
-						tournamentId: existedRegistration.tournamentId,
-						userId: existedRegistration.userId,
-						tournamentEventId: existedRegistration.tournamentEventId,
-						partnerId: existedRegistration.partnerId || null,
-					},
-				});
+				if (
+					existedRegistration.registrationRole ===
+					TournamentRegistrationRole.ATHLETE
+				) {
+					await this.prismaService.tournamentParticipants.create({
+						data: {
+							tournamentId: existedRegistration.tournamentId,
+							userId: existedRegistration.userId,
+							tournamentEventId: existedRegistration.tournamentEventId,
+							partnerId: existedRegistration.partnerId || null,
+						},
+					});
+				} else {
+					await this.prismaService.tournamentUmpires.create({
+						data: {
+							tournamentId: existedRegistration.tournamentId,
+							userId: existedRegistration.userId,
+						},
+					});
+				}
 			}
 
 			if (!option) {
