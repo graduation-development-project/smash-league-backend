@@ -31,6 +31,7 @@ import {GoogleStrategy} from "./strategies/auth/google.strategy";
 import {TeamController} from "./controllers/team.controller";
 import {OrganizerController} from "./controllers/organizers.controller";
 import { PaymentPayOSService } from "../application/services/payment.service";
+import { UmpireController } from "./controllers/umpire.controller";
 
 @Module({
 	imports: [
@@ -80,7 +81,8 @@ import { PaymentPayOSService } from "../application/services/payment.service";
 		TournamentController,
 		TeamLeaderController,
 		TeamController,
-		OrganizerController
+		OrganizerController,
+		UmpireController
 	],
 	providers: [
 		LocalStrategy,
