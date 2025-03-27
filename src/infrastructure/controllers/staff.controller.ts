@@ -38,7 +38,7 @@ export class StaffController {
 			option: boolean;
 			rejectionReason?: string;
 		},
-	): Promise<string> {
+	): Promise<ApiResponse<null>> {
 		return this.verifyUserInformationUseCase.execute(
 			body.verificationID,
 			body.option,
