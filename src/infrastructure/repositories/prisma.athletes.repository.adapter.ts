@@ -150,6 +150,10 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 
 			let userAge = calculateAgeUtil(user.dateOfBirth);
 
+			if(!userAge) {
+				throw new BadRequestException("User dob must be exist before registration")
+			}
+
 			console.log("age: ", userAge);
 
 			if (userAge < event.fromAge || userAge > event.toAge) {
