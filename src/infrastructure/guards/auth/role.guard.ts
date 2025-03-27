@@ -22,17 +22,13 @@ export class RolesGuard implements CanActivate {
 			"Team Leader": "Team_Leader",
 		};
 
-		const roleIds = roles.map((roleName) => {
-			const mappedRoleName = roleNameMapping[roleName] || roleName;
-			return RoleMap[mappedRoleName]?.id;
-		});
+
 
 		console.log("roles: ", roles);
-		console.log(roleIds);
 		console.log("User Roles in Request:", user?.userRoles);
 		// @ts-ignore
 		return user?.userRoles.some((userRole: string) =>
-			roleIds.includes(userRole),
+			roles.includes(userRole),
 		);
 	}
 }
