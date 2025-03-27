@@ -64,9 +64,10 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 
 	async findUserById(userID: string): Promise<TUserWithRole> {
 		try {
-			const user: User = await this.prisma.user.findUnique({
+			const user = await this.prisma.user.findUnique({
 				where: { id: userID },
 				include: { userRoles: { select: { roleId: true } } },
+				omit: { password: true },
 			});
 
 			return {
@@ -75,7 +76,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				userRoles: user.userRoles.map(
 					(role: { roleId: string }) => role.roleId,
 				),
-			};
+			} as TUserWithRole;
 		} catch (e) {
 			throw new BadRequestException("User not found");
 		}
@@ -105,7 +106,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	): Promise<TUserWithRole> {
 		try {
 			// console.log(email, password);
-			const user: User = await this.prisma.user.findUnique({
+			const user = await this.prisma.user.findUnique({
 				where: { email: email },
 				include: { userRoles: { select: { roleId: true } } },
 			});
@@ -124,7 +125,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				userRoles: user.userRoles.map(
 					(role: { roleId: string }) => role.roleId,
 				),
-			};
+			} as TUserWithRole;
 		} catch (e) {
 			throw e;
 		}
@@ -188,12 +189,16 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 		try {
 			// console.log(editUserDTO);
 
-			const updatedUser: User = await this.prisma.user.update({
+			const updatedUser = await this.prisma.user.update({
 				where: {
 					id: userID,
 				},
 				data: {
 					...editUserDTO,
+				},
+
+				omit: {
+					password: true,
 				},
 
 				include: { userRoles: { select: { roleId: true } } },
@@ -210,7 +215,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 								(role: { roleId: string }) => role.roleId,
 							)
 						: [],
-			};
+			} as TUserWithRole;
 		} catch (e) {
 			throw new e();
 		}
@@ -238,12 +243,16 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 
 			const hashedPassword: string = await bcrypt.hash(newPassword, 10);
 
-			const updatedUser: User = await this.prisma.user.update({
+			const updatedUser = await this.prisma.user.update({
 				where: {
 					id: userID,
 				},
 				data: {
 					password: hashedPassword,
+				},
+
+				omit: {
+					password: true,
 				},
 
 				include: { userRoles: { select: { roleId: true } } },
@@ -259,7 +268,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 								(role: { roleId: string }) => role.roleId,
 							)
 						: [],
-			};
+			} as TUserWithRole;
 		} catch (e) {
 			throw e;
 		}
