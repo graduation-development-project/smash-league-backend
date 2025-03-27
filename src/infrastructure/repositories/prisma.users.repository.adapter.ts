@@ -66,16 +66,16 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 		try {
 			const user = await this.prisma.user.findUnique({
 				where: { id: userID },
-				include: { userRoles: { select: { roleId: true } } },
+				include: { userRoles: { include: { role: true } } },
 				omit: { password: true },
 			});
+
+			const roles = user.userRoles.map((item) => item.role.roleName);
 
 			return {
 				...user,
 				// @ts-ignore
-				userRoles: user.userRoles.map(
-					(role: { roleId: string }) => role.roleId,
-				),
+				userRoles: roles,
 			} as TUserWithRole;
 		} catch (e) {
 			throw new BadRequestException("User not found");
@@ -108,7 +108,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			// console.log(email, password);
 			const user = await this.prisma.user.findUnique({
 				where: { email: email },
-				include: { userRoles: { select: { roleId: true } } },
+				include: { userRoles: { include: {role: true} } },
 			});
 
 			if (!user) {
@@ -119,12 +119,12 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 
 			delete user.password;
 
+			const roles = user.userRoles.map((item) => item.role.roleName);
+
 			return {
 				...user,
 				// @ts-ignore
-				userRoles: user.userRoles.map(
-					(role: { roleId: string }) => role.roleId,
-				),
+				userRoles: roles,
 			} as TUserWithRole;
 		} catch (e) {
 			throw e;
@@ -201,20 +201,15 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 					password: true,
 				},
 
-				include: { userRoles: { select: { roleId: true } } },
+				include: { userRoles: { include: { role: true } } },
 			});
+
+			const roles = updatedUser.userRoles.map((item) => item.role.roleName);
 
 			return {
 				...updatedUser,
 				// @ts-ignore
-				userRoles:
-					// @ts-ignore
-					updatedUser?.userRoles.length > 0
-						? // @ts-ignore
-							updatedUser?.userRoles?.map(
-								(role: { roleId: string }) => role.roleId,
-							)
-						: [],
+				userRoles: roles,
 			} as TUserWithRole;
 		} catch (e) {
 			throw new e();
@@ -255,19 +250,14 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 					password: true,
 				},
 
-				include: { userRoles: { select: { roleId: true } } },
+				include: { userRoles: { include: { role: true } } },
 			});
+
+			const roles = updatedUser.userRoles.map((item) => item.role.roleName);
 
 			return {
 				...updatedUser,
-				userRoles:
-					// @ts-ignore
-					updatedUser?.userRoles.length > 0
-						? // @ts-ignore
-							updatedUser?.userRoles?.map(
-								(role: { roleId: string }) => role.roleId,
-							)
-						: [],
+				userRoles: roles,
 			} as TUserWithRole;
 		} catch (e) {
 			throw e;
@@ -279,15 +269,15 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			const user = await this.prisma.user.findUnique({
 				where: { id: userId },
 				omit: { password: true },
-				include: { userRoles: { select: { roleId: true } } },
+				include: { userRoles: { include: { role: true } } },
 			});
+
+			const roles = user.userRoles.map((item) => item.role.roleName);
 
 			return {
 				...user,
 				// @ts-ignore
-				userRoles: user.userRoles.map(
-					(role: { roleId: string }) => role.roleId,
-				),
+				userRoles: roles,
 			} as TUserWithRole;
 		} catch (e) {
 			throw new BadRequestException("User not found");
