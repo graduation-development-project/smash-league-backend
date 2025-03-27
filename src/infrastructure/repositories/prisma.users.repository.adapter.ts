@@ -16,29 +16,30 @@ import { IUserResponse } from "src/domain/interfaces/user/user.interface";
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
+
 	async addCreditForUser(userId: string, credit: number): Promise<any> {
 		const creditsRemain = await this.prisma.user.findUnique({
 			where: {
-				id: userId
+				id: userId,
 			},
 			select: {
-				creditsRemain: true
-			}
+				creditsRemain: true,
+			},
 		});
 		return await this.prisma.user.update({
 			where: {
-				id: userId
+				id: userId,
 			},
 			data: {
-				creditsRemain: creditsRemain.creditsRemain + credit
+				creditsRemain: creditsRemain.creditsRemain + credit,
 			},
 			select: {
 				id: true,
 				name: true,
 				phoneNumber: true,
 				email: true,
-				creditsRemain: true
-			}
+				creditsRemain: true,
+			},
 		});
 	}
 
@@ -114,6 +115,8 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			}
 
 			await this.verifyPlainContentWithHashedContent(password, user.password);
+
+			delete user.password;
 
 			return {
 				...user,
@@ -259,6 +262,26 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			};
 		} catch (e) {
 			throw e;
+		}
+	}
+
+	async getUserProfile(userId: string): Promise<TUserWithRole> {
+		try {
+			const user = await this.prisma.user.findUnique({
+				where: { id: userId },
+				omit: { password: true },
+				include: { userRoles: { select: { roleId: true } } },
+			});
+
+			return {
+				...user,
+				// @ts-ignore
+				userRoles: user.userRoles.map(
+					(role: { roleId: string }) => role.roleId,
+				),
+			} as TUserWithRole;
+		} catch (e) {
+			throw new BadRequestException("User not found");
 		}
 	}
 }

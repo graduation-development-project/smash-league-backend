@@ -100,6 +100,7 @@ import { PrismaMatchRepositoryAdapter } from "src/infrastructure/repositories/pr
 import { AssignUmpireUseCase } from "./usecases/organizers/assign-umpire.usecase";
 import { PrismaUmpireRepositoryAdapter } from "../infrastructure/repositories/prisma.umpire.repository.adapter";
 import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match.usecase";
+import { GetUserProfileUseCase } from "./usecases/users/get-user-profile.usecase";
 
 @Module({
 	imports: [
@@ -207,6 +208,7 @@ import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match
 		CreateUserUseCase,
 		EditUserProfileUseCase,
 		SearchUserByEmailUseCase,
+		GetUserProfileUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -311,6 +313,7 @@ import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match
 		CreateUserUseCase,
 		EditUserProfileUseCase,
 		SearchUserByEmailUseCase,
+		GetUserProfileUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

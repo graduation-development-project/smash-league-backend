@@ -25,6 +25,7 @@ import { ApiResponse } from "src/domain/dtos/api-response";
 import { SearchUserByEmailUseCase } from "src/application/usecases/users/search-user-by-email.usecase";
 import { User } from "@prisma/client";
 import { IUserResponse } from "src/domain/interfaces/user/user.interface";
+import { GetUserProfileUseCase } from "../../application/usecases/users/get-user-profile.usecase";
 
 @Controller("/users")
 export class UsersController {
@@ -32,7 +33,8 @@ export class UsersController {
 		private getUserByIdUseCase: GetUserByIdUseCase,
 		private editUserProfileUseCase: EditUserProfileUseCase,
 		private changePasswordUseCase: ChangePasswordUseCase,
-		private searchUserByEmail: SearchUserByEmailUseCase
+		private searchUserByEmail: SearchUserByEmailUseCase,
+		private getUserProfileUseCase: GetUserProfileUseCase,
 	) {}
 
 	@Get("/id/:id")
@@ -41,6 +43,14 @@ export class UsersController {
 	@UseGuards(JwtAccessTokenGuard)
 	getUserById(@Param("id") userID: string): Promise<TUserWithRole> {
 		return this.getUserByIdUseCase.execute(userID);
+	}
+
+	@Get("/profile")
+	@UseGuards(JwtAccessTokenGuard)
+	getUserProfile(
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<TUserWithRole>> {
+		return this.getUserProfileUseCase.execute(user.id);
 	}
 
 	@Patch("/")
@@ -63,7 +73,9 @@ export class UsersController {
 
 	@Get("search-users-by-email")
 	@UseGuards(JwtAccessTokenGuard)
-	async searchUsersByEmail(@Query("email") email: string) : Promise<ApiResponse<IUserResponse[] | null>> {
+	async searchUsersByEmail(
+		@Query("email") email: string,
+	): Promise<ApiResponse<IUserResponse[] | null>> {
 		return await this.searchUserByEmail.execute(email);
 	}
 }

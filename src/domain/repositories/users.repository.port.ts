@@ -12,6 +12,8 @@ export interface UsersRepositoryPort {
 
 	getUserByEmail(email: string): Promise<User>;
 
+	getUserProfile(userId: string): Promise<TUserWithRole>;
+
 	getUserWithRefreshToken(userID: string, refreshToken: string): Promise<User>;
 
 	createUser(createUserDTO: CreateUserDTO): Promise<User>;
