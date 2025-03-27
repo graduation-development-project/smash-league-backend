@@ -734,7 +734,7 @@ async function main() {
 			tournamentId: tournament.id,
 		},
 		{
-			tournamentEvent: "WOMEN_SINGLE",
+			tournamentEvent: "WOMENS_SINGLE",
 			fromAge: 14,
 			toAge: 30,
 			winningPoint: 21,
@@ -823,7 +823,7 @@ async function main() {
 			tournamentId: tournament.id,
 		},
 		{
-			tournamentEvent: "WOMEN_SINGLE",
+			tournamentEvent: "WOMENS_SINGLE",
 			fromAge: 10,
 			toAge: 16,
 			winningPoint: 21,
