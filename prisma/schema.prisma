@@ -278,7 +278,7 @@ enum TypeOfFormat {
 
 enum BadmintonParticipantType {
   MENS_SINGLE
-  WOMEN_SINGLE
+  WOMENS_SINGLE
   MENS_DOUBLE
   WOMENS_DOUBLE
   MIXED_DOUBLE
