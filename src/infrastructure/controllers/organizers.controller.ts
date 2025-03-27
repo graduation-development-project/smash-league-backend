@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { IRequestUser } from "../../domain/interfaces/interfaces";
-import { Notification, TournamentRegistration } from "@prisma/client";
+import { Match, Notification, TournamentRegistration } from "@prisma/client";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
@@ -19,9 +19,11 @@ import { ResponseTournamentRegistrationDTO } from "../../domain/dtos/organizers/
 import { GetTournamentRegistrationByTournamentIdUseCase } from "../../application/usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
 import {
 	ITournamentParticipantsResponse,
-	ITournamentRegistrationResponse
+	ITournamentRegistrationResponse,
 } from "../../domain/interfaces/tournament/tournament.interface";
 import { GetTournamentParticipantsByTournamentIdUseCase } from "../../application/usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
+import { AssignUmpireUseCase } from "../../application/usecases/organizers/assign-umpire.usecase";
+import { AssignUmpireDTO } from "../../domain/dtos/organizers/assign-umpire.dto";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -31,6 +33,7 @@ export class OrganizerController {
 		private responseTournamentRegistrationUseCase: ResponseTournamentRegistrationUseCase,
 		private getTournamentRegistrationByTournamentIdUseCase: GetTournamentRegistrationByTournamentIdUseCase,
 		private getTournamentParticipantsByTournamentIdUseCase: GetTournamentParticipantsByTournamentIdUseCase,
+		private assignUmpireUseCase: AssignUmpireUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentId")
@@ -65,5 +68,12 @@ export class OrganizerController {
 			...responseTournamentRegistrationDTO,
 			userId: user.id,
 		});
+	}
+
+	@Put("/assign-umpire")
+	assignUmpire(
+		@Body() assignUmpireDTO: AssignUmpireDTO,
+	): Promise<ApiResponse<Match>> {
+		return this.assignUmpireUseCase.execute(assignUmpireDTO);
 	}
 }

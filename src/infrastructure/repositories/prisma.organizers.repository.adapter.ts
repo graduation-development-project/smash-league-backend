@@ -2,13 +2,19 @@ import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { OrganizersRepositoryPort } from "../../domain/repositories/organizers.repository.port";
 import { ResponseTournamentRegistrationDTO } from "../../domain/dtos/organizers/response-tournament-registration.dto";
 import { PrismaService } from "../services/prisma.service";
-import { ReasonType, TournamentRegistrationStatus } from "@prisma/client";
+import {
+	Match,
+	MatchStatus,
+	ReasonType,
+	TournamentRegistrationStatus,
+} from "@prisma/client";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
 import {
 	ITournamentParticipantsResponse,
-	ITournamentRegistrationResponse
+	ITournamentRegistrationResponse,
 } from "../../domain/interfaces/tournament/tournament.interface";
+import { AssignUmpireDTO } from "../../domain/dtos/organizers/assign-umpire.dto";
 
 @Injectable()
 export class PrismaOrganizersRepositoryAdapter
@@ -189,30 +195,60 @@ export class PrismaOrganizersRepositoryAdapter
 					},
 				});
 
-			console.log(tournamentParticipants)
+			console.log(tournamentParticipants);
 
-			const groupedData = tournamentParticipants.reduce(
-				(acc, participant) => {
-					const tournamentEventId = participant.tournamentEventId;
+			const groupedData = tournamentParticipants.reduce((acc, participant) => {
+				const tournamentEventId = participant.tournamentEventId;
 
-					if (!acc[tournamentEventId]) {
-						acc[tournamentEventId] = {
-							tournamentEvent: participant.tournamentEvent,
-							participants: [],
-						};
-					}
-					delete participant.tournamentEvent;
-					acc[tournamentEventId].participants.push(participant);
+				if (!acc[tournamentEventId]) {
+					acc[tournamentEventId] = {
+						tournamentEvent: participant.tournamentEvent,
+						participants: [],
+					};
+				}
+				delete participant.tournamentEvent;
+				acc[tournamentEventId].participants.push(participant);
 
-					return acc;
-				},
-				{},
-			);
+				return acc;
+			}, {});
 
 			// Convert object to array
 			return Object.values(groupedData);
 		} catch (e) {
 			console.error("Get Tournament Registration Error", e);
+			throw e;
+		}
+	}
+
+	async assignUmpireForMatch(assignUmpireDTO: AssignUmpireDTO): Promise<Match> {
+		const { umpireId, matchId, tournamentId } = assignUmpireDTO;
+		try {
+			const isUmpireInMatch: Match[] = await this.prismaService.match.findMany({
+				where: {
+					umpireId,
+					tournamentEvent: {
+						tournamentId,
+					},
+					matchStatus: {
+						not: MatchStatus.ENDED,
+					},
+				},
+			});
+
+			if (isUmpireInMatch.length > 0) {
+				throw new BadRequestException("Umpire have match not end");
+			}
+
+			return await this.prismaService.match.update({
+				where: {
+					id: matchId,
+				},
+				data: {
+					umpireId,
+				},
+			});
+		} catch (e) {
+			console.error("Assign umpire failed", e);
 			throw e;
 		}
 	}

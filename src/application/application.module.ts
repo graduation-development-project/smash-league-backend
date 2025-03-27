@@ -101,6 +101,7 @@ import {GetAllVerificationRequestUseCase} from "./usecases/staffs/get-all-verifi
 import { PrismaStageRepositoryAdapTer } from 'src/infrastructure/repositories/prisma.stage.repository.adapter';
 import { GetMatchesOfStageUseCase } from './usecases/tournament/tournament-event/get-matches-of-stage.usecase';
 import { PrismaMatchRepositoryAdapter } from 'src/infrastructure/repositories/prisma.match.repository.adapter';
+import {AssignUmpireUseCase} from "./usecases/organizers/assign-umpire.usecase";
 
 @Module({
 	imports: [
@@ -286,6 +287,7 @@ import { PrismaMatchRepositoryAdapter } from 'src/infrastructure/repositories/pr
 		ResponseTournamentRegistrationUseCase,
 		GetTournamentRegistrationByTournamentIdUseCase,
 		GetTournamentParticipantsByTournamentIdUseCase,
+		AssignUmpireUseCase,
 
 		//Staff Use Case
 		VerifyUserInformationUseCase,
@@ -391,6 +393,7 @@ import { PrismaMatchRepositoryAdapter } from 'src/infrastructure/repositories/pr
 		ResponseTournamentRegistrationUseCase,
 		GetTournamentRegistrationByTournamentIdUseCase,
 		GetTournamentParticipantsByTournamentIdUseCase,
+		AssignUmpireUseCase,
 
 		//Staff Use Case
 		VerifyUserInformationUseCase,
