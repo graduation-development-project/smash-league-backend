@@ -55,16 +55,16 @@ enum Gender {
 }
 
 model UserVerification {
-  id           String   @id @default(uuid())
+  id           String           @id @default(uuid())
   userId       String
-  user         User     @relation("FK_User_UserVerification", fields: [userId], references: [id])
+  user         User             @relation("FK_User_UserVerification", fields: [userId], references: [id])
   IDCardFront  String?
   IDCardBack   String?
   cardPhoto    String?
   role         String
-  isVerified   Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  rejectReason Reason?  @relation(name: "FK_UserVerification_Reason")
+  status       InvitationStatus @default(PENDING)
+  createdAt    DateTime         @default(now())
+  rejectReason Reason?          @relation(name: "FK_UserVerification_Reason")
 }
 
 model Role {
@@ -313,7 +313,7 @@ model Match {
   matchNumber               Int
   isByeMatch                Boolean
   tournamentEventId         String
-  tournamentEvent           TournamentEvent         @relation(name: "FK_Match_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade, onUpdate: Cascade)                
+  tournamentEvent           TournamentEvent         @relation(name: "FK_Match_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   nextMatchId               String?
   nextMatch                 Match?                  @relation(name: "FK_Match_NextMatch", fields: [nextMatchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   games                     Game[]                  @relation(name: "FK_Game_Match")

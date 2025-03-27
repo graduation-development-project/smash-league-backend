@@ -8,7 +8,7 @@ import { PrismaService } from "../services/prisma.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
-import { ReasonType, UserVerification } from "@prisma/client";
+import { InvitationStatus, ReasonType, UserVerification } from "@prisma/client";
 import { RoleMap } from "../enums/role.enum";
 
 @Injectable()
@@ -34,7 +34,11 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 		await this.prismaService.$transaction(async (prisma) => {
 			await prisma.userVerification.update({
 				where: { id: verificationID },
-				data: { isVerified: option },
+				data: {
+					status: option
+						? InvitationStatus.ACCEPTED
+						: InvitationStatus.REJECTED,
+				},
 			});
 
 			if (option) {
