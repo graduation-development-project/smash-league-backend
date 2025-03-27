@@ -108,8 +108,8 @@ export class CreateNewTournamentUseCase {
 									case "MENS_SINGLE":
 										tournamentEventEnum = BadmintonParticipantType.MENS_SINGLE;
 										break;
-									case "WOMEN_SINGLE":
-										tournamentEventEnum = BadmintonParticipantType.WOMEN_SINGLE;
+									case "WOMENS_SINGLE":
+										tournamentEventEnum = BadmintonParticipantType.WOMENS_SINGLE;
 										break;
 
 									case "MENS_DOUBLE":
