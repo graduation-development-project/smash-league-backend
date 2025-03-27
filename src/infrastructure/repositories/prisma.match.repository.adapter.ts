@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Match, PrismaClient } from "@prisma/client";
+import { create } from "domain";
+import { ICreateMatch } from "src/domain/interfaces/tournament/match/match.interface";
 import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
 
 @Injectable()
@@ -8,8 +10,10 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		private readonly prisma: PrismaClient
 	){
 	}
-	async createMultipleMatch(): Promise<any> {
-		return;
+	async createMultipleMatch(createMatches: ICreateMatch[]): Promise<any> {
+		return await this.prisma.match.createManyAndReturn({
+			data: createMatches
+		});
 	}
 	async getMatchDetail(matchId: string): Promise<Match> {
 		return await this.prisma.match.findUnique({

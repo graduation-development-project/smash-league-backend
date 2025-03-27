@@ -1,9 +1,11 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { MatchStatus } from "@prisma/client";
+import { Match, MatchStatus } from "@prisma/client";
 import { loadESLint } from "eslint";
 import { count } from "node:console";
+import { create } from "node:domain";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { ICreateMatch } from "src/domain/interfaces/tournament/match/match.interface";
+import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
 import { StageRepositoryPort } from "src/domain/repositories/stage.repository.port";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
@@ -16,43 +18,119 @@ export class GenerateBracketUseCase {
 		@Inject("TournamentEventRepository")
 		private readonly tournamentEventRepository: TournamentEventRepositoryPort,
 		@Inject("StageRepository")
-		private readonly stageRepository: StageRepositoryPort
-		
+		private readonly stageRepository: StageRepositoryPort,
+		@Inject("MatchRepository")
+		private readonly matchRepository: MatchRepositoryPort
 	) {
 	}
 
 	async execute(tournamentEventId: string): Promise<ApiResponse<number>> {
 		const listParticipants = await this.tournamentEventRepository.getParticipantsOfTournamentEvent(tournamentEventId);
-		const logarit = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1);
-		const numberOfByeParticipants = logarit - listParticipants.numberOfParticipants;
+		let numberOfBracket = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1) - 1;
+		const numberOfByeParticipants = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1) - listParticipants.numberOfParticipants;
 		const numberOfRounds = this.calculateTheNumberOfRound(listParticipants.numberOfParticipants);
+		const numberOfFullParticipants = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1);
+		// console.log(numberOfFullParticipants);
+		console.log(numberOfBracket);
 		let countableRound = 1;
+		let numberOfMatchPerRound = 1;
 		let check = 0;
-		let numberOfMatch = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1) - 1;
-		console.log(numberOfMatch);
+		let nextMatches: Match[] = [];
 		do {
 			countableRound *= 2;
-			console.log(this.getRoundOfBracket(countableRound));
+			// console.log(this.getRoundOfBracket(countableRound));
 			console.log(countableRound);
 			check += 1;
-			// console.log(check);
-			// const stageCreate = await this.stageRepository.createStage({
-			// 	stageName: this.getRoundOfBracket(countableRound),
-			// 	tournamentEventId: tournamentEventId
-			// });
-			// console.log(stageCreate);
-			let matches: ICreateMatch[] = [];
+			const stageCreate = await this.stageRepository.createStage({
+				stageName: this.getRoundOfBracket(countableRound),
+				tournamentEventId: tournamentEventId
+			});
+			console.log(stageCreate);
+			console.log(nextMatches);
+			let matchesCreate: ICreateMatch[] = [];
 			if (check === 1) {
-				numberOfMatch -= 1;
-				// matches.push({
-				// 	matchStatus: MatchStatus.NOT_STARTED,
-				// 	nextMatchId: null,
-				// 	stageId: stageCreate.id,
-				// 	isByeMatch: false
-				// });
+				matchesCreate.push({
+					matchStatus: MatchStatus.NOT_STARTED,
+					nextMatchId: null,
+					stageId: stageCreate.id,
+					isByeMatch: false,
+					matchNumber: numberOfFullParticipants - 1,
+					tournamentEventId: tournamentEventId
+				});
+				numberOfBracket -= 1;
 			} else if (check === numberOfRounds) {
-				
+				const range = this.createRangeNumberArray(((numberOfByeParticipants / 2) + 1), (((numberOfFullParticipants - 2) / 2) - (numberOfByeParticipants / 2) + 1));
+				console.log(range);
+				// console.log(this.checkNumberIsInRange(7, range));
+				for (let i = (((numberOfFullParticipants - 2) / 2) + 1); i >= 1; i-=2) {
+					if (!this.checkNumberIsInRange(i, range)) {
+						matchesCreate.push({
+							isByeMatch: true,
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: null,
+							stageId: stageCreate.id,
+							matchNumber: i,
+							tournamentEventId: tournamentEventId
+						});
+					} else {
+						matchesCreate.push({
+							isByeMatch: false,
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: null,
+							stageId: stageCreate.id,
+							matchNumber: i,
+							tournamentEventId: tournamentEventId
+						});
+					}
+					numberOfBracket -= 1;
+
+					if (!this.checkNumberIsInRange(i - 1, range)) {
+						matchesCreate.push({
+							isByeMatch: true,
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: null,
+							stageId: stageCreate.id,
+							matchNumber: i - 1,
+							tournamentEventId: tournamentEventId
+						});
+					} else {
+						matchesCreate.push({
+							isByeMatch: false,
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: null,
+							stageId: stageCreate.id,
+							matchNumber: i - 1,
+							tournamentEventId: tournamentEventId
+						});
+						numberOfBracket -= 1;
+					}
+				}
+			} else {
+				for (let i = 0; i < nextMatches.length; i++) {
+					matchesCreate.push({
+						isByeMatch: false,
+						matchNumber: numberOfBracket,
+						matchStatus: MatchStatus.NOT_STARTED,
+						nextMatchId: nextMatches[i].id,
+						stageId: stageCreate.id,
+						tournamentEventId: tournamentEventId				
+					});
+					numberOfBracket -= 1;
+					matchesCreate.push({
+						isByeMatch: false,
+						matchNumber: numberOfBracket,
+						matchStatus: MatchStatus.NOT_STARTED,
+						nextMatchId: nextMatches[i].id,
+						stageId: stageCreate.id,
+						tournamentEventId: tournamentEventId				
+					});
+					numberOfBracket -= 1;
+				}
 			}
+			console.log(matchesCreate);
+			const createMatches = await this.matchRepository.createMultipleMatch(matchesCreate);
+			nextMatches = createMatches;
+			// console.log(nextMatches);
 		} while (check < numberOfRounds);
 		// console.log(numberOfRounds);
 		return new ApiResponse<number>(
@@ -67,7 +145,7 @@ export class GenerateBracketUseCase {
 	}
 
 	calculateTheNumberOfRound(numberOfParticipants: number): number {
-		return Math.floor(Math.log2(numberOfParticipants));
+		return Math.ceil(Math.log2(numberOfParticipants));
 	}
 
 	getRoundOfBracket(numberOfPlayerPerRound: number): string {
@@ -82,8 +160,20 @@ export class GenerateBracketUseCase {
 				return "Quarter-final";
 				break;
 			default: 
-				return `1/${numberOfPlayerPerRound / 2}`
+				return `Round 1/${numberOfPlayerPerRound}`
 				break;			
 		}
 	}
+
+	createRangeNumberArray(start: number, end: number) : number[] {
+		return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+	}
+
+	checkNumberIsInRange(numberToCheck: number, integerArray: number[]) : boolean {
+		if (integerArray.length === 0) return false; // Handle empty array case
+    let min = Math.min(...integerArray);
+    let max = Math.max(...integerArray);
+    return numberToCheck >= min && numberToCheck <= max;
+	}
+
 }

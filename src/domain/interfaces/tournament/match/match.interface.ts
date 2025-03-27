@@ -18,4 +18,6 @@ export interface ICreateMatch {
 	stageId: string;
 	isByeMatch: boolean;
 	nextMatchId: string;
+	matchNumber: number;
+	tournamentEventId: string;
 }
