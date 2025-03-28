@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { IRequestUser } from "../../domain/interfaces/interfaces";
-import { Match, Notification, TournamentRegistration } from "@prisma/client";
+import { Match, Notification, Tournament, TournamentRegistration } from "@prisma/client";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
@@ -24,6 +24,7 @@ import {
 import { GetTournamentParticipantsByTournamentIdUseCase } from "../../application/usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
 import { AssignUmpireUseCase } from "../../application/usecases/organizers/assign-umpire.usecase";
 import { AssignUmpireDTO } from "../../domain/dtos/organizers/assign-umpire.dto";
+import { GetOwnedTournamentUseCase } from "../../application/usecases/organizers/get-owned-tournament.usecase";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -34,6 +35,7 @@ export class OrganizerController {
 		private getTournamentRegistrationByTournamentIdUseCase: GetTournamentRegistrationByTournamentIdUseCase,
 		private getTournamentParticipantsByTournamentIdUseCase: GetTournamentParticipantsByTournamentIdUseCase,
 		private assignUmpireUseCase: AssignUmpireUseCase,
+		private getOwnedTournamentUseCase: GetOwnedTournamentUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentId")
@@ -56,6 +58,13 @@ export class OrganizerController {
 			tournamentId,
 			user.id,
 		);
+	}
+
+	@Get("/owned-tournaments")
+	getOwnedTournament(
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<Tournament[]>> {
+		return this.getOwnedTournamentUseCase.execute(user.id);
 	}
 
 	@Put("/response-tournament-registration")
