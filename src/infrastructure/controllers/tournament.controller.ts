@@ -63,6 +63,7 @@ import { UploadMerchandiseImagesUseCase } from 'src/application/usecases/tournam
 import { BadmintonParticipantType } from 'src/domain/interfaces/tournament/badminton-participant-type.interface';
 import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
 import { GetMatchesOfStageUseCase } from 'src/application/usecases/tournament/tournament-event/get-matches-of-stage.usecase';
+import { GetMatchesOfTournamentEventUseCase } from 'src/application/usecases/tournament/tournament-event/get-matches-of-tournament-event.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -84,7 +85,8 @@ export class TournamentController {
 		private readonly getParticipantsOfTournamentEvent: GetParticipantsOfTournamentEventUseCase,
 		private readonly uploadMerchandiseImagesUseCase: UploadMerchandiseImagesUseCase,
 		private readonly generateBracketUseCase: GenerateBracketUseCase,
-		private readonly getMatchesOfStageUseCase: GetMatchesOfStageUseCase
+		private readonly getMatchesOfStageUseCase: GetMatchesOfStageUseCase,
+		private readonly getMatchesOfTournamentEventUseCase: GetMatchesOfTournamentEventUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -258,5 +260,10 @@ export class TournamentController {
 		@Param("stageId") stageId: string
 	) : Promise<ApiResponse<any>> {
 		return await this.getMatchesOfStageUseCase.execute();
+	}
+
+	@Get("/get-matches-of-tournament-event/:tournamentEventId")
+	async getMatchesOfTournamentEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<any>> {
+		return await this.getMatchesOfTournamentEventUseCase.execute(tournamentEventId);
 	}
 }
