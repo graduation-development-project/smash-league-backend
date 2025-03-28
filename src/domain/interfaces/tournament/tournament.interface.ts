@@ -1,6 +1,8 @@
 import {
 	BadmintonParticipantType,
-	Tournament, TournamentEvent, TournamentParticipants,
+	Tournament,
+	TournamentEvent,
+	TournamentParticipants,
 	TournamentRegistration,
 } from "@prisma/client";
 import { Type } from "class-transformer";
@@ -127,11 +129,11 @@ export interface ITournamentRegistrationResponse {
 	tournamentEvent: TournamentEvent;
 	registrations: TournamentRegistration[];
 }
+
 export interface ITournamentParticipantsResponse {
 	tournamentEvent: TournamentEvent;
 	participants: TournamentParticipants[];
 }
-
 
 // const ParticipantTypeMap = {
 // 	MENS_SINGLE: "MENS_SINGLE",
@@ -173,9 +175,9 @@ export interface ITournamentEventDetail {
 	fromAge: number;
 	toAge: number;
 	id: string;
-	tournamentEvent: string,
-	numberOfGames: number,
-	typeOfFormat: string,
+	tournamentEvent: string;
+	numberOfGames: number;
+	typeOfFormat: string;
 	winningPoint: number;
 	lastPoint: number;
 	championshipPrize: string;
@@ -189,32 +191,48 @@ export interface ITournamentDetailResponse {
 	id: string;
 	name: string;
 	shortName: string;
-	organizer: IOrganizerResponse;
-	contactPhone: string;
-	contactEmail: string;
 	mainColor: string;
 	backgroundTournament: string;
-	location: string;
+	checkInBeforeStart: Date;
 	registrationOpeningDate: Date;
-	expiredTimeLeft: string;
 	registrationClosingDate: Date;
 	drawDate: Date;
 	startDate: Date;
 	endDate: Date;
-	checkInBeforeStart: Date;
-	umpirePerMatch: number;
+	organizer: {
+		id: string;
+		name: string;
+		avatarURL: string;
+		phoneNumber: string;
+		email: string;
+	};
+	contactEmail: string;
+	contactPhone: string;
+	// numberOfMerchandise: true,
+	hasMerchandise: boolean;
+	hasLiveStream: boolean;
+	hasPost: boolean;
+	location: string;
 	registrationFeePerPerson: number;
 	registrationFeePerPair: number;
 	maxEventPerPerson: number;
-	protestFeePerTime: number;
-	hasMerchandise: boolean;
-	numberOfMerchandise: number;
-	merchandiseImages: string[];
+	prizePool: number;
 	requiredAttachment: string[];
-	tournamentSerie: ITournamentSerieResponse;
-	tournamentEvents: ITournamentEventDetail[];
+	protestFeePerTime: number;
+	liveStreamRooms: string[];
+	tournamentSerie: {
+		id: string;
+		tournamentSerieName: string;
+		serieBackgroundImageURL: string;
+	};
+	tournamentEvents: {
+		[tournamentEventName: string]: {
+			fromAge: number;
+			toAge: number;
+			id: string;
+		}[];
+	};
 }
-
 
 export interface IUpdateTournament {
 	id: string;

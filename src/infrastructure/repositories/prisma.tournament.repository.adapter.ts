@@ -1,5 +1,14 @@
-import { ITournamentDetailResponse, ITournamentResponse, IUpdateTournament } from './../../domain/interfaces/tournament/tournament.interface';
-import { PrismaClient, Tournament, TournamentStatus } from "@prisma/client";
+import {
+	ITournamentDetailResponse,
+	ITournamentResponse,
+	IUpdateTournament,
+} from "./../../domain/interfaces/tournament/tournament.interface";
+import {
+	BadmintonParticipantType,
+	PrismaClient,
+	Tournament,
+	TournamentStatus,
+} from "@prisma/client";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { Injectable } from "@nestjs/common";
 import { ICreateTournament } from "src/domain/interfaces/tournament/tournament.interface";
@@ -17,32 +26,40 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
-	async updateTournament(updateTournament: IUpdateTournament): Promise<Tournament> {
+
+	async updateTournament(
+		updateTournament: IUpdateTournament,
+	): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {
-				id: updateTournament.id
+				id: updateTournament.id,
 			},
 			data: {
 				...updateTournament,
-			}
+			},
 		});
 	}
+
 	calculateTimeDetailLeft(date: Date): string {
 		const now = new Date();
 		const currentTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-		if (date.getTime() < currentTime.getTime()) return "Expired!"
+		if (date.getTime() < currentTime.getTime()) return "Expired!";
 		const timeLeft = date.getTime() - currentTime.getTime(); // Difference in milliseconds
 
 		const seconds = Math.floor((timeLeft / 1000) % 60);
-		const secondsString = seconds > 1 ? seconds + " seconds" : seconds === 0? "": "1 second";
+		const secondsString =
+			seconds > 1 ? seconds + " seconds" : seconds === 0 ? "" : "1 second";
 		const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
-		const minutesString = minutes > 1 ? minutes + " minutes " : minutes === 0? "": "1 minute ";
+		const minutesString =
+			minutes > 1 ? minutes + " minutes " : minutes === 0 ? "" : "1 minute ";
 		const hours = Math.floor((timeLeft / 1000 / 60 / 60) % 24);
-		const hoursString = hours > 1 ? hours + " hours " : hours === 0? "": "1 hour ";
+		const hoursString =
+			hours > 1 ? hours + " hours " : hours === 0 ? "" : "1 hour ";
 		const days = Math.floor(timeLeft / 1000 / 60 / 60 / 24);
-		const daysString = days > 1 ? days + " days " : days === 0? "": "1 day ";
+		const daysString = days > 1 ? days + " days " : days === 0 ? "" : "1 day ";
 		return `${daysString}${hoursString}${minutesString}${secondsString} left`;
 	}
+
 	calculateTimeLeft(date: Date): string {
 		const now = new Date();
 		const currentTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
@@ -138,7 +155,7 @@ export class PrismaTournamentRepositorAdapter
 								avatarURL: true,
 								phoneNumber: true,
 								email: true,
-							}
+							},
 						},
 						numberOfMerchandise: true,
 						hasMerchandise: true,
@@ -159,23 +176,27 @@ export class PrismaTournamentRepositorAdapter
 										id: true,
 										name: true,
 										email: true,
-										phoneNumber: true
-									}
+										phoneNumber: true,
+									},
 								},
 								tournamentSerieName: true,
-								serieBackgroundImageURL: true
-							}
-						}
-					}
+								serieBackgroundImageURL: true,
+							},
+						},
+					},
 				}),
 			]);
 
 			// const timeLeft = this.calculateTimeLeft(tournaments[0].registrationClosingDate);
 
-			const tournamentsResponse = Object.values(tournaments).map((tournament) => ({
-				...tournament,
-				expiredTimeLeft: this.calculateTimeLeft(tournament.registrationClosingDate)
-			}));
+			const tournamentsResponse = Object.values(tournaments).map(
+				(tournament) => ({
+					...tournament,
+					expiredTimeLeft: this.calculateTimeLeft(
+						tournament.registrationClosingDate,
+					),
+				}),
+			);
 
 			const lastPage: number = Math.ceil(total / perPage);
 			const nextPage: number = page < lastPage ? page + 1 : null;
@@ -202,13 +223,19 @@ export class PrismaTournamentRepositorAdapter
 		return await this.prisma.tournament.findMany();
 	}
 
-	async getTournamentDetail(tournamentId: string): Promise<ITournamentDetailResponse> {
+	async getTournamentDetail(
+		tournamentId: string,
+	): Promise<ITournamentDetailResponse> {
+		console.log(tournamentId);
 		const tournament = await this.prisma.tournament.findUnique({
 			where: {
-				id: tournamentId
+				id: tournamentId,
 			},
 			select: {
 				id: true,
+				name: true,
+				shortName: true,
+				mainColor: true,
 				backgroundTournament: true,
 				checkInBeforeStart: true,
 				registrationOpeningDate: true,
@@ -216,9 +243,6 @@ export class PrismaTournamentRepositorAdapter
 				drawDate: true,
 				startDate: true,
 				endDate: true,
-				name: true,
-				shortName: true,
-				mainColor: true,
 				organizer: {
 					select: {
 						id: true,
@@ -226,59 +250,66 @@ export class PrismaTournamentRepositorAdapter
 						avatarURL: true,
 						phoneNumber: true,
 						email: true,
-					}
+					},
 				},
 				contactEmail: true,
 				contactPhone: true,
-				numberOfMerchandise: true,
+				// numberOfMerchandise: true,
 				hasMerchandise: true,
+				hasLiveStream: true,
 				location: true,
 				registrationFeePerPerson: true,
 				registrationFeePerPair: true,
-				merchandiseImages: true,
 				maxEventPerPerson: true,
 				prizePool: true,
 				requiredAttachment: true,
-				umpirePerMatch: true,
 				protestFeePerTime: true,
 				tournamentSerie: {
 					select: {
 						id: true,
 						tournamentSerieName: true,
 						serieBackgroundImageURL: true,
-						belongsToUser: {
-							select: {
-								id: true,
-								email: true,
-								phoneNumber: true,
-								name: true
-							}
-						}
-					}
+					},
 				},
 				tournamentEvents: {
 					select: {
+						tournamentEvent: true,
 						fromAge: true,
 						toAge: true,
 						id: true,
-						tournamentEvent: true,
-						numberOfGames: true,
-						typeOfFormat: true,
-						winningPoint: true,
-						lastPoint: true,
-						championshipPrize: true,
-						runnerUpPrize: true,
-						thirdPlacePrize: true,
-						jointThirdPlacePrize: true,
-						ruleOfEventExtension: true
-					}
-				}
-			}
+					},
+				},
+				tournamentPosts: true,
+			},
 		});
+
 		if (tournament === null) return null;
-		const tournamentResponse: ITournamentDetailResponse = {
+
+		const groupedEvents: {
+			[tournamentEventName: string]: {
+				fromAge: number;
+				toAge: number;
+				id: string;
+			}[];
+		} = tournament.tournamentEvents.reduce((acc, event) => {
+			const { tournamentEvent, ...rest } = event;
+			if (!acc[tournamentEvent]) {
+				acc[tournamentEvent] = [];
+			}
+			acc[tournamentEvent].push(rest);
+			return acc;
+		}, {});
+
+		const tournamentResponse = {
 			...tournament,
-			expiredTimeLeft: (tournament === null)? "" : this.calculateTimeDetailLeft(tournament.registrationClosingDate)
+			hasPost: tournament.tournamentPosts.length > 0,
+			liveStreamRooms: [],
+			tournamentEvents: groupedEvents,
+
+			expiredTimeLeft:
+				tournament === null
+					? ""
+					: this.calculateTimeDetailLeft(tournament.registrationClosingDate),
 		};
 		return tournamentResponse;
 	}
