@@ -102,6 +102,7 @@ import { PrismaUmpireRepositoryAdapter } from "../infrastructure/repositories/pr
 import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match.usecase";
 import { GetUserProfileUseCase } from "./usecases/users/get-user-profile.usecase";
 import { GetOwnedTournamentUseCase } from "./usecases/organizers/get-owned-tournament.usecase";
+import { GetTournamentPostUseCase } from "./usecases/tournament/get-tournament-post.usecase";
 
 @Module({
 	imports: [
@@ -264,6 +265,7 @@ import { GetOwnedTournamentUseCase } from "./usecases/organizers/get-owned-tourn
 		GetParticipantsOfTournamentEventUseCase,
 		GenerateBracketUseCase,
 		GetMatchesOfStageUseCase,
+		GetTournamentPostUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -378,6 +380,7 @@ import { GetOwnedTournamentUseCase } from "./usecases/organizers/get-owned-tourn
 		GetParticipantsOfTournamentEventUseCase,
 		GenerateBracketUseCase,
 		GetMatchesOfStageUseCase,
+		GetTournamentPostUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

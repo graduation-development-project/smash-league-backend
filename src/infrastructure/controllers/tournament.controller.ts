@@ -1,5 +1,5 @@
-import { GenerateBracketUseCase } from './../../application/usecases/tournament/generate-bracket.usecase';
-import { UpdateTournament } from './../../domain/interfaces/tournament/tournament.validation';
+import { GenerateBracketUseCase } from "./../../application/usecases/tournament/generate-bracket.usecase";
+import { UpdateTournament } from "./../../domain/interfaces/tournament/tournament.validation";
 import {
 	Body,
 	Controller,
@@ -16,10 +16,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from "@nestjs/common";
-import {
-	Tournament,
-	TournamentSerie,
-} from "@prisma/client";
+import { Tournament, TournamentPost, TournamentSerie } from "@prisma/client";
 import { CreateNewTournamentUseCase } from "src/application/usecases/tournament/create-new-tournament.useacase";
 import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/tournament/get-all-badminton-participant-type.usecase";
 import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
@@ -50,19 +47,24 @@ import { GetAllTournamentSeriesUseCase } from "src/application/usecases/tourname
 import { CreateTournamentSerieUseCase } from "src/application/usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "src/application/usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "src/application/usecases/tournament/create-random-url.usecase";
-import { AnyFilesInterceptor, FileFieldsInterceptor, FileInterceptor } from "@nestjs/platform-express";
+import {
+	AnyFilesInterceptor,
+	FileFieldsInterceptor,
+	FileInterceptor,
+} from "@nestjs/platform-express";
 import { create } from "domain";
 import { UploadBackgroundImageUseCase } from "src/application/usecases/tournament/upload-background-image.usecase";
 import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/get-tournament-detail.usecase";
 import { GetMyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-my-tournament-serie.usecase";
 import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
-import { UpdateTournamentUseCase } from 'src/application/usecases/tournament/update-tournament.usecase';
-import { ITournamentEventParticipants } from 'src/domain/interfaces/tournament/tournament-event/tournament-event.interface';
-import { GetParticipantsOfTournamentEventUseCase } from 'src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase';
-import { UploadMerchandiseImagesUseCase } from 'src/application/usecases/tournament/upload-merchandise-images.usecase';
-import { BadmintonParticipantType } from 'src/domain/interfaces/tournament/badminton-participant-type.interface';
-import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
-import { GetMatchesOfStageUseCase } from 'src/application/usecases/tournament/tournament-event/get-matches-of-stage.usecase';
+import { UpdateTournamentUseCase } from "src/application/usecases/tournament/update-tournament.usecase";
+import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
+import { GetParticipantsOfTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase";
+import { UploadMerchandiseImagesUseCase } from "src/application/usecases/tournament/upload-merchandise-images.usecase";
+import { BadmintonParticipantType } from "src/domain/interfaces/tournament/badminton-participant-type.interface";
+import { KeyValueType } from "src/domain/dtos/key-value-type.type";
+import { GetMatchesOfStageUseCase } from "src/application/usecases/tournament/tournament-event/get-matches-of-stage.usecase";
+import { GetTournamentPostUseCase } from "../../application/usecases/tournament/get-tournament-post.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -84,7 +86,8 @@ export class TournamentController {
 		private readonly getParticipantsOfTournamentEvent: GetParticipantsOfTournamentEventUseCase,
 		private readonly uploadMerchandiseImagesUseCase: UploadMerchandiseImagesUseCase,
 		private readonly generateBracketUseCase: GenerateBracketUseCase,
-		private readonly getMatchesOfStageUseCase: GetMatchesOfStageUseCase
+		private readonly getMatchesOfStageUseCase: GetMatchesOfStageUseCase,
+		private readonly getTournamentPostUseCase: GetTournamentPostUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -125,7 +128,9 @@ export class TournamentController {
 	}
 
 	@Get("get-all-tournament-serie/:userId")
-	async getAllTournamentSerieByUser(@Param("userId") userId: string): Promise<ApiResponse<TournamentSerie>> {
+	async getAllTournamentSerieByUser(
+		@Param("userId") userId: string,
+	): Promise<ApiResponse<TournamentSerie>> {
 		return;
 	}
 
@@ -139,9 +144,7 @@ export class TournamentController {
 
 	@Get("/get-my-tournament-series")
 	@UseGuards(JwtAccessTokenGuard)
-	async getMyTournamentSeries(
-		@Req() request: IRequestUser
-	) {
+	async getMyTournamentSeries(@Req() request: IRequestUser) {
 		return await this.getMyTournamentSerieUseCase.execute(request);
 	}
 
@@ -182,11 +185,12 @@ export class TournamentController {
 	async uploadMerchandiseImages(
 		@UploadedFiles() files: Express.Multer.File[],
 	): Promise<ApiResponse<string[]>> {
-		if (files.length > 5) return new ApiResponse<null | undefined>(
-			HttpStatus.BAD_REQUEST,
-			"Files limit to 5.",
-			null
-		);
+		if (files.length > 5)
+			return new ApiResponse<null | undefined>(
+				HttpStatus.BAD_REQUEST,
+				"Files limit to 5.",
+				null,
+			);
 		return await this.uploadMerchandiseImagesUseCase.execute(files);
 	}
 
@@ -209,9 +213,7 @@ export class TournamentController {
 	}
 
 	@Get("/get-all-badminton-participant-type")
-	async getAllTournamentEvent(): Promise<
-		ApiResponse<KeyValueType<string>[]>
-	> {
+	async getAllTournamentEvent(): Promise<ApiResponse<KeyValueType<string>[]>> {
 		return await this.getAllBadmintonParticipantTypeUseCase.execute();
 	}
 
@@ -226,37 +228,54 @@ export class TournamentController {
 		@Req() request: IRequestUser,
 		@Body() tournamentSerie: CreateTournamentSerie,
 	): Promise<ApiResponse<TournamentSerie>> {
-		return await this.createTournamentSerieUseCase.execute(request, tournamentSerie);
+		return await this.createTournamentSerieUseCase.execute(
+			request,
+			tournamentSerie,
+		);
 	}
 
 	@Get("get-tournament-detail/:id")
-	async getTournamentDetail(@Param("id") id: string): Promise<ApiResponse<ITournamentDetailResponse>> {
+	async getTournamentDetail(
+		@Param("id") id: string,
+	): Promise<ApiResponse<ITournamentDetailResponse>> {
 		return await this.getTournamentDetailUseCase.execute(id);
 	}
 
 	@Put("update-tournament")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
-	async updateTournament(@Body() updateTournament: UpdateTournament) : Promise<ApiResponse<Tournament | null>> {
+	async updateTournament(
+		@Body() updateTournament: UpdateTournament,
+	): Promise<ApiResponse<Tournament | null>> {
 		console.log(updateTournament.merchandiseImages);
 		return await this.updateTournamentUseCase.execute(updateTournament);
 	}
 
 	@Get("/get-participants-of-tournament-event/:tournamentEventId")
-	async getAllParticipantsOfTournamentEvent(@Param("tournamentEventId") tournamentEventId: string) : Promise<ApiResponse<ITournamentEventParticipants>> {
+	async getAllParticipantsOfTournamentEvent(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<ITournamentEventParticipants>> {
 		return this.getParticipantsOfTournamentEvent.execute(tournamentEventId);
 	}
 
 	@Get("/generate-brackets/:tournamentEventId")
 	async generateBrackets(
-		@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<number>> {
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<number>> {
 		return await this.generateBracketUseCase.execute(tournamentEventId);
 	}
 
 	@Get("/get-matches-of-stage/:stageId")
 	async getMatchesOfStage(
-		@Param("stageId") stageId: string
-	) : Promise<ApiResponse<any>> {
+		@Param("stageId") stageId: string,
+	): Promise<ApiResponse<any>> {
 		return await this.getMatchesOfStageUseCase.execute();
+	}
+
+	@Get("/tournament-posts/:tournamentId")
+	async getTournamentPost(
+		@Param("tournamentId") tournamentId: string,
+	): Promise<ApiResponse<TournamentPost[]>> {
+		return this.getTournamentPostUseCase.execute(tournamentId);
 	}
 }

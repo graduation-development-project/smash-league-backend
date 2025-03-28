@@ -7,6 +7,7 @@ import {
 	BadmintonParticipantType,
 	PrismaClient,
 	Tournament,
+	TournamentPost,
 	TournamentStatus,
 } from "@prisma/client";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
@@ -312,5 +313,18 @@ export class PrismaTournamentRepositorAdapter
 					: this.calculateTimeDetailLeft(tournament.registrationClosingDate),
 		};
 		return tournamentResponse;
+	}
+
+	async getTournamentPost(tournamentId: string): Promise<TournamentPost[]> {
+		try {
+			return this.prisma.tournamentPost.findMany({
+				where: {
+					tournamentId,
+				},
+			});
+		} catch (e) {
+			console.error("Get TournamentPost failed", e);
+			throw e;
+		}
 	}
 }

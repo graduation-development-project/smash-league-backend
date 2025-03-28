@@ -1,12 +1,19 @@
-import { Tournament } from "@prisma/client";
-import { ICreateTournament, ITournamentDetailResponse, ITournamentResponse, IUpdateTournament } from "../interfaces/tournament/tournament.interface";
+import { Tournament, TournamentPost } from "@prisma/client";
+import {
+	ICreateTournament,
+	ITournamentDetailResponse,
+	ITournamentResponse,
+	IUpdateTournament,
+} from "../interfaces/tournament/tournament.interface";
 import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
 
 export interface TournamentRepositoryPort {
 	createTournament(tournament: ICreateTournament): Promise<Tournament>;
 
 	getTournament(id: string): Promise<Tournament | null>;
+
 	calculateTimeLeft(date: Date): string;
+
 	calculateTimeDetailLeft(date: Date): string;
 
 	searchTournament(
@@ -19,4 +26,6 @@ export interface TournamentRepositoryPort {
 	getTournamentDetail(tournamentId: string): Promise<ITournamentDetailResponse>;
 
 	updateTournament(updateTournament: IUpdateTournament): Promise<Tournament>;
+
+	getTournamentPost(tournamentId: string): Promise<TournamentPost[]>;
 }
