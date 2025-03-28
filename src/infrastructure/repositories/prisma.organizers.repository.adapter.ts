@@ -6,6 +6,7 @@ import {
 	Match,
 	MatchStatus,
 	ReasonType,
+	Tournament,
 	TournamentRegistrationRole,
 	TournamentRegistrationStatus,
 } from "@prisma/client";
@@ -262,6 +263,19 @@ export class PrismaOrganizersRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("Assign umpire failed", e);
+			throw e;
+		}
+	}
+
+	async getOwnedTournament(organizerId: string): Promise<Tournament[]> {
+		try {
+			return this.prismaService.tournament.findMany({
+				where: {
+					organizerId
+				}
+			})
+		} catch (e) {
+			console.error("Get owned tournament failed", e);
 			throw e;
 		}
 	}
