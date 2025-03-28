@@ -21,3 +21,13 @@ export interface ICreateMatch {
 	matchNumber: number;
 	tournamentEventId: string;
 }
+
+export interface IMatchDetailBracketResponse {
+	id: string;
+	participants: IParticipantResponse[];
+	state: string;
+	tournamentRoundText: string;
+	name: string;
+	nextMatchId: string;
+	startTime: string;
+}

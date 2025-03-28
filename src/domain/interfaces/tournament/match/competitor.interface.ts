@@ -3,7 +3,7 @@ export interface ICompetitorResponse {
 	name: string;
 	avatarURL: string;
 	gender: string;
-	height: string;
+	height: number;
 	hands: string;
 }
 
