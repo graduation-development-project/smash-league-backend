@@ -59,10 +59,13 @@ export class GenerateBracketUseCase {
 				});
 				numberOfBracket -= 1;
 			} else if (check === numberOfRounds) {
-				const range = this.createRangeNumberArray(((numberOfByeParticipants / 2) + 1), (((numberOfFullParticipants - 2) / 2) - (numberOfByeParticipants / 2) + 1));
+				console.log(((numberOfByeParticipants / 2) + 1), " ", Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
+				const range = this.createRangeNumberArray(((numberOfByeParticipants / 2) + 1), Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
 				console.log(range);
 				// console.log(this.checkNumberIsInRange(7, range));
 				for (let i = (((numberOfFullParticipants - 2) / 2) + 1); i >= 1; i-=2) {
+					// console.log(numberOfBracket, " ", this.checkNumberIsInRange(i, range));
+					console.log(i);
 					if (!this.checkNumberIsInRange(i, range)) {
 						matchesCreate.push({
 							isByeMatch: true,
@@ -83,6 +86,7 @@ export class GenerateBracketUseCase {
 						});
 					}
 					numberOfBracket -= 1;
+					console.log(this.checkNumberIsInRange(i - 1, range));
 
 					if (!this.checkNumberIsInRange(i - 1, range)) {
 						matchesCreate.push({
@@ -127,7 +131,7 @@ export class GenerateBracketUseCase {
 					numberOfBracket -= 1;
 				}
 			}
-			console.log(matchesCreate);
+			// console.log(matchesCreate);
 			const createMatches = await this.matchRepository.createMultipleMatch(matchesCreate);
 			nextMatches = createMatches;
 			// console.log(nextMatches);

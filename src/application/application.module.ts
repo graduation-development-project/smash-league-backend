@@ -90,19 +90,22 @@ import { PrismaTransactionRepositoryAdapter } from "src/infrastructure/repositor
 import { AcceptPaymentUseCase } from "./usecases/payment/accept-payment.usecase";
 import { RejectPaymentUseCase } from "./usecases/payment/reject-payment.usecase";
 import { UpdateTournamentUseCase } from "./usecases/tournament/update-tournament.usecase";
-import { GetTournamentParticipantsByTournamentIdUseCase } from "./usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
-import { UploadMerchandiseImagesUseCase } from "./usecases/tournament/upload-merchandise-images.usecase";
-import { GenerateBracketUseCase } from "./usecases/tournament/generate-bracket.usecase";
-import { GetAllVerificationRequestUseCase } from "./usecases/staffs/get-all-verification-request.usecase";
-import { PrismaStageRepositoryAdapTer } from "src/infrastructure/repositories/prisma.stage.repository.adapter";
-import { GetMatchesOfStageUseCase } from "./usecases/tournament/tournament-event/get-matches-of-stage.usecase";
-import { PrismaMatchRepositoryAdapter } from "src/infrastructure/repositories/prisma.match.repository.adapter";
-import { AssignUmpireUseCase } from "./usecases/organizers/assign-umpire.usecase";
-import { PrismaUmpireRepositoryAdapter } from "../infrastructure/repositories/prisma.umpire.repository.adapter";
-import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match.usecase";
+import {
+	GetTournamentParticipantsByTournamentIdUseCase
+} from "./usecases/organizers/get-tournament-participants-by-tournament-id.usecase";
+import { UploadMerchandiseImagesUseCase } from './usecases/tournament/upload-merchandise-images.usecase';
+import { GenerateBracketUseCase } from './usecases/tournament/generate-bracket.usecase';
+import {GetAllVerificationRequestUseCase} from "./usecases/staffs/get-all-verification-request.usecase";
+import { PrismaStageRepositoryAdapTer } from 'src/infrastructure/repositories/prisma.stage.repository.adapter';
+import { GetMatchesOfStageUseCase } from './usecases/tournament/tournament-event/get-matches-of-stage.usecase';
+import { PrismaMatchRepositoryAdapter } from 'src/infrastructure/repositories/prisma.match.repository.adapter';
+import {AssignUmpireUseCase} from "./usecases/organizers/assign-umpire.usecase";
 import { GetUserProfileUseCase } from "./usecases/users/get-user-profile.usecase";
+import { PrismaUmpireRepositoryAdapter } from "src/infrastructure/repositories/prisma.umpire.repository.adapter";
+import { GetMatchesOfTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-matches-of-tournament-event.usecase";
 import { GetOwnedTournamentUseCase } from "./usecases/organizers/get-owned-tournament.usecase";
 import { GetTournamentPostUseCase } from "./usecases/tournament/get-tournament-post.usecase";
+import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match.usecase";
 
 @Module({
 	imports: [
@@ -266,6 +269,7 @@ import { GetTournamentPostUseCase } from "./usecases/tournament/get-tournament-p
 		GenerateBracketUseCase,
 		GetMatchesOfStageUseCase,
 		GetTournamentPostUseCase,
+		GetMatchesOfTournamentEventUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -380,6 +384,7 @@ import { GetTournamentPostUseCase } from "./usecases/tournament/get-tournament-p
 		GetParticipantsOfTournamentEventUseCase,
 		GenerateBracketUseCase,
 		GetMatchesOfStageUseCase,
+		GetMatchesOfTournamentEventUseCase,
 		GetTournamentPostUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,

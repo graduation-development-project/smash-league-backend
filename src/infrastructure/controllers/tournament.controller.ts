@@ -16,7 +16,10 @@ import {
 	UseGuards,
 	UseInterceptors,
 } from "@nestjs/common";
-import { Tournament, TournamentPost, TournamentSerie } from "@prisma/client";
+import {
+	Tournament, TournamentPost,
+	TournamentSerie,
+} from "@prisma/client";
 import { CreateNewTournamentUseCase } from "src/application/usecases/tournament/create-new-tournament.useacase";
 import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/tournament/get-all-badminton-participant-type.usecase";
 import { GetAllFormatTypeUseCase } from "src/application/usecases/tournament/get-all-format-type.usecase";
@@ -57,14 +60,15 @@ import { UploadBackgroundImageUseCase } from "src/application/usecases/tournamen
 import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/get-tournament-detail.usecase";
 import { GetMyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-my-tournament-serie.usecase";
 import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
-import { UpdateTournamentUseCase } from "src/application/usecases/tournament/update-tournament.usecase";
-import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
-import { GetParticipantsOfTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase";
-import { UploadMerchandiseImagesUseCase } from "src/application/usecases/tournament/upload-merchandise-images.usecase";
-import { BadmintonParticipantType } from "src/domain/interfaces/tournament/badminton-participant-type.interface";
-import { KeyValueType } from "src/domain/dtos/key-value-type.type";
-import { GetMatchesOfStageUseCase } from "src/application/usecases/tournament/tournament-event/get-matches-of-stage.usecase";
+import { UpdateTournamentUseCase } from 'src/application/usecases/tournament/update-tournament.usecase';
+import { ITournamentEventParticipants } from 'src/domain/interfaces/tournament/tournament-event/tournament-event.interface';
+import { GetParticipantsOfTournamentEventUseCase } from 'src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase';
+import { UploadMerchandiseImagesUseCase } from 'src/application/usecases/tournament/upload-merchandise-images.usecase';
+import { BadmintonParticipantType } from 'src/domain/interfaces/tournament/badminton-participant-type.interface';
+import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
+import { GetMatchesOfStageUseCase } from 'src/application/usecases/tournament/tournament-event/get-matches-of-stage.usecase';
 import { GetTournamentPostUseCase } from "../../application/usecases/tournament/get-tournament-post.usecase";
+import { GetMatchesOfTournamentEventUseCase } from 'src/application/usecases/tournament/tournament-event/get-matches-of-tournament-event.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -88,6 +92,7 @@ export class TournamentController {
 		private readonly generateBracketUseCase: GenerateBracketUseCase,
 		private readonly getMatchesOfStageUseCase: GetMatchesOfStageUseCase,
 		private readonly getTournamentPostUseCase: GetTournamentPostUseCase,
+		private readonly getMatchesOfTournamentEventUseCase: GetMatchesOfTournamentEventUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -277,5 +282,10 @@ export class TournamentController {
 		@Param("tournamentId") tournamentId: string,
 	): Promise<ApiResponse<TournamentPost[]>> {
 		return this.getTournamentPostUseCase.execute(tournamentId);
+	}
+
+	@Get("/get-matches-of-tournament-event/:tournamentEventId")
+	async getMatchesOfTournamentEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<any>> {
+		return await this.getMatchesOfTournamentEventUseCase.execute(tournamentEventId);
 	}
 }
