@@ -36,7 +36,8 @@ export class PrismaTournamentEventRepositoryAdapter implements TournamentEventRe
 							dateOfBirth: true,
 							hands: true,
 							height: true,
-							gender: true
+							gender: true,
+							avatarURL: true,
 						}
 					},
 					partner: {
@@ -48,7 +49,8 @@ export class PrismaTournamentEventRepositoryAdapter implements TournamentEventRe
 							dateOfBirth: true,
 							gender: true,
 							hands: true,
-							height: true
+							height: true,
+							avatarURL: true,
 						}
 					}
 				}

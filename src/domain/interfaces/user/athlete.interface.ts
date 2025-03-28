@@ -12,6 +12,7 @@ export interface IAthleteResponse {
 	hands: string;
 	height: number;
 	dateOfBirth: Date;
+	avatarURL: string
 }
 
 
