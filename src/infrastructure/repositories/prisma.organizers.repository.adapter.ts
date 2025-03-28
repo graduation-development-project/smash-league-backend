@@ -153,6 +153,21 @@ export class PrismaOrganizersRepositoryAdapter
 				where: {
 					tournamentEventId,
 				},
+
+				include: {
+					user: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							gender: true,
+							phoneNumber: true,
+							height: true,
+							email: true,
+							dateOfBirth: true,
+						},
+					},
+				},
 			});
 		} catch (e) {
 			console.error("Get Tournament Registration Error", e);
