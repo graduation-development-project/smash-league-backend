@@ -238,6 +238,8 @@ export class PrismaTournamentRepositorAdapter
 				shortName: true,
 				mainColor: true,
 				backgroundTournament: true,
+				description: true,
+				introduction: true,
 				checkInBeforeStart: true,
 				registrationOpeningDate: true,
 				registrationClosingDate: true,

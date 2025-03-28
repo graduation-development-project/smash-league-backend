@@ -281,6 +281,8 @@ export class PrismaOrganizersRepositoryAdapter
 					name: true,
 					shortName: true,
 					mainColor: true,
+					description: true,
+					introduction: true,
 					backgroundTournament: true,
 					checkInBeforeStart: true,
 					registrationOpeningDate: true,

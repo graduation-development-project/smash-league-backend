@@ -200,6 +200,7 @@ model Tournament {
   name                     String
   shortName                String?
   description              String
+  introduction             String?
   organizerId              String
   contactPhone             String
   contactEmail             String

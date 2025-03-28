@@ -192,6 +192,8 @@ export interface ITournamentDetailResponse {
 	name: string;
 	shortName: string;
 	mainColor: string;
+	description: string,
+	introduction: string,
 	backgroundTournament: string;
 	checkInBeforeStart: Date;
 	registrationOpeningDate: Date;

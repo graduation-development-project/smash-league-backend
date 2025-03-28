@@ -125,6 +125,13 @@ export class CreateTournament {
 	@IsString()
 	@Allow()
 	shortName?: string;
+
+	@IsString()
+	@MaxLength(512, {
+		message: "Introduction maximum is under 512 characters.",
+	})
+	introduction: string;
+
 	@IsString()
 	@MaxLength(512, {
 		message: "Description maximum is under 512 characters.",
