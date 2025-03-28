@@ -13,6 +13,7 @@ import {
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
 import {
+	ITournamentDetailResponse,
 	ITournamentParticipantsResponse,
 	ITournamentRegistrationResponse,
 } from "../../domain/interfaces/tournament/tournament.interface";
@@ -267,13 +268,93 @@ export class PrismaOrganizersRepositoryAdapter
 		}
 	}
 
-	async getOwnedTournament(organizerId: string): Promise<Tournament[]> {
+	async getOwnedTournament(
+		organizerId: string,
+	): Promise<ITournamentDetailResponse[]> {
 		try {
-			return this.prismaService.tournament.findMany({
+			const tournaments = await this.prismaService.tournament.findMany({
 				where: {
-					organizerId
-				}
-			})
+					organizerId,
+				},
+				select: {
+					id: true,
+					name: true,
+					shortName: true,
+					mainColor: true,
+					backgroundTournament: true,
+					checkInBeforeStart: true,
+					registrationOpeningDate: true,
+					registrationClosingDate: true,
+					drawDate: true,
+					startDate: true,
+					endDate: true,
+					organizer: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							phoneNumber: true,
+							email: true,
+						},
+					},
+					contactEmail: true,
+					contactPhone: true,
+					hasMerchandise: true,
+					hasLiveStream: true,
+					location: true,
+					registrationFeePerPerson: true,
+					registrationFeePerPair: true,
+					maxEventPerPerson: true,
+					prizePool: true,
+					requiredAttachment: true,
+					protestFeePerTime: true,
+					tournamentSerie: {
+						select: {
+							id: true,
+							tournamentSerieName: true,
+							serieBackgroundImageURL: true,
+						},
+					},
+					tournamentEvents: {
+						select: {
+							tournamentEvent: true,
+							fromAge: true,
+							toAge: true,
+							id: true,
+						},
+					},
+					tournamentPosts: true,
+				},
+			});
+
+			const tournamentResponses: ITournamentDetailResponse[] = tournaments.map(
+				(tournament) => {
+					const groupedEvents: {
+						[tournamentEventName: string]: {
+							fromAge: number;
+							toAge: number;
+							id: string;
+						}[];
+					} = tournament.tournamentEvents.reduce((acc, event) => {
+						const { tournamentEvent, ...rest } = event;
+						if (!acc[tournamentEvent]) {
+							acc[tournamentEvent] = [];
+						}
+						acc[tournamentEvent].push(rest);
+						return acc;
+					}, {});
+
+					return {
+						...tournament,
+						hasPost: tournament.tournamentPosts.length > 0,
+						liveStreamRooms: [],
+						tournamentEvents: groupedEvents,
+						expiredTimeLeft: "",
+					};
+				},
+			);
+
+			return tournamentResponses;
 		} catch (e) {
 			console.error("Get owned tournament failed", e);
 			throw e;

@@ -18,6 +18,7 @@ import { ApiResponse } from "../../domain/dtos/api-response";
 import { ResponseTournamentRegistrationDTO } from "../../domain/dtos/organizers/response-tournament-registration.dto";
 import { GetTournamentRegistrationByTournamentIdUseCase } from "../../application/usecases/organizers/get-tournament-registration-by-tournament-id.usecase";
 import {
+	ITournamentDetailResponse,
 	ITournamentParticipantsResponse,
 	ITournamentRegistrationResponse,
 } from "../../domain/interfaces/tournament/tournament.interface";
@@ -63,7 +64,7 @@ export class OrganizerController {
 	@Get("/owned-tournaments")
 	getOwnedTournament(
 		@Req() { user }: IRequestUser,
-	): Promise<ApiResponse<Tournament[]>> {
+	): Promise<ApiResponse<ITournamentDetailResponse[]>> {
 		return this.getOwnedTournamentUseCase.execute(user.id);
 	}
 
