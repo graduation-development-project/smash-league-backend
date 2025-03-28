@@ -9,7 +9,12 @@ import {
 } from "@nestjs/common";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { IRequestUser } from "../../domain/interfaces/interfaces";
-import { Match, Notification, Tournament, TournamentRegistration } from "@prisma/client";
+import {
+	Match,
+	Notification,
+	Tournament,
+	TournamentRegistration,
+} from "@prisma/client";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
@@ -39,13 +44,13 @@ export class OrganizerController {
 		private getOwnedTournamentUseCase: GetOwnedTournamentUseCase,
 	) {}
 
-	@Get("/tournament-registration/:tournamentId")
+	@Get("/tournament-registration/:tournamentEventId")
 	getTournamentRegistrationByTournamentId(
-		@Param("tournamentId") tournamentId: string,
+		@Param("tournamentEventId") tournamentEventId: string,
 		@Req() { user }: IRequestUser,
-	): Promise<ApiResponse<ITournamentRegistrationResponse[]>> {
+	): Promise<ApiResponse<TournamentRegistration[]>> {
 		return this.getTournamentRegistrationByTournamentIdUseCase.execute(
-			tournamentId,
+			tournamentEventId,
 			user.id,
 		);
 	}

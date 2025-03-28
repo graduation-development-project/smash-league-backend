@@ -15,10 +15,10 @@ export interface OrganizersRepositoryPort {
 	getTournamentRegistrationByTournamentId(
 		tournamentId: string,
 		organizerId: string,
-	): Promise<ITournamentRegistrationResponse[]>;
+	): Promise<TournamentRegistration[]>;
 
 	getTournamentParticipantsByTournamentId(
-		tournamentId: string,
+		tournamentEventId: string,
 		organizerId: string,
 	): Promise<ITournamentParticipantsResponse[]>;
 

@@ -6,7 +6,7 @@ import {
 	Match,
 	MatchStatus,
 	ReasonType,
-	Tournament,
+	TournamentRegistration,
 	TournamentRegistrationRole,
 	TournamentRegistrationStatus,
 } from "@prisma/client";
@@ -15,7 +15,6 @@ import { NotificationsRepositoryPort } from "../../domain/repositories/notificat
 import {
 	ITournamentDetailResponse,
 	ITournamentParticipantsResponse,
-	ITournamentRegistrationResponse,
 } from "../../domain/interfaces/tournament/tournament.interface";
 import { AssignUmpireDTO } from "../../domain/dtos/organizers/assign-umpire.dto";
 
@@ -125,55 +124,36 @@ export class PrismaOrganizersRepositoryAdapter
 	}
 
 	async getTournamentRegistrationByTournamentId(
-		tournamentId: string,
+		tournamentEventId: string,
 		organizerId: string,
-	): Promise<ITournamentRegistrationResponse[]> {
+	): Promise<TournamentRegistration[]> {
 		try {
 			const isTournamentOrganizer =
-				await this.prismaService.tournament.findUnique({
+				await this.prismaService.tournamentEvent.findUnique({
 					where: {
-						id: tournamentId,
-						organizerId,
+						id: tournamentEventId,
+					},
+
+					select: {
+						tournament: {
+							select: {
+								organizerId: true,
+							},
+						},
 					},
 				});
 
-			if (!isTournamentOrganizer) {
+			if (isTournamentOrganizer?.tournament?.organizerId !== organizerId) {
 				throw new BadRequestException(
 					"You are not organizer of this tournament",
 				);
 			}
 
-			const tournamentRegistrations =
-				await this.prismaService.tournamentRegistration.findMany({
-					where: {
-						tournamentId,
-					},
-
-					include: {
-						tournamentEvent: true,
-					},
-				});
-
-			const groupedData = tournamentRegistrations.reduce(
-				(acc, registration) => {
-					const tournamentEventId = registration.tournamentEventId;
-
-					if (!acc[tournamentEventId]) {
-						acc[tournamentEventId] = {
-							tournamentEvent: registration.tournamentEvent,
-							registrations: [],
-						};
-					}
-					delete registration.tournamentEvent;
-					acc[tournamentEventId].registrations.push(registration);
-
-					return acc;
+			return await this.prismaService.tournamentRegistration.findMany({
+				where: {
+					tournamentEventId,
 				},
-				{},
-			);
-
-			// Convert object to array
-			return Object.values(groupedData);
+			});
 		} catch (e) {
 			console.error("Get Tournament Registration Error", e);
 			throw e;

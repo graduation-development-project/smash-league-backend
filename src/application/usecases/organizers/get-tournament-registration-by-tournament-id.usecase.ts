@@ -12,14 +12,14 @@ export class GetTournamentRegistrationByTournamentIdUseCase {
 	) {}
 
 	async execute(
-		tournamentId: string,
+		tournamentEventId: string,
 		organizerId: string,
-	): Promise<ApiResponse<ITournamentRegistrationResponse[]>> {
-		return new ApiResponse<ITournamentRegistrationResponse[]>(
+	): Promise<ApiResponse<TournamentRegistration[]>> {
+		return new ApiResponse<TournamentRegistration[]>(
 			HttpStatus.OK,
 			"Get Tournament Registration List by TournamentId successfully!",
 			await this.organizerRepository.getTournamentRegistrationByTournamentId(
-				tournamentId,
+				tournamentEventId,
 				organizerId,
 			),
 		);
