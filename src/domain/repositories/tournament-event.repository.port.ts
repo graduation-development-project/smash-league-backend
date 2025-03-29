@@ -8,4 +8,5 @@ export interface TournamentEventRepositoryPort {
 	createNewTournamentEvent(): Promise<any>;
 	createMultipleTournamentEvent(tournamentEvents: ICreateTournamentEvent[], tournamentId: string) : Promise<TournamentEvent[]>;
 	getParticipantsOfTournamentEvent(tournamentEventId: string): Promise<ITournamentEventParticipants>;
+	getTournamentEventOfTournament(tournamentId: string): Promise<TournamentEvent[]>;
 }

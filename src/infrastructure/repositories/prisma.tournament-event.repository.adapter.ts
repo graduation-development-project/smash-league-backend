@@ -1,16 +1,18 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaClient, Tournament, TournamentEvent } from "@prisma/client";
+import { PrismaClient, TournamentEvent } from "@prisma/client";
 import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 
 @Injectable()
-export class PrismaTournamentEventRepositoryAdapter implements TournamentEventRepositoryPort {
-	constructor(
-		private prisma: PrismaClient
-	){
-	}
-	async getParticipantsOfTournamentEvent(tournamentEventId: string): Promise<ITournamentEventParticipants> {
+export class PrismaTournamentEventRepositoryAdapter
+	implements TournamentEventRepositoryPort
+{
+	constructor(private prisma: PrismaClient) {}
+
+	async getParticipantsOfTournamentEvent(
+		tournamentEventId: string,
+	): Promise<ITournamentEventParticipants> {
 		// const numberOfParticipants = await this.prisma.tournamentParticipants.count({
 		// 	where: {
 		// 		tournamentEventId: tournamentEventId
@@ -19,12 +21,12 @@ export class PrismaTournamentEventRepositoryAdapter implements TournamentEventRe
 		const [numberOfParticipants, listParticipants] = await Promise.all([
 			await this.prisma.tournamentParticipants.count({
 				where: {
-					tournamentEventId: tournamentEventId
-				}
+					tournamentEventId: tournamentEventId,
+				},
 			}),
 			await this.prisma.tournamentParticipants.findMany({
 				where: {
-					tournamentEventId: tournamentEventId
+					tournamentEventId: tournamentEventId,
 				},
 				select: {
 					user: {
@@ -38,7 +40,7 @@ export class PrismaTournamentEventRepositoryAdapter implements TournamentEventRe
 							height: true,
 							gender: true,
 							avatarURL: true,
-						}
+						},
 					},
 					partner: {
 						select: {
@@ -51,43 +53,67 @@ export class PrismaTournamentEventRepositoryAdapter implements TournamentEventRe
 							hands: true,
 							height: true,
 							avatarURL: true,
-						}
-					}
-				}
-			})
+						},
+					},
+				},
+			}),
 		]);
 		return {
 			numberOfParticipants: numberOfParticipants,
-			listParticipants: listParticipants
+			listParticipants: listParticipants,
 		};
 	}
-	async createMultipleTournamentEvent(tournamentEvents: ICreateTournamentEvent[],
-																			tournamentId: string
+
+	async createMultipleTournamentEvent(
+		tournamentEvents: ICreateTournamentEvent[],
+		tournamentId: string,
 	): Promise<any> {
 		const events = Object.values(tournamentEvents).map((event) => ({
 			...event,
-			tournamentId: tournamentId
+			tournamentId: tournamentId,
 		}));
 		console.log(events);
-		const tournaments: TournamentEvent[] = await this.prisma.tournamentEvent.createManyAndReturn({
-			data: events,
-			skipDuplicates: true
-		})
+		const tournaments: TournamentEvent[] =
+			await this.prisma.tournamentEvent.createManyAndReturn({
+				data: events,
+				skipDuplicates: true,
+			});
 		return [];
 	}
 
-	async getAllTournamentEvent(tournamentId: string): Promise<TournamentEvent[]> {
+	async getAllTournamentEvent(
+		tournamentId: string,
+	): Promise<TournamentEvent[]> {
 		return await this.prisma.tournamentEvent.findMany({
 			where: {
-				tournamentId: tournamentId
-			}
+				tournamentId: tournamentId,
+			},
 		});
 	}
-	getAllTournamentEventOfUser(userId: string, tournamentId: string): Promise<TournamentEvent[]> {
+
+	getAllTournamentEventOfUser(
+		userId: string,
+		tournamentId: string,
+	): Promise<TournamentEvent[]> {
 		throw new Error("Method not implemented.");
 	}
+
 	createNewTournamentEvent(): Promise<any> {
 		throw new Error("Method not implemented.");
 	}
-	
+
+	async getTournamentEventOfTournament(
+		tournamentId: string,
+	): Promise<TournamentEvent[]> {
+		try {
+			return await this.prisma.tournamentEvent.findMany({
+				where: {
+					tournamentId,
+				},
+			});
+		} catch (e) {
+			console.error("getTournamentEventOfTournament faield", e);
+			throw e;
+		}
+	}
 }

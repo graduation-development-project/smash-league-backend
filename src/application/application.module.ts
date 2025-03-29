@@ -107,6 +107,9 @@ import { GetOwnedTournamentUseCase } from "./usecases/organizers/get-owned-tourn
 import { GetTournamentPostUseCase } from "./usecases/tournament/get-tournament-post.usecase";
 import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match.usecase";
 import { GetUmpireRegistrationUseCase } from "./usecases/organizers/get-umpire-registration.usecase";
+import {
+	GetTournamentEventsByTournamentIdUseCase
+} from "./usecases/tournament/tournament-event/get-tournament-events-by-tournament-id.usecase";
 
 @Module({
 	imports: [
@@ -271,6 +274,7 @@ import { GetUmpireRegistrationUseCase } from "./usecases/organizers/get-umpire-r
 		GetMatchesOfStageUseCase,
 		GetTournamentPostUseCase,
 		GetMatchesOfTournamentEventUseCase,
+		GetTournamentEventsByTournamentIdUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -388,6 +392,8 @@ import { GetUmpireRegistrationUseCase } from "./usecases/organizers/get-umpire-r
 		GetMatchesOfStageUseCase,
 		GetMatchesOfTournamentEventUseCase,
 		GetTournamentPostUseCase,
+		GetTournamentEventsByTournamentIdUseCase,
+
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
