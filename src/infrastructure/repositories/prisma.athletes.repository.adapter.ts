@@ -79,27 +79,14 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		let registrationDocumentCreator: string[] = [];
 
 		try {
-			const [tournament, event] = await Promise.all([
-				this.prisma.tournament.findUnique({ where: { id: tournamentId } }),
-				this.prisma.tournamentEvent.findUnique({
-					where: { id: tournamentEventId },
-				}),
-			]);
-
-			if (!tournament) {
-				throw new BadRequestException("Tournament not found");
-			}
-
-			const tournamentOrganizer = await this.prisma.tournament.findUnique({
-				where: {
-					id: tournamentId,
-					organizerId: user.id,
-				},
+			const tournament = await this.prisma.tournament.findUnique({
+				where: { id: tournamentId },
 			});
+			if (!tournament) throw new BadRequestException("Tournament not found");
 
-			if (tournamentOrganizer) {
+			if (tournament.organizerId === user.id) {
 				throw new BadRequestException(
-					"You cannot participate your own tournament",
+					"You cannot participate in your own tournament",
 				);
 			}
 
@@ -109,18 +96,18 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				);
 			}
 
-			if (!event) {
-				throw new BadRequestException("Tournament event not found");
+			let isDoubleEvent = false;
+			let event: any = null;
+			if (registrationRole !== TournamentRegistrationRole.UMPIRE) {
+				event = await this.prisma.tournamentEvent.findUnique({
+					where: { id: tournamentEventId },
+				});
+				if (!event) throw new BadRequestException("Tournament event not found");
+				isDoubleEvent = event.tournamentEvent.toUpperCase().includes("DOUBLE");
 			}
 
-			const isDoubleEvent: boolean = event.tournamentEvent
-				.toUpperCase()
-				.includes("DOUBLE");
-
-			let partnerId: string | null = null;
-
-			const userRegistered: TournamentRegistration =
-				await this.prisma.tournamentRegistration.findFirst({
+			const userRegistered = await this.prisma.tournamentRegistration.findFirst(
+				{
 					where: {
 						tournamentId,
 						OR: [
@@ -128,84 +115,60 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 							{ partnerId: user.id },
 						],
 					},
-				});
-
-			if (userRegistered) {
+				},
+			);
+			if (userRegistered)
 				throw new BadRequestException(
-					"You already registered for this tournament event type",
+					"You are already registered for this tournament",
 				);
-			}
 
 			if (fromTeamId) {
-				const teamExisted: Team = await this.prisma.team.findUnique({
-					where: {
-						id: fromTeamId,
-					},
+				const teamExisted = await this.prisma.team.findUnique({
+					where: { id: fromTeamId },
 				});
+				if (!teamExisted)
+					throw new BadRequestException("Your team does not exist");
+			}
 
-				if (!teamExisted) {
-					throw new BadRequestException("Your team is not existed");
+			if (registrationRole !== TournamentRegistrationRole.UMPIRE) {
+				const userAge = calculateAgeUtil(user.dateOfBirth);
+				if (
+					!userAge ||
+					(event && (userAge < event.fromAge || userAge > event.toAge))
+				) {
+					throw new BadRequestException(
+						"Your age is not suitable for this event",
+					);
 				}
 			}
 
-			let userAge = calculateAgeUtil(user.dateOfBirth);
-
-			if(!userAge) {
-				throw new BadRequestException("User dob must be exist before registration")
-			}
-
-			console.log("age: ", userAge);
-
-			if (userAge < event.fromAge || userAge > event.toAge) {
-				throw new BadRequestException(
-					"Your age is not suitable for this event",
-				);
-			}
-
-			const folderName = `tournament-registration/${tournamentId}/${tournamentEventId}/${user.id}`;
-
+			const folderName = `tournament-registration/${tournamentId}/${tournamentEventId || "umpire"}/${user.id}`;
 			const imageUrls = await this.uploadService.uploadFiles(
 				files,
 				folderName,
 				user.id,
 			);
 
-			registrationDocumentCreator = [
-				imageUrls[0].secure_url,
-				imageUrls[1].secure_url,
-				imageUrls[2].secure_url,
-			];
-
-			if (
-				!registrationDocumentCreator ||
-				registrationDocumentCreator.length < 3
-			) {
-				throw new BadRequestException(
-					"You must submit your information to verify",
-				);
+			registrationDocumentCreator = imageUrls
+				.slice(0, 3)
+				.map((file) => file.secure_url);
+			if (registrationDocumentCreator.length < 3) {
+				throw new BadRequestException("You must submit verification documents");
 			}
 
-			if (
-				isDoubleEvent &&
-				registrationRole.toUpperCase() !== TournamentRegistrationRole.UMPIRE
-			) {
-				if (!partnerEmail) {
+			let partnerId: string | null = null;
+			if (isDoubleEvent) {
+				if (!partnerEmail)
 					throw new BadRequestException(
-						"Partner is required to register for double match",
+						"Partner is required for double matches",
 					);
-				}
-
-				const partner: User = await this.prisma.user.findUnique({
+				const partner = await this.prisma.user.findUnique({
 					where: { email: partnerEmail },
 				});
-
-				if (!partner) {
-					throw new BadRequestException("Partner does not exist");
-				}
+				if (!partner) throw new BadRequestException("Partner does not exist");
 
 				partnerId = partner.id;
-
-				const partnerRegistered: TournamentRegistration =
+				const partnerRegistered =
 					await this.prisma.tournamentRegistration.findFirst({
 						where: {
 							tournamentId,
@@ -215,27 +178,15 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 							],
 						},
 					});
+				if (partnerRegistered)
+					throw new BadRequestException("Your partner is already registered");
 
-				if (partnerRegistered) {
+				registrationDocumentPartner = imageUrls
+					.slice(3, 6)
+					.map((file) => file.secure_url);
+				if (registrationDocumentPartner.length < 3) {
 					throw new BadRequestException(
-						"Your partner is already registered for this tournament event type",
-					);
-				}
-
-				registrationDocumentPartner = [
-					imageUrls[3].secure_url,
-					imageUrls[4].secure_url,
-					imageUrls[5].secure_url,
-				];
-				console.log(registrationDocumentCreator);
-				console.log(registrationDocumentPartner);
-
-				if (
-					!registrationDocumentPartner ||
-					registrationDocumentPartner?.length < 3
-				) {
-					throw new BadRequestException(
-						"You need submit your partner information to verify",
+						"Your partner must submit verification documents",
 					);
 				}
 			}
@@ -244,16 +195,19 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				data: {
 					tournamentId,
 					userId: user.id,
-					tournamentEventId,
-					partnerId: isDoubleEvent ? partnerId : null,
+					tournamentEventId:
+						registrationRole === TournamentRegistrationRole.UMPIRE
+							? null
+							: tournamentEventId,
+					partnerId:
+						registrationRole === TournamentRegistrationRole.UMPIRE
+							? null
+							: partnerId,
 					registrationDocumentCreator,
 					registrationDocumentPartner,
 					registrationRole:
-						registrationRole.toUpperCase() ===
-						TournamentRegistrationRole.ATHLETE
-							? TournamentRegistrationRole.ATHLETE
-							: TournamentRegistrationRole.UMPIRE,
-					fromTeamId: fromTeamId ? fromTeamId : null,
+						registrationRole.toUpperCase() as TournamentRegistrationRole,
+					fromTeamId: fromTeamId || null,
 				},
 			});
 		} catch (e) {

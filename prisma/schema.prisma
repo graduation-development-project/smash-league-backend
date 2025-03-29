@@ -349,7 +349,7 @@ model TournamentRegistration {
   id                          String                       @id @default(uuid())
   tournamentId                String
   userId                      String?
-  tournamentEventId           String
+  tournamentEventId           String?
   tournamentEvent             TournamentEvent?             @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
   partnerId                   String? // Nullable: Used only for doubles
   isPayForTheRegistrationFee  Boolean                      @default(false)

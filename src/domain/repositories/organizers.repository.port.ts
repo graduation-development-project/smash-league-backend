@@ -17,6 +17,11 @@ export interface OrganizersRepositoryPort {
 		organizerId: string,
 	): Promise<TournamentRegistration[]>;
 
+	getUmpireRegistrationByTournamentId(
+		tournamentId: string,
+		organizerId: string,
+	): Promise<TournamentRegistration[]>;
+
 	getTournamentParticipantsByTournamentId(
 		tournamentEventId: string,
 		organizerId: string,

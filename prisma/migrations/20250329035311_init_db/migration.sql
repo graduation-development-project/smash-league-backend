@@ -20,7 +20,10 @@ CREATE TYPE "TournamentStatus" AS ENUM ('CREATED', 'OPENING', 'OPENING_FOR_REGIS
 CREATE TYPE "TypeOfFormat" AS ENUM ('SINGLE_ELIMINATION', 'ROUND_ROBIN');
 
 -- CreateEnum
-CREATE TYPE "BadmintonParticipantType" AS ENUM ('MENS_SINGLE', 'WOMEN_SINGLE', 'MENS_DOUBLE', 'WOMENS_DOUBLE', 'MIXED_DOUBLE');
+CREATE TYPE "BadmintonParticipantType" AS ENUM ('MENS_SINGLE', 'WOMENS_SINGLE', 'MENS_DOUBLE', 'WOMENS_DOUBLE', 'MIXED_DOUBLE');
+
+-- CreateEnum
+CREATE TYPE "MatchStatus" AS ENUM ('NOT_STARTED', 'ON_GOING', 'INTERVAL', 'ENDED');
 
 -- CreateEnum
 CREATE TYPE "TournamentRegistrationStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
@@ -79,7 +82,7 @@ CREATE TABLE "UserVerification" (
     "IDCardBack" TEXT,
     "cardPhoto" TEXT,
     "role" TEXT NOT NULL,
-    "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "status" "InvitationStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "UserVerification_pkey" PRIMARY KEY ("id")
@@ -197,6 +200,7 @@ CREATE TABLE "Tournament" (
     "name" TEXT NOT NULL,
     "shortName" TEXT,
     "description" TEXT NOT NULL,
+    "introduction" TEXT,
     "organizerId" TEXT NOT NULL,
     "contactPhone" TEXT NOT NULL,
     "contactEmail" TEXT NOT NULL,
@@ -243,13 +247,63 @@ CREATE TABLE "TournamentEvent" (
     "ruleOfEventExtension" TEXT,
     "minimumAthlete" INTEGER NOT NULL,
     "maximumAthlete" INTEGER,
-    "championshipPrize" TEXT[],
-    "runnerUpPrize" TEXT[],
-    "thirdPlacePrize" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "jointThirdPlacePrize" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "championshipPrize" TEXT NOT NULL,
+    "runnerUpPrize" TEXT NOT NULL,
+    "thirdPlacePrize" TEXT,
+    "jointThirdPlacePrize" TEXT,
     "tournamentId" TEXT NOT NULL,
 
     CONSTRAINT "TournamentEvent_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Stage" (
+    "id" TEXT NOT NULL,
+    "stageName" TEXT NOT NULL,
+    "tournamentEventId" TEXT NOT NULL,
+
+    CONSTRAINT "Stage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Match" (
+    "id" TEXT NOT NULL,
+    "matchStatus" "MatchStatus" NOT NULL,
+    "leftCompetitorId" TEXT,
+    "rightCompetitorId" TEXT,
+    "leftCompetitorAttendance" BOOLEAN DEFAULT false,
+    "rightCompetitorAttendance" BOOLEAN DEFAULT false,
+    "startedWhen" TIMESTAMP(3),
+    "forfeitCompetitorId" TEXT,
+    "matchWonByCompetitorId" TEXT,
+    "umpireId" TEXT,
+    "stageId" TEXT NOT NULL,
+    "matchNumber" INTEGER NOT NULL,
+    "isByeMatch" BOOLEAN NOT NULL,
+    "tournamentEventId" TEXT NOT NULL,
+    "nextMatchId" TEXT,
+
+    CONSTRAINT "Match_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Game" (
+    "id" TEXT NOT NULL,
+    "leftCompetitorPoint" INTEGER NOT NULL,
+    "rightCompetitorPoint" INTEGER NOT NULL,
+    "gameNumber" INTEGER NOT NULL,
+    "currentServerId" TEXT,
+    "matchId" TEXT NOT NULL,
+    "gameWonByCompetitorId" TEXT,
+
+    CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Point" (
+    "id" TEXT NOT NULL,
+
+    CONSTRAINT "Point_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -280,6 +334,15 @@ CREATE TABLE "TournamentParticipants" (
     "partnerId" TEXT,
 
     CONSTRAINT "TournamentParticipants_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TournamentUmpires" (
+    "id" TEXT NOT NULL,
+    "tournamentId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "TournamentUmpires_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -352,8 +415,10 @@ CREATE TABLE "Package" (
 CREATE TABLE "Transaction" (
     "id" TEXT NOT NULL,
     "transactionDetail" TEXT NOT NULL,
+    "transactionPaymentLink" TEXT,
+    "transactionImage" TEXT,
     "transactionType" "TransactionType" NOT NULL,
-    "orderId" TEXT NOT NULL,
+    "orderId" INTEGER NOT NULL,
     "value" INTEGER NOT NULL,
     "status" "TransactionStatus" NOT NULL,
     "cancelledReason" TEXT,
@@ -363,7 +428,7 @@ CREATE TABLE "Transaction" (
 
 -- CreateTable
 CREATE TABLE "Order" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "total" INTEGER NOT NULL,
     "packageId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -460,6 +525,42 @@ ALTER TABLE "Tournament" ADD CONSTRAINT "Tournament_organizerId_fkey" FOREIGN KE
 ALTER TABLE "TournamentEvent" ADD CONSTRAINT "TournamentEvent_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Stage" ADD CONSTRAINT "Stage_tournamentEventId_fkey" FOREIGN KEY ("tournamentEventId") REFERENCES "TournamentEvent"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Match" ADD CONSTRAINT "Match_leftCompetitorId_fkey" FOREIGN KEY ("leftCompetitorId") REFERENCES "TournamentParticipants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Match" ADD CONSTRAINT "Match_rightCompetitorId_fkey" FOREIGN KEY ("rightCompetitorId") REFERENCES "TournamentParticipants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Match" ADD CONSTRAINT "Match_forfeitCompetitorId_fkey" FOREIGN KEY ("forfeitCompetitorId") REFERENCES "TournamentParticipants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Match" ADD CONSTRAINT "Match_matchWonByCompetitorId_fkey" FOREIGN KEY ("matchWonByCompetitorId") REFERENCES "TournamentParticipants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Match" ADD CONSTRAINT "Match_umpireId_fkey" FOREIGN KEY ("umpireId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Match" ADD CONSTRAINT "Match_stageId_fkey" FOREIGN KEY ("stageId") REFERENCES "Stage"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Match" ADD CONSTRAINT "Match_tournamentEventId_fkey" FOREIGN KEY ("tournamentEventId") REFERENCES "TournamentEvent"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Match" ADD CONSTRAINT "Match_nextMatchId_fkey" FOREIGN KEY ("nextMatchId") REFERENCES "Match"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Game" ADD CONSTRAINT "Game_currentServerId_fkey" FOREIGN KEY ("currentServerId") REFERENCES "TournamentParticipants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Game" ADD CONSTRAINT "Game_gameWonByCompetitorId_fkey" FOREIGN KEY ("gameWonByCompetitorId") REFERENCES "TournamentParticipants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Game" ADD CONSTRAINT "Game_matchId_fkey" FOREIGN KEY ("matchId") REFERENCES "Match"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "TournamentRegistration" ADD CONSTRAINT "TournamentRegistration_tournamentEventId_fkey" FOREIGN KEY ("tournamentEventId") REFERENCES "TournamentEvent"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -485,6 +586,12 @@ ALTER TABLE "TournamentParticipants" ADD CONSTRAINT "TournamentParticipants_tour
 
 -- AddForeignKey
 ALTER TABLE "TournamentParticipants" ADD CONSTRAINT "TournamentParticipants_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TournamentUmpires" ADD CONSTRAINT "TournamentUmpires_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TournamentUmpires" ADD CONSTRAINT "TournamentUmpires_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TournamentPost" ADD CONSTRAINT "TournamentPost_tournamentId_fkey" FOREIGN KEY ("tournamentId") REFERENCES "Tournament"("id") ON DELETE CASCADE ON UPDATE CASCADE;

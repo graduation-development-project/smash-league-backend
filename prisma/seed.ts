@@ -180,7 +180,7 @@ async function main() {
 	await new Promise((resolve) => setTimeout(resolve, 5000));
 	console.log(roleFromDBs);
 
-	await roleFromDBs.forEach((role) => {
+	roleFromDBs.forEach((role) => {
 		const mappedRoleName = roleNameMapping[role.roleName] || role.roleName;
 		if (RoleMap[mappedRoleName]) {
 			RoleMap[mappedRoleName].id = role.id;
@@ -213,6 +213,7 @@ async function main() {
 			phoneNumber: "7051174663",
 			isVerified: true,
 			gender: "MALE",
+			dateOfBirth: "1990-05-15T10:30:00.000Z",
 		},
 		{
 			name: "Trần Nguyệt Ánh",
@@ -221,6 +222,7 @@ async function main() {
 			phoneNumber: "8886135433",
 			isVerified: true,
 			gender: "FEMALE",
+			dateOfBirth: "1990-05-15T10:30:00.000Z",
 		},
 		{
 			name: "Nguyễn Ngọc Nghi",
@@ -229,6 +231,7 @@ async function main() {
 			phoneNumber: "1972443218",
 			isVerified: true,
 			gender: "FEMALE",
+			dateOfBirth: "2003-11-17T10:30:00.000Z",
 		},
 		{
 			name: "Nguyễn Hoàng Lam",
@@ -489,6 +492,15 @@ async function main() {
 			});
 			console.log(userRole);
 		}
+
+		if (accountCreate.email === "hoduongtrungnguyen@gmail.com") {
+			const userRole = await prisma.userRole.create({
+				data: {
+					userId: accountCreate.id,
+					roleId: RoleMap["Organizer"].id,
+				},
+			});
+		}
 	}
 	console.log(accountCreates);
 
@@ -711,7 +723,7 @@ async function main() {
 
 	const tournament = await prisma.tournament.findFirst({
 		where: {
-			status: "CREATED",
+			name: "European Badminton Masters 2025",
 		},
 	});
 

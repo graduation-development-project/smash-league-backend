@@ -31,6 +31,7 @@ import { GetTournamentParticipantsByTournamentIdUseCase } from "../../applicatio
 import { AssignUmpireUseCase } from "../../application/usecases/organizers/assign-umpire.usecase";
 import { AssignUmpireDTO } from "../../domain/dtos/organizers/assign-umpire.dto";
 import { GetOwnedTournamentUseCase } from "../../application/usecases/organizers/get-owned-tournament.usecase";
+import { GetUmpireRegistrationUseCase } from "../../application/usecases/organizers/get-umpire-registration.usecase";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -42,6 +43,7 @@ export class OrganizerController {
 		private getTournamentParticipantsByTournamentIdUseCase: GetTournamentParticipantsByTournamentIdUseCase,
 		private assignUmpireUseCase: AssignUmpireUseCase,
 		private getOwnedTournamentUseCase: GetOwnedTournamentUseCase,
+		private getUmpireRegistrationUseCase: GetUmpireRegistrationUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentEventId")
@@ -53,6 +55,14 @@ export class OrganizerController {
 			tournamentEventId,
 			user.id,
 		);
+	}
+
+	@Get("/umpire-registration/:tournamentId")
+	getUmpireRegustrationByTournamentId(
+		@Param("tournamentId") tournamentId: string,
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<TournamentRegistration[]>> {
+		return this.getUmpireRegistrationUseCase.execute(tournamentId, user.id);
 	}
 
 	@Get("/tournament-participants/:tournamentId")

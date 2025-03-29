@@ -188,6 +188,65 @@ export class PrismaOrganizersRepositoryAdapter
 		}
 	}
 
+	async getUmpireRegistrationByTournamentId(
+		tournamentId: string,
+		organizerId: string,
+	): Promise<TournamentRegistration[]> {
+		try {
+			const isTournamentOrganizer =
+				await this.prismaService.tournament.findUnique({
+					where: {
+						id: tournamentId,
+						organizerId,
+					},
+				});
+
+			if (!isTournamentOrganizer) {
+				throw new BadRequestException(
+					"You are not organizer of this tournament",
+				);
+			}
+
+			return await this.prismaService.tournamentRegistration.findMany({
+				where: {
+					tournamentId,
+					registrationRole: TournamentRegistrationRole.UMPIRE,
+				},
+
+				include: {
+					user: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							gender: true,
+							phoneNumber: true,
+							height: true,
+							email: true,
+							dateOfBirth: true,
+						},
+					},
+
+					partner: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							gender: true,
+							phoneNumber: true,
+							height: true,
+							email: true,
+							dateOfBirth: true,
+						},
+					},
+				},
+			});
+		} catch (e) {
+			console.error("Get Tournament Registration Error", e);
+			throw e;
+		}
+	}
+
 	async getTournamentParticipantsByTournamentId(
 		tournamentId: string,
 		organizerId: string,
