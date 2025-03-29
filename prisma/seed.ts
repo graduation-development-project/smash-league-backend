@@ -648,7 +648,7 @@ async function main() {
 			registrationFeePerPerson: 700000,
 			registrationFeePerPair: 1300000,
 			maxEventPerPerson: 3,
-			status: "CREATED",
+			status: "OPENING_FOR_REGISTRATION",
 			protestFeePerTime: 250000,
 			prizePool: 75000000,
 			hasMerchandise: true,

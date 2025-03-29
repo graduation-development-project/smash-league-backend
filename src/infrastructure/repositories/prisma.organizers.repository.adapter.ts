@@ -167,6 +167,19 @@ export class PrismaOrganizersRepositoryAdapter
 							dateOfBirth: true,
 						},
 					},
+
+					partner: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							gender: true,
+							phoneNumber: true,
+							height: true,
+							email: true,
+							dateOfBirth: true,
+						},
+					},
 				},
 			});
 		} catch (e) {
