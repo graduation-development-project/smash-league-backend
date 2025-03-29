@@ -8,9 +8,9 @@ import { RegisterNewRoleDTO } from "../dtos/athletes/register-new-role.dto";
 import { ResponseToTeamInvitationDTO } from "../dtos/athletes/response-to-team-invitation.dto";
 import { LeaveTeamDTO } from "../dtos/athletes/leave-team.dto";
 import { RequestJoinTeamDTO } from "../dtos/athletes/request-join-team.dto";
-import {ResponseTeamLeaderTransferDTO} from "../dtos/athletes/response-team-leader-transfer.dto";
-import {IPaginatedOutput, IPaginateOptions} from "../interfaces/interfaces";
-import {IParticipatedTournamentResponse} from "../interfaces/tournament/tournament.interface";
+import { ResponseTeamLeaderTransferDTO } from "../dtos/athletes/response-team-leader-transfer.dto";
+import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
+import { IParticipatedTournamentResponse } from "../interfaces/tournament/tournament.interface";
 
 export interface AthletesRepositoryPort {
 	registerTournament(
@@ -43,4 +43,8 @@ export interface AthletesRepositoryPort {
 	responseToTransferTeamLeader(
 		responseToTransferTeamLeaderDTO: ResponseTeamLeaderTransferDTO,
 	): Promise<string>;
+
+	getTournamentRegistrationByUserId(
+		userID: string,
+	): Promise<TournamentRegistration[]>;
 }

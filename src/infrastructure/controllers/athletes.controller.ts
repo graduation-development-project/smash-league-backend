@@ -43,6 +43,7 @@ import { ResponseTeamLeaderTransferDTO } from "../../domain/dtos/athletes/respon
 import { ResponseTransferTeamLeaderUseCase } from "../../application/usecases/athletes/response-transfer-team-leader.usecase";
 import { ApiResponse } from "../../domain/dtos/api-response";
 import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournament/tournament.interface";
+import { GetTournamentRegistrationByUserIdUseCase } from "../../application/usecases/athletes/get-tournament-registration-by-user-id.usecase";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -56,6 +57,7 @@ export class AthletesController {
 		private leaveTeamUseCase: LeaveTeamUseCase,
 		private requestJoinTeamUseCase: RequestJoinTeamUseCase,
 		private responseTransferTeamLeaderUseCase: ResponseTransferTeamLeaderUseCase,
+		private getTournamentRegistrationByUserIdUseCase: GetTournamentRegistrationByUserIdUseCase,
 		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
@@ -84,6 +86,13 @@ export class AthletesController {
 			user.id,
 			tournamentStatus,
 		);
+	}
+
+	@Get("tournament-registration")
+	getTournamentRegisatryionByUserId(
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<TournamentRegistration[]>> {
+		return this.getTournamentRegistrationByUserIdUseCase.execute(user.id);
 	}
 
 	// @Post("upload-verification-images")

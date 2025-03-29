@@ -669,4 +669,54 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			[recipientId],
 		);
 	}
+
+	async getTournamentRegistrationByUserId(
+		userID: string,
+	): Promise<TournamentRegistration[]> {
+		try {
+			return this.prisma.tournamentRegistration.findMany({
+				where: {
+					OR: [
+						{
+							userId: userID,
+						},
+
+						{
+							partnerId: userID,
+						},
+					],
+				},
+
+				include: {
+					user: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							gender: true,
+							phoneNumber: true,
+							height: true,
+							email: true,
+							dateOfBirth: true,
+						},
+					},
+					partner: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							gender: true,
+							phoneNumber: true,
+							height: true,
+							email: true,
+							dateOfBirth: true,
+						},
+					},
+				},
+			});
+		} catch (e) {
+			console.error("getTournamentRegistrationByUserId failed", e);
+			throw e;
+		}
+	}
 }

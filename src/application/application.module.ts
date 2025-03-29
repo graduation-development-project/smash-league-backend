@@ -110,6 +110,9 @@ import { GetUmpireRegistrationUseCase } from "./usecases/organizers/get-umpire-r
 import {
 	GetTournamentEventsByTournamentIdUseCase
 } from "./usecases/tournament/tournament-event/get-tournament-events-by-tournament-id.usecase";
+import {
+	GetTournamentRegistrationByUserIdUseCase
+} from "./usecases/athletes/get-tournament-registration-by-user-id.usecase";
 
 @Module({
 	imports: [
@@ -218,6 +221,7 @@ import {
 		EditUserProfileUseCase,
 		SearchUserByEmailUseCase,
 		GetUserProfileUseCase,
+		GetTournamentRegistrationByUserIdUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -328,6 +332,7 @@ import {
 		EditUserProfileUseCase,
 		SearchUserByEmailUseCase,
 		GetUserProfileUseCase,
+		GetTournamentRegistrationByUserIdUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
