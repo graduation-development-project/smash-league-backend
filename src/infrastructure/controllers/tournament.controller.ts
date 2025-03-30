@@ -21,6 +21,7 @@ import {
 	TournamentEvent,
 	TournamentPost,
 	TournamentSerie,
+	TournamentUmpires,
 } from "@prisma/client";
 import { CreateNewTournamentUseCase } from "src/application/usecases/tournament/create-new-tournament.useacase";
 import { GetAllBadmintonParticipantTypeUseCase } from "src/application/usecases/tournament/get-all-badminton-participant-type.usecase";
@@ -72,6 +73,7 @@ import { GetMatchesOfStageUseCase } from "src/application/usecases/tournament/to
 import { GetTournamentPostUseCase } from "../../application/usecases/tournament/get-tournament-post.usecase";
 import { GetMatchesOfTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-matches-of-tournament-event.usecase";
 import { GetTournamentEventsByTournamentIdUseCase } from "../../application/usecases/tournament/tournament-event/get-tournament-events-by-tournament-id.usecase";
+import { GetTournamentUmpireUseCase } from "../../application/usecases/tournament/get-tournament-umpire.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -97,6 +99,7 @@ export class TournamentController {
 		private readonly getTournamentPostUseCase: GetTournamentPostUseCase,
 		private readonly getMatchesOfTournamentEventUseCase: GetMatchesOfTournamentEventUseCase,
 		private readonly getTournamentEventsByTournamentIdUseCase: GetTournamentEventsByTournamentIdUseCase,
+		private readonly getTournamentUmpireUseCase: GetTournamentUmpireUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -304,5 +307,12 @@ export class TournamentController {
 		return await this.getTournamentEventsByTournamentIdUseCase.execute(
 			tournamentId,
 		);
+	}
+
+	@Get("/get-tournament-umpires/:tournamentId")
+	async getTournamentUmpires(
+		@Param("tournamentId") tournamentId: string,
+	): Promise<ApiResponse<TournamentUmpires[]>> {
+		return await this.getTournamentUmpireUseCase.execute(tournamentId);
 	}
 }

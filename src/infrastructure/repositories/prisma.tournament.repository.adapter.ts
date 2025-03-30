@@ -9,6 +9,7 @@ import {
 	Tournament,
 	TournamentPost,
 	TournamentStatus,
+	TournamentUmpires,
 } from "@prisma/client";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { Injectable } from "@nestjs/common";
@@ -326,6 +327,36 @@ export class PrismaTournamentRepositorAdapter
 			});
 		} catch (e) {
 			console.error("Get TournamentPost failed", e);
+			throw e;
+		}
+	}
+
+	async getTournamentUmpire(
+		tournamentId: string,
+	): Promise<TournamentUmpires[]> {
+		try {
+			return this.prisma.tournamentUmpires.findMany({
+				where: {
+					tournamentId,
+				},
+
+				include: {
+					user: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							gender: true,
+							phoneNumber: true,
+							height: true,
+							email: true,
+							dateOfBirth: true,
+						},
+					},
+				},
+			});
+		} catch (e) {
+			console.error("getTournamentUmpire failed: ", e);
 			throw e;
 		}
 	}
