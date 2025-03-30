@@ -712,6 +712,9 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 							dateOfBirth: true,
 						},
 					},
+
+					tournament: true,
+					tournamentEvent: true,
 				},
 			});
 		} catch (e) {
