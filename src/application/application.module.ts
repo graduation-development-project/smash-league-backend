@@ -113,6 +113,7 @@ import {
 import {
 	GetTournamentRegistrationByUserIdUseCase
 } from "./usecases/athletes/get-tournament-registration-by-user-id.usecase";
+import { GetUserTransactionUseCase } from "./usecases/payment/get-user-transaction.usecase";
 
 @Module({
 	imports: [
@@ -222,6 +223,7 @@ import {
 		SearchUserByEmailUseCase,
 		GetUserProfileUseCase,
 		GetTournamentRegistrationByUserIdUseCase,
+		GetUserTransactionUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -333,6 +335,7 @@ import {
 		SearchUserByEmailUseCase,
 		GetUserProfileUseCase,
 		GetTournamentRegistrationByUserIdUseCase,
+		GetUserTransactionUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
