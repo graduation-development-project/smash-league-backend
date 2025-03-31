@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { Match } from "@prisma/client";
+import { Game, Match } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
 
@@ -11,17 +11,23 @@ export class StartMatchUseCase {
 	) {
 	}
 
-	async execute(matchId: string): Promise<ApiResponse<Match>> {
+	async execute(matchId: string, currentServerId: string): Promise<ApiResponse<Game>> {
 		const match = await this.matchRepository.getMatchDetail(matchId);
 		if (match === null) return new ApiResponse<null | undefined>(
 			HttpStatus.BAD_REQUEST,
 			"Match id not found!",
 			null
 		);
-		return new ApiResponse<Match>(
+		if (currentServerId != match.leftCompetitorId && currentServerId != match.rightCompetitorId) 
+			return new ApiResponse<null | undefined>(
+				HttpStatus.BAD_REQUEST,
+				"Current server Id is not exist in this match!",
+				null
+			);
+		return new ApiResponse<Game>(
 			HttpStatus.NO_CONTENT,
 			"Update start time for match successful!",
-			await this.matchRepository.updateStartTimeForMatch(matchId)
+			await this.matchRepository.updateStartTimeForMatch(matchId, currentServerId)
 		);
 	}
 }

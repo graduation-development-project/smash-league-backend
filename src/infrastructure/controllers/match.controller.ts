@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Put, Query, UseGuards } from "@nestjs/common";
 import { UpdateAttendanceUseCase } from "src/application/usecases/tournament/match/update-attendance.usecase";
 import { UpdateForfeitCompetitorUseCase } from "src/application/usecases/tournament/match/update-forfeit-competitor.usecase,";
 import { ApiResponse } from "src/domain/dtos/api-response";
@@ -7,7 +7,7 @@ import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import { StartMatchUseCase } from "src/application/usecases/tournament/match/start-match.usecase";
-import { Match } from "@prisma/client";
+import { Game, Match } from "@prisma/client";
 
 @Controller("match")
 export class MatchController {
@@ -29,7 +29,8 @@ export class MatchController {
 		} 
 	
 	@Put("update-start-time/:matchId")
-	async updateStartTimeForMatch(@Param("matchId") matchId: string): Promise<ApiResponse<Match>> {
-		return await this.startMatchUseCase.execute(matchId);
+	async updateStartTimeForMatch(@Param("matchId") matchId: string, @Query("currentServerId") currentServerId: string): Promise<ApiResponse<Game>> {
+		console.log(currentServerId);
+		return await this.startMatchUseCase.execute(matchId, currentServerId);
 	}	
 }
