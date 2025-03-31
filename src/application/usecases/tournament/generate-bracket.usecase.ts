@@ -39,14 +39,11 @@ export class GenerateBracketUseCase {
 		do {
 			countableRound *= 2;
 			// console.log(this.getRoundOfBracket(countableRound));
-			console.log(countableRound);
 			check += 1;
 			const stageCreate = await this.stageRepository.createStage({
 				stageName: this.getRoundOfBracket(countableRound),
 				tournamentEventId: tournamentEventId
 			});
-			console.log(stageCreate);
-			console.log(nextMatches);
 			let matchesCreate: ICreateMatch[] = [];
 			if (check === 1) {
 				matchesCreate.push({
@@ -59,18 +56,17 @@ export class GenerateBracketUseCase {
 				});
 				numberOfBracket -= 1;
 			} else if (check === numberOfRounds) {
-				console.log(((numberOfByeParticipants / 2) + 1), " ", Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
+				//console.log(((numberOfByeParticipants / 2) + 1), " ", Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
 				const range = this.createRangeNumberArray(((numberOfByeParticipants / 2) + 1), Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
-				console.log(range);
+				// console.log(nextMatches.length);
 				// console.log(this.checkNumberIsInRange(7, range));
-				for (let i = (((numberOfFullParticipants - 2) / 2) + 1); i >= 1; i-=2) {
+				for (let i = nextMatches.length * 2; i >= 2; i-=2) {
 					// console.log(numberOfBracket, " ", this.checkNumberIsInRange(i, range));
-					console.log(i);
 					if (!this.checkNumberIsInRange(i, range)) {
 						matchesCreate.push({
 							isByeMatch: true,
 							matchStatus: MatchStatus.NOT_STARTED,
-							nextMatchId: null,
+							nextMatchId: nextMatches[i/2-1].id,
 							stageId: stageCreate.id,
 							matchNumber: i,
 							tournamentEventId: tournamentEventId
@@ -79,20 +75,20 @@ export class GenerateBracketUseCase {
 						matchesCreate.push({
 							isByeMatch: false,
 							matchStatus: MatchStatus.NOT_STARTED,
-							nextMatchId: null,
+							nextMatchId: nextMatches[i/2-1].id,
 							stageId: stageCreate.id,
 							matchNumber: i,
 							tournamentEventId: tournamentEventId
 						});
 					}
 					numberOfBracket -= 1;
-					console.log(this.checkNumberIsInRange(i - 1, range));
+					//console.log(this.checkNumberIsInRange(i - 1, range));
 
 					if (!this.checkNumberIsInRange(i - 1, range)) {
 						matchesCreate.push({
 							isByeMatch: true,
 							matchStatus: MatchStatus.NOT_STARTED,
-							nextMatchId: null,
+							nextMatchId: nextMatches[i/2-1].id,
 							stageId: stageCreate.id,
 							matchNumber: i - 1,
 							tournamentEventId: tournamentEventId
@@ -101,13 +97,13 @@ export class GenerateBracketUseCase {
 						matchesCreate.push({
 							isByeMatch: false,
 							matchStatus: MatchStatus.NOT_STARTED,
-							nextMatchId: null,
+							nextMatchId: nextMatches[i/2-1].id,
 							stageId: stageCreate.id,
 							matchNumber: i - 1,
 							tournamentEventId: tournamentEventId
 						});
-						numberOfBracket -= 1;
 					}
+					numberOfBracket -= 1;
 				}
 			} else {
 				for (let i = 0; i < nextMatches.length; i++) {
@@ -134,7 +130,10 @@ export class GenerateBracketUseCase {
 			// console.log(matchesCreate);
 			const createMatches = await this.matchRepository.createMultipleMatch(matchesCreate);
 			nextMatches = createMatches;
-			// console.log(nextMatches);
+			if (check === numberOfRounds - 1) {
+				// console.log(nextMatches);
+				// console.log(nextMatches.length);
+			}
 		} while (check < numberOfRounds);
 		// console.log(numberOfRounds);
 		return new ApiResponse<number>(
