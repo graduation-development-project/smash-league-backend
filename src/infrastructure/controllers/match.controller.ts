@@ -8,13 +8,15 @@ import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import { StartMatchUseCase } from "src/application/usecases/tournament/match/start-match.usecase";
 import { Game, Match } from "@prisma/client";
+import { UpdatePointUseCase } from "src/application/usecases/tournament/match/update-point.usecase";
 
 @Controller("match")
 export class MatchController {
 	constructor(
 		private readonly updateAttendanceUseCase: UpdateAttendanceUseCase,
 		private readonly updateForfeitCompetitorUseCase: UpdateForfeitCompetitorUseCase,
-		private readonly startMatchUseCase: StartMatchUseCase
+		private readonly startMatchUseCase: StartMatchUseCase,
+		private readonly updatePointUseCase: UpdatePointUseCase
 	) {
 	}
 
@@ -33,4 +35,11 @@ export class MatchController {
 		console.log(currentServerId);
 		return await this.startMatchUseCase.execute(matchId, currentServerId);
 	}	
+
+	@Put("update-point/:gameId")
+	async updatePointOfGame(@Param("gameId") gameId: string,
+				@Query("winningId") winningId: string): Promise<ApiResponse<any>> {
+					console.log(gameId);
+					return await this.updatePointUseCase.execute(gameId, winningId);
+				}				
 }
