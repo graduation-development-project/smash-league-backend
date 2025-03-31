@@ -116,6 +116,8 @@ import { UpdateForfeitCompetitorUseCase } from "./usecases/tournament/match/upda
 import { GetUserTransactionUseCase } from "./usecases/payment/get-user-transaction.usecase";
 import { GetTournamentUmpireUseCase } from "./usecases/tournament/get-tournament-umpire.usecase";
 import { StartMatchUseCase } from "./usecases/tournament/match/start-match.usecase";
+import { UpdatePointUseCase } from "./usecases/tournament/match/update-point.usecase";
+import { PrismaGameRepositoryAdapter } from "src/infrastructure/repositories/prisma.game.repository.adapter";
 
 @Module({
 	imports: [
@@ -206,6 +208,10 @@ import { StartMatchUseCase } from "./usecases/tournament/match/start-match.useca
 			provide: "UmpireRepository",
 			useClass: PrismaUmpireRepositoryAdapter,
 		},
+		{	
+			provide: "GameRepository",
+			useClass: PrismaGameRepositoryAdapter
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -294,6 +300,7 @@ import { StartMatchUseCase } from "./usecases/tournament/match/start-match.useca
 		UpdateAttendanceUseCase,
 		UpdateForfeitCompetitorUseCase,
 		StartMatchUseCase,
+		UpdatePointUseCase,
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
@@ -420,6 +427,7 @@ import { StartMatchUseCase } from "./usecases/tournament/match/start-match.useca
 		UpdateAttendanceUseCase,
 		UpdateForfeitCompetitorUseCase,
 		StartMatchUseCase,
+		UpdatePointUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case

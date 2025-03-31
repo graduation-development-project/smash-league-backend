@@ -33,6 +33,7 @@ async function main() {
 	await createBracketFunction1(tournamentEvent2, tournamentParticipants2);
 
 	await addParticipantsToBracket(tournamentEvent1.id);
+	await addParticipantsToBracket(tournamentEvent2.id);
 	//console.log(tournamentParticipants1.length);
 	
 }
