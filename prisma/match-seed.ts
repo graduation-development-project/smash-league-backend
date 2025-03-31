@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function main() {
 	const tournamentEvent = await prisma.tournamentEvent.findFirst({
 		where: {
-			typeOfFormat: "SINGLE_ELIMINATION"
+			typeOfFormat: "SINGLE_ELIMINATION",
 		}
 	});
 	console.log(tournamentEvent);
@@ -29,6 +29,27 @@ async function main() {
 		tournamentParticipants.push(account);
 	}
 	console.log(tournamentParticipants);
+
+	const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
+		where: {
+			tournamentEvent: "MENS_DOUBLE"
+		}
+	});
+	console.log(tournamentEvent2);
+	var participants2 = [];
+	for (let i = 0; i < participants.length; i+=2) {
+		const account = await prisma.tournamentParticipants.create({
+			data: {
+				userId: participants[i].id,
+				partnerId: participants[i+1].id,
+				tournamentEventId: tournamentEvent2.id,
+				tournamentId: tournamentEvent2.tournamentId,
+			}
+		});
+		participants2.push(account);
+	}
+
+	console.log(participants2);
 }
 
 main()

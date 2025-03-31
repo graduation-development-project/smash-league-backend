@@ -74,6 +74,8 @@ import { GetTournamentPostUseCase } from "../../application/usecases/tournament/
 import { GetMatchesOfTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-matches-of-tournament-event.usecase";
 import { GetTournamentEventsByTournamentIdUseCase } from "../../application/usecases/tournament/tournament-event/get-tournament-events-by-tournament-id.usecase";
 import { GetTournamentUmpireUseCase } from "../../application/usecases/tournament/get-tournament-umpire.usecase";
+import { UpdateAttendanceUseCase } from "src/application/usecases/tournament/match/update-attendance.usecase";
+import { UpdateForfeitCompetitorUseCase } from "src/application/usecases/tournament/match/update-forfeit-competitor.usecase,";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -99,7 +101,7 @@ export class TournamentController {
 		private readonly getTournamentPostUseCase: GetTournamentPostUseCase,
 		private readonly getMatchesOfTournamentEventUseCase: GetMatchesOfTournamentEventUseCase,
 		private readonly getTournamentEventsByTournamentIdUseCase: GetTournamentEventsByTournamentIdUseCase,
-		private readonly getTournamentUmpireUseCase: GetTournamentUmpireUseCase,
+		private readonly getTournamentUmpireUseCase: GetTournamentUmpireUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
