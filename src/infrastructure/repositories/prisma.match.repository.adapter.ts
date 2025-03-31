@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Match, MatchStatus, PrismaClient, TournamentEvent } from "@prisma/client";
+import { Game, Match, MatchStatus, PrismaClient, TournamentEvent } from "@prisma/client";
 import { create } from "domain";
 import { ICreateMatch, IMatchDetailBracketResponse } from "src/domain/interfaces/tournament/match/match.interface";
 import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
@@ -10,18 +10,49 @@ import { convertToLocalTime } from "../util/convert-to-local-time.util";
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(
 		private readonly prisma: PrismaClient
-	){
+	) {
 	}
-	async updateStartTimeForMatch(matchId: string): Promise<Match> {
-		return await this.prisma.match.update({
+	async updatePoint(gameId: string, winningId: string): Promise<any> {
+		const game = await this.prisma.game.findUnique({
 			where: {
-				id: matchId
-			},
-			data: {
-				startedWhen: convertToLocalTime(new Date()),
-				matchStatus: MatchStatus.ON_GOING
+				id: gameId
 			}
 		});
+
+		const match = await this.prisma.match.findUnique({
+			where: {
+				id: game.matchId
+			}
+		});
+		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
+			where: {
+				id: match.tournamentEventId
+			}
+		});
+		console.log(tournamentEvent);
+		// const [leftCompetitorPoint, rightCompetitorPoint] = [game.leftCompetitorPoint, game.rightCompetitorPoint];
+		// if ( === winningId) {
+
+		// } else {
+
+		// }
+		return;
+	}
+
+	checkingPointUpdated(pointUser1: number, pointUser2: number, winningPoint: number, lastPoint: number): any {
+		
+	}
+	async updateStartTimeForMatch(matchId: string, currentServerId: string): Promise<Game> {
+		const game = await this.prisma.game.create({
+			data: {
+				leftCompetitorPoint: 0,
+				rightCompetitorPoint: 0,
+				gameNumber: 1,
+				matchId: matchId, 
+				currentServerId: currentServerId
+			}
+		});
+		return game;
 	}
 	async updateForfeitCompetitor(matchId: string, forfeitCompetitorId: string): Promise<any> {
 		return await this.prisma.match.update({
