@@ -21,6 +21,11 @@ export interface TournamentRepositoryPort {
 		searchTerm?: string,
 	): Promise<IPaginatedOutput<ITournamentResponse>>;
 
+	getTournamentsByUserId(
+		organizerId: string,
+		options: IPaginateOptions,
+	): Promise<IPaginatedOutput<ITournamentResponse>>;
+
 	filterTournament(): Promise<Tournament[]>;
 
 	getTournamentDetail(tournamentId: string): Promise<ITournamentDetailResponse>;
@@ -28,6 +33,6 @@ export interface TournamentRepositoryPort {
 	updateTournament(updateTournament: IUpdateTournament): Promise<Tournament>;
 
 	getTournamentPost(tournamentId: string): Promise<TournamentPost[]>;
-	getTournamentUmpire(tournamentId: string): Promise<TournamentUmpires[]>
-	
+
+	getTournamentUmpire(tournamentId: string): Promise<TournamentUmpires[]>;
 }

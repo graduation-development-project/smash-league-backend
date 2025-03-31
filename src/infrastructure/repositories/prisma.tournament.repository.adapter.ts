@@ -360,4 +360,110 @@ export class PrismaTournamentRepositorAdapter
 			throw e;
 		}
 	}
+
+	async getTournamentsByUserId(
+		userId: string,
+		options: IPaginateOptions,
+	): Promise<IPaginatedOutput<ITournamentResponse>> {
+		try {
+			const page: number =
+				parseInt(options.page?.toString()) || DEFAULT_PAGE_NUMBER;
+			const perPage: number =
+				parseInt(options.perPage?.toString()) || DEFAULT_PAGE_SIZE;
+			const skip: number = (page - 1) * perPage;
+
+			const [total, tournaments] = await Promise.all([
+				this.prisma.tournament.count({
+					where: {
+						organizerId: userId,
+					},
+				}),
+
+				this.prisma.tournament.findMany({
+					where: {
+						organizerId: userId,
+					},
+					orderBy: { name: "asc" },
+					take: perPage,
+					skip: skip,
+					select: {
+						id: true,
+						backgroundTournament: true,
+						checkInBeforeStart: true,
+						registrationOpeningDate: true,
+						registrationClosingDate: true,
+						drawDate: true,
+						startDate: true,
+						endDate: true,
+						name: true,
+						shortName: true,
+						mainColor: true,
+						organizer: {
+							select: {
+								id: true,
+								name: true,
+								avatarURL: true,
+								phoneNumber: true,
+								email: true,
+							},
+						},
+						numberOfMerchandise: true,
+						hasMerchandise: true,
+						location: true,
+						registrationFeePerPerson: true,
+						registrationFeePerPair: true,
+						merchandiseImages: true,
+						maxEventPerPerson: true,
+						prizePool: true,
+						requiredAttachment: true,
+						umpirePerMatch: true,
+						protestFeePerTime: true,
+						tournamentSerie: {
+							select: {
+								id: true,
+								belongsToUser: {
+									select: {
+										id: true,
+										name: true,
+										email: true,
+										phoneNumber: true,
+									},
+								},
+								tournamentSerieName: true,
+								serieBackgroundImageURL: true,
+							},
+						},
+					},
+				}),
+			]);
+
+			const tournamentsResponse = Object.values(tournaments).map(
+				(tournament) => ({
+					...tournament,
+					expiredTimeLeft: this.calculateTimeLeft(
+						tournament.registrationClosingDate,
+					),
+				}),
+			);
+
+			const lastPage: number = Math.ceil(total / perPage);
+			const nextPage: number = page < lastPage ? page + 1 : null;
+			const prevPage: number = page > 1 ? page - 1 : null;
+
+			return {
+				data: tournamentsResponse,
+				meta: {
+					total,
+					lastPage,
+					currentPage: page,
+					totalPerPage: perPage,
+					prevPage,
+					nextPage,
+				},
+			};
+		} catch (e) {
+			console.error("getTournamentsByUserId failed:  ", e);
+			throw e;
+		}
+	}
 }

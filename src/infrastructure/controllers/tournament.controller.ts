@@ -76,6 +76,7 @@ import { GetTournamentEventsByTournamentIdUseCase } from "../../application/usec
 import { GetTournamentUmpireUseCase } from "../../application/usecases/tournament/get-tournament-umpire.usecase";
 import { UpdateAttendanceUseCase } from "src/application/usecases/tournament/match/update-attendance.usecase";
 import { UpdateForfeitCompetitorUseCase } from "src/application/usecases/tournament/match/update-forfeit-competitor.usecase,";
+import { GetTournamentsByUserIdUseCase } from "../../application/usecases/tournament/get-tournaments-by-user-id.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -101,7 +102,8 @@ export class TournamentController {
 		private readonly getTournamentPostUseCase: GetTournamentPostUseCase,
 		private readonly getMatchesOfTournamentEventUseCase: GetMatchesOfTournamentEventUseCase,
 		private readonly getTournamentEventsByTournamentIdUseCase: GetTournamentEventsByTournamentIdUseCase,
-		private readonly getTournamentUmpireUseCase: GetTournamentUmpireUseCase
+		private readonly getTournamentUmpireUseCase: GetTournamentUmpireUseCase,
+		private readonly getTournamentsByUserIdUseCase: GetTournamentsByUserIdUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -316,5 +318,15 @@ export class TournamentController {
 		@Param("tournamentId") tournamentId: string,
 	): Promise<ApiResponse<TournamentUmpires[]>> {
 		return await this.getTournamentUmpireUseCase.execute(tournamentId);
+	}
+
+	@UseGuards(JwtAccessTokenGuard)
+	@Get("/get-tournaments-by-organizer")
+	async getTournamentByOrganizer(
+		@Req() { user }: IRequestUser,
+		@Body() options: IPaginateOptions,
+	): Promise<ApiResponse<IPaginatedOutput<ITournamentResponse>>> {
+		console.log(user);
+		return await this.getTournamentsByUserIdUseCase.execute(user.id, options);
 	}
 }
