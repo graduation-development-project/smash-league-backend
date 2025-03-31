@@ -49,8 +49,9 @@ async function main() {
 		participants2.push(account);
 	}
 
-	console.log(participants2);
 }
+
+
 
 main()
 	.then(async () => {

@@ -31,7 +31,7 @@ export class GenerateBracketUseCase {
 		const numberOfRounds = this.calculateTheNumberOfRound(listParticipants.numberOfParticipants);
 		const numberOfFullParticipants = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1);
 		// console.log(numberOfFullParticipants);
-		console.log(numberOfBracket);
+		//console.log(numberOfBracket);
 		let countableRound = 1;
 		let numberOfMatchPerRound = 1;
 		let check = 0;
