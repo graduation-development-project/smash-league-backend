@@ -1,7 +1,7 @@
 import { HttpStatus, Inject } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
-import { TournamentEventRepositoryPort } from "src/domain/interfaces/repositories/tournament-event.repository.port";
+import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 
 export class GetParticipantsOfTournamentEventUseCase {
 	constructor(

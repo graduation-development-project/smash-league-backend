@@ -17,9 +17,9 @@ import {
 	CreateTournament,
 	CreateTournamentEvent, CreateTournamentEventsDTO,
 } from "src/domain/interfaces/tournament/tournament.validation";
-import { TournamentEventRepositoryPort } from "src/domain/interfaces/repositories/tournament-event.repository.port";
-import { TournamentSerieRepositoryPort } from "src/domain/interfaces/repositories/tournament-serie.repository.port";
-import { TournamentRepositoryPort } from "src/domain/interfaces/repositories/tournament.repository.port";
+import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
+import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
+import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { UploadService } from "src/infrastructure/services/upload.service";
 
 @Injectable()

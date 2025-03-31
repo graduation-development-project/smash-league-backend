@@ -1,7 +1,7 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { CreateNotificationDTO } from "../../../domain/dtos/notifications/create-notification.dto";
 import { ResponseTournamentRegistrationDTO } from "../../../domain/dtos/organizers/response-tournament-registration.dto";
-import { OrganizersRepositoryPort } from "../../../domain/interfaces/repositories/organizers.repository.port";
+import { OrganizersRepositoryPort } from "../../../domain/repositories/organizers.repository.port";
 import { ApiResponse } from "../../../domain/dtos/api-response";
 
 @Injectable()

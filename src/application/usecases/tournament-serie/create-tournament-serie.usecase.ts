@@ -4,7 +4,7 @@ import { TournamentSerie } from "@prisma/client";
 import { create } from "domain";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { CreateTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.validation";
-import { TournamentSerieRepositoryPort } from "src/domain/interfaces/repositories/tournament-serie.repository.port";
+import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 
 export class CreateTournamentSerieUseCase {
 	constructor(

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaClient, TournamentEvent } from "@prisma/client";
 import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
-import { TournamentEventRepositoryPort } from "src/domain/interfaces/repositories/tournament-event.repository.port";
+import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 
 @Injectable()
 export class PrismaTournamentEventRepositoryAdapter

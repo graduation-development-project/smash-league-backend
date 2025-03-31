@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../services/prisma.service";
-import { UmpireRepositoryPort } from "../../domain/interfaces/repositories/umpire.repository.port";
+import { UmpireRepositoryPort } from "../../domain/repositories/umpire.repository.port";
 import { UmpireUpdateMatchDTO } from "../../domain/dtos/umpire/umpire-update-match.dto";
 
 @Injectable()

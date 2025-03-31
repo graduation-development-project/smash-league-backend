@@ -5,10 +5,10 @@ import { count } from "node:console";
 import { create } from "node:domain";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { ICreateMatch } from "src/domain/interfaces/tournament/match/match.interface";
-import { MatchRepositoryPort } from "src/domain/interfaces/repositories/match.repository.port";
-import { StageRepositoryPort } from "src/domain/interfaces/repositories/stage.repository.port";
-import { TournamentEventRepositoryPort } from "src/domain/interfaces/repositories/tournament-event.repository.port";
-import { TournamentRepositoryPort } from "src/domain/interfaces/repositories/tournament.repository.port";
+import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
+import { StageRepositoryPort } from "src/domain/repositories/stage.repository.port";
+import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
+import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 
 @Injectable()
 export class GenerateBracketUseCase {

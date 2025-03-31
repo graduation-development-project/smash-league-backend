@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { AthletesRepositoryPort } from "../../../domain/interfaces/repositories/athletes.repository.port";
+import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
 import {RequestJoinTeamDTO} from "../../../domain/dtos/athletes/request-join-team.dto";
 
 @Injectable()

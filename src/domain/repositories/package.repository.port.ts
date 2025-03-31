@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { PackageEntity } from "../../entities/transaction/package.entity";
-import { ICreatePackage } from "../package/package.interface";
+import { PackageEntity } from "../entities/transaction/package.entity";
+import { ICreatePackage } from "../interfaces/package/package.interface";
 import { Package } from "@prisma/client";
 
 export interface PackageRepositoryPort {

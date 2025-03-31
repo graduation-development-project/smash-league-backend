@@ -1,7 +1,7 @@
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { SignUpDTO } from "../../../domain/dtos/auth/sign-up.dto";
-import { AuthRepositoryPort } from "../../../domain/interfaces/repositories/auth.repository.port";
+import { AuthRepositoryPort } from "../../../domain/repositories/auth.repository.port";
 import { ISignUpResponse } from "../../../domain/interfaces/interfaces";
 
 @Injectable()

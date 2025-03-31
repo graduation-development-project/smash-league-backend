@@ -1,15 +1,27 @@
 import { Injectable } from "@nestjs/common";
-import { Match, PrismaClient, TournamentEvent } from "@prisma/client";
+import { Match, MatchStatus, PrismaClient, TournamentEvent } from "@prisma/client";
 import { create } from "domain";
 import { ICreateMatch, IMatchDetailBracketResponse } from "src/domain/interfaces/tournament/match/match.interface";
 import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
-import { MatchRepositoryPort } from "src/domain/interfaces/repositories/match.repository.port";
+import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
+import { convertToLocalTime } from "../util/convert-to-local-time.util";
 
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(
 		private readonly prisma: PrismaClient
 	){
+	}
+	async updateStartTimeForMatch(matchId: string): Promise<Match> {
+		return await this.prisma.match.update({
+			where: {
+				id: matchId
+			},
+			data: {
+				startedWhen: convertToLocalTime(new Date()),
+				matchStatus: MatchStatus.ON_GOING
+			}
+		});
 	}
 	async updateForfeitCompetitor(matchId: string, forfeitCompetitorId: string): Promise<any> {
 		return await this.prisma.match.update({

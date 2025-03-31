@@ -6,12 +6,15 @@ import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
+import { StartMatchUseCase } from "src/application/usecases/tournament/match/start-match.usecase";
+import { Match } from "@prisma/client";
 
 @Controller("match")
 export class MatchController {
 	constructor(
 		private readonly updateAttendanceUseCase: UpdateAttendanceUseCase,
-		private readonly updateForfeitCompetitorUseCase: UpdateForfeitCompetitorUseCase
+		private readonly updateForfeitCompetitorUseCase: UpdateForfeitCompetitorUseCase,
+		private readonly startMatchUseCase: StartMatchUseCase
 	) {
 	}
 
@@ -24,4 +27,9 @@ export class MatchController {
 		@Param("rightCompetitorAttendance") rightCompetitorAttendance: boolean): Promise<ApiResponse<any>> {
 			return await this.updateAttendance(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
 		} 
+	
+	@Put("update-start-time/:matchId")
+	async updateStartTimeForMatch(@Param("matchId") matchId: string): Promise<ApiResponse<Match>> {
+		return await this.startMatchUseCase.execute(matchId);
+	}	
 }

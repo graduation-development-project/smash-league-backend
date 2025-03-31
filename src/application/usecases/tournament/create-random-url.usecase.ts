@@ -1,7 +1,7 @@
 import { HttpStatus, Inject } from "@nestjs/common";
 import { Tournament } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { TournamentRepositoryPort } from "src/domain/interfaces/repositories/tournament.repository.port";
+import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { v4 as uuidv4 } from "uuid";
 
 export class CreateRandomURLUseCase {
