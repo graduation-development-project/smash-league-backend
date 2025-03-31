@@ -115,6 +115,7 @@ import { UpdateAttendanceUseCase } from "./usecases/tournament/match/update-atte
 import { UpdateForfeitCompetitorUseCase } from "./usecases/tournament/match/update-forfeit-competitor.usecase,";
 import { GetUserTransactionUseCase } from "./usecases/payment/get-user-transaction.usecase";
 import { GetTournamentUmpireUseCase } from "./usecases/tournament/get-tournament-umpire.usecase";
+import { StartMatchUseCase } from "./usecases/tournament/match/start-match.usecase";
 
 @Module({
 	imports: [
@@ -292,6 +293,7 @@ import { GetTournamentUmpireUseCase } from "./usecases/tournament/get-tournament
 		//Match Use Case
 		UpdateAttendanceUseCase,
 		UpdateForfeitCompetitorUseCase,
+		StartMatchUseCase,
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
@@ -417,6 +419,7 @@ import { GetTournamentUmpireUseCase } from "./usecases/tournament/get-tournament
 		//Match Use Case 
 		UpdateAttendanceUseCase,
 		UpdateForfeitCompetitorUseCase,
+		StartMatchUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case

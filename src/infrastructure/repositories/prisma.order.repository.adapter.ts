@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Order, OrderStatus, PrismaClient } from "@prisma/client";
 import { ICreateOrderRequest, IOrderDetailResponse } from "src/domain/interfaces/payment/order.payment.interface";
-import { OrderRepositoryPort } from "src/domain/interfaces/repositories/order.repository.port";
+import { OrderRepositoryPort } from "src/domain/repositories/order.repository.port";
 
 @Injectable()
 export class PrismaOrderRepositoryAdapter implements OrderRepositoryPort {

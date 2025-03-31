@@ -3,7 +3,7 @@ import { TournamentSerie } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 import { ModifyTournamentSerie } from "src/domain/interfaces/tournament-serie/tournament-serie.validation";
-import { TournamentSerieRepositoryPort } from "src/domain/interfaces/repositories/tournament-serie.repository.port";
+import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 
 export class ModifyTournamentSerieUseCase {
 	constructor(

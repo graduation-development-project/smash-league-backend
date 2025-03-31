@@ -3,7 +3,7 @@ import {
 	Injectable,
 	NotFoundException,
 } from "@nestjs/common";
-import { StaffsRepositoryPort } from "../../domain/interfaces/repositories/staffs.repository.port";
+import { StaffsRepositoryPort } from "../../domain/repositories/staffs.repository.port";
 import { PrismaService } from "../services/prisma.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";

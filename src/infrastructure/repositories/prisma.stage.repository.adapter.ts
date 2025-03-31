@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { Stage, Match, PrismaClient } from "@prisma/client";
 import { create } from "domain";
 import { ICreateStage, IStageResponse } from "src/domain/interfaces/tournament/tournament-event/stage.interface";
-import { StageRepositoryPort } from "src/domain/interfaces/repositories/stage.repository.port";
+import { StageRepositoryPort } from "src/domain/repositories/stage.repository.port";
 
 @Injectable()
 export class PrismaStageRepositoryAdapTer implements StageRepositoryPort {

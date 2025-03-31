@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { TeamRepositoryPort } from "../../../domain/interfaces/repositories/team.repository.port";
+import { TeamRepositoryPort } from "../../../domain/repositories/team.repository.port";
 import { User } from "@prisma/client";
 import {
 	IPaginatedOutput,

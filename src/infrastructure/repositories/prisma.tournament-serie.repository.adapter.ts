@@ -3,7 +3,7 @@ import { PrismaClient, Tournament, TournamentSerie } from "@prisma/client";
 import { IPaginatedOutput, IPaginateOptions } from "src/domain/interfaces/interfaces";
 import { ICreateTournamentSerieOnly, IModifyTournamentSerie, ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 import { ICreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.interface";
-import { TournamentSerieRepositoryPort } from "src/domain/interfaces/repositories/tournament-serie.repository.port";
+import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 
 @Injectable()
 export class PrismaTournamentSerieRepositoryAdapter implements TournamentSerieRepositoryPort {

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../services/prisma.service";
-import { TeamRepositoryPort } from "../../domain/interfaces/repositories/team.repository.port";
+import { TeamRepositoryPort } from "../../domain/repositories/team.repository.port";
 import { Team, User, UserTeam } from "@prisma/client";
 import {
 	IPaginatedOutput,

@@ -1,11 +1,11 @@
 import { User } from "@prisma/client";
-import { SignUpDTO } from "../../dtos/auth/sign-up.dto";
+import { SignUpDTO } from "../dtos/auth/sign-up.dto";
 import {
 	IRequestUser,
 	ISignInResponse,
 	ISignUpResponse,
-} from "../interfaces";
-import { ResetPasswordDTO } from "../../dtos/auth/reset-password.dto";
+} from "../interfaces/interfaces";
+import { ResetPasswordDTO } from "../dtos/auth/reset-password.dto";
 import { TUserWithRole } from "src/infrastructure/types/users.type";
 
 export interface AuthRepositoryPort {

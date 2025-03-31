@@ -1,11 +1,11 @@
-import { ResponseTournamentRegistrationDTO } from "../../dtos/organizers/response-tournament-registration.dto";
+import { ResponseTournamentRegistrationDTO } from "../dtos/organizers/response-tournament-registration.dto";
 import { Match, Tournament, TournamentRegistration } from "@prisma/client";
 import {
 	ITournamentDetailResponse,
 	ITournamentParticipantsResponse,
 	ITournamentRegistrationResponse,
-} from "../tournament/tournament.interface";
-import { AssignUmpireDTO } from "../../dtos/organizers/assign-umpire.dto";
+} from "../interfaces/tournament/tournament.interface";
+import { AssignUmpireDTO } from "../dtos/organizers/assign-umpire.dto";
 
 export interface OrganizersRepositoryPort {
 	responseTournamentRegistration(

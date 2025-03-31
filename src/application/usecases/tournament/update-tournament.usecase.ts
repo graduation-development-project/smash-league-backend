@@ -2,8 +2,8 @@ import { ApiResponse } from 'src/domain/dtos/api-response';
 import { UpdateTournament } from './../../../domain/interfaces/tournament/tournament.validation';
 import { HttpStatus, Inject } from "@nestjs/common";
 import { ITournamentDetailResponse } from 'src/domain/interfaces/tournament/tournament.interface';
-import { TournamentSerieRepositoryPort } from "src/domain/interfaces/repositories/tournament-serie.repository.port";
-import { TournamentRepositoryPort } from "src/domain/interfaces/repositories/tournament.repository.port";
+import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
+import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { Tournament } from '@prisma/client';
 
 export class UpdateTournamentUseCase {

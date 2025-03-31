@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { AthletesRepositoryPort } from "../../../domain/interfaces/repositories/athletes.repository.port";
+import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
 import { UserVerification } from "@prisma/client";
 import { RegisterNewRoleDTO } from "../../../domain/dtos/athletes/register-new-role.dto";
 import { ApiResponse } from "../../../domain/dtos/api-response";

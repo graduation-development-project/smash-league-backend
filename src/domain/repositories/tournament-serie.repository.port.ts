@@ -1,7 +1,7 @@
 import { Tournament, TournamentSerie } from "@prisma/client";
-import { ICreateTournamentSerieOnly, IModifyTournamentSerie, ITournamentSerieResponse } from "../tournament-serie/tournament-serie.interface";
-import { ICreateTournamentSerie } from "../tournament/tournament.interface";
-import { IPaginatedOutput, IPaginateOptions } from "../interfaces";
+import { ICreateTournamentSerieOnly, IModifyTournamentSerie, ITournamentSerieResponse } from "../interfaces/tournament-serie/tournament-serie.interface";
+import { ICreateTournamentSerie } from "../interfaces/tournament/tournament.interface";
+import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
 
 export interface TournamentSerieRepositoryPort {
 	countPageTournament(options: IPaginateOptions): Promise<number>;

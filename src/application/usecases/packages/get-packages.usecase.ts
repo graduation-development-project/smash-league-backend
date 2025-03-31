@@ -1,7 +1,7 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { PackageEntity } from "src/domain/entities/transaction/package.entity";
-import { PackageRepositoryPort } from "src/domain/interfaces/repositories/package.repository.port";
+import { PackageRepositoryPort } from "src/domain/repositories/package.repository.port";
 
 @Injectable()
 export class GetPackagesUseCase {

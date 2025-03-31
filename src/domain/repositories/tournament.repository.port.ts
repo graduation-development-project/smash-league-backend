@@ -28,6 +28,6 @@ export interface TournamentRepositoryPort {
 	updateTournament(updateTournament: IUpdateTournament): Promise<Tournament>;
 
 	getTournamentPost(tournamentId: string): Promise<TournamentPost[]>;
-
 	getTournamentUmpire(tournamentId: string): Promise<TournamentUmpires[]>
+	
 }

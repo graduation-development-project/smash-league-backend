@@ -3,7 +3,7 @@ import { Package, PrismaClient, UserVerification } from "@prisma/client";
 import { create } from "domain";
 import { PackageEntity } from "src/domain/entities/transaction/package.entity";
 import { ICreatePackage } from "src/domain/interfaces/package/package.interface";
-import { PackageRepositoryPort } from "src/domain/interfaces/repositories/package.repository.port";
+import { PackageRepositoryPort } from "src/domain/repositories/package.repository.port";
 
 @Injectable()
 export class PrismaPackageRepositoryAdapter implements PackageRepositoryPort {
