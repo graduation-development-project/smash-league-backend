@@ -2,7 +2,7 @@ import { HttpStatus, Inject } from "@nestjs/common";
 import { Tournament, TournamentSerie } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IPaginatedOutput, IPaginateOptions } from "src/domain/interfaces/interfaces";
-import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
+import { TournamentSerieRepositoryPort } from "src/domain/interfaces/repositories/tournament-serie.repository.port";
 
 export class GetTournamentsOfTournamentSerieUseCase {
 	constructor(

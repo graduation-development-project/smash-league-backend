@@ -5,7 +5,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { Gender, PrismaClient, User } from "@prisma/client";
-import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
+import { UsersRepositoryPort } from "../../domain/interfaces/repositories/users.repository.port";
 import { CreateUserDTO } from "../../domain/dtos/users/create-user.dto";
 import { TUserWithRole } from "../types/users.type";
 import { RoleMap } from "../enums/role.enum";

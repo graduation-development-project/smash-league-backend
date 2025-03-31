@@ -1,6 +1,6 @@
 import { TournamentEvent } from "@prisma/client";
-import { ICreateTournamentEvent } from "../interfaces/tournament/tournament.interface";
-import { ITournamentEventParticipants } from "../interfaces/tournament/tournament-event/tournament-event.interface";
+import { ICreateTournamentEvent } from "../tournament/tournament.interface";
+import { ITournamentEventParticipants } from "../tournament/tournament-event/tournament-event.interface";
 
 export interface TournamentEventRepositoryPort {
 	getAllTournamentEvent(tournamentId: string): Promise<TournamentEvent[]>;

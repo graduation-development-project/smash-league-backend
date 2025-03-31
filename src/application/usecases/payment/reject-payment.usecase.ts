@@ -2,10 +2,10 @@ import { HttpStatus, Inject } from "@nestjs/common";
 import { Transaction } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IRequestUser } from "src/domain/interfaces/interfaces";
-import { OrderRepositoryPort } from "src/domain/repositories/order.repository.port";
-import { PackageRepositoryPort } from "src/domain/repositories/package.repository.port";
-import { TransactionRepositoryPort } from "src/domain/repositories/transaction.repository.port";
-import { UsersRepositoryPort } from "src/domain/repositories/users.repository.port";
+import { OrderRepositoryPort } from "src/domain/interfaces/repositories/order.repository.port";
+import { PackageRepositoryPort } from "src/domain/interfaces/repositories/package.repository.port";
+import { TransactionRepositoryPort } from "src/domain/interfaces/repositories/transaction.repository.port";
+import { UsersRepositoryPort } from "src/domain/interfaces/repositories/users.repository.port";
 
 export class RejectPaymentUseCase {
 	constructor(

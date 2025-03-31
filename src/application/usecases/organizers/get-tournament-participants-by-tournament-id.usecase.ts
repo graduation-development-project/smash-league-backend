@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { OrganizersRepositoryPort } from "../../../domain/repositories/organizers.repository.port";
+import { OrganizersRepositoryPort } from "../../../domain/interfaces/repositories/organizers.repository.port";
 import { ApiResponse } from "../../../domain/dtos/api-response";
 import { TournamentRegistration } from "@prisma/client";
 import {

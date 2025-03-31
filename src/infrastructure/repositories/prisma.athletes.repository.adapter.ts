@@ -16,7 +16,7 @@ import {
 	UserTeam,
 	UserVerification,
 } from "@prisma/client";
-import { AthletesRepositoryPort } from "../../domain/repositories/athletes.repository.port";
+import { AthletesRepositoryPort } from "../../domain/interfaces/repositories/athletes.repository.port";
 import { RegisterTournamentDTO } from "../../domain/dtos/athletes/register-tournament.dto";
 import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
 import { PrismaService } from "../services/prisma.service";
@@ -25,7 +25,7 @@ import { UploadService } from "../services/upload.service";
 import { ResponseToTeamInvitationDTO } from "../../domain/dtos/athletes/response-to-team-invitation.dto";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { LeaveTeamDTO } from "../../domain/dtos/athletes/leave-team.dto";
-import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
+import { NotificationsRepositoryPort } from "../../domain/interfaces/repositories/notifications.repository.port";
 import { RequestJoinTeamDTO } from "../../domain/dtos/athletes/request-join-team.dto";
 import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
 import { ResponseTeamLeaderTransferDTO } from "../../domain/dtos/athletes/response-team-leader-transfer.dto";

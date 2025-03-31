@@ -1,5 +1,5 @@
 import { Team, User } from "@prisma/client";
-import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
+import { IPaginatedOutput, IPaginateOptions } from "../interfaces";
 
 export interface TeamRepositoryPort {
 	// getTeamMemberByTeamId(teamId: string): Promise<User[]>;

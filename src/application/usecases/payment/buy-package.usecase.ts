@@ -1,9 +1,9 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { ICreateOrderRequest } from "src/domain/interfaces/payment/order.payment.interface";
-import { OrderRepositoryPort } from "src/domain/repositories/order.repository.port";
-import { PackageRepositoryPort } from "src/domain/repositories/package.repository.port";
-import { TransactionRepositoryPort } from "src/domain/repositories/transaction.repository.port";
+import { OrderRepositoryPort } from "src/domain/interfaces/repositories/order.repository.port";
+import { PackageRepositoryPort } from "src/domain/interfaces/repositories/package.repository.port";
+import { TransactionRepositoryPort } from "src/domain/interfaces/repositories/transaction.repository.port";
 import { PaymentPayOSService } from "src/application/services/payment.service";
 
 @Injectable()

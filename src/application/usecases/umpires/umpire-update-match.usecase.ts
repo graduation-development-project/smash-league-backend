@@ -1,7 +1,7 @@
 import { HttpStatus, Inject } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
 
-import { UmpireRepositoryPort } from "../../../domain/repositories/umpire.repository.port";
+import { UmpireRepositoryPort } from "../../../domain/interfaces/repositories/umpire.repository.port";
 import { UmpireUpdateMatchDTO } from "../../../domain/dtos/umpire/umpire-update-match.dto";
 
 export class UmpireUpdateMatchUseCase {

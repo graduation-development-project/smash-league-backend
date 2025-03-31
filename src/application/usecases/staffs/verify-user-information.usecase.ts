@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { StaffsRepositoryPort } from "../../../domain/repositories/staffs.repository.port";
+import { StaffsRepositoryPort } from "../../../domain/interfaces/repositories/staffs.repository.port";
 import { ApiResponse } from "../../../domain/dtos/api-response";
 
 @Injectable()

@@ -2,7 +2,7 @@ import { HttpStatus, Inject } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IUserResponse } from "src/domain/interfaces/user/user.interface";
-import { UsersRepositoryPort } from "src/domain/repositories/users.repository.port";
+import { UsersRepositoryPort } from "src/domain/interfaces/repositories/users.repository.port";
 
 export class SearchUserByEmailUseCase {
 	constructor(

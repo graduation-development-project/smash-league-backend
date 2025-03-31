@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { OrganizersRepositoryPort } from "../../domain/repositories/organizers.repository.port";
+import { OrganizersRepositoryPort } from "../../domain/interfaces/repositories/organizers.repository.port";
 import { ResponseTournamentRegistrationDTO } from "../../domain/dtos/organizers/response-tournament-registration.dto";
 import { PrismaService } from "../services/prisma.service";
 import {
@@ -11,7 +11,7 @@ import {
 	TournamentRegistrationStatus,
 } from "@prisma/client";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
-import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
+import { NotificationsRepositoryPort } from "../../domain/interfaces/repositories/notifications.repository.port";
 import {
 	ITournamentDetailResponse,
 	ITournamentParticipantsResponse,

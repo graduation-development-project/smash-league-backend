@@ -1,7 +1,7 @@
 import { HttpStatus, Inject } from "@nestjs/common";
 import { Match } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
+import { MatchRepositoryPort } from "src/domain/interfaces/repositories/match.repository.port";
 
 export class GetMatchesOfTournamentEventUseCase {
 	constructor(

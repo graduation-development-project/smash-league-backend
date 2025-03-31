@@ -105,8 +105,14 @@ import { GetOwnedTournamentUseCase } from "./usecases/organizers/get-owned-tourn
 import { GetTournamentPostUseCase } from "./usecases/tournament/get-tournament-post.usecase";
 import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match.usecase";
 import { GetUmpireRegistrationUseCase } from "./usecases/organizers/get-umpire-registration.usecase";
-import { GetTournamentEventsByTournamentIdUseCase } from "./usecases/tournament/tournament-event/get-tournament-events-by-tournament-id.usecase";
-import { GetTournamentRegistrationByUserIdUseCase } from "./usecases/athletes/get-tournament-registration-by-user-id.usecase";
+import {
+	GetTournamentEventsByTournamentIdUseCase
+} from "./usecases/tournament/tournament-event/get-tournament-events-by-tournament-id.usecase";
+import {
+	GetTournamentRegistrationByUserIdUseCase
+} from "./usecases/athletes/get-tournament-registration-by-user-id.usecase";
+import { UpdateAttendanceUseCase } from "./usecases/tournament/match/update-attendance.usecase";
+import { UpdateForfeitCompetitorUseCase } from "./usecases/tournament/match/update-forfeit-competitor.usecase,";
 import { GetUserTransactionUseCase } from "./usecases/payment/get-user-transaction.usecase";
 import { GetTournamentUmpireUseCase } from "./usecases/tournament/get-tournament-umpire.usecase";
 
@@ -282,6 +288,10 @@ import { GetTournamentUmpireUseCase } from "./usecases/tournament/get-tournament
 		GetAllTournamentSeriesUseCase,
 		CreateTournamentSerieUseCase,
 		GetMyTournamentSerieUseCase,
+
+		//Match Use Case
+		UpdateAttendanceUseCase,
+		UpdateForfeitCompetitorUseCase,
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
@@ -403,6 +413,10 @@ import { GetTournamentUmpireUseCase } from "./usecases/tournament/get-tournament
 		GetAllTournamentSeriesUseCase,
 		CreateTournamentSerieUseCase,
 		GetMyTournamentSerieUseCase,
+
+		//Match Use Case 
+		UpdateAttendanceUseCase,
+		UpdateForfeitCompetitorUseCase,
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case

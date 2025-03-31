@@ -7,7 +7,7 @@ import {
 } from "@prisma/client";
 import { create } from "domain";
 import { ICreateTransactionRequest } from "src/domain/interfaces/payment/transaction.interface";
-import { TransactionRepositoryPort } from "src/domain/repositories/transaction.repository.port";
+import { TransactionRepositoryPort } from "src/domain/interfaces/repositories/transaction.repository.port";
 
 @Injectable()
 export class PrismaTransactionRepositoryAdapter

@@ -1,5 +1,5 @@
 import { Notification } from "@prisma/client";
-import { CreateNotificationDTO } from "../dtos/notifications/create-notification.dto";
+import { CreateNotificationDTO } from "../../dtos/notifications/create-notification.dto";
 
 export interface NotificationsRepositoryPort {
 	getNotificationsByUserID(userID: string): Promise<Notification[]>;

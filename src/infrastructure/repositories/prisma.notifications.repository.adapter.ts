@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { Notification, PrismaClient, UserNotification } from "@prisma/client";
-import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
+import { NotificationsRepositoryPort } from "../../domain/interfaces/repositories/notifications.repository.port";
 import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
 import { InjectQueue } from "@nestjs/bullmq";

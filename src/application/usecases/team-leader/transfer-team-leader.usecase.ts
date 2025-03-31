@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { TeamLeadersRepositoryPort } from "../../../domain/repositories/team-leaders.repository.port";
+import { TeamLeadersRepositoryPort } from "../../../domain/interfaces/repositories/team-leaders.repository.port";
 import { TransferTeamLeaderRoleDTO } from "../../../domain/dtos/team-leaders/transfer-team-leader-role.dto";
 import { ApiResponse } from "../../../domain/dtos/api-response";
 import { TeamRequest } from "@prisma/client";

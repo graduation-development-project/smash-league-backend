@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { TeamRepositoryPort } from "../../../domain/repositories/team.repository.port";
+import { TeamRepositoryPort } from "../../../domain/interfaces/repositories/team.repository.port";
 import { Team } from "@prisma/client";
 
 @Injectable()

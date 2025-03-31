@@ -2,7 +2,7 @@ import { HttpStatus, Inject } from "@nestjs/common";
 import { Package } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { ICreatePackage } from "src/domain/interfaces/package/package.interface";
-import { PackageRepositoryPort } from "src/domain/repositories/package.repository.port";
+import { PackageRepositoryPort } from "src/domain/interfaces/repositories/package.repository.port";
 
 export class CreatePackageUseCase {
 	constructor(

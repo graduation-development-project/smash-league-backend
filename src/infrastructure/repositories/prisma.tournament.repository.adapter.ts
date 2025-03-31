@@ -11,7 +11,7 @@ import {
 	TournamentStatus,
 	TournamentUmpires,
 } from "@prisma/client";
-import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
+import { TournamentRepositoryPort } from "src/domain/interfaces/repositories/tournament.repository.port";
 import { Injectable } from "@nestjs/common";
 import { ICreateTournament } from "src/domain/interfaces/tournament/tournament.interface";
 import {

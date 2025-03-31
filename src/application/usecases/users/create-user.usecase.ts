@@ -1,5 +1,5 @@
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
-import { UsersRepositoryPort } from "../../../domain/repositories/users.repository.port";
+import { UsersRepositoryPort } from "../../../domain/interfaces/repositories/users.repository.port";
 import { User } from "@prisma/client";
 import { CreateUserDTO } from "../../../domain/dtos/users/create-user.dto";
 

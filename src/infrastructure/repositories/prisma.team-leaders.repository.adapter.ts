@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { TeamLeadersRepositoryPort } from "../../domain/repositories/team-leaders.repository.port";
+import { TeamLeadersRepositoryPort } from "../../domain/interfaces/repositories/team-leaders.repository.port";
 import { PrismaService } from "../services/prisma.service";
 import {
 	InvitationStatus,
@@ -22,7 +22,7 @@ import { RoleMap } from "../enums/role.enum";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
-import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
+import { NotificationsRepositoryPort } from "../../domain/interfaces/repositories/notifications.repository.port";
 import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
 import { RemoveTeamMemberDTO } from "../../domain/dtos/team-leaders/remove-team-member.dto";
 import { ResponseLeaveTeamRequestDTO } from "../../domain/dtos/team-leaders/response-leave-team-request.dto";

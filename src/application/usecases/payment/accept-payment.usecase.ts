@@ -2,10 +2,10 @@ import { IRequestUser } from './../../../domain/interfaces/interfaces';
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { Transaction } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { OrderRepositoryPort } from "src/domain/repositories/order.repository.port";
-import { PackageRepositoryPort } from "src/domain/repositories/package.repository.port";
-import { TransactionRepositoryPort } from "src/domain/repositories/transaction.repository.port";
-import { UsersRepositoryPort } from "src/domain/repositories/users.repository.port";
+import { OrderRepositoryPort } from "src/domain/interfaces/repositories/order.repository.port";
+import { PackageRepositoryPort } from "src/domain/interfaces/repositories/package.repository.port";
+import { TransactionRepositoryPort } from "src/domain/interfaces/repositories/transaction.repository.port";
+import { UsersRepositoryPort } from "src/domain/interfaces/repositories/users.repository.port";
 
 @Injectable()
 export class AcceptPaymentUseCase {

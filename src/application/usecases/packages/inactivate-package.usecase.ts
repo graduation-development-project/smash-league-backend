@@ -1,7 +1,7 @@
 import { HttpStatus, Inject } from "@nestjs/common";
 import { Package } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { PackageRepositoryPort } from "src/domain/repositories/package.repository.port";
+import { PackageRepositoryPort } from "src/domain/interfaces/repositories/package.repository.port";
 
 export class InactivatePackageUseCase {
 	constructor(

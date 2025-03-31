@@ -1,7 +1,7 @@
 import * as bcrypt from "bcryptjs";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { PrismaClient, User } from "@prisma/client";
-import { AuthRepositoryPort } from "../../domain/repositories/auth.repository.port";
+import { AuthRepositoryPort } from "../../domain/interfaces/repositories/auth.repository.port";
 import { SignUpDTO } from "../../domain/dtos/auth/sign-up.dto";
 import {
 	IPayload,
@@ -10,7 +10,7 @@ import {
 } from "../../domain/interfaces/interfaces";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
-import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
+import { UsersRepositoryPort } from "../../domain/interfaces/repositories/users.repository.port";
 import { MailService } from "../services/mail.service";
 import { generateOtpCode } from "../util/generate-otp-code.util";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";

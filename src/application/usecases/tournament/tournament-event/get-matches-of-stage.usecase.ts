@@ -1,6 +1,6 @@
 import { Inject } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
-import { StageRepositoryPort } from "src/domain/repositories/stage.repository.port";
+import { StageRepositoryPort } from "src/domain/interfaces/repositories/stage.repository.port";
 
 export class GetMatchesOfStageUseCase {
 	constructor(

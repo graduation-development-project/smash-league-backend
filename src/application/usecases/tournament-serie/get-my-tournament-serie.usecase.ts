@@ -2,7 +2,7 @@ import { HttpStatus, Inject } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IRequestUser } from "src/domain/interfaces/interfaces";
 import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
-import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
+import { TournamentSerieRepositoryPort } from "src/domain/interfaces/repositories/tournament-serie.repository.port";
 
 export class GetMyTournamentSerieUseCase {
 	constructor(
