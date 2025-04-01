@@ -420,6 +420,9 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 										name: true
 									}
 								}
+							},
+							orderBy: {
+								matchNumber: "desc"
 							}
 						}
 					}
