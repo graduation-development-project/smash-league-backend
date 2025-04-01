@@ -9,6 +9,7 @@ import {
 	TournamentRegistration,
 	TournamentRegistrationRole,
 	TournamentRegistrationStatus,
+	User,
 } from "@prisma/client";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
 import { NotificationsRepositoryPort } from "../../domain/repositories/notifications.repository.port";
@@ -20,6 +21,7 @@ import { AssignUmpireDTO } from "../../domain/dtos/organizers/assign-umpire.dto"
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { formatDate, getCurrentTime } from "../util/format-date-time.util";
+import { RoleMap } from "../enums/role.enum";
 
 @Injectable()
 export class PrismaOrganizersRepositoryAdapter
@@ -331,7 +333,7 @@ export class PrismaOrganizersRepositoryAdapter
 				},
 			});
 
-			if(!matchDetail) {
+			if (!matchDetail) {
 				throw new BadRequestException("Match not found.");
 			}
 
@@ -346,14 +348,32 @@ export class PrismaOrganizersRepositoryAdapter
 				[umpireId],
 			);
 
-			return await this.prismaService.match.update({
-				where: {
-					id: matchId,
+			return await this.prismaService.$transaction(
+				async (prisma): Promise<Match> => {
+					const match = await prisma.match.update({
+						where: {
+							id: matchId,
+						},
+						data: {
+							umpireId,
+						},
+					});
+
+					await prisma.tournamentUmpires.update({
+						where: {
+							userId_tournamentId: {
+								userId: umpireId,
+								tournamentId,
+							},
+						},
+						data: {
+							isAvailable: false,
+						},
+					});
+
+					return match;
 				},
-				data: {
-					umpireId,
-				},
-			});
+			);
 		} catch (e) {
 			console.error("Assign umpire failed", e);
 			throw e;

@@ -429,8 +429,11 @@ model TournamentUmpires {
   id           String     @id @default(uuid())
   tournamentId String
   userId       String
+  isAvailable  Boolean    @default(true)
   tournament   Tournament @relation(name: "FK_TournamentUmpires_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
   user         User       @relation(name: "FK_TournamentUmpires_User", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tournamentId])
 }
 
 enum TournamentRegistrationStatus {
