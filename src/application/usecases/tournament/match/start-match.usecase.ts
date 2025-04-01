@@ -18,6 +18,16 @@ export class StartMatchUseCase {
 			"Match id not found!",
 			null
 		);
+		if (match.courtId === null) return new ApiResponse<null | undefined>(
+			HttpStatus.BAD_REQUEST,
+			"Court not found, please assign court for this match before start!",
+			null
+		);
+		if (match.umpireId === null) return new ApiResponse<null | undefined>(
+			HttpStatus.BAD_REQUEST,
+			"Umpire not found, please assign umpire for this match before start!",
+			null
+		);
 		if (currentServerId != match.leftCompetitorId && currentServerId != match.rightCompetitorId) 
 			return new ApiResponse<null | undefined>(
 				HttpStatus.BAD_REQUEST,
