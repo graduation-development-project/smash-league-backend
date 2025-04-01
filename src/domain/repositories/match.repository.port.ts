@@ -12,4 +12,5 @@ export interface MatchRepositoryPort {
 	updateForfeitCompetitor(matchId: string, forfeitCompetitorId: string): Promise<any>;
 	updateStartTimeForMatch(matchId: string, currentServerId: string): Promise<Game>;
 	updatePoint(gameId: string, winningId: string): Promise<any>;
+	assignCourtForMatch(matchId: string, courtId: string): Promise<Match>;
 }

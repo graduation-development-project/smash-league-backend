@@ -7,6 +7,7 @@ import { MatchRepositoryPort } from "src/domain/repositories/match.repository.po
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
 import { IGameAfterUpdatePointResponse, IPointOfGameResponse } from "src/domain/interfaces/tournament/match/game.interface";
 import { IParticipantResponse } from "src/domain/interfaces/tournament/match/competitor.interface";
+import { match } from "assert";
 
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
@@ -14,6 +15,17 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		private readonly prisma: PrismaClient
 	) {
 	}
+	async assignCourtForMatch(matchId: string, courtId: string): Promise<Match> {
+		return await this.prisma.match.update({
+			where: {
+				id: matchId
+			},
+			data: {
+				courtId: courtId
+			}
+		});
+	}
+
 	async updatePoint(gameId: string, winningId: string): Promise<IGameAfterUpdatePointResponse> {
 		const game = await this.prisma.game.findUnique({
 			where: {
