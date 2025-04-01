@@ -245,4 +245,36 @@ export class PrismaTeamsRepositoryAdapter implements TeamRepositoryPort {
 			throw e;
 		}
 	}
+
+	async getTeamMemberByOrganizerId(teamLeaderId: string): Promise<User[]> {
+		try {
+			const userList = await this.prismaService.userTeam.findMany({
+				where: {
+					team: {
+						teamLeaderId,
+					},
+				},
+
+				select: {
+					user: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
+							phoneNumber: true,
+							email: true,
+							height: true,
+							gender: true,
+							dateOfBirth: true,
+						},
+					},
+				},
+			});
+
+			return userList.map((user) => user.user as User);
+		} catch (e) {
+			console.error("getTeamMemberByOrganizerId", e);
+			throw e;
+		}
+	}
 }

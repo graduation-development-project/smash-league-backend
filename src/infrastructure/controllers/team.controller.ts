@@ -22,6 +22,9 @@ import { GetJoinedTeamsUseCase } from "../../application/usecases/teams/get-join
 import { SearchTeamsUseCase } from "../../application/usecases/teams/search-teams.usecase";
 import * as sea from "node:sea";
 import { ApiResponse } from "../../domain/dtos/api-response";
+import {
+	GetTeamMembersByTeamLeaderUseCase
+} from "../../application/usecases/teams/get-team-members-by-team-leader.usecase";
 
 @Controller("/teams")
 export class TeamController {
@@ -31,6 +34,7 @@ export class TeamController {
 		private getJoinedTeamsUseCase: GetJoinedTeamsUseCase,
 		// private getTeamListUseCase: GetTeamListUseCase,
 		private searchTeamsUseCase: SearchTeamsUseCase,
+		private getTeamMembersByTeamLeaderUseCase: GetTeamMembersByTeamLeaderUseCase,
 	) {}
 
 	// @Get("/")
@@ -71,9 +75,20 @@ export class TeamController {
 		return this.searchTeamsUseCase.execute(paginateOption, searchTerm);
 	}
 
+	@Get("/memberList/")
+	@UseGuards(JwtAccessTokenGuard)
+	@HttpCode(HttpStatus.OK)
+	getTeamMembersByOrganizer(
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<User[]>> {
+		return this.getTeamMembersByTeamLeaderUseCase.execute(user.id);
+	}
+
 	@Get("/:teamId")
 	@HttpCode(HttpStatus.OK)
 	getTeamDetail(@Param("teamId") teamId: string): Promise<Team> {
 		return this.getTeamDetailUseCase.execute(teamId);
 	}
+
+
 }

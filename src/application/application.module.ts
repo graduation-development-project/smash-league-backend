@@ -119,6 +119,7 @@ import { StartMatchUseCase } from "./usecases/tournament/match/start-match.useca
 import { UpdatePointUseCase } from "./usecases/tournament/match/update-point.usecase";
 import { PrismaGameRepositoryAdapter } from "src/infrastructure/repositories/prisma.game.repository.adapter";
 import { GetTournamentsByUserIdUseCase } from "./usecases/tournament/get-tournaments-by-user-id.usecase";
+import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-members-by-team-leader.usecase";
 
 @Module({
 	imports: [
@@ -271,6 +272,7 @@ import { GetTournamentsByUserIdUseCase } from "./usecases/tournament/get-tournam
 		ResponseTransferTeamLeaderUseCase,
 		GetTeamDetailUseCase,
 		GetJoinedTeamsUseCase,
+		GetTeamMembersByTeamLeaderUseCase,
 		//Tournament Use Case
 		GetParticipatedTournamentsUseCase,
 		RegisterTournamentUseCase,
@@ -397,6 +399,8 @@ import { GetTournamentsByUserIdUseCase } from "./usecases/tournament/get-tournam
 		ResponseTransferTeamLeaderUseCase,
 		GetTeamDetailUseCase,
 		GetJoinedTeamsUseCase,
+		GetTeamMembersByTeamLeaderUseCase,
+
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		//Tournament Use Case

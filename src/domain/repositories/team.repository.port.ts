@@ -20,4 +20,6 @@ export interface TeamRepositoryPort {
 		teamId: string,
 		searchTerm?: string,
 	): Promise<IPaginatedOutput<User>>;
+
+	getTeamMemberByOrganizerId(teamLeaderId: string): Promise<User[]>;
 }
