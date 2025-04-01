@@ -17,6 +17,9 @@ import {
 	ITournamentParticipantsResponse,
 } from "../../domain/interfaces/tournament/tournament.interface";
 import { AssignUmpireDTO } from "../../domain/dtos/organizers/assign-umpire.dto";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
+import { formatDate, getCurrentTime } from "../util/format-date-time.util";
 
 @Injectable()
 export class PrismaOrganizersRepositoryAdapter
@@ -24,6 +27,7 @@ export class PrismaOrganizersRepositoryAdapter
 {
 	constructor(
 		private prismaService: PrismaService,
+		@InjectQueue("emailQueue") private emailQueue: Queue,
 		@Inject("NotificationRepository")
 		private notificationsRepository: NotificationsRepositoryPort,
 	) {}
@@ -320,6 +324,27 @@ export class PrismaOrganizersRepositoryAdapter
 			if (isUmpireInMatch.length > 0) {
 				throw new BadRequestException("Umpire have match not end");
 			}
+
+			const matchDetail: Match = await this.prismaService.match.findUnique({
+				where: {
+					id: matchId,
+				},
+			});
+
+			if(!matchDetail) {
+				throw new BadRequestException("Match not found.");
+			}
+
+			const createNotificationDTO = {
+				title: `You were assigned to new match`,
+				message: `You were assigned to new match at ${formatDate(matchDetail.startedWhen)}, ${getCurrentTime(matchDetail.startedWhen)}`,
+				type: NotificationTypeMap.Kick.id,
+			};
+
+			await this.notificationsRepository.createNotification(
+				createNotificationDTO,
+				[umpireId],
+			);
 
 			return await this.prismaService.match.update({
 				where: {
