@@ -195,6 +195,24 @@ model TournamentSerie {
   tournaments             Tournament[] @relation(name: "FK_Tournament_TournamentSerie")
 }
 
+model Province {
+  id          String       @id @default(uuid())
+  province    String
+  tournaments Tournament[] @relation(name: "FK_Tournament_Province")
+}
+
+model District {
+  id          String       @id @default(uuid())
+  district    String
+  tournaments Tournament[] @relation(name: "FK_Tournament_District")
+}
+
+model Ward {
+  id          String       @id @default(uuid())
+  ward        String
+  tournaments Tournament[] @relation(name: "FK_Tournament_Ward")
+}
+
 model Tournament {
   id                       String                   @id
   name                     String
@@ -206,6 +224,12 @@ model Tournament {
   contactEmail             String
   mainColor                String?
   backgroundTournament     String
+  provinceId               String?
+  province                 Province?                @relation(name: "FK_Tournament_Province", fields: [provinceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  districtId               String?
+  district                 District?                @relation(name: "FK_Tournament_District", fields: [districtId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  wardId                   String?
+  ward                     Ward?                    @relation(name: "FK_Tournament_Ward", fields: [wardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   location                 String
   registrationOpeningDate  DateTime
   registrationClosingDate  DateTime
@@ -237,6 +261,7 @@ model Tournament {
   tournamentEvents         TournamentEvent[]        @relation(name: "FK_Tournament_TournamentEvent")
   TournamentParticipants   TournamentParticipants[] @relation(name: "FK_TournamentParticipants_Tournament")
   TournamentUmpires        TournamentUmpires[]      @relation(name: "FK_TournamentUmpires_Tournament")
+  courts                   Court[]                  @relation(name: "FK_Court_Tournament")
 }
 
 enum TournamentStatus {
@@ -285,6 +310,15 @@ enum BadmintonParticipantType {
   MIXED_DOUBLE
 }
 
+model Court {
+  id             String     @id @default(uuid())
+  courtCode      String
+  tournamentId   String
+  tournament     Tournament @relation(name: "FK_Court_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courtAvailable Boolean    @default(true)
+  matches        Match[]    @relation(name: "FK_Match_Court")
+}
+
 model Stage {
   id                String          @id @default(uuid())
   stageName         String
@@ -313,6 +347,8 @@ model Match {
   stage                     Stage                   @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   matchNumber               Int
   isByeMatch                Boolean
+  courtId                   String?
+  court                     Court?                  @relation(name: "FK_Match_Court", fields: [courtId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tournamentEventId         String
   tournamentEvent           TournamentEvent         @relation(name: "FK_Match_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   nextMatchId               String?
@@ -519,6 +555,7 @@ model Transaction {
   order                  Order             @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
   value                  Int
   status                 TransactionStatus
+  createdAt              DateTime          @default(now())
   cancelledReason        String?
 }
 
