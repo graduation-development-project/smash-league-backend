@@ -119,6 +119,9 @@ import { StartMatchUseCase } from "./usecases/tournament/match/start-match.useca
 import { UpdatePointUseCase } from "./usecases/tournament/match/update-point.usecase";
 import { PrismaGameRepositoryAdapter } from "src/infrastructure/repositories/prisma.game.repository.adapter";
 import { GetTournamentsByUserIdUseCase } from "./usecases/tournament/get-tournaments-by-user-id.usecase";
+import { PrismaCourtRepositoryAdapter } from "src/infrastructure/repositories/prisma.court.repository.adapter";
+import { AssignCourtForMatchUseCase } from "./usecases/tournament/court/assign-court-for-match.usecase";
+import { GetCourtAvailableUseCase } from "./usecases/tournament/court/get-court-available.usecase";
 import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-members-by-team-leader.usecase";
 
 @Module({
@@ -214,6 +217,10 @@ import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-mem
 			provide: "GameRepository",
 			useClass: PrismaGameRepositoryAdapter
 		},
+		{
+			provide: "CourtRepository",
+			useClass: PrismaCourtRepositoryAdapter
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -306,6 +313,10 @@ import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-mem
 		UpdateForfeitCompetitorUseCase,
 		StartMatchUseCase,
 		UpdatePointUseCase,
+
+		//Court Use Case
+		AssignCourtForMatchUseCase,
+		GetCourtAvailableUseCase,
 		// GetTeamListUseCase,
 		SearchTeamsUseCase,
 		GetTournamentsOfTournamentSerieUseCase,
@@ -436,6 +447,11 @@ import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-mem
 		UpdateForfeitCompetitorUseCase,
 		StartMatchUseCase,
 		UpdatePointUseCase,
+
+		//Court Use Case
+		AssignCourtForMatchUseCase,
+		GetCourtAvailableUseCase,
+		
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case
