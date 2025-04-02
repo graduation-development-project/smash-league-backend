@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../services/prisma.service";
 import { UmpireRepositoryPort } from "../../domain/repositories/umpire.repository.port";
 import { UmpireUpdateMatchDTO } from "../../domain/dtos/umpire/umpire-update-match.dto";
-import { Match } from "@prisma/client";
+import { Match, Tournament, TournamentUmpires } from "@prisma/client";
 
 @Injectable()
 export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
@@ -76,6 +76,26 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 			});
 		} catch (e) {
 			console.error("Get assigned match failed", e);
+			throw e;
+		}
+	}
+
+	async getParticipateTournaments(umpireId: string): Promise<Tournament[]> {
+		try {
+			const tournamentUmpireList =
+				await this.prismaService.tournamentUmpires.findMany({
+					where: {
+						userId: umpireId,
+					},
+					select: {
+						tournament: true,
+					},
+				});
+
+			return tournamentUmpireList.map((tournament) => tournament.tournament);
+
+		} catch (e) {
+			console.error("Get Participate Tournaments failed", e);
 			throw e;
 		}
 	}

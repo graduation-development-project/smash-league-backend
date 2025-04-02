@@ -124,6 +124,7 @@ import { AssignCourtForMatchUseCase } from "./usecases/tournament/court/assign-c
 import { GetCourtAvailableUseCase } from "./usecases/tournament/court/get-court-available.usecase";
 import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-members-by-team-leader.usecase";
 import { GetAssignedMatchUseCase } from "./usecases/umpires/get-assigned-match.usecase";
+import { GetUmpireParticipatedTournamentsUseCase } from "./usecases/umpires/get-participated-tournaments.usecase";
 
 @Module({
 	imports: [
@@ -352,6 +353,7 @@ import { GetAssignedMatchUseCase } from "./usecases/umpires/get-assigned-match.u
 		//Umpire Use Case
 		UmpireUpdateMatchUseCase,
 		GetAssignedMatchUseCase,
+		GetUmpireParticipatedTournamentsUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -485,6 +487,7 @@ import { GetAssignedMatchUseCase } from "./usecases/umpires/get-assigned-match.u
 		//Umpire Use Case
 		UmpireUpdateMatchUseCase,
 		GetAssignedMatchUseCase,
+		GetUmpireParticipatedTournamentsUseCase,
 	],
 })
 export class ApplicationModule {}
