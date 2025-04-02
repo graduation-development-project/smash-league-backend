@@ -29,9 +29,11 @@ export class MatchController {
 	// @Roles(RoleMap.Umpire.name)
 	async updateAttendance(
 		@Param("matchId") matchId: string,
-		@Param("leftCompetitorAttendance") leftCompetitorAttendance: boolean,
-		@Param("rightCompetitorAttendance") rightCompetitorAttendance: boolean): Promise<ApiResponse<any>> {
-			return await this.updateAttendance(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
+		@Query("leftCompetitorAttendance") leftCompetitorAttendance: boolean,
+		@Query("rightCompetitorAttendance") rightCompetitorAttendance: boolean): Promise<ApiResponse<any>> {
+			// console.log(leftCompetitorAttendance, ' ', rightCompetitorAttendance);
+			// return;
+			return await this.updateAttendanceUseCase.execute(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
 		} 
 	
 	@Put("update-start-time/:matchId")

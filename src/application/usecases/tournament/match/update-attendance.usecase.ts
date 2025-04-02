@@ -17,6 +17,7 @@ export class UpdateAttendanceUseCase {
 			"No match id found!",
 			null
 		);
+		// console.log(Boolean(leftCompetitorAttendance), ' ', Boolean(rightCompetitorAttendance));
 		const matchUpdated = await this.matchRepository.updateAttendance(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
 		return new ApiResponse<Match>(
 			HttpStatus.NO_CONTENT,
