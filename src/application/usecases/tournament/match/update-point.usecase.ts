@@ -14,7 +14,7 @@ export class UpdatePointUseCase {
 
 	async execute(gameId: string, winningId: string): Promise<ApiResponse<any>> {
 		const gameDetail = await this.gameRepository.getGame(gameId);
-		console.log(gameDetail);
+		// console.log(gameDetail);
 		if (gameDetail === null) return new ApiResponse<null | undefined>(
 			HttpStatus.BAD_REQUEST,
 			"Game not found!",
