@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../services/prisma.service";
 import { UmpireRepositoryPort } from "../../domain/repositories/umpire.repository.port";
 import { UmpireUpdateMatchDTO } from "../../domain/dtos/umpire/umpire-update-match.dto";
+import { Match } from "@prisma/client";
 
 @Injectable()
 export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
@@ -19,7 +20,6 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 		} = updateMatchDTO;
 
 		try {
-
 			console.log(user.id, matchId);
 			const isUmpireForMatch = await this.prismaService.match.findUnique({
 				where: {
@@ -49,6 +49,33 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 			return "Update Match Successfully";
 		} catch (e) {
 			console.error("update match failed", e);
+			throw e;
+		}
+	}
+
+	async getAssignedMatches(
+		umpireId: string,
+		tournamentId: string,
+	): Promise<Match[]> {
+		try {
+			return this.prismaService.match.findMany({
+				where: {
+					tournamentEvent: {
+						tournamentId,
+					},
+					umpireId,
+				},
+
+				include: {
+					tournamentEvent: {
+						include: {
+							tournament: true,
+						},
+					},
+				},
+			});
+		} catch (e) {
+			console.error("Get assigned match failed", e);
 			throw e;
 		}
 	}

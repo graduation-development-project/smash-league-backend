@@ -123,6 +123,7 @@ import { PrismaCourtRepositoryAdapter } from "src/infrastructure/repositories/pr
 import { AssignCourtForMatchUseCase } from "./usecases/tournament/court/assign-court-for-match.usecase";
 import { GetCourtAvailableUseCase } from "./usecases/tournament/court/get-court-available.usecase";
 import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-members-by-team-leader.usecase";
+import { GetAssignedMatchUseCase } from "./usecases/umpires/get-assigned-match.usecase";
 
 @Module({
 	imports: [
@@ -350,6 +351,7 @@ import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-mem
 
 		//Umpire Use Case
 		UmpireUpdateMatchUseCase,
+		GetAssignedMatchUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -482,6 +484,7 @@ import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-mem
 
 		//Umpire Use Case
 		UmpireUpdateMatchUseCase,
+		GetAssignedMatchUseCase,
 	],
 })
 export class ApplicationModule {}
