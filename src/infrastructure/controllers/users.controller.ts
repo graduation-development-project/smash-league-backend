@@ -40,7 +40,7 @@ export class UsersController {
 	@Get("/id/:id")
 	// @Roles(RoleMap.Admin.id, RoleMap.Athlete.id)
 	// @UseGuards(RolesGuard)
-	@UseGuards(JwtAccessTokenGuard)
+	// @UseGuards(JwtAccessTokenGuard)
 	getUserById(@Param("id") userID: string): Promise<TUserWithRole> {
 		return this.getUserByIdUseCase.execute(userID);
 	}
