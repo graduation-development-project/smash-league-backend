@@ -125,6 +125,7 @@ import { GetCourtAvailableUseCase } from "./usecases/tournament/court/get-court-
 import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-members-by-team-leader.usecase";
 import { GetAssignedMatchUseCase } from "./usecases/umpires/get-assigned-match.usecase";
 import { GetUmpireParticipatedTournamentsUseCase } from "./usecases/umpires/get-participated-tournaments.usecase";
+import { GetMatchByIdUseCase } from "./usecases/tournament/match/get-match-by-id.usecase";
 
 @Module({
 	imports: [
@@ -315,7 +316,7 @@ import { GetUmpireParticipatedTournamentsUseCase } from "./usecases/umpires/get-
 		UpdateForfeitCompetitorUseCase,
 		StartMatchUseCase,
 		UpdatePointUseCase,
-
+		GetMatchByIdUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
@@ -451,7 +452,7 @@ import { GetUmpireParticipatedTournamentsUseCase } from "./usecases/umpires/get-
 		UpdateForfeitCompetitorUseCase,
 		StartMatchUseCase,
 		UpdatePointUseCase,
-
+		GetMatchByIdUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,

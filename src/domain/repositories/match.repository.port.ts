@@ -1,8 +1,10 @@
 import { Game, Match, TournamentEvent } from "@prisma/client";
 import { ICreateMatch, IMatchDetailBracketResponse } from "../interfaces/tournament/match/match.interface";
+import { IMatchQueryResponse } from "../interfaces/tournament/match/match.query";
 
 export interface MatchRepositoryPort {
 	getMatchDetail(matchId: string): Promise<Match>;
+	getMatchDetailById(matchId: string): Promise<IMatchQueryResponse>;
 	createMatch(): Promise<any>;
 	createMultipleMatch(createMatches: ICreateMatch[]): Promise<Match[]>;
 	getMatchesOfStage(stageId: string): Promise<Match[]>;
