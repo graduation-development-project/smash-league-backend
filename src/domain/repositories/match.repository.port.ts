@@ -1,6 +1,7 @@
 import { Game, Match, TournamentEvent } from "@prisma/client";
 import { ICreateMatch, IMatchDetailBracketResponse } from "../interfaces/tournament/match/match.interface";
 import { IMatchQueryResponse } from "../interfaces/tournament/match/match.query";
+import { IGameAfterUpdatePointResponse } from "../interfaces/tournament/match/game.interface";
 
 export interface MatchRepositoryPort {
 	getMatchDetail(matchId: string): Promise<Match>;
@@ -13,6 +14,6 @@ export interface MatchRepositoryPort {
 	updateAttendance(matchId: string, leftCompetitorAttendance: boolean, rightCompetitorAttendance: boolean): Promise<any>;
 	updateForfeitCompetitor(matchId: string, forfeitCompetitorId: string): Promise<any>;
 	updateStartTimeForMatch(matchId: string, currentServerId: string): Promise<Game>;
-	updatePoint(gameId: string, winningId: string): Promise<any>;
+	updatePoint(gameId: string, winningId: string): Promise<IGameAfterUpdatePointResponse>;
 	assignCourtForMatch(matchId: string, courtId: string): Promise<Match>;
 }

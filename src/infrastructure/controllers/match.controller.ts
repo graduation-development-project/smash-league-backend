@@ -53,7 +53,7 @@ export class MatchController {
 	@Put("update-point/:gameId")
 	async updatePointOfGame(@Param("gameId") gameId: string,
 				@Query("winningId") winningId: string): Promise<ApiResponse<any>> {
-					console.log(gameId);
+					// console.log(gameId);
 					return await this.updatePointUseCase.execute(gameId, winningId);
 				}				
 
