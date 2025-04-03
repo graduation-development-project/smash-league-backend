@@ -98,7 +98,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					height: null,
 					hands: null
 				},
-				partner: {
+				partner: matchDetail.leftCompetitor.partner === null? null: {
 					id: matchDetail.leftCompetitor?.partner?.id,
 					name: matchDetail.leftCompetitor?.partner?.name,
 					gender: matchDetail.leftCompetitor?.partner?.gender,
@@ -117,11 +117,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					height: null,
 					hands: null
 				},
-				partner: {
-					id: matchDetail.rightCompetitor?.partner?.id,
-					name: matchDetail.rightCompetitor?.partner?.name,
-					gender: matchDetail.rightCompetitor?.partner?.gender,
-					avatarURL	: matchDetail.rightCompetitor?.partner?.avatarURL,
+				partner: matchDetail.leftCompetitor.partner === null? null: {
+					id: matchDetail.leftCompetitor?.partner?.id,
+					name: matchDetail.leftCompetitor?.partner?.name,
+					gender: matchDetail.leftCompetitor?.partner?.gender,
+					avatarURL	: matchDetail.leftCompetitor?.partner?.avatarURL,
 					height: null,
 					hands: null
 				}
@@ -467,6 +467,10 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		}
 	}
 
+	// async updatePoint(gameId: string, winningId: string): Promise<any> {
+	// 	return await this.processUpdatePointForCompetitor(gameId, winningId);
+	// }
+
 	// async checkIfWonMatch(competitorId: string, numberOfGamePerMatch: number): Promise<boolean> {
 	// 	const games = await this.prisma.game.count({
 	// 		where: {
@@ -477,22 +481,106 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	// 	return;
 	// }
 
-	async processWonMatch(gameId: string, winningId, numberOfGames: number): Promise<any> {
-		const gameWon = await this.prisma.game.findUnique({
+	async processUpdatePointForCompetitor(gameId: string, winningId): Promise<Game> {
+		// get data of games
+		const game = await this.prisma.game.findUnique({
 			where: {
 				id: gameId
 			}
 		});
-		const games = await this.prisma.game.count({
+		//Get data for match
+		const match = await this.prisma.match.findUnique({
 			where: {
-				matchId: gameWon.matchId,
+				id: game.matchId
+			}
+		});
+		//get data of tournament events
+		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
+			where: {
+				id: match.tournamentEventId
+			}
+		});
+		if (match.leftCompetitorId === winningId) {
+			return await this.prisma.game.update({
+				where: {
+					id: gameId
+				},
+				data: {
+					leftCompetitorPoint: game.leftCompetitorPoint + 1
+				}
+			});
+		} else {
+			return await this.prisma.game.update({
+				where: {
+					id: gameId
+				},
+				data: {
+					rightCompetitorPoint: game.rightCompetitorPoint + 1
+				}
+			});
+		}
+		const [isWonGame, gameWon] = await this.checkWonGame(game, match, winningId, tournamentEvent.numberOfGames, 
+			tournamentEvent.winningPoint, tournamentEvent.lastPoint
+		);
+		console.log(gameWon);
+	}
+
+	async checkWonGame(game: Game, match: Match, winningId: string, 
+		numberOfGames: number, winningPoint: number, lastPoint: number): Promise<[boolean, Game | null]> { 
+		if (game.leftCompetitorPoint >= winningPoint || game.rightCompetitorPoint >= winningPoint
+		) {
+			if (Math.abs(game.leftCompetitorPoint - game.rightCompetitorPoint) >= 2) {
+				await this.updateGameResult(winningId, game, match, numberOfGames);
+			} else if (game.leftCompetitorPoint === lastPoint || game.rightCompetitorPoint === lastPoint) {
+				
+			}
+		}
+		return;
+	}
+
+	async updateGameResult(winningId: string, game: Game, match: Match, numberOfGames: number): Promise<Game> {
+		const gameUpdated = await this.prisma.game.update({
+			where: {
+				id: game.id
+			},
+			data: {
+				currentServerId: winningId,
+				gameWonByCompetitorId: winningId,
+				status: GameStatus.ENDED
+			}
+		});
+		const countGames = await this.prisma.game.count({
+			where: {
+				matchId: match.id,
 				gameWonByCompetitorId: winningId
 			}
 		});
-		console.log(games);
-		if (Math.floor(numberOfGames / 2) + 1 === games) {
+		const updatedMatch = await this.processWonMatch(game, match, winningId, numberOfGames);
+		return;
+	}
 
+	async processWonMatch(game: Game, match: Match, winningId: string, numberOfGames: number): Promise<any> {
+		const games = await this.prisma.game.count({
+			where: {
+				matchId: game.matchId,
+				gameWonByCompetitorId: winningId
+			}
+		});
+		if (Math.floor(numberOfGames / 2) + 1 === games) {
+			const matchUpdated = await this.prisma.match.update({
+				where: {
+					id: match.id
+				},
+				data: {
+					matchWonByCompetitorId: winningId, 
+					matchStatus: MatchStatus.ENDED,
+				}
+			});
 		} 
+		return;
+	}
+
+	async assignCompetitorForNextMatch(competitorId: string, nextMatchId: string): Promise<Match> {
 		return;
 	}
 
