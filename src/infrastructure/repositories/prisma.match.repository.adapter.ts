@@ -6,7 +6,7 @@ import { ICreateMatch, IMatchDetailBracketResponse } from "src/domain/interfaces
 import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
 import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
-import { IGameAfterUpdatePointResponse, IPointOfGameResponse } from "src/domain/interfaces/tournament/match/game.interface";
+import { IGameAfterUpdatePointResponse, IPointOfGameResponse, IWonCompetitorResponse } from "src/domain/interfaces/tournament/match/game.interface";
 import { IParticipantResponse } from "src/domain/interfaces/tournament/match/competitor.interface";
 import { match } from "assert";
 
@@ -147,329 +147,329 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		});
 	}
 
-	async updatePoint(gameId: string, winningId: string): Promise<IGameAfterUpdatePointResponse> {
-		const game = await this.prisma.game.findUnique({
-			where: {
-				id: gameId
-			}
-		});
-		const tournamentParticipantGet = await this.prisma.tournamentParticipants.findUnique({
-			where: {
-				id: winningId
-			}
-		});
-		console.log(tournamentParticipantGet);
+	// async updatePoint(gameId: string, winningId: string): Promise<IGameAfterUpdatePointResponse> {
+	// 	const game = await this.prisma.game.findUnique({
+	// 		where: {
+	// 			id: gameId
+	// 		}
+	// 	});
+	// 	const tournamentParticipantGet = await this.prisma.tournamentParticipants.findUnique({
+	// 		where: {
+	// 			id: winningId
+	// 		}
+	// 	});
+	// 	console.log(tournamentParticipantGet);
 
-		const match = await this.prisma.match.findUnique({
-			where: {
-				id: game.matchId
-			}
-		});
-		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
-			where: {
-				id: match.tournamentEventId
-			}
-		});
-		// console.log(tournamentEvent);
-		const [leftCompetitorPoint, rightCompetitorPoint] = [game.leftCompetitorPoint, game.rightCompetitorPoint];
-		if (match.leftCompetitorId === winningId) {
-			const point = await this.prisma.game.update({
-				where: {
-					id: gameId
-				},
-				data: {
-					leftCompetitorPoint: game.leftCompetitorPoint + 1
-				}
-			});
-			// console.log(point);
-			// game.leftCompetitorPoint++;
-		} else if (match.rightCompetitorId === winningId) {
-			const point = await this.prisma.game.update({
-				where: {
-					id: game.id
-				},
-				data: {
-					rightCompetitorPoint: game.rightCompetitorPoint + 1
-				}
-			});
-			// game.rightCompetitorPoint++;
-		}
-		if (game.leftCompetitorPoint >= tournamentEvent.winningPoint && 
-			(game.leftCompetitorPoint - game.rightCompetitorPoint) >= 2
-		) {
-			await this.prisma.game.update({
-				where: {
-					id: game.id
-				},
-				data: {
-					gameWonByCompetitorId: winningId,
-					currentServerId: winningId,
-					status: GameStatus.ENDED
-				}
-			});
-			const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
-				where: {
-					id: winningId
-				},
-				select: {
-					id: true,
-					user: {
-						select: {
-							id: true,
-							name: true,
-							avatarURL: true,
-							gender: true,
-							height: true,
-							hands: true,
-						}
-					},
-					partner: {
-						select: {
-							id: true,
-							name: true,
-							avatarURL: true,
-							gender: true,
-							hands: true,
-							height: true
-						}
-					}
-				}
-			});
-			const games = await this.prisma.game.findMany({
-				where: {
-					matchId: game.matchId
-				}
-			});
-			return {
-				currentGameNumber: game.gameNumber,
-				currentServerId: winningId,
-				isEnd: true,
-				message: "Game ended!",
-				winningCompetitor: {
-					id: winningId,
-					userName: tournamentParticipant.user.name,
-					partnerName: tournamentParticipant?.partner?.name
-				},
-				currentPoint: games.map(this.transformGameData)
-			}
-		} 
-		if (game.rightCompetitorPoint >= tournamentEvent.winningPoint && 
-			(game.rightCompetitorPoint - game.leftCompetitorPoint) >= 2
-		) {
-			await this.prisma.game.update({
-				where: {
-					id: game.id
-				},
-				data: {
-					gameWonByCompetitorId: winningId,
-					currentServerId: winningId,
-					status: GameStatus.ENDED
-				}
-			});
-			const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
-				where: {
-					id: winningId
-				},
-				select: {
-					id: true,
-					user: {
-						select: {
-							id: true,
-							name: true,
-							avatarURL: true,
-							gender: true,
-							height: true,
-							hands: true,
-						}
-					},
-					partner: {
-						select: {
-							id: true,
-							name: true,
-							avatarURL: true,
-							gender: true,
-							hands: true,
-							height: true
-						}
-					}
-				}
-			});
-			const games = await this.prisma.game.findMany({
-				where: {
-					matchId: game.matchId
-				}
-			});
-			return {
-				currentGameNumber: game.gameNumber,
-				currentServerId: winningId,
-				isEnd: true,
-				message: "Game ended!",
-				winningCompetitor: {
-					id: winningId,
-					userName: tournamentParticipant.user.name,
-					partnerName: tournamentParticipant?.partner?.name
-				},
-				currentPoint: games.map(this.transformGameData)
-			};
-		}
+	// 	const match = await this.prisma.match.findUnique({
+	// 		where: {
+	// 			id: game.matchId
+	// 		}
+	// 	});
+	// 	const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
+	// 		where: {
+	// 			id: match.tournamentEventId
+	// 		}
+	// 	});
+	// 	// console.log(tournamentEvent);
+	// 	const [leftCompetitorPoint, rightCompetitorPoint] = [game.leftCompetitorPoint, game.rightCompetitorPoint];
+	// 	if (match.leftCompetitorId === winningId) {
+	// 		const point = await this.prisma.game.update({
+	// 			where: {
+	// 				id: gameId
+	// 			},
+	// 			data: {
+	// 				leftCompetitorPoint: game.leftCompetitorPoint + 1
+	// 			}
+	// 		});
+	// 		// console.log(point);
+	// 		// game.leftCompetitorPoint++;
+	// 	} else if (match.rightCompetitorId === winningId) {
+	// 		const point = await this.prisma.game.update({
+	// 			where: {
+	// 				id: game.id
+	// 			},
+	// 			data: {
+	// 				rightCompetitorPoint: game.rightCompetitorPoint + 1
+	// 			}
+	// 		});
+	// 		// game.rightCompetitorPoint++;
+	// 	}
+	// 	if (game.leftCompetitorPoint >= tournamentEvent.winningPoint && 
+	// 		(game.leftCompetitorPoint - game.rightCompetitorPoint) >= 2
+	// 	) {
+	// 		await this.prisma.game.update({
+	// 			where: {
+	// 				id: game.id
+	// 			},
+	// 			data: {
+	// 				gameWonByCompetitorId: winningId,
+	// 				currentServerId: winningId,
+	// 				status: GameStatus.ENDED
+	// 			}
+	// 		});
+	// 		const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
+	// 			where: {
+	// 				id: winningId
+	// 			},
+	// 			select: {
+	// 				id: true,
+	// 				user: {
+	// 					select: {
+	// 						id: true,
+	// 						name: true,
+	// 						avatarURL: true,
+	// 						gender: true,
+	// 						height: true,
+	// 						hands: true,
+	// 					}
+	// 				},
+	// 				partner: {
+	// 					select: {
+	// 						id: true,
+	// 						name: true,
+	// 						avatarURL: true,
+	// 						gender: true,
+	// 						hands: true,
+	// 						height: true
+	// 					}
+	// 				}
+	// 			}
+	// 		});
+	// 		const games = await this.prisma.game.findMany({
+	// 			where: {
+	// 				matchId: game.matchId
+	// 			}
+	// 		});
+	// 		return {
+	// 			currentGameNumber: game.gameNumber,
+	// 			currentServerId: winningId,
+	// 			isEnd: true,
+	// 			message: "Game ended!",
+	// 			winningCompetitor: {
+	// 				id: winningId,
+	// 				userName: tournamentParticipant.user.name,
+	// 				partnerName: tournamentParticipant?.partner?.name
+	// 			},
+	// 			currentPoint: games.map(this.transformGameData)
+	// 		}
+	// 	} 
+	// 	if (game.rightCompetitorPoint >= tournamentEvent.winningPoint && 
+	// 		(game.rightCompetitorPoint - game.leftCompetitorPoint) >= 2
+	// 	) {
+	// 		await this.prisma.game.update({
+	// 			where: {
+	// 				id: game.id
+	// 			},
+	// 			data: {
+	// 				gameWonByCompetitorId: winningId,
+	// 				currentServerId: winningId,
+	// 				status: GameStatus.ENDED
+	// 			}
+	// 		});
+	// 		const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
+	// 			where: {
+	// 				id: winningId
+	// 			},
+	// 			select: {
+	// 				id: true,
+	// 				user: {
+	// 					select: {
+	// 						id: true,
+	// 						name: true,
+	// 						avatarURL: true,
+	// 						gender: true,
+	// 						height: true,
+	// 						hands: true,
+	// 					}
+	// 				},
+	// 				partner: {
+	// 					select: {
+	// 						id: true,
+	// 						name: true,
+	// 						avatarURL: true,
+	// 						gender: true,
+	// 						hands: true,
+	// 						height: true
+	// 					}
+	// 				}
+	// 			}
+	// 		});
+	// 		const games = await this.prisma.game.findMany({
+	// 			where: {
+	// 				matchId: game.matchId
+	// 			}
+	// 		});
+	// 		return {
+	// 			currentGameNumber: game.gameNumber,
+	// 			currentServerId: winningId,
+	// 			isEnd: true,
+	// 			message: "Game ended!",
+	// 			winningCompetitor: {
+	// 				id: winningId,
+	// 				userName: tournamentParticipant.user.name,
+	// 				partnerName: tournamentParticipant?.partner?.name
+	// 			},
+	// 			currentPoint: games.map(this.transformGameData)
+	// 		};
+	// 	}
 
-		if (game.leftCompetitorPoint >= tournamentEvent.lastPoint) {
-			const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
-				where: {
-					id: winningId
-				},
-				select: {
-					id: true,
-					user: {
-						select: {
-							id: true,
-							name: true,
-							avatarURL: true,
-							gender: true,
-							height: true,
-							hands: true,
-						}
-					},
-					partner: {
-						select: {
-							id: true,
-							name: true,
-							avatarURL: true,
-							gender: true,
-							hands: true,
-							height: true
-						}
-					}
-				}
-			});
-			// tournamentEvent
-			const games = await this.prisma.game.findMany({
-				where: {
-					matchId: game.matchId
-				}
-			});
-			//Set game ended
-			const gameUpdate = await this.prisma.game.update({
-				where: {
-					id: gameId
-				},
-				data: {
-					currentServerId: winningId,
-					gameWonByCompetitorId: winningId,
-					status: GameStatus.ENDED
-				}
-			});
-			return {
-				currentGameNumber: game.gameNumber,
-				currentServerId: winningId,
-				isEnd: true,
-				message: "Game ended!",
-				winningCompetitor: {
-					id: winningId,
-					userName: tournamentParticipant.user.name,
-					partnerName: tournamentParticipant.partner.name
-				},
-				currentPoint: games.map(this.transformGameData)
-			};
-		}
-		if (game.rightCompetitorPoint >= tournamentEvent.lastPoint) {
-			const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
-				where: {
-					id: winningId
-				},
-				select: {
-					id: true,
-					user: {
-						select: {
-							id: true,
-							name: true,
-							avatarURL: true,
-							gender: true,
-							height: true,
-							hands: true,
-						}
-					},
-					partner: {
-						select: {
-							id: true,
-							name: true,
-							avatarURL: true,
-							gender: true,
-							hands: true,
-							height: true
-						}
-					}
-				}
-			});
-			const games = await this.prisma.game.findMany({
-				where: {
-					matchId: game.matchId
-				}
-			});
-			return {
-				currentGameNumber: game.gameNumber,
-				currentServerId: winningId,
-				isEnd: true,
-				message: "Game ended!",
-				winningCompetitor: {
-					id: winningId,
-					userName: tournamentParticipant.user.name,
-					partnerName: tournamentParticipant.partner.name
-				},
-				currentPoint: games.map(this.transformGameData)
-			}
-		}	
-		// if (await this.checkIfWonMatch(match.leftCompetitorId, tournamentEvent.numberOfGames)) {
+	// 	if (game.leftCompetitorPoint >= tournamentEvent.lastPoint) {
+	// 		const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
+	// 			where: {
+	// 				id: winningId
+	// 			},
+	// 			select: {
+	// 				id: true,
+	// 				user: {
+	// 					select: {
+	// 						id: true,
+	// 						name: true,
+	// 						avatarURL: true,
+	// 						gender: true,
+	// 						height: true,
+	// 						hands: true,
+	// 					}
+	// 				},
+	// 				partner: {
+	// 					select: {
+	// 						id: true,
+	// 						name: true,
+	// 						avatarURL: true,
+	// 						gender: true,
+	// 						hands: true,
+	// 						height: true
+	// 					}
+	// 				}
+	// 			}
+	// 		});
+	// 		// tournamentEvent
+	// 		const games = await this.prisma.game.findMany({
+	// 			where: {
+	// 				matchId: game.matchId
+	// 			}
+	// 		});
+	// 		//Set game ended
+	// 		const gameUpdate = await this.prisma.game.update({
+	// 			where: {
+	// 				id: gameId
+	// 			},
+	// 			data: {
+	// 				currentServerId: winningId,
+	// 				gameWonByCompetitorId: winningId,
+	// 				status: GameStatus.ENDED
+	// 			}
+	// 		});
+	// 		return {
+	// 			currentGameNumber: game.gameNumber,
+	// 			currentServerId: winningId,
+	// 			isEnd: true,
+	// 			message: "Game ended!",
+	// 			winningCompetitor: {
+	// 				id: winningId,
+	// 				userName: tournamentParticipant.user.name,
+	// 				partnerName: tournamentParticipant.partner.name
+	// 			},
+	// 			currentPoint: games.map(this.transformGameData)
+	// 		};
+	// 	}
+	// 	if (game.rightCompetitorPoint >= tournamentEvent.lastPoint) {
+	// 		const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
+	// 			where: {
+	// 				id: winningId
+	// 			},
+	// 			select: {
+	// 				id: true,
+	// 				user: {
+	// 					select: {
+	// 						id: true,
+	// 						name: true,
+	// 						avatarURL: true,
+	// 						gender: true,
+	// 						height: true,
+	// 						hands: true,
+	// 					}
+	// 				},
+	// 				partner: {
+	// 					select: {
+	// 						id: true,
+	// 						name: true,
+	// 						avatarURL: true,
+	// 						gender: true,
+	// 						hands: true,
+	// 						height: true
+	// 					}
+	// 				}
+	// 			}
+	// 		});
+	// 		const games = await this.prisma.game.findMany({
+	// 			where: {
+	// 				matchId: game.matchId
+	// 			}
+	// 		});
+	// 		return {
+	// 			currentGameNumber: game.gameNumber,
+	// 			currentServerId: winningId,
+	// 			isEnd: true,
+	// 			message: "Game ended!",
+	// 			winningCompetitor: {
+	// 				id: winningId,
+	// 				userName: tournamentParticipant.user.name,
+	// 				partnerName: tournamentParticipant.partner.name
+	// 			},
+	// 			currentPoint: games.map(this.transformGameData)
+	// 		}
+	// 	}	
+	// 	// if (await this.checkIfWonMatch(match.leftCompetitorId, tournamentEvent.numberOfGames)) {
 
-		// } else if (await this.checkIfWonMatch(match.rightCompetitorId, tournamentEvent.numberOfGames)) {
+	// 	// } else if (await this.checkIfWonMatch(match.rightCompetitorId, tournamentEvent.numberOfGames)) {
 
-		// }
-		const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
-			where: {
-				id: winningId
-			},
-			select: {
-				id: true,
-				user: {
-					select: {
-						id: true,
-						name: true,
-						avatarURL: true,
-						gender: true,
-						height: true,
-						hands: true,
-					}
-				},
-				partner: {
-					select: {
-						id: true,
-						name: true,
-						avatarURL: true,
-						gender: true,
-						hands: true,
-						height: true
-					}
-				}
-			}
-		});
-		const games = await this.prisma.game.findMany({
-			where: {
-				matchId: game.matchId
-			}
-		});
-		return {
-			currentGameNumber: game.gameNumber,
-			currentServerId: winningId,
-			isEnd: false,
-			message: "",
-			winningCompetitor: null,
-			currentPoint: games.map(this.transformGameData)
-		}
-	}
-
-	// async updatePoint(gameId: string, winningId: string): Promise<any> {
-	// 	return await this.processUpdatePointForCompetitor(gameId, winningId);
+	// 	// }
+	// 	const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
+	// 		where: {
+	// 			id: winningId
+	// 		},
+	// 		select: {
+	// 			id: true,
+	// 			user: {
+	// 				select: {
+	// 					id: true,
+	// 					name: true,
+	// 					avatarURL: true,
+	// 					gender: true,
+	// 					height: true,
+	// 					hands: true,
+	// 				}
+	// 			},
+	// 			partner: {
+	// 				select: {
+	// 					id: true,
+	// 					name: true,
+	// 					avatarURL: true,
+	// 					gender: true,
+	// 					hands: true,
+	// 					height: true
+	// 				}
+	// 			}
+	// 		}
+	// 	});
+	// 	const games = await this.prisma.game.findMany({
+	// 		where: {
+	// 			matchId: game.matchId
+	// 		}
+	// 	});
+	// 	return {
+	// 		currentGameNumber: game.gameNumber,
+	// 		currentServerId: winningId,
+	// 		isEnd: false,
+	// 		message: "",
+	// 		winningCompetitor: null,
+	// 		currentPoint: games.map(this.transformGameData)
+	// 	}
 	// }
+
+	async updatePoint(gameId: string, winningId: string): Promise<IGameAfterUpdatePointResponse> {
+		return await this.processUpdatePointForCompetitor(gameId, winningId);
+	}
 
 	// async checkIfWonMatch(competitorId: string, numberOfGamePerMatch: number): Promise<boolean> {
 	// 	const games = await this.prisma.game.count({
@@ -481,7 +481,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	// 	return;
 	// }
 
-	async processUpdatePointForCompetitor(gameId: string, winningId): Promise<Game> {
+	async processUpdatePointForCompetitor(gameId: string, winningId): Promise<IGameAfterUpdatePointResponse> {
 		// get data of games
 		const game = await this.prisma.game.findUnique({
 			where: {
@@ -500,73 +500,256 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				id: match.tournamentEventId
 			}
 		});
+		const updatedPoint = await this.updatePointForMatch(game, winningId, tournamentEvent);
+		// if (match.leftCompetitorId === winningId) {
+		// 	const updatePoint = await this.prisma.game.update({
+		// 		where: {
+		// 			id: gameId
+		// 		},
+		// 		data: {
+		// 			leftCompetitorPoint: game.leftCompetitorPoint + 1
+		// 		}
+		// 	});
+			
+		// } else {
+		// 	return await this.prisma.game.update({
+		// 		where: {
+		// 			id: gameId
+		// 		},
+		// 		data: {
+		// 			rightCompetitorPoint: game.rightCompetitorPoint + 1
+		// 		}
+		// 	});
+		// }
+		return updatedPoint;
+		// const [isWonGame, gameWon] = await this.checkWonGame(game, match, winningId, tournamentEvent.numberOfGames, 
+		// 	tournamentEvent.winningPoint, tournamentEvent.lastPoint
+		// );
+		// console.log(gameWon);
+	}
+
+	async updatePointForMatch(game: Game, winningId: string, tournamentEvent: TournamentEvent): Promise<IGameAfterUpdatePointResponse> {
+		const match = await this.prisma.match.findUnique({
+			where: {
+				id: game.matchId
+			}
+		});
+		const [leftCompetitorPoint, rightCompetitorPoint] = [game.leftCompetitorPoint, game.rightCompetitorPoint];
+		// if (match.leftCompetitorId === winningId) {
+		// 	const updatedGamePoint = await this.prisma.game.update({
+		// 		where: {
+		// 			id: game.id,
+		// 		}, 
+		// 		data: {
+		// 			leftCompetitorPoint: game.leftCompetitorPoint + 1,
+		// 		}
+		// 	});
+		// 	if (updatedGamePoint.leftCompetitorPoint < tournamentEvent.winningPoint || updatedGamePoint.rightCompetitorPoint < tournamentEvent.winningPoint)
+		// 		return {
+		// 			currentGameNumber: updatedGamePoint.gameNumber,
+		// 			currentServerId: winningId,
+		// 			message: "Game continues!",
+		// 			isEnd: false,
+		// 			currentPoint: await this.getAllGamesOfMatch(updatedGamePoint.matchId),
+		// 		}
+		// 	} else {
+		// 		const updatedGamePoint = await this.prisma.game.update({
+		// 			where: {
+		// 				id: game.id,
+		// 			}, 
+		// 			data: {
+		// 				rightCompetitorPoint: game.rightCompetitorPoint + 1,
+		// 			}
+		// 		});
+		// 	if (updatedGamePoint.leftCompetitorPoint < tournamentEvent.winningPoint && updatedGamePoint.rightCompetitorPoint < tournamentEvent.winningPoint)
+		// 		return {
+		// 			currentGameNumber: updatedGamePoint.gameNumber,
+		// 			message: "Game continues!",
+
+		// 			currentServerId: winningId,
+		// 			isEnd: false,
+		// 			currentPoint: await this.getAllGamesOfMatch(updatedGamePoint.matchId),
+		// 		}
+		// 	return await this.processWonGame(game, winningId, tournamentEvent);		
+		// }
+		let pointUpdated: Game;
 		if (match.leftCompetitorId === winningId) {
-			return await this.prisma.game.update({
+			pointUpdated = await this.prisma.game.update({
 				where: {
-					id: gameId
+					id: game.id
 				},
 				data: {
-					leftCompetitorPoint: game.leftCompetitorPoint + 1
+					leftCompetitorPoint: leftCompetitorPoint + 1
 				}
 			});
 		} else {
-			return await this.prisma.game.update({
+			pointUpdated = await this.prisma.game.update({
 				where: {
-					id: gameId
+					id: game.id
 				},
 				data: {
-					rightCompetitorPoint: game.rightCompetitorPoint + 1
+					rightCompetitorPoint: rightCompetitorPoint + 1
 				}
 			});
 		}
-		const [isWonGame, gameWon] = await this.checkWonGame(game, match, winningId, tournamentEvent.numberOfGames, 
-			tournamentEvent.winningPoint, tournamentEvent.lastPoint
-		);
-		console.log(gameWon);
+		if (pointUpdated.leftCompetitorPoint < tournamentEvent.winningPoint && pointUpdated.rightCompetitorPoint < tournamentEvent.winningPoint) {
+			return {
+				currentGameNumber: pointUpdated.gameNumber,
+				message: "Game continues!",
+		
+				currentServerId: winningId,
+				isEnd: false,
+				currentPoint: await this.getAllGamesOfMatch(pointUpdated.matchId),
+			}			
+		}
+		return await this.processWonGame(pointUpdated, winningId, tournamentEvent);
 	}
 
-	async checkWonGame(game: Game, match: Match, winningId: string, 
-		numberOfGames: number, winningPoint: number, lastPoint: number): Promise<[boolean, Game | null]> { 
-		if (game.leftCompetitorPoint >= winningPoint || game.rightCompetitorPoint >= winningPoint
+	async getAllGamesOfMatch(matchId: string): Promise<IPointOfGameResponse[]> {
+		const games = await this.prisma.game.findMany({
+			where: {
+				matchId: matchId
+			}
+		});
+		return games.map(this.transformGameData);
+	}
+
+	// async checkWonGame(game: Game, match: Match, winningId: string, 
+	// 	numberOfGames: number, winningPoint: number, lastPoint: number): Promise<[boolean, Game | null]> { 
+	// 	if (game.leftCompetitorPoint >= winningPoint || game.rightCompetitorPoint >= winningPoint
+	// 	) {
+	// 		if (Math.abs(game.leftCompetitorPoint - game.rightCompetitorPoint) >= 2) {
+	// 			await this.updateGameResult(winningId, game, match, numberOfGames);
+	// 		} else if (game.leftCompetitorPoint === lastPoint || game.rightCompetitorPoint === lastPoint) {
+				
+	// 		}
+	// 	}
+	// 	return;
+	// }
+
+	// async updateGameResult(winningId: string, game: Game, match: Match, numberOfGames: number): Promise<Game> {
+	// 	const gameUpdated = await this.prisma.game.update({
+	// 		where: {
+	// 			id: game.id
+	// 		},
+	// 		data: {
+	// 			currentServerId: winningId,
+	// 			gameWonByCompetitorId: winningId,
+	// 			status: GameStatus.ENDED
+	// 		}
+	// 	});
+	// 	const countGames = await this.prisma.game.count({
+	// 		where: {
+	// 			matchId: match.id,
+	// 			gameWonByCompetitorId: winningId
+	// 		}
+	// 	});
+	// 	const updatedMatch = await this.processWonMatch(game, match, winningId, numberOfGames);
+	// 	return;
+	// }
+
+	async processWonGame(game: Game, winningId: string, tournamentEvent: TournamentEvent): Promise<IGameAfterUpdatePointResponse> {
+		const match = await this.prisma.match.findUnique({
+			where: {
+				id: game.matchId
+			}
+		});
+		if (game.leftCompetitorPoint >= tournamentEvent.winningPoint ||
+			game.rightCompetitorPoint >= tournamentEvent.winningPoint
 		) {
 			if (Math.abs(game.leftCompetitorPoint - game.rightCompetitorPoint) >= 2) {
-				await this.updateGameResult(winningId, game, match, numberOfGames);
-			} else if (game.leftCompetitorPoint === lastPoint || game.rightCompetitorPoint === lastPoint) {
-				
+				// const updatedGame = await this.prisma.game.update({
+				// 	where: {
+				// 		id: game.id
+				// 	},
+				// 	data: {
+				// 		currentServerId: winningId,
+				// 		gameWonByCompetitorId: winningId,
+
+				// 	}
+				// })
+				// return {
+				// 	currentGameNumber: game.gameNumber,
+				// 	winningCompetitor: await this.getWinningCompetitor(winningId),
+				// 	currentPoint: await this.getAllGamesOfMatch(game.matchId),
+				// 	currentServerId: winningId,
+				// 	isEnd: true,
+				// 	message: "Game ended!"
+				// };
+				console.log("Ket thuc 1");
+				const gameEnded = await this.prisma.game.update({
+					where: {
+						id: game.id
+					},
+					data: {
+						currentServerId: winningId,
+						gameWonByCompetitorId: winningId,
+						status: GameStatus.ENDED
+					}
+				});
+				return await this.processWonMatch(game, match, winningId, tournamentEvent);
+			} else if (game.leftCompetitorPoint === tournamentEvent.lastPoint || game.rightCompetitorPoint === tournamentEvent.lastPoint) {
+				console.log("Ket thuc 2");
+				const gameEnded = await this.prisma.game.update({
+					where: {
+						id: game.id
+					},
+					data: {
+						currentServerId: winningId,
+						gameWonByCompetitorId: winningId,
+						status: GameStatus.ENDED
+					}
+				});
+				return await this.processWonMatch(game, match, winningId, tournamentEvent);
 			}
-		}
-		return;
+		}	
 	}
 
-	async updateGameResult(winningId: string, game: Game, match: Match, numberOfGames: number): Promise<Game> {
-		const gameUpdated = await this.prisma.game.update({
-			where: {
-				id: game.id
-			},
-			data: {
-				currentServerId: winningId,
-				gameWonByCompetitorId: winningId,
-				status: GameStatus.ENDED
-			}
-		});
-		const countGames = await this.prisma.game.count({
-			where: {
-				matchId: match.id,
-				gameWonByCompetitorId: winningId
-			}
-		});
-		const updatedMatch = await this.processWonMatch(game, match, winningId, numberOfGames);
-		return;
+	async getWinningCompetitor(winningId: string): Promise<IWonCompetitorResponse> {
+		const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
+						where: {
+							id: winningId
+						},
+						select: {
+							id: true,
+							user: {
+								select: {
+									id: true,
+									name: true,
+									avatarURL: true,
+									gender: true,
+									height: true,
+									hands: true,
+								}
+							},
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									avatarURL: true,
+									gender: true,
+									hands: true,
+									height: true
+								}
+							}
+						}
+					});
+
+		return {
+			id: winningId,
+			userName: tournamentParticipant.user.name,
+			partnerName: tournamentParticipant.user === null? null: tournamentParticipant.partner.name
+		};
 	}
 
-	async processWonMatch(game: Game, match: Match, winningId: string, numberOfGames: number): Promise<any> {
+	async processWonMatch(game: Game, match: Match, winningId: string, tournamentEvent: TournamentEvent): Promise<IGameAfterUpdatePointResponse> {
 		const games = await this.prisma.game.count({
 			where: {
 				matchId: game.matchId,
 				gameWonByCompetitorId: winningId
 			}
 		});
-		if (Math.floor(numberOfGames / 2) + 1 === games) {
+		if (Math.floor(tournamentEvent.numberOfGames / 2) + 1 === games) {
 			const matchUpdated = await this.prisma.match.update({
 				where: {
 					id: match.id
@@ -576,7 +759,19 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					matchStatus: MatchStatus.ENDED,
 				}
 			});
-		} 
+			console.log("Won matches!");
+		} else {
+			const newGame = await this.prisma.game.create({
+				data: {
+					gameNumber: game.gameNumber + 1,
+					leftCompetitorPoint: 0,
+					rightCompetitorPoint: 0,
+					currentServerId: winningId,
+					matchId: match.id,
+					status: GameStatus.ON_GOING
+				}
+			});
+		}
 		return;
 	}
 
@@ -814,6 +1009,4 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	updateMatch(): Promise<any> {
 		throw new Error("Method not implemented.");
 	}
-
-	
 }

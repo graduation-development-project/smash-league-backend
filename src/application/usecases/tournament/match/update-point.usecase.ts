@@ -1,5 +1,6 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ApiResponse } from "src/domain/dtos/api-response";
+import { IGameAfterUpdatePointResponse } from "src/domain/interfaces/tournament/match/game.interface";
 import { GameRepositoryPort } from "src/domain/repositories/game.repository.port";
 import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
 @Injectable()
@@ -12,7 +13,7 @@ export class UpdatePointUseCase {
 	) {
 	}
 
-	async execute(gameId: string, winningId: string): Promise<ApiResponse<any>> {
+	async execute(gameId: string, winningId: string): Promise<ApiResponse<IGameAfterUpdatePointResponse>> {
 		const gameDetail = await this.gameRepository.getGame(gameId);
 		// console.log(gameDetail);
 		if (gameDetail === null) return new ApiResponse<null | undefined>(
@@ -26,7 +27,7 @@ export class UpdatePointUseCase {
 			null
 		);
 		const game = await this.matchRepository.updatePoint(gameId, winningId);
-		return new ApiResponse<any>(
+		return new ApiResponse<IGameAfterUpdatePointResponse>(
 			HttpStatus.OK,
 			"Update point successful!",
 			game

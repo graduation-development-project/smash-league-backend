@@ -1,3 +1,5 @@
+import { Game } from "@prisma/client";
+
 export interface IGameAfterUpdatePointResponse {
 	isEnd: boolean;
 	message: string;
@@ -5,6 +7,7 @@ export interface IGameAfterUpdatePointResponse {
 	winningCompetitor?: IWonCompetitorResponse;
 	currentGameNumber: number;
 	currentPoint: IPointOfGameResponse[];
+	newGame?: Game;
 }
 
 export interface IWonCompetitorResponse {
