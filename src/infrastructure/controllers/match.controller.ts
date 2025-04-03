@@ -11,6 +11,8 @@ import { Court, Game, Match } from "@prisma/client";
 import { UpdatePointUseCase } from "src/application/usecases/tournament/match/update-point.usecase";
 import { GetCourtAvailableUseCase } from "src/application/usecases/tournament/court/get-court-available.usecase";
 import { AssignCourtForMatchUseCase } from "src/application/usecases/tournament/court/assign-court-for-match.usecase";
+import { GetMatchByIdUseCase } from "src/application/usecases/tournament/match/get-match-by-id.usecase";
+import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
 
 @Controller("match")
 export class MatchController {
@@ -20,8 +22,14 @@ export class MatchController {
 		private readonly startMatchUseCase: StartMatchUseCase,
 		private readonly updatePointUseCase: UpdatePointUseCase,
 		private readonly getCourtsAvailableUseCase: GetCourtAvailableUseCase,
-		private readonly assignCourtForMatchUseCase: AssignCourtForMatchUseCase
+		private readonly assignCourtForMatchUseCase: AssignCourtForMatchUseCase,
+		private readonly getMatchByIdUseCase: GetMatchByIdUseCase
 	) {
+	}
+
+	@Get("get-match/:matchId")
+	async getMatchById(@Param("matchId") matchId: string): Promise<ApiResponse<IMatchQueryResponse>> {
+		return await this.getMatchByIdUseCase.execute(matchId);
 	}
 
 	@Put("update-attendance/:matchId")

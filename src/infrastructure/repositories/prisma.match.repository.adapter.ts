@@ -1,6 +1,6 @@
 import { count } from 'node:console';
 import { Injectable } from "@nestjs/common";
-import { Game, Match, MatchStatus, PrismaClient, TournamentEvent } from "@prisma/client";
+import { Game, GameStatus, Match, MatchStatus, PrismaClient, TournamentEvent } from "@prisma/client";
 import { create } from "domain";
 import { ICreateMatch, IMatchDetailBracketResponse } from "src/domain/interfaces/tournament/match/match.interface";
 import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
@@ -15,6 +15,126 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(
 		private readonly prisma: PrismaClient
 	) {
+	}
+	async getMatchDetailById(matchId: string): Promise<IMatchQueryResponse> {
+		const matchDetail: any = await this.prisma.match.findUnique({
+			where: {
+				id: matchId
+			},
+			select: {
+				id: true,
+				court: {
+					select: {
+						id: true,
+						courtCode: true,
+					}
+				},
+				isByeMatch: true,
+				leftCompetitor: {
+					select: {
+						id: true,
+						user: {
+							select: {
+								id: true,
+								email: true,
+								name: true,
+								avatarURL: true,
+								gender: true
+							}
+						},
+						partner: {
+							select: {
+								id: true,
+								name: true,
+								avatarURL: true,
+								email: true,
+								gender: true
+							}
+						}
+					}
+				},
+				matchNumber: true,
+				rightCompetitor: {
+					select: {
+						id: true,
+						user: {
+							select: {
+								id: true,
+								email: true,
+								name: true,
+								avatarURL: true,
+								gender: true
+							}
+						},
+						partner: {
+							select: {
+								id: true,
+								name: true,
+								avatarURL: true,
+								email: true,
+								gender: true
+							}
+						}
+					}
+				},
+				stage: {
+					select: {
+						stageName: true,
+						id: true
+					}
+				},
+				startedWhen: true
+			}
+		});
+		return {
+			id: matchDetail.id,
+			leftCompetitor: {
+				id: matchDetail.leftCompetitor.id,
+				user: {
+					id: matchDetail.leftCompetitor.user.id,
+					name: matchDetail.leftCompetitor.user.name,
+					gender: matchDetail.leftCompetitor.user.gender,
+					avatarURL	: matchDetail.leftCompetitor.user.avatarURL,
+					height: null,
+					hands: null
+				},
+				partner: {
+					id: matchDetail.leftCompetitor?.partner?.id,
+					name: matchDetail.leftCompetitor?.partner?.name,
+					gender: matchDetail.leftCompetitor?.partner?.gender,
+					avatarURL	: matchDetail.leftCompetitor?.partner?.avatarURL,
+					height: null,
+					hands: null
+				}
+			},
+			rightCompetitor: {
+				id: matchDetail.rightCompetitor.id,
+				user: {
+					id: matchDetail.rightCompetitor.user.id,
+					name: matchDetail.rightCompetitor.user.name,
+					gender: matchDetail.rightCompetitor.user.gender,
+					avatarURL	: matchDetail.rightCompetitor.user.avatarURL,
+					height: null,
+					hands: null
+				},
+				partner: {
+					id: matchDetail.rightCompetitor?.partner?.id,
+					name: matchDetail.rightCompetitor?.partner?.name,
+					gender: matchDetail.rightCompetitor?.partner?.gender,
+					avatarURL	: matchDetail.rightCompetitor?.partner?.avatarURL,
+					height: null,
+					hands: null
+				}
+			},
+			matchNumber: matchDetail.matchNumber,
+			stage: {
+				id: matchDetail.stage.id,
+				stageName: matchDetail.stage.stageName
+			},
+			startedWhen: matchDetail.startedWhen,
+			umpire: null,
+			nextMatchId: null
+		};
 	}
 	async assignCourtForMatch(matchId: string, courtId: string): Promise<Match> {
 		return await this.prisma.match.update({
@@ -33,6 +153,12 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				id: gameId
 			}
 		});
+		const tournamentParticipantGet = await this.prisma.tournamentParticipants.findUnique({
+			where: {
+				id: winningId
+			}
+		});
+		console.log(tournamentParticipantGet);
 
 		const match = await this.prisma.match.findUnique({
 			where: {
@@ -46,7 +172,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		});
 		// console.log(tournamentEvent);
 		const [leftCompetitorPoint, rightCompetitorPoint] = [game.leftCompetitorPoint, game.rightCompetitorPoint];
-		console.log(leftCompetitorPoint);
 		if (match.leftCompetitorId === winningId) {
 			const point = await this.prisma.game.update({
 				where: {
@@ -56,7 +181,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					leftCompetitorPoint: game.leftCompetitorPoint + 1
 				}
 			});
-			console.log(point);
+			// console.log(point);
 			// game.leftCompetitorPoint++;
 		} else if (match.rightCompetitorId === winningId) {
 			const point = await this.prisma.game.update({
@@ -66,8 +191,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				data: {
 					rightCompetitorPoint: game.rightCompetitorPoint + 1
 				}
-			})
-			game.rightCompetitorPoint++;
+			});
+			// game.rightCompetitorPoint++;
 		}
 		if (game.leftCompetitorPoint >= tournamentEvent.winningPoint && 
 			(game.leftCompetitorPoint - game.rightCompetitorPoint) >= 2
@@ -78,7 +203,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				},
 				data: {
 					gameWonByCompetitorId: winningId,
-					currentServerId: winningId
+					currentServerId: winningId,
+					status: GameStatus.ENDED
 				}
 			});
 			const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
@@ -109,7 +235,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					}
 				}
 			});
-			console.log(tournamentParticipant);
 			const games = await this.prisma.game.findMany({
 				where: {
 					matchId: game.matchId
@@ -123,14 +248,24 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				winningCompetitor: {
 					id: winningId,
 					userName: tournamentParticipant.user.name,
-					partnerName: tournamentParticipant.partner.name
+					partnerName: tournamentParticipant?.partner?.name
 				},
 				currentPoint: games.map(this.transformGameData)
 			}
 		} 
 		if (game.rightCompetitorPoint >= tournamentEvent.winningPoint && 
-			(game.rightCompetitorPoint - game.rightCompetitorPoint) >= 2
+			(game.rightCompetitorPoint - game.leftCompetitorPoint) >= 2
 		) {
+			await this.prisma.game.update({
+				where: {
+					id: game.id
+				},
+				data: {
+					gameWonByCompetitorId: winningId,
+					currentServerId: winningId,
+					status: GameStatus.ENDED
+				}
+			});
 			const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
 				where: {
 					id: winningId
@@ -172,13 +307,13 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				winningCompetitor: {
 					id: winningId,
 					userName: tournamentParticipant.user.name,
-					partnerName: tournamentParticipant.partner.name
+					partnerName: tournamentParticipant?.partner?.name
 				},
 				currentPoint: games.map(this.transformGameData)
-			}
+			};
 		}
 
-		if (game.leftCompetitorPoint === tournamentEvent.lastPoint) {
+		if (game.leftCompetitorPoint >= tournamentEvent.lastPoint) {
 			const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
 				where: {
 					id: winningId
@@ -207,15 +342,21 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					}
 				}
 			});
-			const gameLeftWons = await this.prisma.game.count({
-				where: {
-					gameWonByCompetitorId: tournamentParticipant.id
-				}
-			});
-			tournamentEvent
+			// tournamentEvent
 			const games = await this.prisma.game.findMany({
 				where: {
 					matchId: game.matchId
+				}
+			});
+			//Set game ended
+			const gameUpdate = await this.prisma.game.update({
+				where: {
+					id: gameId
+				},
+				data: {
+					currentServerId: winningId,
+					gameWonByCompetitorId: winningId,
+					status: GameStatus.ENDED
 				}
 			});
 			return {
@@ -229,9 +370,9 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					partnerName: tournamentParticipant.partner.name
 				},
 				currentPoint: games.map(this.transformGameData)
-			}
+			};
 		}
-		if (game.rightCompetitorPoint === tournamentEvent.lastPoint) {
+		if (game.rightCompetitorPoint >= tournamentEvent.lastPoint) {
 			const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
 				where: {
 					id: winningId
@@ -278,11 +419,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				currentPoint: games.map(this.transformGameData)
 			}
 		}	
-		if (await this.checkIfWonMatch(match.leftCompetitorId, tournamentEvent.numberOfGames)) {
+		// if (await this.checkIfWonMatch(match.leftCompetitorId, tournamentEvent.numberOfGames)) {
 
-		} else if (await this.checkIfWonMatch(match.rightCompetitorId, tournamentEvent.numberOfGames)) {
+		// } else if (await this.checkIfWonMatch(match.rightCompetitorId, tournamentEvent.numberOfGames)) {
 
-		}
+		// }
 		const tournamentParticipant: IParticipantResponse = await this.prisma.tournamentParticipants.findUnique({
 			where: {
 				id: winningId
@@ -326,14 +467,42 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		}
 	}
 
-	async checkIfWonMatch(competitorId: string, numberOfGamePerMatch: number): Promise<boolean> {
-		const games = await this.prisma.game.count({
+	// async checkIfWonMatch(competitorId: string, numberOfGamePerMatch: number): Promise<boolean> {
+	// 	const games = await this.prisma.game.count({
+	// 		where: {
+	// 			gameWonByCompetitorId: competitorId
+	// 		}
+	// 	});
+	// 	// console.log(games);
+	// 	return;
+	// }
+
+	async processWonMatch(gameId: string, winningId, numberOfGames: number): Promise<any> {
+		const gameWon = await this.prisma.game.findUnique({
 			where: {
-				gameWonByCompetitorId: competitorId
+				id: gameId
 			}
 		});
-		// console.log(games);
+		const games = await this.prisma.game.count({
+			where: {
+				matchId: gameWon.matchId,
+				gameWonByCompetitorId: winningId
+			}
+		});
+		console.log(games);
+		if (Math.floor(numberOfGames / 2) + 1 === games) {
+
+		} 
 		return;
+	}
+
+	async updatePointForLeftCompetitorInGame(gameId: string, leftCompetitorId: string): Promise<any> {
+		const tournamentParticipants = await this.prisma.tournamentParticipants.findUnique({
+			where: {
+				id: leftCompetitorId
+			}
+		});
+
 	}
 
 	transformGameData(game: Game) : IPointOfGameResponse {
@@ -351,7 +520,16 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				rightCompetitorPoint: 0,
 				gameNumber: 1,
 				matchId: matchId, 
-				currentServerId: currentServerId
+				currentServerId: currentServerId,
+			}
+		});
+		const matchUpdated = await this.prisma.match.update({
+			where: {
+				id: matchId
+			},
+			data: {
+				startedWhen: convertToLocalTime(new Date()),
+				matchStatus: MatchStatus.ON_GOING
 			}
 		});
 		return game;

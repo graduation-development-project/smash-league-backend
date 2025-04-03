@@ -128,19 +128,11 @@ export class TournamentController {
 		return await this.createRandomURLUseCase.execute();
 	}
 
-	@Post("/demo")
-	@UseInterceptors(AnyFilesInterceptor())
+	@Get("/demo")
 	async getData(
-		@Body()
-		data: {
-			demo;
-		},
-		@UploadedFile() files: Express.Multer.File[],
+		@Query("numberOfGames") numberOfGames: number
 	) {
-		return {
-			data: JSON.parse(data.demo),
-			files: files,
-		};
+		return Math.floor(numberOfGames / 2) + 1;
 	}
 
 	@Get("get-all-tournament-serie/:userId")

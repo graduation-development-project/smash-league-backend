@@ -361,6 +361,7 @@ model Game {
   id                    String                  @id @default(uuid())
   leftCompetitorPoint   Int
   rightCompetitorPoint  Int
+  status                GameStatus              @default(ON_GOING)
   gameNumber            Int
   currentServerId       String?
   currentServer         TournamentParticipants? @relation(name: "FK_Game_CurrentServer", fields: [currentServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -368,6 +369,11 @@ model Game {
   gameWonByCompetitorId String?
   gameWonByCompetitor   TournamentParticipants? @relation(name: "FK_Game_GameWonByCompetitor", fields: [gameWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   match                 Match                   @relation(name: "FK_Game_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum GameStatus {
+  ON_GOING
+  ENDED
 }
 
 model Point {
