@@ -763,6 +763,15 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				}
 			});
 			console.log("Won matches!");
+			// const nextMatch = await this.prisma.match.findUnique({
+			// 	where: {
+			// 		id: matchUpdated.nextMatchId
+			// 	}
+			// });
+			// const stage = await this.prisma.stage.findUnique({
+
+			// })
+			return null;
 		} else {
 			const newGame = await this.prisma.game.create({
 				data: {
@@ -787,18 +796,52 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		return;
 	}
 
-	async assignCompetitorForNextMatch(competitorId: string, nextMatchId: string): Promise<Match> {
-		return;
-	}
-
-	async updatePointForLeftCompetitorInGame(gameId: string, leftCompetitorId: string): Promise<any> {
-		const tournamentParticipants = await this.prisma.tournamentParticipants.findUnique({
+	async assignCompetitorForNextMatch(competitorId: string, nextMatchId: string, currentMatchId: string): Promise<IGameAfterUpdatePointResponse> {
+		const nextMatch = await this.prisma.match.findUnique({
 			where: {
-				id: leftCompetitorId
+				id: nextMatchId
+			},
+			select: {
+				matchesPrevious: true
 			}
 		});
-
+		if (currentMatchId === nextMatch.matchesPrevious[0].id) {
+			const updatedNextMatch = await this.prisma.match.update({
+				where: {
+					id: nextMatchId
+				},
+				data: {
+					leftCompetitorId: competitorId
+				}
+			});
+		}
+		const updatedNextMatch = await this.prisma.match.update({
+			where: {
+				id: nextMatchId
+			},
+			data: {
+				leftCompetitorId: competitorId
+			}
+		});
+		return {
+			currentGameNumber: 0,
+			currentPoint: await this.getAllGamesOfMatch(currentMatchId),
+			currentServerId: competitorId,
+			isEnd: true,
+			newGame: null, 
+			winningCompetitor: await this.getWinningCompetitor(competitorId),
+			message: "Match ended!"
+		};
 	}
+
+	// async updatePointForLeftCompetitorInGame(gameId: string, leftCompetitorId: string): Promise<any> {
+	// 	const tournamentParticipants = await this.prisma.tournamentParticipants.findUnique({
+	// 		where: {
+	// 			id: leftCompetitorId
+	// 		}
+	// 	});
+
+	// }
 
 	transformGameData(game: Game) : IPointOfGameResponse {
 		return {
