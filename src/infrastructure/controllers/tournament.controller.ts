@@ -77,6 +77,8 @@ import { GetTournamentUmpireUseCase } from "../../application/usecases/tournamen
 import { UpdateAttendanceUseCase } from "src/application/usecases/tournament/match/update-attendance.usecase";
 import { UpdateForfeitCompetitorUseCase } from "src/application/usecases/tournament/match/update-forfeit-competitor.usecase,";
 import { GetTournamentsByUserIdUseCase } from "../../application/usecases/tournament/get-tournaments-by-user-id.usecase";
+import { GetTournamentEventStandingBoardUseCase } from "../../application/usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
+import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -104,6 +106,7 @@ export class TournamentController {
 		private readonly getTournamentEventsByTournamentIdUseCase: GetTournamentEventsByTournamentIdUseCase,
 		private readonly getTournamentUmpireUseCase: GetTournamentUmpireUseCase,
 		private readonly getTournamentsByUserIdUseCase: GetTournamentsByUserIdUseCase,
+		private readonly getTournamentEventStandingBoardUseCase: GetTournamentEventStandingBoardUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -129,9 +132,7 @@ export class TournamentController {
 	}
 
 	@Get("/demo")
-	async getData(
-		@Query("numberOfGames") numberOfGames: number
-	) {
+	async getData(@Query("numberOfGames") numberOfGames: number) {
 		return Math.floor(numberOfGames / 2) + 1;
 	}
 
@@ -320,5 +321,14 @@ export class TournamentController {
 	): Promise<ApiResponse<IPaginatedOutput<ITournamentResponse>>> {
 		console.log(user);
 		return await this.getTournamentsByUserIdUseCase.execute(user.id, options);
+	}
+
+	@Get("/get-tournaments-event-standing-board/:tournamentEventId")
+	async getTournamentsEventStandingBoard(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<ITournamentStandingBoardInterface>> {
+		return await this.getTournamentEventStandingBoardUseCase.execute(
+			tournamentEventId,
+		);
 	}
 }

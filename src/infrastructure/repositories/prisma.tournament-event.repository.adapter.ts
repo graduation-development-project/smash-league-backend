@@ -3,6 +3,7 @@ import { PrismaClient, TournamentEvent } from "@prisma/client";
 import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
+import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
 
 @Injectable()
 export class PrismaTournamentEventRepositoryAdapter
@@ -113,6 +114,123 @@ export class PrismaTournamentEventRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("getTournamentEventOfTournament faield", e);
+			throw e;
+		}
+	}
+
+	async getTournamentEventStandingBoard(
+		tournamentEventId: string,
+	): Promise<ITournamentStandingBoardInterface> {
+		try {
+			return this.prisma.tournamentEvent.findUnique({
+				where: {
+					id: tournamentEventId,
+				},
+				select: {
+					championship: {
+						select: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true,
+								},
+							},
+
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true,
+								},
+							},
+						},
+					},
+					runnerUp: {
+						select: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true,
+								},
+							},
+
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true,
+								},
+							},
+						},
+					},
+					thirdPlace: {
+						select: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true,
+								},
+							},
+
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true,
+								},
+							},
+						},
+					},
+					jointThirdPlace: {
+						select: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true,
+								},
+							},
+
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true,
+								},
+							},
+						},
+					},
+				},
+			});
+		} catch (e) {
+			console.error("getTournamentEventStandingBoard failed", e);
 			throw e;
 		}
 	}
