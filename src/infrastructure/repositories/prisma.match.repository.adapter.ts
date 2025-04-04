@@ -609,6 +609,9 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		const games = await this.prisma.game.findMany({
 			where: {
 				matchId: matchId
+			},
+			orderBy: {
+				gameNumber: 'desc'
 			}
 		});
 		return games.map(this.transformGameData);
