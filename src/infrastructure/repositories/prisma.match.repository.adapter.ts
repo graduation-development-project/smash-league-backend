@@ -738,7 +738,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		return {
 			id: winningId,
 			userName: tournamentParticipant.user.name,
-			partnerName: tournamentParticipant.user === null? null: tournamentParticipant.partner.name
+			partnerName: tournamentParticipant.partner === null? null: tournamentParticipant.partner.name
 		};
 	}
 
@@ -771,6 +771,15 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					status: GameStatus.ON_GOING
 				}
 			});
+			return {
+				currentGameNumber: newGame.gameNumber,
+				currentPoint: await this.getAllGamesOfMatch(newGame.matchId),
+				currentServerId: winningId,
+				isEnd: true,
+				message: "New game!",
+				newGame: newGame,
+				winningCompetitor: await this.getWinningCompetitor(winningId)
+			};
 		}
 		return;
 	}
