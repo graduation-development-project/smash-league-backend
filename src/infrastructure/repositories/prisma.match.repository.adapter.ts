@@ -611,7 +611,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				matchId: matchId
 			},
 			orderBy: {
-				gameNumber: 'desc'
+				gameNumber: 'asc'
 			}
 		});
 		return games.map(this.transformGameData);
