@@ -771,7 +771,15 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			// const stage = await this.prisma.stage.findUnique({
 
 			// })
-			return null;
+			return {
+				currentGameNumber: 0,
+				currentPoint: await this.getAllGamesOfMatch(match.id),
+				currentServerId: winningId,
+				isEnd: true, 
+				message: "Match ended!",
+				newGame: null,
+				winningCompetitor: await this.getWinningCompetitor(winningId)
+			};
 		} else {
 			const newGame = await this.prisma.game.create({
 				data: {
