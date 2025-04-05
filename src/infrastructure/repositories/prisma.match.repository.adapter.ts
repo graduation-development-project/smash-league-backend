@@ -117,11 +117,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					height: null,
 					hands: null
 				},
-				partner: matchDetail.leftCompetitor.partner === null? null: {
-					id: matchDetail.leftCompetitor?.partner?.id,
-					name: matchDetail.leftCompetitor?.partner?.name,
-					gender: matchDetail.leftCompetitor?.partner?.gender,
-					avatarURL	: matchDetail.leftCompetitor?.partner?.avatarURL,
+				partner: matchDetail.rightCompetitor.partner === null? null: {
+					id: matchDetail.rightCompetitor?.partner?.id,
+					name: matchDetail.rightCompetitor?.partner?.name,
+					gender: matchDetail.rightCompetitor?.partner?.gender,
+					avatarURL	: matchDetail.rightCompetitor?.partner?.avatarURL,
 					height: null,
 					hands: null
 				}
@@ -762,6 +762,12 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					matchStatus: MatchStatus.ENDED,
 				}
 			});
+			const matchesOfCurrentStage = await this.prisma.match.count({
+				where: {
+					stageId: matchUpdated.stageId
+				}
+			});
+			if (matchUpdated.nextMatchId === null) await this.updateStandingOfTournamentEvent(matchUpdated.id);
 			console.log("Won matches!");
 			// const nextMatch = await this.prisma.match.findUnique({
 			// 	where: {
@@ -804,6 +810,34 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		return;
 	}
 
+	async updateStandingOfTournamentEvent(currentMatchId: string): Promise<any> {
+		const match = await this.prisma.match.findUnique({
+			where: {
+				id: currentMatchId
+			}
+		});
+		if (match.matchWonByCompetitorId === match.leftCompetitorId) {
+			const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
+				where: {
+					id: match.tournamentEventId
+				},
+				data: {
+					championshipId: match.leftCompetitorId,
+					runnerUpId: match.rightCompetitorId
+				}
+			});
+		} else {
+			const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
+				where: {
+					id: match.tournamentEventId
+				},
+				data: {
+					championshipId: match.rightCompetitorId,
+					runnerUpId: match.leftCompetitorId
+				}
+			});
+		}
+	}
 	async assignCompetitorForNextMatch(competitorId: string, nextMatchId: string, currentMatchId: string): Promise<IGameAfterUpdatePointResponse> {
 		const nextMatch = await this.prisma.match.findUnique({
 			where: {
@@ -822,15 +856,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					leftCompetitorId: competitorId
 				}
 			});
-		}
-		const updatedNextMatch = await this.prisma.match.update({
-			where: {
-				id: nextMatchId
-			},
-			data: {
-				leftCompetitorId: competitorId
-			}
-		});
+		} else if (currentMatchId === nextMatch.matchesPrevious[1].id)
+		
 		return {
 			currentGameNumber: 0,
 			currentPoint: await this.getAllGamesOfMatch(currentMatchId),
@@ -1066,8 +1093,12 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	createMatch(): Promise<any> {
 		throw new Error("Method not implemented.");
 	}
-	getMatchesOfStage(stageId: string): Promise<Match[]> {
-		throw new Error("Method not implemented.");
+	async getMatchesOfStage(stageId: string): Promise<Match[]> {
+		return await this.prisma.match.findMany({
+			where: {
+				stageId: stageId
+			}
+		});
 	}
 	updateMatch(): Promise<any> {
 		throw new Error("Method not implemented.");
