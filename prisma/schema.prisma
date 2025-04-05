@@ -6,7 +6,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-
 }
 
 enum Hands {
@@ -31,6 +30,11 @@ model User {
   height                        Int?
   hands                         Hands?
   dateOfBirth                   DateTime?
+  location                      String?
+  startPlayingCompetitively     DateTime?
+  placeOfBirth                  String?
+  startPlayingSport             DateTime?
+  sportAmbitions                String?
   tournamentSeries              TournamentSerie[]        @relation(name: "FK_TournamentSerie_User")
   orders                        Order[]                  @relation(name: "FK_Order_User")
   teamLeaderOf                  Team[]                   @relation(name: "FK_User_TeamLeader")
