@@ -14,12 +14,12 @@ jobs:
       uses: actions/checkout@v2
     - name: Stop volume and remove exist container before create container
       run: |
-          docker container stop smash_league_api
-          docker container rm smash_league_api
-          docker volume rm smash-league-backend_backend_service
-          docker container stop database
-          docker container rm database
-          docker volume rm smash-league-backend_postgres_data
+          docker container stop smash_league_api || true
+          docker container rm smash_league_api || true
+          docker volume rm smash-league-backend_backend_service || true
+          docker container stop database || true
+          docker container rm database || true
+          docker volume rm smash-league-backend_postgres_data || true
     - name: Set up environment variable for docker
       run: |
           touch .env
