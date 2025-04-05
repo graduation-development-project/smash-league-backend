@@ -762,9 +762,28 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					matchStatus: MatchStatus.ENDED,
 				}
 			});
-			const matchesOfCurrentStage = await this.prisma.match.count({
+			// const matchesOfCurrentStage = await this.prisma.match.count({
+			// 	where: {
+			// 		stageId: matchUpdated.stageId
+			// 	}
+			// });
+			const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
 				where: {
-					stageId: matchUpdated.stageId
+					id: match.tournamentEventId
+				}
+			});
+			const umpireOfMatch = await this.prisma.tournamentUmpires.findFirst({
+				where: {
+					tournamentId: tournamentEvent.tournamentId,
+					userId: matchUpdated.umpireId
+				}
+			});
+			const updateUmpireAvailable = await this.prisma.tournamentUmpires.update({
+				where: {
+					id: umpireOfMatch.id
+				},
+				data: {
+					isAvailable: true
 				}
 			});
 			if (matchUpdated.nextMatchId === null) await this.updateStandingOfTournamentEvent(matchUpdated.id);
