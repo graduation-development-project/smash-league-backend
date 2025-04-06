@@ -363,7 +363,7 @@ import {
 	exports: [
 		//Auth Service
 		AuthService,
-
+		PaymentPayOSService,
 		ApplicationFunction,
 		//User use case
 		GetUserByIdUseCase,
