@@ -101,28 +101,10 @@ export class PrismaOrganizersRepositoryAdapter
 					// 	},
 					// });
 
-					const isDouble =
-						existedRegistration.tournamentEvent.tournamentEvent.includes(
-							"DOUBLE",
-						);
-
-					console.log(isDouble);
-
-					const transaction: Transaction =
-						await this.transactionRepository.createTransactionForRegistrationFee(
-							{
-								tournamentRegistrationId: tournamentRegistrationId,
-								value: isDouble
-									? isTournamentOrganizer.registrationFeePerPerson
-									: isTournamentOrganizer.registrationFeePerPair,
-								transactionDetail: "Fee for registration",
-							},
-						);
-
 					await this.notificationsRepository.createNotification(
 						{
 							title: `Your tournament registration has been approved`,
-							message: `Your tournament registration has been approved, please pay your registration fee : ${transaction.transactionPaymentLink}`,
+							message: `Your tournament registration has been approved, please pay your registration fee`,
 							type: NotificationTypeMap.Approve.id,
 							tournamentRegistrationId,
 						},
