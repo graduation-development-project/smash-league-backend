@@ -9,6 +9,7 @@ import {
 	TournamentRegistration,
 	TournamentRegistrationRole,
 	TournamentRegistrationStatus,
+	Transaction,
 	User,
 } from "@prisma/client";
 import { NotificationTypeMap } from "../enums/notification-type.enum";
@@ -22,6 +23,7 @@ import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { formatDate, getCurrentTime } from "../util/format-date-time.util";
 import { RoleMap } from "../enums/role.enum";
+import { TransactionRepositoryPort } from "../../domain/repositories/transaction.repository.port";
 
 @Injectable()
 export class PrismaOrganizersRepositoryAdapter
@@ -32,6 +34,8 @@ export class PrismaOrganizersRepositoryAdapter
 		@InjectQueue("emailQueue") private emailQueue: Queue,
 		@Inject("NotificationRepository")
 		private notificationsRepository: NotificationsRepositoryPort,
+		@Inject("TransactionRepository")
+		private transactionRepository: TransactionRepositoryPort,
 	) {}
 
 	async responseTournamentRegistration(
@@ -44,6 +48,10 @@ export class PrismaOrganizersRepositoryAdapter
 			await this.prismaService.tournamentRegistration.findUnique({
 				where: {
 					id: tournamentRegistrationId,
+				},
+
+				include: {
+					tournamentEvent: true,
 				},
 			});
 
@@ -65,11 +73,16 @@ export class PrismaOrganizersRepositoryAdapter
 		}
 
 		try {
+			// * Check if Athlete update status: ON_WAITING_REGISTRATION_FEE
+			// * If Umpire update status: APPROVED
 			await this.prismaService.tournamentRegistration.update({
 				where: { id: tournamentRegistrationId },
 				data: {
 					status: option
-						? TournamentRegistrationStatus.APPROVED
+						? existedRegistration.registrationRole ===
+							TournamentRegistrationRole.ATHLETE
+							? TournamentRegistrationStatus.ON_WAITING_REGISTRATION_FEE
+							: TournamentRegistrationStatus.APPROVED
 						: TournamentRegistrationStatus.REJECTED,
 				},
 			});
@@ -79,14 +92,42 @@ export class PrismaOrganizersRepositoryAdapter
 					existedRegistration.registrationRole ===
 					TournamentRegistrationRole.ATHLETE
 				) {
-					await this.prismaService.tournamentParticipants.create({
-						data: {
-							tournamentId: existedRegistration.tournamentId,
-							userId: existedRegistration.userId,
-							tournamentEventId: existedRegistration.tournamentEventId,
-							partnerId: existedRegistration.partnerId || null,
+					// await this.prismaService.tournamentParticipants.create({
+					// 	data: {
+					// 		tournamentId: existedRegistration.tournamentId,
+					// 		userId: existedRegistration.userId,
+					// 		tournamentEventId: existedRegistration.tournamentEventId,
+					// 		partnerId: existedRegistration.partnerId || null,
+					// 	},
+					// });
+
+					const isDouble =
+						existedRegistration.tournamentEvent.tournamentEvent.includes(
+							"DOUBLE",
+						);
+
+					console.log(isDouble);
+
+					const transaction: Transaction =
+						await this.transactionRepository.createTransactionForRegistrationFee(
+							{
+								tournamentRegistrationId: tournamentRegistrationId,
+								value: isDouble
+									? isTournamentOrganizer.registrationFeePerPerson
+									: isTournamentOrganizer.registrationFeePerPair,
+								transactionDetail: "Fee for registration",
+							},
+						);
+
+					await this.notificationsRepository.createNotification(
+						{
+							title: `Your tournament registration has been approved`,
+							message: `Your tournament registration has been approved, please pay your registration fee : ${transaction.transactionPaymentLink}`,
+							type: NotificationTypeMap.Approve.id,
+							tournamentRegistrationId,
 						},
-					});
+						[existedRegistration.userId],
+					);
 				} else {
 					await this.prismaService.tournamentUmpires.create({
 						data: {
@@ -94,6 +135,16 @@ export class PrismaOrganizersRepositoryAdapter
 							userId: existedRegistration.userId,
 						},
 					});
+
+					await this.notificationsRepository.createNotification(
+						{
+							title: `Your tournament registration has been approved`,
+							message: `Your tournament registration has been approved`,
+							type: NotificationTypeMap.Approve.id,
+							tournamentRegistrationId,
+						},
+						[existedRegistration.userId],
+					);
 				}
 			}
 

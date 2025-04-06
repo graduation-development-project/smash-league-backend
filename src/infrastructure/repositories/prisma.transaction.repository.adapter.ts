@@ -83,6 +83,18 @@ export class PrismaTransactionRepositoryAdapter
 		});
 	}
 
+	async createTransactionForRegistrationFee(
+		createTransaction: ICreateTransactionRequest,
+	): Promise<Transaction> {
+		return await this.prisma.transaction.create({
+			data: {
+				...createTransaction,
+				transactionType: TransactionType.PAY_REGISTRATION_FEE,
+				status: TransactionStatus.PENDING,
+			},
+		});
+	}
+
 	async getTransactionByUserId(userId: string): Promise<Transaction[]> {
 		try {
 			return await this.prisma.transaction.findMany({
@@ -94,8 +106,8 @@ export class PrismaTransactionRepositoryAdapter
 				include: {
 					order: {
 						include: {
-							package: true
-						}
+							package: true,
+						},
 					},
 				},
 			});

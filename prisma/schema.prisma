@@ -407,7 +407,6 @@ model TournamentRegistration {
   tournamentEventId           String?
   tournamentEvent             TournamentEvent?             @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
   partnerId                   String? // Nullable: Used only for doubles
-  isPayForTheRegistrationFee  Boolean                      @default(false)
   registrationDocumentCreator String[]                     @default([])
   registrationDocumentPartner String[]                     @default([])
   registrationRole            TournamentRegistrationRole
@@ -421,6 +420,7 @@ model TournamentRegistration {
   fromTeam                    Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
   reasonId                    String?                      @unique
   Notification                Notification[]               @relation(name: "FK_TournamentRegistration_Notification")
+  transaction                 Transaction[]                @relation(name: "FK_TournamentRegistration_Transaction")
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
@@ -463,6 +463,7 @@ enum TournamentRegistrationStatus {
   PENDING
   APPROVED
   REJECTED
+  ON_WAITING_REGISTRATION_FEE
 }
 
 enum TournamentRegistrationRole {
@@ -572,17 +573,19 @@ enum TransactionType {
 }
 
 model Transaction {
-  id                     String            @id @default(uuid())
-  transactionDetail      String
-  transactionPaymentLink String?
-  transactionImage       String?
-  transactionType        TransactionType
-  orderId                Int
-  order                  Order             @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
-  value                  Int
-  status                 TransactionStatus
-  createdAt              DateTime          @default(now())
-  cancelledReason        String?
+  id                       String                  @id @default(uuid())
+  transactionDetail        String
+  transactionPaymentLink   String?
+  transactionImage         String?
+  transactionType          TransactionType
+  orderId                  Int?
+  order                    Order?                  @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
+  tournamentRegistrationId String?
+  tournamentRegistration   TournamentRegistration? @relation(name: "FK_TournamentRegistration_Transaction", fields: [tournamentRegistrationId], references: [id], onDelete: Cascade)
+  value                    Int
+  status                   TransactionStatus
+  createdAt                DateTime                @default(now())
+  cancelledReason          String?
 }
 
 enum TransactionStatus {
