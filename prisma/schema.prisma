@@ -573,12 +573,12 @@ enum TransactionType {
 }
 
 model Transaction {
-  id                       String                  @id @default(uuid())
+  id                       Int                  @id @default(autoincrement())
   transactionDetail        String
   transactionPaymentLink   String?
   transactionImage         String?
   transactionType          TransactionType
-  orderId                  Int?
+  orderId                  String?
   order                    Order?                  @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
   tournamentRegistrationId String?
   tournamentRegistration   TournamentRegistration? @relation(name: "FK_TournamentRegistration_Transaction", fields: [tournamentRegistrationId], references: [id], onDelete: Cascade)
@@ -595,7 +595,7 @@ enum TransactionStatus {
 }
 
 model Order {
-  id           Int           @id @default(autoincrement())
+  id           String           @id @default(uuid())
   total        Int
   packageId    String
   userId       String

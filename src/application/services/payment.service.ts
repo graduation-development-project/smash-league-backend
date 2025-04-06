@@ -13,14 +13,14 @@ export class PaymentPayOSService {
 		private readonly configService: ConfigService
 	) {
 	}
-	async createPaymentLink(order: IOrderDetailResponse, transactionId: string) : Promise<IPayOSPaymentResponse> {
+	async createPaymentLink(order: IOrderDetailResponse, transactionId: number) : Promise<IPayOSPaymentResponse> {
 			const payOS = new PayOS(
 				this.configService.get<string>("PAYOS_CLIENT_ID"),
 				this.configService.get<string>("PAYOS_API_KEY"),
 				this.configService.get<string>("PAYOS_CHECKSUM_KEY")
 			);
 			const body = {
-				orderCode: order.id,
+				orderCode: transactionId,
 				amount: order.total,
 				description: "Payment " + order.package.packageName,
 				items: [

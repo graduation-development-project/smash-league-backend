@@ -1,6 +1,6 @@
 export interface ICreateTransactionRequest {
 	transactionDetail: string;
-	orderId?: number;
+	orderId?: string;
 	tournamentRegistrationId?: string;
 	value: number;
 }

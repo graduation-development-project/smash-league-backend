@@ -21,7 +21,7 @@ export class AcceptPaymentUseCase {
 	) {
 	}
 
-	async execute(user: IRequestUser, transactionId: string): Promise<ApiResponse<Transaction>> {
+	async execute(user: IRequestUser, transactionId: number): Promise<ApiResponse<Transaction>> {
 		const transaction = await this.transactionRepository.getTransaction(transactionId);
 		if (transaction.status === "SUCCESSFUL") return new ApiResponse<null | undefined>(
 			HttpStatus.BAD_REQUEST,

@@ -9,7 +9,7 @@ export class PrismaOrderRepositoryAdapter implements OrderRepositoryPort {
 		private readonly prisma: PrismaClient
 	) {
 	}
-	async cancelOrder(orderId: number): Promise<Order> {
+	async cancelOrder(orderId: string): Promise<Order> {
 		return await this.prisma.order.update({
 			where: {
 				id: orderId
@@ -19,7 +19,7 @@ export class PrismaOrderRepositoryAdapter implements OrderRepositoryPort {
 			}
 		});
 	}
-	async acceptOrder(orderId: number): Promise<Order> {
+	async acceptOrder(orderId: string): Promise<Order> {
 		return await this.prisma.order.update({
 			where: {
 				id: orderId
@@ -60,7 +60,7 @@ export class PrismaOrderRepositoryAdapter implements OrderRepositoryPort {
 			}
 		});
 	}
-	async getOrder(orderId: number): Promise<IOrderDetailResponse> {
+	async getOrder(orderId: string): Promise<IOrderDetailResponse> {
 		return await this.prisma.order.findUnique({
 			where: {
 				id: orderId

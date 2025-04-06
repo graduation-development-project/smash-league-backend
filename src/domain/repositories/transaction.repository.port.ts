@@ -2,12 +2,12 @@ import { Transaction } from "@prisma/client";
 import { ICreateTransactionRequest } from "../interfaces/payment/transaction.interface";
 
 export interface TransactionRepositoryPort {
-	getTransaction(id: string): Promise<Transaction>;
-	getTransactionOfOrder(orderId: number): Promise<Transaction[]>;
+	getTransaction(id: number): Promise<Transaction>;
+	getTransactionOfOrder(orderId: string): Promise<Transaction[]>;
 	createTransactionForBuyingPackage(createTransaction: ICreateTransactionRequest): Promise<Transaction>;
 	createTransactionForRegistrationFee(createTransaction: ICreateTransactionRequest): Promise<Transaction>;
-	acceptTransaction(transactionId: string): Promise<Transaction>;
-	rejectTransaction(transactionId: string): Promise<Transaction>;
-	updatePaymentForTransaction(transactionId: string, transactionImage: string, transactionPaymentLink: string): Promise<Transaction>;
+	acceptTransaction(transactionId: number): Promise<Transaction>;
+	rejectTransaction(transactionId: number): Promise<Transaction>;
+	updatePaymentForTransaction(transactionId: number, transactionImage: string, transactionPaymentLink: string): Promise<Transaction>;
 	getTransactionByUserId(userId: string): Promise<Transaction[]>;
 }

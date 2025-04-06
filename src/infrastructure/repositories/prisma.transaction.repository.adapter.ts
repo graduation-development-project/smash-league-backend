@@ -16,7 +16,7 @@ export class PrismaTransactionRepositoryAdapter
 	constructor(private readonly prisma: PrismaClient) {}
 
 	async updatePaymentForTransaction(
-		transactionId: string,
+		transactionId: number,
 		transactionImage: string,
 		transactionPaymentLink: string,
 	): Promise<Transaction> {
@@ -31,7 +31,7 @@ export class PrismaTransactionRepositoryAdapter
 		});
 	}
 
-	async acceptTransaction(transactionId: string): Promise<Transaction> {
+	async acceptTransaction(transactionId: number): Promise<Transaction> {
 		return await this.prisma.transaction.update({
 			where: {
 				id: transactionId,
@@ -42,7 +42,7 @@ export class PrismaTransactionRepositoryAdapter
 		});
 	}
 
-	async rejectTransaction(transactionId: string): Promise<Transaction> {
+	async rejectTransaction(transactionId: number): Promise<Transaction> {
 		return await this.prisma.transaction.update({
 			where: {
 				id: transactionId,
@@ -53,7 +53,7 @@ export class PrismaTransactionRepositoryAdapter
 		});
 	}
 
-	async getTransaction(id: string): Promise<Transaction> {
+	async getTransaction(id: number): Promise<Transaction> {
 		return await this.prisma.transaction.findUnique({
 			where: {
 				id: id,
@@ -61,7 +61,7 @@ export class PrismaTransactionRepositoryAdapter
 		});
 	}
 
-	async getTransactionOfOrder(orderId: number): Promise<Transaction[]> {
+	async getTransactionOfOrder(orderId: string): Promise<Transaction[]> {
 		return await this.prisma.transaction.findMany({
 			where: {
 				orderId: {

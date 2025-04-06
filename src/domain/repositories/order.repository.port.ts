@@ -4,8 +4,8 @@ import { ICreateOrderRequest, IOrderDetailResponse } from "../interfaces/payment
 
 export interface OrderRepositoryPort {
 	createOrder(createOrderRequest: ICreateOrderRequest): Promise<IOrderDetailResponse>;
-	getOrder(orderId: number): Promise<IOrderDetailResponse>;
+	getOrder(orderId: string): Promise<IOrderDetailResponse>;
 	getOrdersOfUser(userId: string): Promise<IOrderDetailResponse[]>;
-	acceptOrder(orderId: number): Promise<Order>;
-	cancelOrder(orderId: number): Promise<Order>;
+	acceptOrder(orderId: string): Promise<Order>;
+	cancelOrder(orderId: string): Promise<Order>;
 }

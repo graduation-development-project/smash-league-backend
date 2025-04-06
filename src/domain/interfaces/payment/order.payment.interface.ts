@@ -2,7 +2,7 @@ import { IPackageDefaultResponse } from "../package/package.interface";
 import { IUserDefaultResponse } from "../user/user.interface";
 
 export interface IOrderDetailResponse {
-	id: number;
+	id: string;
 	total: number;
 	user: IUserDefaultResponse;
 	package: IPackageDefaultResponse;
