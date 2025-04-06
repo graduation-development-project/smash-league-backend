@@ -1,6 +1,7 @@
 services:
   api:
     container_name: smash_league_api
+    mem_limit: 512m
     ports:
       - 5000:5000
     env_file:
