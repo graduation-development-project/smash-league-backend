@@ -52,7 +52,7 @@ export class PaymentController {
 	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
 	async acceptPayment(
 		@Req() user: IRequestUser,
-		@Param("transactionId") transactionId: string,
+		@Param("transactionId") transactionId: number,
 	): Promise<ApiResponse<Transaction>> {
 		return await this.acceptPaymentUseCase.execute(user, transactionId);
 	}
@@ -62,7 +62,7 @@ export class PaymentController {
 	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
 	async rejectPayment(
 		@Req() user: IRequestUser,
-		@Param("transactionId") transactionId: string,
+		@Param("transactionId") transactionId: number,
 	): Promise<ApiResponse<Transaction>> {
 		return await this.rejectPaymentUseCase.execute(user, transactionId);
 	}
