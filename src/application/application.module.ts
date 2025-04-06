@@ -129,6 +129,7 @@ import { GetMatchByIdUseCase } from "./usecases/tournament/match/get-match-by-id
 import {
 	GetTournamentEventStandingBoardUseCase
 } from "./usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
+import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/register-tournament-for-team.usecase";
 
 @Module({
 	imports: [
@@ -308,6 +309,7 @@ import {
 		GetTournamentUmpireUseCase,
 		GetTournamentsByUserIdUseCase,
 		GetTournamentEventStandingBoardUseCase,
+		RegisterTournamentForTeamUseCase,
 
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
@@ -363,7 +365,7 @@ import {
 	exports: [
 		//Auth Service
 		AuthService,
-
+		PaymentPayOSService,
 		ApplicationFunction,
 		//User use case
 		GetUserByIdUseCase,
@@ -446,6 +448,7 @@ import {
 		GetTournamentUmpireUseCase,
 		GetTournamentsByUserIdUseCase,
 		GetTournamentEventStandingBoardUseCase,
+		RegisterTournamentForTeamUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

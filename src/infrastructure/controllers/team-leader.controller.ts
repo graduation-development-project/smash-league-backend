@@ -14,7 +14,7 @@ import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import { CreateTeamDTO } from "../../domain/dtos/team-leaders/create-team.dto";
 import { CreateTeamUseCase } from "../../application/usecases/team-leader/create-team.usecase";
-import { Team, TeamRequest } from "@prisma/client";
+import { Team, TeamRequest, TournamentRegistration } from "@prisma/client";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { SendTeamInvitationUseCase } from "../../application/usecases/team-leader/send-team-invitation.usecase";
 import { Send } from "express";
@@ -31,6 +31,8 @@ import { ResponseJoinTeamRequestUseCase } from "../../application/usecases/team-
 import { TransferTeamLeaderRoleDTO } from "../../domain/dtos/team-leaders/transfer-team-leader-role.dto";
 import { TransferTeamLeaderUseCase } from "../../application/usecases/team-leader/transfer-team-leader.usecase";
 import { ApiResponse } from "../../domain/dtos/api-response";
+import { RegisterTournamentForTeamUseCase } from "../../application/usecases/team-leader/register-tournament-for-team.usecase";
+import { RegisterTournamentForTeamDTO } from "../../domain/dtos/team-leaders/register-tournament-for-team.dto";
 
 @Controller("/team-leaders")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -45,6 +47,7 @@ export class TeamLeaderController {
 		private responseLeaveTeamRequestUseCase: ResponseLeaveTeamRequestUseCase,
 		private responseJoinTeamRequestUseCase: ResponseJoinTeamRequestUseCase,
 		private transferTeamLeaderUseCase: TransferTeamLeaderUseCase,
+		private registerTournamentForTeamUseCase: RegisterTournamentForTeamUseCase,
 	) {}
 
 	@Post("/create-team")
@@ -135,5 +138,12 @@ export class TeamLeaderController {
 			...transferTeamLeaderRoleDTO,
 			user,
 		});
+	}
+
+	@Post("register-tournament-for-team")
+	registerTournamentForTeam(
+		@Body() registerTournamentForTeamDTO: RegisterTournamentForTeamDTO[],
+	): Promise<ApiResponse<TournamentRegistration[]>> {
+		return this.registerTournamentForTeamUseCase.execute(registerTournamentForTeamDTO)
 	}
 }

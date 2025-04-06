@@ -1,9 +1,13 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import {
+	BadRequestException,
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+} from "@nestjs/common";
 import { TeamLeadersRepositoryPort } from "../../domain/repositories/team-leaders.repository.port";
 import { PrismaService } from "../services/prisma.service";
 import {
 	InvitationStatus,
-	Notification,
 	ReasonType,
 	Team,
 	TeamInvitation,
@@ -12,6 +16,7 @@ import {
 	TeamRequestType,
 	TeamRole,
 	TeamStatus,
+	TournamentRegistration,
 	UserTeam,
 } from "@prisma/client";
 import { SendInvitationDTO } from "../../domain/dtos/team-leaders/send-invitation.dto";
@@ -27,6 +32,7 @@ import { EditTeamDTO } from "../../domain/dtos/team-leaders/edit-team.dto";
 import { RemoveTeamMemberDTO } from "../../domain/dtos/team-leaders/remove-team-member.dto";
 import { ResponseLeaveTeamRequestDTO } from "../../domain/dtos/team-leaders/response-leave-team-request.dto";
 import { TransferTeamLeaderRoleDTO } from "../../domain/dtos/team-leaders/transfer-team-leader-role.dto";
+import { RegisterTournamentForTeamDTO } from "../../domain/dtos/team-leaders/register-tournament-for-team.dto";
 
 @Injectable()
 export class PrismaTeamLeadersRepositoryAdapter
@@ -620,6 +626,67 @@ export class PrismaTeamLeadersRepositoryAdapter
 		} catch (e) {
 			console.error("Transfer team leader role failed", e.message, e.stack);
 			throw e;
+		}
+	}
+
+	async registerTournamentForTeam(
+		registerTournamentForTeamDTO: RegisterTournamentForTeamDTO[],
+	): Promise<TournamentRegistration[]> {
+		try {
+			if (registerTournamentForTeamDTO.length === 0) {
+				throw new BadRequestException("No team members provided");
+			}
+
+			const registrationsData = [];
+
+			for (const dto of registerTournamentForTeamDTO) {
+				const {
+					playerId,
+					tournamentId,
+					tournamentEventId,
+					partnerId,
+					fromTeamId,
+					registrationDocumentPartner,
+					registrationDocumentCreator,
+				} = dto;
+
+				const existingRegistration =
+					await this.prismaService.tournamentRegistration.findFirst({
+						where: {
+							tournamentId,
+							OR: [
+								{ userId: playerId, tournamentEventId },
+								{ partnerId: playerId, tournamentEventId },
+							],
+						},
+					});
+				if (existingRegistration) {
+					throw new BadRequestException(
+						`Player ${playerId} is already registered for this tournament event`,
+					);
+				}
+
+				registrationsData.push({
+					tournamentId,
+					userId: playerId,
+					tournamentEventId: tournamentEventId || null,
+					partnerId: partnerId || null,
+					registrationRole: "ATHLETE",
+					fromTeamId: fromTeamId || null,
+					registrationDocumentCreator,
+					registrationDocumentPartner,
+				});
+			}
+
+			return await this.prismaService.tournamentRegistration.createManyAndReturn(
+				{
+					data: registrationsData,
+					skipDuplicates: true,
+				},
+			);
+		} catch (e) {
+			console.error("registerTournamentForTeam failed", e.message, e.stack);
+			throw new InternalServerErrorException("Team registration failed");
 		}
 	}
 }

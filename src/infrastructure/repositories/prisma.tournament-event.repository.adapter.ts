@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaClient, TournamentEvent } from "@prisma/client";
+import { PrismaClient, Tournament, TournamentEvent } from "@prisma/client";
 import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
@@ -10,6 +10,27 @@ export class PrismaTournamentEventRepositoryAdapter
 	implements TournamentEventRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async getTournamentOfTournamentEvent(tournamentEventId: string): Promise<Tournament> {
+		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
+			where: {
+				id: tournamentEventId
+			},
+			select: {
+				tournament: true
+			}
+		});
+		return tournamentEvent.tournament;
+	}
+	async getTournamentEventById(tournamentEventId: string): Promise<any> {
+		return await this.prisma.tournamentEvent.findUnique({
+			where: {
+				id: tournamentEventId
+			},
+			include: {
+				tournament: true
+			}
+		});
+	}
 
 	async getParticipantsOfTournamentEvent(
 		tournamentEventId: string,

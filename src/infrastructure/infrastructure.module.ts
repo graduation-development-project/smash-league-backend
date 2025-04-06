@@ -108,6 +108,6 @@ import { MatchController } from "./controllers/match.controller";
 		},
 		PaymentPayOSService
 	],
-	exports: [MailService, UploadService, PaymentPayOSService],
+	exports: [MailService, UploadService],
 })
 export class InfrastructureModule {}
