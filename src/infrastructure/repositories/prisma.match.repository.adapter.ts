@@ -766,6 +766,18 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		};
 	}
 
+	async getNumberOfMatchOfStage(stageId: string): Promise<number> {
+		return await this.prisma.match.count({
+			where: {
+				stageId: stageId
+			}
+		});
+	}
+
+	async getThirdPlaceMatch(matchId: string): Promise<Match | null> {
+		return;
+	}
+
 	async processWonMatch(game: Game, match: Match, winningId: string, tournamentEvent: TournamentEvent): Promise<IGameAfterUpdatePointResponse> {
 		const games = await this.prisma.game.count({
 			where: {
@@ -808,6 +820,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				}
 			});
 			if (matchUpdated.nextMatchId === null) await this.updateStandingOfTournamentEvent(matchUpdated.id);
+			
 			console.log("Won matches!");
 			// const nextMatch = await this.prisma.match.findUnique({
 			// 	where: {
@@ -847,7 +860,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				winningCompetitor: await this.getWinningCompetitor(winningId)
 			};
 		}
-		return;
 	}
 
 	async updateStandingOfTournamentEvent(currentMatchId: string): Promise<any> {

@@ -23,7 +23,7 @@ export class PaymentPayOSService {
 		);
 		const body = {
 			orderCode: transactionId,
-			amount: value,
+			amount: 2000,
 			description: "Pay tournament fee",
 			items: [
 				{
