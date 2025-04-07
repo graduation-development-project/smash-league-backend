@@ -26,6 +26,16 @@ export interface TournamentRepositoryPort {
 		options: IPaginateOptions,
 	): Promise<IPaginatedOutput<ITournamentResponse>>;
 
+	getTournamentsByUserId(
+		organizerId: string,
+		options: IPaginateOptions,
+	): Promise<IPaginatedOutput<ITournamentResponse>>;
+
+	getTournamentsByOrganizerId(
+		organizerId: string,
+		options: IPaginateOptions,
+	): Promise<IPaginatedOutput<ITournamentResponse>>;
+
 	filterTournament(): Promise<Tournament[]>;
 
 	getTournamentDetail(tournamentId: string): Promise<ITournamentDetailResponse>;
