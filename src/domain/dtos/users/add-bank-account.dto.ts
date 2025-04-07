@@ -4,9 +4,8 @@ export class AddBankAccountDTO {
 	@IsOptional()
 	userId: string;
 
-	@IsNumber()
 	@IsNotEmpty()
-	bankId: number;
+	bankId: string;
 
 	@IsString()
 	@IsNotEmpty()

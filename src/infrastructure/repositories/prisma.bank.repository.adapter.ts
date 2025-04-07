@@ -17,7 +17,7 @@ export class PrismaBankRepositoryAdapter implements BankRepositoryPort {
 	}
 
 	async getUniqueBankAccount(
-		bankId: number,
+		bankId: string,
 		accountNumber: string,
 		userId: string,
 	): Promise<UserBankAccount> {
