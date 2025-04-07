@@ -15,28 +15,21 @@ export class PaymentPayOSService {
 	) {
 	}
 
-	async createPaymentLinkForRegistrationFee(tournamentRegistration: TournamentRegistration, tournament: Tournament, tournamentEvent: TournamentEvent, transactionId: number): Promise<any> {
+	async createPaymentLinkForRegistrationFee( tournamentEvent: TournamentEvent, transactionId: number, value: number): Promise<any> {
 		const payOS = new PayOS(
 			this.configService.get<string>("PAYOS_CLIENT_ID"),
 			this.configService.get<string>("PAYOS_API_KEY"),
 			this.configService.get<string>("PAYOS_CHECKSUM_KEY")
 		);
-		let amount = 0;
-		if (tournamentEvent.tournamentEvent === "MENS_DOUBLE" ||
-			tournamentEvent.tournamentEvent === "WOMENS_DOUBLE" ||
-			tournamentEvent.tournamentEvent === "MIXED_DOUBLE") {
-			if (tournament.registrationFeePerPair > 0) amount = tournament.registrationFeePerPair;
-			else amount = tournament.registrationFeePerPerson * 2;
-		} else amount = tournament.registrationFeePerPerson;
 		const body = {
 			orderCode: transactionId,
-			amount: amount,
-			description: "Payment for registration fee!",
+			amount: value,
+			description: "Pay tournament fee",
 			items: [
 				{
 					name: "Payment for " + tournamentEvent.tournamentEvent,
 					quantity: 1,
-					price: amount,
+					price: value,
 				},
 			],
 			cancelUrl: this.configService.get<string>("PAYOS_CANCEL_URL") + "?transactionId=" + transactionId,
@@ -53,6 +46,8 @@ export class PaymentPayOSService {
 		}
 		return;
 	}
+
+
 	async createPaymentLink(order: IOrderDetailResponse, transactionId: number) : Promise<IPayOSPaymentResponse> {
 		const payOS = new PayOS(
 			this.configService.get<string>("PAYOS_CLIENT_ID"),

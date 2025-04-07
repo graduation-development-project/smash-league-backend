@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { CheckoutResponseDataType } from "@payos/node/lib/type";
 import { CreatePaymentLinkUseCase } from "src/application/usecases/payment/create-payment-link.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
@@ -14,6 +14,7 @@ import { AcceptPaymentUseCase } from "src/application/usecases/payment/accept-pa
 import { Transaction } from "@prisma/client";
 import { RejectPaymentUseCase } from "src/application/usecases/payment/reject-payment.usecase";
 import { GetUserTransactionUseCase } from "../../application/usecases/payment/get-user-transaction.usecase";
+import { PayRegistrationFeeUseCase } from "../../application/usecases/payment/pay-registration-fee.usecase";
 
 @Controller("/payment")
 export class PaymentController {
@@ -23,6 +24,7 @@ export class PaymentController {
 		private readonly acceptPaymentUseCase: AcceptPaymentUseCase,
 		private readonly rejectPaymentUseCase: RejectPaymentUseCase,
 		private readonly getUserTransactionUseCase: GetUserTransactionUseCase,
+		private readonly payRegistrationFeeUseCase: PayRegistrationFeeUseCase,
 	) {}
 
 	@Get("/buy-package/:packageId")
@@ -33,6 +35,15 @@ export class PaymentController {
 		@Param("packageId") packageId: string,
 	): Promise<ApiResponse<IPayOSPaymentResponse>> {
 		return await this.buyPackageUseCase.execute(packageId, request.user.id);
+	}
+
+	@Get("/pay-registration-fee/:tournamentRegistrationId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
+	async payRegistrationFee(
+		@Param("tournamentRegistrationId") tournamentRegistrationId: string,
+	): Promise<ApiResponse<IPayOSPaymentResponse>> {
+		return await this.payRegistrationFeeUseCase.execute(tournamentRegistrationId);
 	}
 
 	// @Get("/create-payment-link")

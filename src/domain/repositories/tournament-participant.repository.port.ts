@@ -1,0 +1,14 @@
+import {
+	TournamentParticipants,
+	TournamentRegistration,
+	TournamentRegistrationStatus,
+} from "@prisma/client";
+
+export interface TournamentParticipantsRepositoryPort {
+	addTournamentParticipant(
+		tournamentId: string,
+		tournamentEventId: string,
+		playerId: string,
+		partnerId?: string,
+	): Promise<TournamentParticipants>;
+}

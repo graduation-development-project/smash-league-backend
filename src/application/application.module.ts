@@ -105,12 +105,8 @@ import { GetOwnedTournamentUseCase } from "./usecases/organizers/get-owned-tourn
 import { GetTournamentPostUseCase } from "./usecases/tournament/get-tournament-post.usecase";
 import { UmpireUpdateMatchUseCase } from "./usecases/umpires/umpire-update-match.usecase";
 import { GetUmpireRegistrationUseCase } from "./usecases/organizers/get-umpire-registration.usecase";
-import {
-	GetTournamentEventsByTournamentIdUseCase
-} from "./usecases/tournament/tournament-event/get-tournament-events-by-tournament-id.usecase";
-import {
-	GetTournamentRegistrationByUserIdUseCase
-} from "./usecases/athletes/get-tournament-registration-by-user-id.usecase";
+import { GetTournamentEventsByTournamentIdUseCase } from "./usecases/tournament/tournament-event/get-tournament-events-by-tournament-id.usecase";
+import { GetTournamentRegistrationByUserIdUseCase } from "./usecases/athletes/get-tournament-registration-by-user-id.usecase";
 import { UpdateAttendanceUseCase } from "./usecases/tournament/match/update-attendance.usecase";
 import { UpdateForfeitCompetitorUseCase } from "./usecases/tournament/match/update-forfeit-competitor.usecase,";
 import { GetUserTransactionUseCase } from "./usecases/payment/get-user-transaction.usecase";
@@ -126,10 +122,13 @@ import { GetTeamMembersByTeamLeaderUseCase } from "./usecases/teams/get-team-mem
 import { GetAssignedMatchUseCase } from "./usecases/umpires/get-assigned-match.usecase";
 import { GetUmpireParticipatedTournamentsUseCase } from "./usecases/umpires/get-participated-tournaments.usecase";
 import { GetMatchByIdUseCase } from "./usecases/tournament/match/get-match-by-id.usecase";
-import {
-	GetTournamentEventStandingBoardUseCase
-} from "./usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
+import { GetTournamentEventStandingBoardUseCase } from "./usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
 import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/register-tournament-for-team.usecase";
+import { PayRegistrationFeeUseCase } from "./usecases/payment/pay-registration-fee.usecase";
+import { PrismaTournamentRegistrationRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-registration.repository.adapter";
+import {
+	PrismaTournamentParticipantRepositoryAdapter
+} from "../infrastructure/repositories/prisma.tournament-participant.repository.adapter";
 
 @Module({
 	imports: [
@@ -220,18 +219,28 @@ import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/registe
 			provide: "UmpireRepository",
 			useClass: PrismaUmpireRepositoryAdapter,
 		},
-		{	
+		{
 			provide: "GameRepository",
-			useClass: PrismaGameRepositoryAdapter
+			useClass: PrismaGameRepositoryAdapter,
 		},
 		{
 			provide: "CourtRepository",
-			useClass: PrismaCourtRepositoryAdapter
+			useClass: PrismaCourtRepositoryAdapter,
+		},
+		{
+			provide: "TournamentRegistrationRepositoryPort",
+			useClass: PrismaTournamentRegistrationRepositoryAdapter,
+		},
+		{
+			provide: "TournamentParticipantRepositoryPort",
+			useClass: PrismaTournamentParticipantRepositoryAdapter,
 		},
 		//Third Party Service
 		MailService,
 		UploadService,
 		PaymentPayOSService,
+		PrismaService,
+
 		//Authentication Service
 		AuthService,
 		//Prisma Service
@@ -341,6 +350,7 @@ import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/registe
 		BuyPackageUseCase,
 		AcceptPaymentUseCase,
 		RejectPaymentUseCase,
+		PayRegistrationFeeUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -455,7 +465,7 @@ import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/registe
 		CreateTournamentSerieUseCase,
 		GetMyTournamentSerieUseCase,
 
-		//Match Use Case 
+		//Match Use Case
 		UpdateAttendanceUseCase,
 		UpdateForfeitCompetitorUseCase,
 		StartMatchUseCase,
@@ -464,7 +474,7 @@ import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/registe
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
-		
+
 		// UploadVerificationImagesUseCase,
 
 		//Package Use Case
@@ -477,6 +487,7 @@ import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/registe
 		BuyPackageUseCase,
 		AcceptPaymentUseCase,
 		RejectPaymentUseCase,
+		PayRegistrationFeeUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
