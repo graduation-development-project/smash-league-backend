@@ -617,7 +617,7 @@ enum OrderStatus {
 }
 
 model Bank {
-  id              Int               @id @default(autoincrement())
+  id              String               @id @default(uuid())
   name            String
   shortName       String
   code            String
@@ -630,7 +630,7 @@ model UserBankAccount {
   accountNumber String
   userId        String
   user          User   @relation(name: "FK_User_UserBankAccount", fields: [userId], references: [id], onDelete: Cascade)
-  bankId        Int
+  bankId        String
   bank          Bank   @relation(name: "FK_Bank_UserBankAccount", fields: [bankId], references: [id])
 
   @@unique([accountNumber, bankId])
