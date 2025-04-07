@@ -52,6 +52,7 @@ model User {
   TeamRequest                   TeamRequest[]            @relation(name: "FK_TeamMember_TeamRequest")
   matchHosts                    Match[]                  @relation(name: "FK_Match_Umpire")
   TournamentUmpires             TournamentUmpires[]      @relation(name: "FK_TournamentUmpires_User")
+  UserBankAccount               UserBankAccount[]        @relation(name: "FK_User_UserBankAccount")
 }
 
 enum Gender {
@@ -573,7 +574,7 @@ enum TransactionType {
 }
 
 model Transaction {
-  id                       Int                  @id @default(autoincrement())
+  id                       Int                     @id @default(autoincrement())
   transactionDetail        String
   transactionPaymentLink   String?
   transactionImage         String?
@@ -595,7 +596,7 @@ enum TransactionStatus {
 }
 
 model Order {
-  id           String           @id @default(uuid())
+  id           String        @id @default(uuid())
   total        Int
   packageId    String
   userId       String
@@ -609,4 +610,20 @@ enum OrderStatus {
   PAID
   PENDING
   FAILED
+}
+
+model Bank {
+  id              Int               @id @default(autoincrement())
+  name            String
+  code            String
+  logo            String
+  UserBankAccount UserBankAccount[] @relation(name: "FK_Bank_UserBankAccount")
+}
+
+model UserBankAccount {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(name: "FK_User_UserBankAccount", fields: [userId], references: [id], onDelete: Cascade)
+  bankId Int
+  bank   Bank   @relation(name: "FK_Bank_UserBankAccount", fields: [bankId], references: [id])
 }
