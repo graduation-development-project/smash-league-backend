@@ -33,6 +33,7 @@ import {OrganizerController} from "./controllers/organizers.controller";
 import { PaymentPayOSService } from "../application/services/payment.service";
 import { UmpireController } from "./controllers/umpire.controller";
 import { MatchController } from "./controllers/match.controller";
+import { BankController } from "./controllers/bank.controller";
 
 @Module({
 	imports: [
@@ -84,7 +85,8 @@ import { MatchController } from "./controllers/match.controller";
 		TeamController,
 		OrganizerController,
 		UmpireController,
-		MatchController
+		MatchController,
+		BankController
 	],
 	providers: [
 		LocalStrategy,

@@ -615,6 +615,7 @@ enum OrderStatus {
 model Bank {
   id              Int               @id @default(autoincrement())
   name            String
+  shortName       String
   code            String
   logo            String
   UserBankAccount UserBankAccount[] @relation(name: "FK_Bank_UserBankAccount")

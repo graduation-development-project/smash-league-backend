@@ -127,9 +127,9 @@ import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/registe
 import { AssignAthleteIntoMatchUseCase } from "./usecases/tournament/match/assign-athlete-into-match.usecase";
 import { PayRegistrationFeeUseCase } from "./usecases/payment/pay-registration-fee.usecase";
 import { PrismaTournamentRegistrationRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-registration.repository.adapter";
-import {
-	PrismaTournamentParticipantRepositoryAdapter
-} from "../infrastructure/repositories/prisma.tournament-participant.repository.adapter";
+import { PrismaTournamentParticipantRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-participant.repository.adapter";
+import { PrismaBankRepositoryAdapter } from "../infrastructure/repositories/prisma.bank.repository.adapter";
+import { GetAllBanksUseCase } from "./usecases/bank/get-all-banks.usecase";
 
 @Module({
 	imports: [
@@ -235,6 +235,11 @@ import {
 		{
 			provide: "TournamentParticipantRepositoryPort",
 			useClass: PrismaTournamentParticipantRepositoryAdapter,
+		},
+
+		{
+			provide: "BankRepositoryPort",
+			useClass: PrismaBankRepositoryAdapter,
 		},
 		//Third Party Service
 		MailService,
@@ -373,6 +378,9 @@ import {
 		UmpireUpdateMatchUseCase,
 		GetAssignedMatchUseCase,
 		GetUmpireParticipatedTournamentsUseCase,
+
+		//Bank Use Case
+		GetAllBanksUseCase
 	],
 	exports: [
 		//Auth Service
@@ -511,6 +519,9 @@ import {
 		UmpireUpdateMatchUseCase,
 		GetAssignedMatchUseCase,
 		GetUmpireParticipatedTournamentsUseCase,
+
+		//Bank Use Case
+		GetAllBanksUseCase,
 	],
 })
 export class ApplicationModule {}
