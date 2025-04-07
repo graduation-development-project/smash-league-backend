@@ -1,4 +1,14 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import {
+	Body,
+	Controller,
+	Get,
+	Param,
+	Post,
+	Req,
+	UploadedFiles,
+	UseGuards,
+	UseInterceptors,
+} from "@nestjs/common";
 import { CheckoutResponseDataType } from "@payos/node/lib/type";
 import { CreatePaymentLinkUseCase } from "src/application/usecases/payment/create-payment-link.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
@@ -15,6 +25,9 @@ import { Transaction } from "@prisma/client";
 import { RejectPaymentUseCase } from "src/application/usecases/payment/reject-payment.usecase";
 import { GetUserTransactionUseCase } from "../../application/usecases/payment/get-user-transaction.usecase";
 import { PayRegistrationFeeUseCase } from "../../application/usecases/payment/pay-registration-fee.usecase";
+import { CreatePaybackTransactionDTO } from "../../domain/dtos/transactions/create-payback-transaction.dto";
+import { PaybackRegistrationFeeUseCase } from "../../application/usecases/payment/payback-registration-fee.usecase";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
 
 @Controller("/payment")
 export class PaymentController {
@@ -25,6 +38,7 @@ export class PaymentController {
 		private readonly rejectPaymentUseCase: RejectPaymentUseCase,
 		private readonly getUserTransactionUseCase: GetUserTransactionUseCase,
 		private readonly payRegistrationFeeUseCase: PayRegistrationFeeUseCase,
+		private readonly paybackRegistrationFeeUseCase: PaybackRegistrationFeeUseCase,
 	) {}
 
 	@Get("/buy-package/:packageId")
@@ -43,7 +57,9 @@ export class PaymentController {
 	async payRegistrationFee(
 		@Param("tournamentRegistrationId") tournamentRegistrationId: string,
 	): Promise<ApiResponse<IPayOSPaymentResponse>> {
-		return await this.payRegistrationFeeUseCase.execute(tournamentRegistrationId);
+		return await this.payRegistrationFeeUseCase.execute(
+			tournamentRegistrationId,
+		);
 	}
 
 	// @Get("/create-payment-link")
@@ -85,5 +101,19 @@ export class PaymentController {
 		@Req() { user }: IRequestUser,
 	): Promise<ApiResponse<Transaction[]>> {
 		return await this.getUserTransactionUseCase.execute(user.id);
+	}
+
+	@UseInterceptors(AnyFilesInterceptor())
+	@Post("/payback-tournament-fee")
+	@UseGuards(JwtAccessTokenGuard)
+	@Roles(RoleMap.Staff.name)
+	async paybackTournamentFee(
+		@Body() createPaybackTransactionDTO: CreatePaybackTransactionDTO,
+		@UploadedFiles() paybackImage: Express.Multer.File[],
+	): Promise<ApiResponse<Transaction>> {
+		return await this.paybackRegistrationFeeUseCase.execute({
+			...createPaybackTransactionDTO,
+			paybackImage,
+		});
 	}
 }

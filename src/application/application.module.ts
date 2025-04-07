@@ -131,6 +131,7 @@ import { PrismaTournamentParticipantRepositoryAdapter } from "../infrastructure/
 import { PrismaBankRepositoryAdapter } from "../infrastructure/repositories/prisma.bank.repository.adapter";
 import { GetAllBanksUseCase } from "./usecases/bank/get-all-banks.usecase";
 import { AddBankAccountUseCase } from "./usecases/users/add-bank-account.usecase";
+import { PaybackRegistrationFeeUseCase } from "./usecases/payment/payback-registration-fee.usecase";
 
 @Module({
 	imports: [
@@ -360,6 +361,7 @@ import { AddBankAccountUseCase } from "./usecases/users/add-bank-account.usecase
 		AcceptPaymentUseCase,
 		RejectPaymentUseCase,
 		PayRegistrationFeeUseCase,
+		PaybackRegistrationFeeUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -502,6 +504,7 @@ import { AddBankAccountUseCase } from "./usecases/users/add-bank-account.usecase
 		AcceptPaymentUseCase,
 		RejectPaymentUseCase,
 		PayRegistrationFeeUseCase,
+		PaybackRegistrationFeeUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,

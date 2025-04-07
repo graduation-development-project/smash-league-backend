@@ -6,7 +6,10 @@ import {
 	TransactionType,
 } from "@prisma/client";
 import { create } from "domain";
-import { ICreateTransactionRequest } from "src/domain/interfaces/payment/transaction.interface";
+import {
+	ICreatePaybackTransactionRequest,
+	ICreateTransactionRequest,
+} from "src/domain/interfaces/payment/transaction.interface";
 import { TransactionRepositoryPort } from "src/domain/repositories/transaction.repository.port";
 
 @Injectable()
@@ -113,6 +116,29 @@ export class PrismaTransactionRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("Get user transaction failed");
+			throw e;
+		}
+	}
+
+	async createPaybackTransaction(
+		createPayback: ICreatePaybackTransactionRequest,
+	): Promise<Transaction> {
+		const { paybackToUserId, paybackImage, transactionDetail, value } =
+			createPayback;
+
+		try {
+			return await this.prisma.transaction.create({
+				data: {
+					paybackImage,
+					paybackToUserId,
+					value,
+					transactionDetail,
+					transactionType: TransactionType.PAYBACK_REGISTRATION_FEE,
+					status: TransactionStatus.SUCCESSFUL,
+				},
+			});
+		} catch (e) {
+			console.error("Create payback transaction failed", e);
 			throw e;
 		}
 	}

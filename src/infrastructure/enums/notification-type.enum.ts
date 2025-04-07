@@ -11,6 +11,7 @@ export const NotificationTypeMap = {
 	Leave_Team: { id: null, name: "Leave Team" },
 	Join_Team: { id: null, name: "Join Team" },
 	Transfer_Team_Leader: { id: null, name: "Transfer Team Leader" },
+	Refund: { id: null, name: "Refund" },
 };
 
 const notificationTypeMapping = {

@@ -20,6 +20,11 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 				where: {
 					id: tournamentRegistrationId,
 				},
+
+				include: {
+					tournament: true,
+					tournamentEvent: true,
+				},
 			});
 		} catch (e) {
 			console.error("Get tournament registration by id failed", e);

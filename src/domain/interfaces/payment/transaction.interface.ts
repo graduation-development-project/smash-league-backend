@@ -4,3 +4,10 @@ export interface ICreateTransactionRequest {
 	tournamentRegistrationId?: string;
 	value: number;
 }
+
+export interface ICreatePaybackTransactionRequest {
+	transactionDetail: string;
+	value: number;
+	paybackToUserId: string;
+	paybackImage: string;
+}

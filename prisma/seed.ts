@@ -52,6 +52,9 @@ async function main() {
 		{
 			typeOfNotification: "Transfer Team Leader",
 		},
+		{
+			typeOfNotification: "Refund",
+		},
 	];
 	let packages: Prisma.PackageCreateManyInput[] = [
 		{

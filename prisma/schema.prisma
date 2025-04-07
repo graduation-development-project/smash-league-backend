@@ -53,6 +53,7 @@ model User {
   matchHosts                    Match[]                  @relation(name: "FK_Match_Umpire")
   TournamentUmpires             TournamentUmpires[]      @relation(name: "FK_TournamentUmpires_User")
   UserBankAccount               UserBankAccount[]        @relation(name: "FK_User_UserBankAccount")
+  paybackTransaction            Transaction[]            @relation(name: "FK_User_Transaction")
 }
 
 enum Gender {
@@ -578,6 +579,9 @@ model Transaction {
   transactionDetail        String
   transactionPaymentLink   String?
   transactionImage         String?
+  paybackToUserId          String?
+  paybackToUser            User?                   @relation(name: "FK_User_Transaction", fields: [paybackToUserId], references: [id])
+  paybackImage             String?
   transactionType          TransactionType
   orderId                  String?
   order                    Order?                  @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
