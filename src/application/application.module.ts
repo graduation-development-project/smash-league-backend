@@ -130,6 +130,7 @@ import { PrismaTournamentRegistrationRepositoryAdapter } from "../infrastructure
 import { PrismaTournamentParticipantRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-participant.repository.adapter";
 import { PrismaBankRepositoryAdapter } from "../infrastructure/repositories/prisma.bank.repository.adapter";
 import { GetAllBanksUseCase } from "./usecases/bank/get-all-banks.usecase";
+import { AddBankAccountUseCase } from "./usecases/users/add-bank-account.usecase";
 
 @Module({
 	imports: [
@@ -263,6 +264,7 @@ import { GetAllBanksUseCase } from "./usecases/bank/get-all-banks.usecase";
 		GetUserProfileUseCase,
 		GetTournamentRegistrationByUserIdUseCase,
 		GetUserTransactionUseCase,
+		AddBankAccountUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -398,6 +400,7 @@ import { GetAllBanksUseCase } from "./usecases/bank/get-all-banks.usecase";
 		GetUserProfileUseCase,
 		GetTournamentRegistrationByUserIdUseCase,
 		GetUserTransactionUseCase,
+		AddBankAccountUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

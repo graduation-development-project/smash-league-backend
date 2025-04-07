@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { BankRepositoryPort } from "../../domain/repositories/bank.repository.port";
-import { Bank } from "@prisma/client";
+import { Bank, UserBankAccount } from "@prisma/client";
 import { PrismaService } from "../services/prisma.service";
 
 @Injectable()
@@ -12,6 +12,30 @@ export class PrismaBankRepositoryAdapter implements BankRepositoryPort {
 			return this.prismaService.bank.findMany({});
 		} catch (e) {
 			console.error("getAllBankList failed", e);
+			throw e;
+		}
+	}
+
+	async getUniqueBankAccount(
+		bankId: number,
+		accountNumber: string,
+		userId: string,
+	): Promise<UserBankAccount> {
+		try {
+			return this.prismaService.userBankAccount.findUnique({
+				where: {
+					userId,
+					accountNumber_bankId: {
+						accountNumber,
+						bankId,
+					},
+				},
+				include: {
+					bank: true,
+				},
+			});
+		} catch (e) {
+			console.error("getUniqueBankAccount failed", e);
 			throw e;
 		}
 	}

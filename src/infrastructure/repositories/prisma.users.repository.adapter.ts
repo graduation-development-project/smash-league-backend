@@ -4,7 +4,7 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from "@nestjs/common";
-import { Gender, PrismaClient, User } from "@prisma/client";
+import { Gender, PrismaClient, User, UserBankAccount } from "@prisma/client";
 import { UsersRepositoryPort } from "../../domain/repositories/users.repository.port";
 import { CreateUserDTO } from "../../domain/dtos/users/create-user.dto";
 import { TUserWithRole } from "../types/users.type";
@@ -12,6 +12,7 @@ import { RoleMap } from "../enums/role.enum";
 import { EditUserDTO } from "../../domain/dtos/users/edit-user.dto";
 import { ChangePasswordDTO } from "../../domain/dtos/users/change-password.dto";
 import { IUserResponse } from "src/domain/interfaces/user/user.interface";
+import { AddBankAccountDTO } from "../../domain/dtos/users/add-bank-account.dto";
 
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
@@ -108,7 +109,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			// console.log(email, password);
 			const user = await this.prisma.user.findUnique({
 				where: { email: email },
-				include: { userRoles: { include: {role: true} } },
+				include: { userRoles: { include: { role: true } } },
 			});
 
 			if (!user) {
@@ -281,6 +282,19 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			} as TUserWithRole;
 		} catch (e) {
 			throw new BadRequestException("User not found");
+		}
+	}
+
+	async addBankAccount(
+		addBankAccountDTO: AddBankAccountDTO,
+	): Promise<UserBankAccount> {
+		try {
+			return this.prisma.userBankAccount.create({
+				data: addBankAccountDTO
+			});
+		} catch (e) {
+			console.error("add bank account failed", e);
+			throw e;
 		}
 	}
 }

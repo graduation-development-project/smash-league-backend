@@ -1,9 +1,10 @@
-import { User } from "@prisma/client";
+import { User, UserBankAccount } from "@prisma/client";
 import { CreateUserDTO } from "../dtos/users/create-user.dto";
 import { TUserWithRole } from "../../infrastructure/types/users.type";
 import { EditUserDTO } from "../dtos/users/edit-user.dto";
 import { ChangePasswordDTO } from "../dtos/users/change-password.dto";
 import { IUserResponse } from "../interfaces/user/user.interface";
+import { AddBankAccountDTO } from "../dtos/users/add-bank-account.dto";
 
 export interface UsersRepositoryPort {
 	findUserById(userID: string): Promise<TUserWithRole>;
@@ -28,6 +29,11 @@ export interface UsersRepositoryPort {
 		changePasswordDTO: ChangePasswordDTO,
 	): Promise<TUserWithRole>;
 
-	searchUserByEmail(email: string) : Promise<IUserResponse[]>;
+	searchUserByEmail(email: string): Promise<IUserResponse[]>;
+
 	addCreditForUser(userId: string, credit: number): Promise<any>;
+
+	addBankAccount(
+		addBankAccountDTO: AddBankAccountDTO,
+	): Promise<UserBankAccount>;
 }

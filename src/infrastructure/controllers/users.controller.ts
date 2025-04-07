@@ -5,6 +5,7 @@ import {
 	Param,
 	ParseIntPipe,
 	Patch,
+	Post,
 	Put,
 	Query,
 	Req,
@@ -23,9 +24,11 @@ import { ChangePasswordDTO } from "../../domain/dtos/users/change-password.dto";
 import { ChangePasswordUseCase } from "../../application/usecases/users/change-password.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { SearchUserByEmailUseCase } from "src/application/usecases/users/search-user-by-email.usecase";
-import { User } from "@prisma/client";
+import { User, UserBankAccount } from "@prisma/client";
 import { IUserResponse } from "src/domain/interfaces/user/user.interface";
 import { GetUserProfileUseCase } from "../../application/usecases/users/get-user-profile.usecase";
+import { AddBankAccountUseCase } from "../../application/usecases/users/add-bank-account.usecase";
+import { AddBankAccountDTO } from "../../domain/dtos/users/add-bank-account.dto";
 
 @Controller("/users")
 export class UsersController {
@@ -35,7 +38,9 @@ export class UsersController {
 		private changePasswordUseCase: ChangePasswordUseCase,
 		private searchUserByEmail: SearchUserByEmailUseCase,
 		private getUserProfileUseCase: GetUserProfileUseCase,
-	) {}
+		private addBankAccountUseCase: AddBankAccountUseCase,
+	) {
+	}
 
 	@Get("/id/:id")
 	// @Roles(RoleMap.Admin.id, RoleMap.Athlete.id)
@@ -77,5 +82,14 @@ export class UsersController {
 		@Query("email") email: string,
 	): Promise<ApiResponse<IUserResponse[] | null>> {
 		return await this.searchUserByEmail.execute(email);
+	}
+
+	@Post("add-bank-account")
+	@UseGuards(JwtAccessTokenGuard)
+	async addBankAccount(
+		@Req() { user }: IRequestUser,
+		@Body() addBankAccountDTO: AddBankAccountDTO,
+	): Promise<ApiResponse<UserBankAccount>> {
+		return await this.addBankAccountUseCase.execute({ ...addBankAccountDTO, userId: user.id });
 	}
 }

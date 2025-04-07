@@ -622,9 +622,12 @@ model Bank {
 }
 
 model UserBankAccount {
-  id     String @id @default(uuid())
-  userId String
-  user   User   @relation(name: "FK_User_UserBankAccount", fields: [userId], references: [id], onDelete: Cascade)
-  bankId Int
-  bank   Bank   @relation(name: "FK_Bank_UserBankAccount", fields: [bankId], references: [id])
+  id            String @id @default(uuid())
+  accountNumber String
+  userId        String
+  user          User   @relation(name: "FK_User_UserBankAccount", fields: [userId], references: [id], onDelete: Cascade)
+  bankId        Int
+  bank          Bank   @relation(name: "FK_Bank_UserBankAccount", fields: [bankId], references: [id])
+
+  @@unique([accountNumber, bankId])
 }
