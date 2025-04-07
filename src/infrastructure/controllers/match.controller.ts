@@ -13,6 +13,7 @@ import { GetCourtAvailableUseCase } from "src/application/usecases/tournament/co
 import { AssignCourtForMatchUseCase } from "src/application/usecases/tournament/court/assign-court-for-match.usecase";
 import { GetMatchByIdUseCase } from "src/application/usecases/tournament/match/get-match-by-id.usecase";
 import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
+import { AssignAthleteIntoMatchUseCase } from "src/application/usecases/tournament/match/assign-athlete-into-match.usecase";
 
 @Controller("match")
 export class MatchController {
@@ -23,7 +24,8 @@ export class MatchController {
 		private readonly updatePointUseCase: UpdatePointUseCase,
 		private readonly getCourtsAvailableUseCase: GetCourtAvailableUseCase,
 		private readonly assignCourtForMatchUseCase: AssignCourtForMatchUseCase,
-		private readonly getMatchByIdUseCase: GetMatchByIdUseCase
+		private readonly getMatchByIdUseCase: GetMatchByIdUseCase,
+		private readonly assignAthleteIntoMatchUseCase: AssignAthleteIntoMatchUseCase
 	) {
 	}
 
@@ -70,4 +72,14 @@ export class MatchController {
 	async assignCourtForMatch(@Query("matchId") matchId: string, @Query("courtId") courtId: string): Promise<ApiResponse<Match>> {
 		return await this.assignCourtForMatchUseCase.execute(matchId, courtId);
 	}
+
+	@Get("assign-athlete-into-match/:matchId")
+	// @UseGuards(JwtAccessTokenGuard, RolesGuard)
+	// @Roles(RoleMap.Organizer.name)
+	async assignAthleteIntoMatch(@Param("matchId") matchId: string,
+			@Query("leftCompetitorId") leftCompetitorId: string,
+			@Query("rightCompetitorId") rightCompetitorId: string): Promise<ApiResponse<Match>> {
+				// console.log(matchId, " ", leftCompetitorId, " ", rightCompetitorId);
+				return await this.assignAthleteIntoMatchUseCase.execute(matchId, leftCompetitorId, rightCompetitorId);
+			}
 }

@@ -16,4 +16,6 @@ export interface MatchRepositoryPort {
 	updateStartTimeForMatch(matchId: string, currentServerId: string): Promise<Game>;
 	updatePoint(gameId: string, winningId: string): Promise<IGameAfterUpdatePointResponse>;
 	assignCourtForMatch(matchId: string, courtId: string): Promise<Match>;
+	assignAthleteIntoMatch(matchId: string, leftCompetitorId: string, rightCompetitorId: string): Promise<Match>;
+	countMatchesOfLastStage(matchId: string): Promise<number>;
 }
