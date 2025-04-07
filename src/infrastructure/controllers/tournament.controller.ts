@@ -79,6 +79,7 @@ import { UpdateForfeitCompetitorUseCase } from "src/application/usecases/tournam
 import { GetTournamentsByUserIdUseCase } from "../../application/usecases/tournament/get-tournaments-by-user-id.usecase";
 import { GetTournamentEventStandingBoardUseCase } from "../../application/usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
 import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
+import { GetFeatureTournamentsUseCase } from "../../application/usecases/tournament/get-feature-tournaments.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -107,6 +108,7 @@ export class TournamentController {
 		private readonly getTournamentUmpireUseCase: GetTournamentUmpireUseCase,
 		private readonly getTournamentsByUserIdUseCase: GetTournamentsByUserIdUseCase,
 		private readonly getTournamentEventStandingBoardUseCase: GetTournamentEventStandingBoardUseCase,
+		private readonly getFeatureTournamentsUseCase: GetFeatureTournamentsUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -330,5 +332,10 @@ export class TournamentController {
 		return await this.getTournamentEventStandingBoardUseCase.execute(
 			tournamentEventId,
 		);
+	}
+
+	@Get("/feature-tournaments")
+	async getFeatureTournament(): Promise<ApiResponse<Tournament[]>> {
+		return this.getFeatureTournamentsUseCase.execute();
 	}
 }

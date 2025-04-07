@@ -35,4 +35,6 @@ export interface TournamentRepositoryPort {
 	getTournamentPost(tournamentId: string): Promise<TournamentPost[]>;
 
 	getTournamentUmpire(tournamentId: string): Promise<TournamentUmpires[]>;
+
+	getFeatureTournaments(): Promise<Tournament[]>;
 }

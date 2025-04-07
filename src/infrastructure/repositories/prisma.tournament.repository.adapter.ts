@@ -466,4 +466,23 @@ export class PrismaTournamentRepositorAdapter
 			throw e;
 		}
 	}
+
+	async getFeatureTournaments(): Promise<Tournament[]> {
+		try {
+			return await this.prisma.tournament.findMany({
+				where: {
+					status: TournamentStatus.ON_GOING,
+				},
+				take: 5,
+				orderBy: {
+					TournamentParticipants: {
+						_count: "desc",
+					},
+				},
+			});
+		} catch (e) {
+			console.error("getFeatureTournament failed: ", e);
+			throw e;
+		}
+	}
 }

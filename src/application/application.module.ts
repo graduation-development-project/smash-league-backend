@@ -132,6 +132,7 @@ import { PrismaBankRepositoryAdapter } from "../infrastructure/repositories/pris
 import { GetAllBanksUseCase } from "./usecases/bank/get-all-banks.usecase";
 import { AddBankAccountUseCase } from "./usecases/users/add-bank-account.usecase";
 import { PaybackRegistrationFeeUseCase } from "./usecases/payment/payback-registration-fee.usecase";
+import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-tournaments.usecase";
 
 @Module({
 	imports: [
@@ -328,6 +329,7 @@ import { PaybackRegistrationFeeUseCase } from "./usecases/payment/payback-regist
 		GetTournamentsByUserIdUseCase,
 		GetTournamentEventStandingBoardUseCase,
 		RegisterTournamentForTeamUseCase,
+		GetFeatureTournamentsUseCase,
 
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
@@ -474,6 +476,7 @@ import { PaybackRegistrationFeeUseCase } from "./usecases/payment/payback-regist
 		GetTournamentsByUserIdUseCase,
 		GetTournamentEventStandingBoardUseCase,
 		RegisterTournamentForTeamUseCase,
+		GetFeatureTournamentsUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
