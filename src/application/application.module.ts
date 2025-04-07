@@ -124,6 +124,7 @@ import { GetUmpireParticipatedTournamentsUseCase } from "./usecases/umpires/get-
 import { GetMatchByIdUseCase } from "./usecases/tournament/match/get-match-by-id.usecase";
 import { GetTournamentEventStandingBoardUseCase } from "./usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
 import { RegisterTournamentForTeamUseCase } from "./usecases/team-leader/register-tournament-for-team.usecase";
+import { AssignAthleteIntoMatchUseCase } from "./usecases/tournament/match/assign-athlete-into-match.usecase";
 import { PayRegistrationFeeUseCase } from "./usecases/payment/pay-registration-fee.usecase";
 import { PrismaTournamentRegistrationRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-registration.repository.adapter";
 import {
@@ -332,6 +333,7 @@ import {
 		StartMatchUseCase,
 		UpdatePointUseCase,
 		GetMatchByIdUseCase,
+		AssignAthleteIntoMatchUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
@@ -471,6 +473,7 @@ import {
 		StartMatchUseCase,
 		UpdatePointUseCase,
 		GetMatchByIdUseCase,
+		AssignAthleteIntoMatchUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
