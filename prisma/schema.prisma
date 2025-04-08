@@ -54,6 +54,7 @@ model User {
   TournamentUmpires             TournamentUmpires[]      @relation(name: "FK_TournamentUmpires_User")
   UserBankAccount               UserBankAccount[]        @relation(name: "FK_User_UserBankAccount")
   paybackTransaction            Transaction[]            @relation(name: "FK_User_Transaction")
+  transactions                  Transaction[]            @relation(name: "FK_Transaction_Owner")
 }
 
 enum Gender {
@@ -579,6 +580,8 @@ model Transaction {
   transactionDetail        String
   transactionPaymentLink   String?
   transactionImage         String?
+  userId                   String
+  user                     User                    @relation(name: "FK_Transaction_Owner", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   paybackToUserId          String?
   paybackToUser            User?                   @relation(name: "FK_User_Transaction", fields: [paybackToUserId], references: [id])
   paybackImage             String?

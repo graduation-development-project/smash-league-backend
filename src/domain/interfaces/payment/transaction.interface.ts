@@ -1,4 +1,5 @@
 export interface ICreateTransactionRequest {
+	userId: string;
 	transactionDetail: string;
 	orderId?: string;
 	tournamentRegistrationId?: string;
@@ -6,6 +7,7 @@ export interface ICreateTransactionRequest {
 }
 
 export interface ICreatePaybackTransactionRequest {
+	userId: string;
 	transactionDetail: string;
 	value: number;
 	paybackToUserId: string;

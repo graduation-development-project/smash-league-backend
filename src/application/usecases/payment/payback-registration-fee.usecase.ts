@@ -79,6 +79,7 @@ export class PaybackRegistrationFeeUseCase {
 			HttpStatus.CREATED,
 			"Create payback tournament fee successfully!!",
 			await this.transactionRepository.createPaybackTransaction({
+				userId: createPayback.userId,
 				transactionDetail,
 				paybackImage: imgURLs[0].secure_url,
 				value: parseInt(value),

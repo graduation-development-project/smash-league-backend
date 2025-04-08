@@ -55,10 +55,12 @@ export class PaymentController {
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
 	async payRegistrationFee(
+		@Req() { user }: IRequestUser,
 		@Param("tournamentRegistrationId") tournamentRegistrationId: string,
 	): Promise<ApiResponse<IPayOSPaymentResponse>> {
 		return await this.payRegistrationFeeUseCase.execute(
-			tournamentRegistrationId,
+			user.id,
+			tournamentRegistrationId
 		);
 	}
 
@@ -108,12 +110,14 @@ export class PaymentController {
 	@UseGuards(JwtAccessTokenGuard)
 	@Roles(RoleMap.Staff.name)
 	async paybackTournamentFee(
+		@Req() { user }: IRequestUser,
 		@Body() createPaybackTransactionDTO: CreatePaybackTransactionDTO,
 		@UploadedFiles() paybackImage: Express.Multer.File[],
 	): Promise<ApiResponse<Transaction>> {
 		return await this.paybackRegistrationFeeUseCase.execute({
 			...createPaybackTransactionDTO,
 			paybackImage,
+			userId: user.id
 		});
 	}
 }

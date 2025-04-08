@@ -17,7 +17,7 @@ export class PayRegistrationFeeUseCase {
 		private prismaService: PrismaService,
 	) {}
 
-	async execute(tournamentRegistrationId: string): Promise<ApiResponse<any>> {
+	async execute(userId: string, tournamentRegistrationId: string): Promise<ApiResponse<any>> {
 		const tournamentRegistration =
 			await this.prismaService.tournamentRegistration.findUnique({
 				where: {
@@ -38,6 +38,7 @@ export class PayRegistrationFeeUseCase {
 
 		const transaction =
 			await this.transactionRepository.createTransactionForRegistrationFee({
+				userId: userId,
 				transactionDetail: "Pay tournament fee",
 				tournamentRegistrationId,
 				value,

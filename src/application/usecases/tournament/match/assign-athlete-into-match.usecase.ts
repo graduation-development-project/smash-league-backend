@@ -18,11 +18,12 @@ export class AssignAthleteIntoMatchUseCase {
 			return await this.checkAssignRightAthleteIntoByeMatch(matchId, leftCompetitorId, rightCompetitorId);
 		} else if (matchDetail.isByeMatch && matchDetail.matchNumber > Math.floor(numberOfMatch)) {
 			return await this.checkAssignLeftAthleteIntoByeMatch(matchId, leftCompetitorId, rightCompetitorId);
-		} else return await this.assignAthleteIntoMatch(matchId, leftCompetitorId, rightCompetitorId);
+		} 
+		return await this.assignAthleteIntoMatch(matchId, leftCompetitorId, rightCompetitorId);
 	}
 
 	async checkAssignLeftAthleteIntoByeMatch(matchId: string, leftCompetitorId?: string, rightCompetitorId?: string): Promise<ApiResponse<Match>>{
-		if (rightCompetitorId === undefined || rightCompetitorId === null) return new ApiResponse<null | undefined>(
+		if (rightCompetitorId !== undefined || rightCompetitorId !== null) return new ApiResponse<null | undefined>(
 			HttpStatus.OK,
 			"This match cannot have right competitor!",
 			null
@@ -40,7 +41,7 @@ export class AssignAthleteIntoMatchUseCase {
 	} 
 
 	async checkAssignRightAthleteIntoByeMatch(matchId: string, leftCompetitorId?: string, rightCompetitorId?: string): Promise<ApiResponse<Match>> {
-		if (leftCompetitorId === null || leftCompetitorId === undefined) return new ApiResponse<null | undefined>(
+		if (leftCompetitorId !== null || leftCompetitorId !== undefined) return new ApiResponse<null | undefined>(
 			HttpStatus.OK,
 			"This match cannot have left competitor!",
 			null
