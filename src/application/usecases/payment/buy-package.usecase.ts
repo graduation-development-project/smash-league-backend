@@ -33,6 +33,7 @@ export class BuyPackageUseCase {
 		});
 		console.log(order);
 		const transaction = await this.transactionRepository.createTransactionForBuyingPackage({
+			userId: userId,
 			orderId: order.id,
 			transactionDetail: "Payment for package " + order.package.packageName,
 			value: order.total

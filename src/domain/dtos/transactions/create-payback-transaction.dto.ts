@@ -3,6 +3,10 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 export class CreatePaybackTransactionDTO {
 	@IsNotEmpty()
 	@IsString()
+	userId: string;
+	
+	@IsNotEmpty()
+	@IsString()
 	paybackToUserId: string;
 
 	@IsNotEmpty()

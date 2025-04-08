@@ -129,6 +129,7 @@ export class PrismaTransactionRepositoryAdapter
 		try {
 			return await this.prisma.transaction.create({
 				data: {
+					userId: createPayback.userId,
 					paybackImage,
 					paybackToUserId,
 					value,
