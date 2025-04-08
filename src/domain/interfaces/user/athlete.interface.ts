@@ -3,6 +3,12 @@ export interface IParticipantsResponse {
 	partner?: IAthleteResponse;
 }
 
+export interface IParticipantsByTournamentEventResponse {
+	id: string;
+	user: IAthleteResponse;
+	partner?: IAthleteResponse;
+}
+
 export interface IAthleteResponse {
 	id: string;
 	name: string;

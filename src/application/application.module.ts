@@ -133,6 +133,7 @@ import { GetAllBanksUseCase } from "./usecases/bank/get-all-banks.usecase";
 import { AddBankAccountUseCase } from "./usecases/users/add-bank-account.usecase";
 import { PaybackRegistrationFeeUseCase } from "./usecases/payment/payback-registration-fee.usecase";
 import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-tournaments.usecase";
+import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 
 @Module({
 	imports: [
@@ -320,6 +321,7 @@ import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-
 		GetTournamentDetailUseCase,
 		UpdateTournamentUseCase,
 		GetParticipantsOfTournamentEventUseCase,
+		GetParticipantsByTournamentEventUseCase,
 		GenerateBracketUseCase,
 		GetMatchesOfStageUseCase,
 		GetTournamentPostUseCase,
@@ -467,6 +469,7 @@ import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-
 		GetTournamentDetailUseCase,
 		UpdateTournamentUseCase,
 		GetParticipantsOfTournamentEventUseCase,
+		GetParticipantsByTournamentEventUseCase,
 		GenerateBracketUseCase,
 		GetMatchesOfStageUseCase,
 		GetMatchesOfTournamentEventUseCase,

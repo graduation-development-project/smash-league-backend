@@ -64,7 +64,7 @@ import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/
 import { GetMyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-my-tournament-serie.usecase";
 import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 import { UpdateTournamentUseCase } from "src/application/usecases/tournament/update-tournament.usecase";
-import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
+import { IParticipantsOfTournamentEvent, ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { GetParticipantsOfTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase";
 import { UploadMerchandiseImagesUseCase } from "src/application/usecases/tournament/upload-merchandise-images.usecase";
 import { BadmintonParticipantType } from "src/domain/interfaces/tournament/badminton-participant-type.interface";
@@ -80,6 +80,8 @@ import { GetTournamentsByUserIdUseCase } from "../../application/usecases/tourna
 import { GetTournamentEventStandingBoardUseCase } from "../../application/usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
 import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
 import { GetFeatureTournamentsUseCase } from "../../application/usecases/tournament/get-feature-tournaments.usecase";
+import { IParticipantsByTournamentEventResponse } from "src/domain/interfaces/user/athlete.interface";
+import { GetParticipantsByTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -109,6 +111,7 @@ export class TournamentController {
 		private readonly getTournamentsByUserIdUseCase: GetTournamentsByUserIdUseCase,
 		private readonly getTournamentEventStandingBoardUseCase: GetTournamentEventStandingBoardUseCase,
 		private readonly getFeatureTournamentsUseCase: GetFeatureTournamentsUseCase,
+		private readonly getParticipantsByTournamentEventUseCase: GetParticipantsByTournamentEventUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -267,6 +270,13 @@ export class TournamentController {
 		@Param("tournamentEventId") tournamentEventId: string,
 	): Promise<ApiResponse<ITournamentEventParticipants>> {
 		return this.getParticipantsOfTournamentEvent.execute(tournamentEventId);
+	}
+
+	@Get("/get-participants-by-tournament-event/:tournamentEventId")
+	async getAllParticipantsByTournamentEvent(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<IParticipantsOfTournamentEvent>> {
+		return this.getParticipantsByTournamentEventUseCase.execute(tournamentEventId);
 	}
 
 	@Get("/generate-brackets/:tournamentEventId")
