@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient, Tournament, TournamentEvent } from "@prisma/client";
-import { ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
+import { IParticipantsOfTournamentEvent, ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
@@ -10,6 +10,53 @@ export class PrismaTournamentEventRepositoryAdapter
 	implements TournamentEventRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async getParticipantsByTournamentEvent(tournamentEventId: string): Promise<IParticipantsOfTournamentEvent> {
+		const [numberOfParticipants, listParticipants] = await Promise.all([
+			await this.prisma.tournamentParticipants.count({
+				where: {
+					tournamentEventId: tournamentEventId,
+				},
+			}),
+			await this.prisma.tournamentParticipants.findMany({
+				where: {
+					tournamentEventId: tournamentEventId,
+				},
+				select: {
+					id: true,
+					user: {
+						select: {
+							id: true,
+							name: true,
+							phoneNumber: true,
+							email: true,
+							dateOfBirth: true,
+							hands: true,
+							height: true,
+							gender: true,
+							avatarURL: true,
+						},
+					},
+					partner: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+							phoneNumber: true,
+							dateOfBirth: true,
+							gender: true,
+							hands: true,
+							height: true,
+							avatarURL: true,
+						},
+					},
+				},
+			}),
+		]);
+		return {
+			numberOfParticipants: numberOfParticipants,
+			listParticipants: listParticipants,
+		};
+	}
 	async getTournamentOfTournamentEvent(tournamentEventId: string): Promise<Tournament> {
 		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
 			where: {
