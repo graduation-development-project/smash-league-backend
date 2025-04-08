@@ -270,7 +270,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			const user = await this.prisma.user.findUnique({
 				where: { id: userId },
 				omit: { password: true },
-				include: { userRoles: { include: { role: true } } },
+				include: { userRoles: { include: { role: true } }, teamLeaderOf: true },
 			});
 
 			const roles = user.userRoles.map((item) => item.role.roleName);
@@ -279,7 +279,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				...user,
 				// @ts-ignore
 				userRoles: roles,
-			} as TUserWithRole;
+			} as unknown as TUserWithRole;
 		} catch (e) {
 			throw new BadRequestException("User not found");
 		}
@@ -290,7 +290,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	): Promise<UserBankAccount> {
 		try {
 			return this.prisma.userBankAccount.create({
-				data: addBankAccountDTO
+				data: addBankAccountDTO,
 			});
 		} catch (e) {
 			console.error("add bank account failed", e);

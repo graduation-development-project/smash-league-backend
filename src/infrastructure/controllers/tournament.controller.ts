@@ -80,6 +80,7 @@ import { GetTournamentsByUserIdUseCase } from "../../application/usecases/tourna
 import { GetTournamentEventStandingBoardUseCase } from "../../application/usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
 import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
 import { GetFeatureTournamentsUseCase } from "../../application/usecases/tournament/get-feature-tournaments.usecase";
+import { GetTournamentsByOrganizerIdUseCase } from "../../application/usecases/tournament/get-tournaments-by-organizer-id.usecase";
 import { IParticipantsByTournamentEventResponse } from "src/domain/interfaces/user/athlete.interface";
 import { GetParticipantsByTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 
@@ -111,6 +112,7 @@ export class TournamentController {
 		private readonly getTournamentsByUserIdUseCase: GetTournamentsByUserIdUseCase,
 		private readonly getTournamentEventStandingBoardUseCase: GetTournamentEventStandingBoardUseCase,
 		private readonly getFeatureTournamentsUseCase: GetFeatureTournamentsUseCase,
+		private readonly getTournamentsByOrganizerIdUseCase: GetTournamentsByOrganizerIdUseCase,
 		private readonly getParticipantsByTournamentEventUseCase: GetParticipantsByTournamentEventUseCase
 	) {}
 
@@ -329,10 +331,21 @@ export class TournamentController {
 	@Get("/get-tournaments-by-organizer")
 	async getTournamentByOrganizer(
 		@Req() { user }: IRequestUser,
-		@Body() options: IPaginateOptions,
+		@Query() paginateOption: IPaginateOptions,
 	): Promise<ApiResponse<IPaginatedOutput<ITournamentResponse>>> {
 		console.log(user);
-		return await this.getTournamentsByUserIdUseCase.execute(user.id, options);
+		return await this.getTournamentsByUserIdUseCase.execute(user.id, paginateOption);
+	}
+
+	@Get("/get-tournaments-by-organizer-id/:organizerId")
+	async getTournamentByOrganizerId(
+		@Param("organizerId") organizerId: string,
+		@Query() paginateOption: IPaginateOptions,
+	): Promise<ApiResponse<IPaginatedOutput<ITournamentResponse>>> {
+		return await this.getTournamentsByOrganizerIdUseCase.execute(
+			organizerId,
+			paginateOption,
+		);
 	}
 
 	@Get("/get-tournaments-event-standing-board/:tournamentEventId")

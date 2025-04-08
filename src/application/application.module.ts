@@ -133,6 +133,7 @@ import { GetAllBanksUseCase } from "./usecases/bank/get-all-banks.usecase";
 import { AddBankAccountUseCase } from "./usecases/users/add-bank-account.usecase";
 import { PaybackRegistrationFeeUseCase } from "./usecases/payment/payback-registration-fee.usecase";
 import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-tournaments.usecase";
+import { GetTournamentsByOrganizerIdUseCase } from "./usecases/tournament/get-tournaments-by-organizer-id.usecase";
 import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 
 @Module({
@@ -332,6 +333,7 @@ import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/t
 		GetTournamentEventStandingBoardUseCase,
 		RegisterTournamentForTeamUseCase,
 		GetFeatureTournamentsUseCase,
+		GetTournamentsByOrganizerIdUseCase,
 
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
@@ -388,7 +390,7 @@ import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/t
 		GetUmpireParticipatedTournamentsUseCase,
 
 		//Bank Use Case
-		GetAllBanksUseCase
+		GetAllBanksUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -480,6 +482,7 @@ import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/t
 		GetTournamentEventStandingBoardUseCase,
 		RegisterTournamentForTeamUseCase,
 		GetFeatureTournamentsUseCase,
+		GetTournamentsByOrganizerIdUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
