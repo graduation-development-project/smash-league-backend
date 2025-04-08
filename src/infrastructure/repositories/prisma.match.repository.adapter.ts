@@ -8,6 +8,7 @@ import { MatchRepositoryPort } from "src/domain/repositories/match.repository.po
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
 import { IGameAfterUpdatePointResponse, IPointOfGameResponse, IWonCompetitorResponse } from "src/domain/interfaces/tournament/match/game.interface";
 import { IParticipantResponse } from "src/domain/interfaces/tournament/match/competitor.interface";
+import { StageOfMatch } from '../enums/tournament/tournament-match.enum';
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(
@@ -774,8 +775,19 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		});
 	}
 
-	async getThirdPlaceMatch(matchId: string): Promise<Match | null> {
-		return;
+	async getThirdPlaceMatch(tournamentEventId: string): Promise<Match | null> {
+		
+		const thirdPlaceStage = await this.prisma.stage.findFirst({
+			where: {
+				tournamentEventId: tournamentEventId,
+				stageName: StageOfMatch.ThirdPlaceMatch
+			}
+		});
+		return await this.prisma.match.findFirst({
+			where: {
+				stageId: thirdPlaceStage.id
+			}
+		});
 	}
 
 	async processWonMatch(game: Game, match: Match, winningId: string, tournamentEvent: TournamentEvent): Promise<IGameAfterUpdatePointResponse> {
@@ -820,7 +832,12 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				}
 			});
 			if (matchUpdated.nextMatchId === null) await this.updateStandingOfTournamentEvent(matchUpdated.id);
-			
+			else if (await this.getNumberOfMatchOfStage(matchUpdated.stageId) === 2) {
+				const thirdPlaceMatch = await this.getThirdPlaceMatch(matchUpdated.tournamentEventId);
+				if (thirdPlaceMatch === null) {
+					const thirdPlaceMatch = await this.createThirdPlaceMatch(matchUpdated.stageId);
+				}
+			}
 			console.log("Won matches!");
 			// const nextMatch = await this.prisma.match.findUnique({
 			// 	where: {
@@ -1142,8 +1159,34 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			}
 		});
 	}
-	createMatch(): Promise<any> {
-		throw new Error("Method not implemented.");
+
+	async createThirdPlaceMatch(tournamentEventId: string): Promise<Match> {
+		const stage = await this.prisma.stage.create({
+			data: {
+				stageName: StageOfMatch.ThirdPlaceMatch,
+				tournamentEventId: tournamentEventId
+			}
+		});
+		return await this.prisma.match.create({
+			data: {
+				stageId: stage.id,
+				matchNumber: 0,
+				matchStatus: MatchStatus.NOT_STARTED, 
+				isByeMatch: false,
+				nextMatchId: null,
+				tournamentEventId: tournamentEventId
+			}
+		});
+	}
+	async createMatch(): Promise<any> {
+		// return await this.prisma.match.create({
+		// 	data: {
+		// 		matchNumber: 0,
+		// 		isByeMatch: false,
+		// 		tournamentEventId: 
+		// 	}
+		// })
+		return;
 	}
 	async getMatchesOfStage(stageId: string): Promise<Match[]> {
 		return await this.prisma.match.findMany({

@@ -22,7 +22,7 @@ export class AssignAthleteIntoMatchUseCase {
 	}
 
 	async checkAssignLeftAthleteIntoByeMatch(matchId: string, leftCompetitorId?: string, rightCompetitorId?: string): Promise<ApiResponse<Match>>{
-		if (rightCompetitorId !== null) return new ApiResponse<null | undefined>(
+		if (rightCompetitorId === undefined || rightCompetitorId === null) return new ApiResponse<null | undefined>(
 			HttpStatus.OK,
 			"This match cannot have right competitor!",
 			null
@@ -40,7 +40,7 @@ export class AssignAthleteIntoMatchUseCase {
 	} 
 
 	async checkAssignRightAthleteIntoByeMatch(matchId: string, leftCompetitorId?: string, rightCompetitorId?: string): Promise<ApiResponse<Match>> {
-		if (leftCompetitorId !== null) return new ApiResponse<null | undefined>(
+		if (leftCompetitorId === null || leftCompetitorId === undefined) return new ApiResponse<null | undefined>(
 			HttpStatus.OK,
 			"This match cannot have left competitor!",
 			null

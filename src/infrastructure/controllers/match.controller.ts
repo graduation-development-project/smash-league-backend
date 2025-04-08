@@ -79,7 +79,7 @@ export class MatchController {
 	async assignAthleteIntoMatch(@Param("matchId") matchId: string,
 			@Query("leftCompetitorId") leftCompetitorId: string,
 			@Query("rightCompetitorId") rightCompetitorId: string): Promise<ApiResponse<Match>> {
-				// console.log(matchId, " ", leftCompetitorId, " ", rightCompetitorId);
+				console.log(matchId, " ", leftCompetitorId, " ", rightCompetitorId);
 				return await this.assignAthleteIntoMatchUseCase.execute(matchId, leftCompetitorId, rightCompetitorId);
 			}
 }
