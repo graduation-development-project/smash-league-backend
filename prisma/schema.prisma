@@ -281,6 +281,12 @@ enum TournamentStatus {
   FINISHED
 }
 
+enum TournamentEventStatus {
+  CREATED
+  ON_GOING
+  ENDED
+}
+
 model TournamentEvent {
   id                     String                   @id @default(uuid())
   tournamentEvent        BadmintonParticipantType
@@ -293,6 +299,7 @@ model TournamentEvent {
   ruleOfEventExtension   String?
   minimumAthlete         Int
   maximumAthlete         Int?
+  tournamentEventStatus  TournamentEventStatus    @default(CREATED)
   championshipPrize      String
   runnerUpPrize          String
   thirdPlacePrize        String?

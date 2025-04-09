@@ -1,6 +1,6 @@
 import { count } from 'node:console';
 import { Injectable } from "@nestjs/common";
-import { Game, GameStatus, Match, MatchStatus, PrismaClient, TournamentEvent } from "@prisma/client";
+import { Game, GameStatus, Match, MatchStatus, PrismaClient, TournamentEvent, TournamentEventStatus } from "@prisma/client";
 import { create } from "domain";
 import { ICreateMatch, IMatchDetailBracketResponse } from "src/domain/interfaces/tournament/match/match.interface";
 import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
@@ -776,7 +776,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	}
 
 	async getThirdPlaceMatch(tournamentEventId: string): Promise<Match | null> {
-		
 		const thirdPlaceStage = await this.prisma.stage.findFirst({
 			where: {
 				tournamentEventId: tournamentEventId,
@@ -831,12 +830,50 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					isAvailable: true
 				}
 			});
-			if (matchUpdated.nextMatchId === null) await this.updateStandingOfTournamentEvent(matchUpdated.id);
-			else if (await this.getNumberOfMatchOfStage(matchUpdated.stageId) === 2) {
-				const thirdPlaceMatch = await this.getThirdPlaceMatch(matchUpdated.tournamentEventId);
-				if (thirdPlaceMatch === null) {
-					const thirdPlaceMatch = await this.createThirdPlaceMatch(matchUpdated.stageId);
+			const matchStage = await this.prisma.stage.findUnique({
+				where: {
+					id: matchUpdated.stageId
 				}
+			});
+			if (matchUpdated.nextMatchId === null && matchStage.stageName === StageOfMatch.Final) {
+				await this.updateStandingOfTournamentEvent(matchUpdated.id);
+				const thirdPlaceMatch = await this.getThirdPlaceMatch(matchUpdated.tournamentEventId);
+				if (thirdPlaceMatch !== null) {
+					if (thirdPlaceMatch.matchWonByCompetitorId !== null) {
+						const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
+							where: { 
+								id: matchUpdated.tournamentEventId
+							},
+							data: {
+								tournamentEventStatus: TournamentEventStatus.ENDED
+							}
+						});
+					}
+				} else {
+					const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
+						where: { 
+							id: matchUpdated.tournamentEventId
+						},
+						data: {
+							tournamentEventStatus: TournamentEventStatus.ENDED
+						}
+					});
+				}
+			}
+			else if (matchStage.stageName === StageOfMatch.Semi_Final) {
+				// const thirdPlaceMatch = await this.getThirdPlaceMatch(matchUpdated.tournamentEventId);
+				// const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
+				// 	where: {
+				// 		id: matchUpdated.tournamentEventId
+				// 	}
+				// });
+				// if (thirdPlaceMatch === null) {
+				// 	const thirdPlaceMatch = await this.createThirdPlaceMatch(matchUpdated.stageId);
+				// }
+				const loseCompetitorId = matchUpdated.leftCompetitorId === winningId? matchUpdated.rightCompetitorId : matchUpdated.leftCompetitorId;
+				const processThirdPlaceMatch = await this.processSemiFinalMatch(matchUpdated, loseCompetitorId);
+			} else if (matchStage.stageName === StageOfMatch.ThirdPlaceMatch) {
+				
 			}
 			console.log("Won matches!");
 			// const nextMatch = await this.prisma.match.findUnique({
@@ -879,6 +916,45 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		}
 	}
 
+	async processSemiFinalMatch(match: Match, competitorId: string): Promise<any> {
+		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
+			where: {
+				id: match.tournamentEventId
+			}
+		});
+		if (tournamentEvent.thirdPlacePrize !== null || tournamentEvent.jointThirdPlacePrize !== null) {
+			const thirdPlaceMatch = await this.getThirdPlaceMatch(match.tournamentEventId);
+			if (thirdPlaceMatch === null) {
+				const createThirdPlaceMatch = await this.createThirdPlaceMatch(match.tournamentEventId);
+				const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(createThirdPlaceMatch.id, competitorId, null);
+				console.log(updatedThirdPlaceMatch);
+			} else {
+				if (thirdPlaceMatch.leftCompetitorId !== null) {
+					const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(thirdPlaceMatch.id, thirdPlaceMatch.leftCompetitorId, competitorId);
+					console.log(updatedThirdPlaceMatch);
+				} else if (thirdPlaceMatch.rightCompetitorId !== null) {
+					const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(thirdPlaceMatch.id, competitorId, thirdPlaceMatch.rightCompetitorId);
+					console.log(updatedThirdPlaceMatch);
+				} 
+			}		
+		}
+	}
+
+	async isThirdPlaceMatch(match: Match): Promise<boolean> {
+		const thirdPlaceStage = await this.prisma.stage.findFirst({
+			where: {
+				tournamentEventId: match.tournamentEventId,
+				stageName: StageOfMatch.ThirdPlaceMatch
+			}
+		});
+		const thirdPlaceMatch = await this.prisma.match.findFirst({
+			where: {
+				stageId: thirdPlaceStage.id
+			}
+		});
+		return await thirdPlaceMatch.id === match.id;
+	}
+
 	async updateStandingOfTournamentEvent(currentMatchId: string): Promise<any> {
 		const match = await this.prisma.match.findUnique({
 			where: {
@@ -913,7 +989,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				id: nextMatchId
 			},
 			select: {
-				matchesPrevious: true
+				matchesPrevious: {
+					orderBy: {
+						matchNumber: 'asc'
+					}
+				}
 			}
 		});
 		if (currentMatchId === nextMatch.matchesPrevious[0].id) {
@@ -925,7 +1005,16 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					leftCompetitorId: competitorId
 				}
 			});
-		} else if (currentMatchId === nextMatch.matchesPrevious[1].id)
+		} else if (currentMatchId === nextMatch.matchesPrevious[1].id) {
+			const updatedNextMatch = await this.prisma.match.update({
+				where: {
+					id: nextMatchId
+				},
+				data: {
+					rightCompetitorId: competitorId
+				}
+			});
+		}
 		
 		return {
 			currentGameNumber: 0,
@@ -1156,6 +1245,19 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		return await this.prisma.match.findUnique({
 			where: {
 				id: matchId
+			}
+		});
+	}
+
+	async updateThirdPlaceMatch(matchId: string, leftCompetitorId: string, rightCompetitorId: string): Promise<Match> {
+		return await this.prisma.match.update({
+			where: {
+				id: matchId
+			},
+			data: {
+				leftCompetitorId: leftCompetitorId,
+				rightCompetitorId: rightCompetitorId,
+				nextMatchId: null
 			}
 		});
 	}

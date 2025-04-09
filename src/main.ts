@@ -12,7 +12,7 @@ async function bootstrap() {
 	await loadNotificationTypeMap();
 	const app = await NestFactory.create(AppModule);
 	app.enableCors({
-		origin: ["http://localhost:3000", "https://smashit.com.vn"],
+		origin: ["http://localhost:3000", "https://smashit.com.vn", "https://client.smashit.com.vn"],
 		methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
 		credentials: true
 	});

@@ -7,7 +7,7 @@ import { MatchRepositoryPort } from "src/domain/repositories/match.repository.po
 export class StartMatchUseCase {
 	constructor(
 		@Inject("MatchRepository")
-		private readonly matchRepository: MatchRepositoryPort
+		private readonly matchRepository: MatchRepositoryPort,
 	) {
 	}
 
