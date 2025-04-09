@@ -75,149 +75,209 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			files,
 		} = registerTournamentDTO;
 
-		let registrationDocumentPartner: string[] = [];
-		let registrationDocumentCreator: string[] = [];
+		const isUmpire = registrationRole === TournamentRegistrationRole.UMPIRE;
+		const isAthlete =
+			registrationRole.toUpperCase() === TournamentRegistrationRole.ATHLETE;
 
-		try {
-			const tournament = await this.prisma.tournament.findUnique({
-				where: { id: tournamentId },
-			});
-			if (!tournament) throw new BadRequestException("Tournament not found");
+		const tournament = await this.getTournamentOrThrow(tournamentId);
+		this.validateUserNotOrganizer(tournament.organizerId, user.id);
+		this.validateTournamentStatus(tournament.status as TournamentStatus);
 
-			if (tournament.organizerId === user.id) {
-				throw new BadRequestException(
-					"You cannot participate in your own tournament",
-				);
-			}
-
-			if (tournament.status !== TournamentStatus.OPENING_FOR_REGISTRATION) {
-				throw new BadRequestException(
-					"This tournament is not open for registration",
-				);
-			}
-
-			let isDoubleEvent = false;
-			let event: any = null;
-			if (registrationRole !== TournamentRegistrationRole.UMPIRE) {
-				event = await this.prisma.tournamentEvent.findUnique({
-					where: { id: tournamentEventId },
-				});
-				if (!event) throw new BadRequestException("Tournament event not found");
-				isDoubleEvent = event.tournamentEvent.toUpperCase().includes("DOUBLE");
-			}
-
-			const whereClause =
-				registrationRole === TournamentRegistrationRole.UMPIRE
-					? { tournamentId }
-					: {
-							tournamentId,
-							OR: [
-								{ userId: user.id, tournamentEventId },
-								{ partnerId: user.id, tournamentEventId },
-							],
-						};
-
-			const userRegistered = await this.prisma.tournamentRegistration.findFirst(
-				{
-					where: whereClause,
-				},
-			);
-			if (userRegistered)
-				throw new BadRequestException(
-					"You are already registered for this tournament",
-				);
-
-			if (fromTeamId) {
-				const teamExisted = await this.prisma.team.findUnique({
-					where: { id: fromTeamId },
-				});
-				if (!teamExisted)
-					throw new BadRequestException("Your team does not exist");
-			}
-
-			if (registrationRole !== TournamentRegistrationRole.UMPIRE) {
-				const userAge = calculateAgeUtil(user.dateOfBirth);
-				if (
-					!userAge ||
-					(event && (userAge < event.fromAge || userAge > event.toAge))
-				) {
-					throw new BadRequestException(
-						"Your age is not suitable for this event",
-					);
-				}
-			}
-
-			const folderName = `tournament-registration/${tournamentId}/${tournamentEventId || "umpire"}/${user.id}`;
-			const imageUrls = await this.uploadService.uploadFiles(
-				files,
-				folderName,
-				user.id,
-			);
-
-			registrationDocumentCreator = imageUrls
-				.slice(0, 3)
-				.map((file) => file.secure_url);
-			if (registrationDocumentCreator.length < 3) {
-				throw new BadRequestException("You must submit verification documents");
-			}
-
-			let partnerId: string | null = null;
-			if (isDoubleEvent) {
-				if (!partnerEmail)
-					throw new BadRequestException(
-						"Partner is required for double matches",
-					);
-				const partner = await this.prisma.user.findUnique({
-					where: { email: partnerEmail },
-				});
-				if (!partner) throw new BadRequestException("Partner does not exist");
-
-				partnerId = partner.id;
-				const partnerRegistered =
-					await this.prisma.tournamentRegistration.findFirst({
-						where: {
-							tournamentId,
-							OR: [
-								{ userId: partner.id, tournamentEventId },
-								{ partnerId: partner.id, tournamentEventId },
-							],
-						},
-					});
-				if (partnerRegistered)
-					throw new BadRequestException("Your partner is already registered");
-
-				registrationDocumentPartner = imageUrls
-					.slice(3, 6)
-					.map((file) => file.secure_url);
-				if (registrationDocumentPartner.length < 3) {
-					throw new BadRequestException(
-						"Your partner must submit verification documents",
-					);
-				}
-			}
-
-			return this.prisma.tournamentRegistration.create({
-				data: {
-					tournamentId,
-					userId: user.id,
-					tournamentEventId:
-						registrationRole === TournamentRegistrationRole.UMPIRE
-							? null
-							: tournamentEventId,
-					partnerId:
-						registrationRole === TournamentRegistrationRole.UMPIRE
-							? null
-							: partnerId,
-					registrationDocumentCreator,
-					registrationDocumentPartner,
-					registrationRole:
-						registrationRole.toUpperCase() as TournamentRegistrationRole,
-					fromTeamId: fromTeamId || null,
-				},
-			});
-		} catch (e) {
-			throw e;
+		let isDoubleEvent = false;
+		let event = null;
+		if (!isUmpire) {
+			event = await this.getTournamentEventOrThrow(tournamentEventId);
+			isDoubleEvent = event.tournamentEvent.toUpperCase().includes("DOUBLE");
 		}
+
+		await this.validateUserNotRegistered(
+			user.id,
+			tournamentId,
+			tournamentEventId,
+			registrationRole as TournamentRegistrationRole,
+		);
+
+		if (isAthlete) {
+			await this.validateMaxEventPerPerson(
+				user.id,
+				tournament.maxEventPerPerson,
+			);
+		}
+
+		if (fromTeamId) {
+			await this.validateTeamExistence(fromTeamId);
+		}
+
+		if (!isUmpire) {
+			this.validateUserAge(user.dateOfBirth, event.fromAge, event.toAge);
+		}
+
+		let partnerId: string | null = null;
+		let registrationDocumentPartner: string[] = [];
+
+		if (isDoubleEvent) {
+			if (!partnerEmail)
+				throw new BadRequestException("Partner is required for double matches");
+			const partner = await this.getPartnerOrThrow(partnerEmail);
+			await this.validateMaxEventPerPerson(
+				partner.id,
+				tournament.maxEventPerPerson,
+			);
+			await this.validatePartnerNotRegistered(
+				partner.id,
+				tournamentId,
+				tournamentEventId,
+			);
+			partnerId = partner.id;
+		}
+
+		const folderName = `tournament-registration/${tournamentId}/${tournamentEventId || "umpire"}/${user.id}`;
+		const imageUrls = await this.uploadService.uploadFiles(
+			files,
+			folderName,
+			user.id,
+		);
+		const registrationDocumentCreator = this.extractFiles(
+			imageUrls,
+			0,
+			3,
+			"creator",
+		);
+
+		registrationDocumentPartner = this.extractFiles(imageUrls, 3, 6, "partner");
+
+		return this.prisma.tournamentRegistration.create({
+			data: {
+				tournamentId,
+				userId: user.id,
+				tournamentEventId: isUmpire ? null : tournamentEventId,
+				partnerId: isUmpire ? null : partnerId,
+				registrationDocumentCreator,
+				registrationDocumentPartner,
+				registrationRole:
+					registrationRole.toUpperCase() as TournamentRegistrationRole,
+				fromTeamId: fromTeamId || null,
+			},
+		});
+	}
+
+	private async getTournamentOrThrow(tournamentId: string) {
+		const tournament = await this.prisma.tournament.findUnique({
+			where: { id: tournamentId },
+		});
+		if (!tournament) throw new BadRequestException("Tournament not found");
+		return tournament;
+	}
+
+	private validateUserNotOrganizer(organizerId: string, userId: string) {
+		if (organizerId === userId) {
+			throw new BadRequestException(
+				"You cannot participate in your own tournament",
+			);
+		}
+	}
+
+	private validateTournamentStatus(status: TournamentStatus) {
+		if (status !== TournamentStatus.OPENING_FOR_REGISTRATION) {
+			throw new BadRequestException(
+				"This tournament is not open for registration",
+			);
+		}
+	}
+
+	private async getTournamentEventOrThrow(eventId: string) {
+		const event = await this.prisma.tournamentEvent.findUnique({
+			where: { id: eventId },
+		});
+		if (!event) throw new BadRequestException("Tournament event not found");
+		return event;
+	}
+
+	private async validateUserNotRegistered(
+		userId: string,
+		tournamentId: string,
+		tournamentEventId: string,
+		role: TournamentRegistrationRole,
+	) {
+		const whereClause =
+			role === TournamentRegistrationRole.UMPIRE
+				? { tournamentId }
+				: {
+						tournamentId,
+						OR: [
+							{ userId, tournamentEventId },
+							{ partnerId: userId, tournamentEventId },
+						],
+					};
+		const existing = await this.prisma.tournamentRegistration.findFirst({
+			where: whereClause,
+		});
+		if (existing)
+			throw new BadRequestException(
+				"You are already registered for this tournament",
+			);
+	}
+
+	private async validateMaxEventPerPerson(userId: string, max: number) {
+		const registrations = await this.prisma.tournamentParticipants.findMany({
+			where: { OR: [{ userId }, { partnerId: userId }] },
+		});
+		if (registrations.length >= max) {
+			throw new BadRequestException(
+				`You cannot register more than ${max} events`,
+			);
+		}
+	}
+
+	private async validateTeamExistence(teamId: string) {
+		const team = await this.prisma.team.findUnique({ where: { id: teamId } });
+		if (!team) throw new BadRequestException("Your team does not exist");
+	}
+
+	private validateUserAge(dob: Date, fromAge: number, toAge: number) {
+		const age = calculateAgeUtil(dob);
+		if (!age || age < fromAge || age > toAge) {
+			throw new BadRequestException("Your age is not suitable for this event");
+		}
+	}
+
+	private extractFiles(
+		files: any[],
+		from: number,
+		to: number,
+		label: string,
+	): string[] {
+		const selected = files.slice(from, to).map((f) => f.secure_url);
+		if (selected.length < 3) {
+			throw new BadRequestException(
+				`You must submit 3 verification documents for ${label}`,
+			);
+		}
+		return selected;
+	}
+
+	private async getPartnerOrThrow(email: string) {
+		const partner = await this.prisma.user.findUnique({ where: { email } });
+		if (!partner) throw new BadRequestException("Partner does not exist");
+		return partner;
+	}
+
+	private async validatePartnerNotRegistered(
+		partnerId: string,
+		tournamentId: string,
+		eventId: string,
+	) {
+		const existing = await this.prisma.tournamentRegistration.findFirst({
+			where: {
+				tournamentId,
+				OR: [
+					{ userId: partnerId, tournamentEventId: eventId },
+					{ partnerId, tournamentEventId: eventId },
+				],
+			},
+		});
+		if (existing)
+			throw new BadRequestException("Your partner is already registered");
 	}
 
 	async getParticipatedTournaments(
