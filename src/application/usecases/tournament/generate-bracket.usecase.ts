@@ -9,6 +9,7 @@ import { MatchRepositoryPort } from "src/domain/repositories/match.repository.po
 import { StageRepositoryPort } from "src/domain/repositories/stage.repository.port";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
+import { StageOfMatch } from "src/infrastructure/enums/tournament/tournament-match.enum";
 
 @Injectable()
 export class GenerateBracketUseCase {
@@ -154,13 +155,13 @@ export class GenerateBracketUseCase {
 	getRoundOfBracket(numberOfPlayerPerRound: number): string {
 		switch(numberOfPlayerPerRound) {
 			case 2: 
-				return "Final";
+				return StageOfMatch.Final;
 				break;
 			case 4: 
-				return "Semi-final";
+				return StageOfMatch.Semi_Final;
 				break;
 			case 8:
-				return "Quarter-final";
+				return StageOfMatch.Quarter_Final;
 				break;
 			default: 
 				return `Round 1/${numberOfPlayerPerRound}`

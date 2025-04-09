@@ -22,7 +22,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "match-seed": "ts-node prisma/match-seed.ts",
     "bracket-seed": "ts-node prisma/bracket-seed.ts",
-    "bank-seed": "ts-node prisma/bank-seed.ts"
+    "bank-seed": "ts-node prisma/bank-seed.ts",
+    "team-seed": "ts-node prisma/team-seed.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
