@@ -473,8 +473,8 @@ async function main() {
 			email: "admin@smashleague.com",
 			password: await bcrypt.hash("12345678", 10),
 			phoneNumber: "0921238324",
-			isVerified: false,
-			gender: "FEMALE",
+			isVerified: true,
+			gender: "MALE",
 		},
 	];
 
