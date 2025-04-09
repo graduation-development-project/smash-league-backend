@@ -468,6 +468,14 @@ async function main() {
 			isVerified: false,
 			gender: "FEMALE",
 		},
+		{
+			name: "Admin",
+			email: "admin@smashleague.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "0921238324",
+			isVerified: false,
+			gender: "FEMALE",
+		},
 	];
 
 	// const accountCreates = accounts.forEach(async (account) => {
@@ -484,6 +492,13 @@ async function main() {
 				data: {
 					userId: accountCreate.id,
 					roleId: RoleMap["Admin"].id,
+				},
+			});
+		} else if (accountCreate.email === "dodangphucanh@gmail.com") {
+			const userRole = await prisma.userRole.create({
+				data: {
+					userId: accountCreate.id,
+					roleId: RoleMap["Staff"].id,
 				},
 			});
 		} else {
