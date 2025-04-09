@@ -660,22 +660,60 @@ export class PrismaTeamLeadersRepositoryAdapter
 							],
 						},
 					});
+
+				const tournamentEvent =
+					await this.prismaService.tournamentEvent.findUnique({
+						where: {
+							id: tournamentEventId,
+						},
+					});
+
+				if (!tournamentEvent) {
+					throw new BadRequestException("Tournament Event not exist");
+				}
+
+				const teamExisted = await this.prismaService.team.findUnique({
+					where: {
+						id: fromTeamId,
+					},
+				});
+
+				if(!teamExisted) {
+					throw new BadRequestException("Team not found")
+				}
+
 				if (existingRegistration) {
 					throw new BadRequestException(
-						`Player ${playerId} is already registered for this tournament event`,
+						`Player is already registered for this tournament event`,
 					);
 				}
 
-				registrationsData.push({
-					tournamentId,
-					userId: playerId,
-					tournamentEventId: tournamentEventId || null,
-					partnerId: partnerId || null,
-					registrationRole: "ATHLETE",
-					fromTeamId: fromTeamId || null,
-					registrationDocumentCreator,
-					registrationDocumentPartner,
-				});
+				if (tournamentEvent.tournamentEvent.includes("DOUBLE")) {
+					if (partnerId === null || partnerId === undefined) {
+					} else {
+						registrationsData.push({
+							tournamentId,
+							userId: playerId,
+							tournamentEventId: tournamentEventId || null,
+							partnerId: partnerId || null,
+							registrationRole: "ATHLETE",
+							fromTeamId: fromTeamId || null,
+							registrationDocumentCreator,
+							registrationDocumentPartner,
+						});
+					}
+				} else {
+					registrationsData.push({
+						tournamentId,
+						userId: playerId,
+						tournamentEventId: tournamentEventId || null,
+						partnerId: partnerId || null,
+						registrationRole: "ATHLETE",
+						fromTeamId: fromTeamId || null,
+						registrationDocumentCreator,
+						registrationDocumentPartner,
+					});
+				}
 			}
 
 			return await this.prismaService.tournamentRegistration.createManyAndReturn(
@@ -686,7 +724,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 			);
 		} catch (e) {
 			console.error("registerTournamentForTeam failed", e.message, e.stack);
-			throw new InternalServerErrorException("Team registration failed");
+			throw e;
 		}
 	}
 }

@@ -106,15 +106,20 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				isDoubleEvent = event.tournamentEvent.toUpperCase().includes("DOUBLE");
 			}
 
+			const whereClause =
+				registrationRole === TournamentRegistrationRole.UMPIRE
+					? { tournamentId }
+					: {
+							tournamentId,
+							OR: [
+								{ userId: user.id, tournamentEventId },
+								{ partnerId: user.id, tournamentEventId },
+							],
+						};
+
 			const userRegistered = await this.prisma.tournamentRegistration.findFirst(
 				{
-					where: {
-						tournamentId,
-						OR: [
-							{ userId: user.id, tournamentEventId },
-							{ partnerId: user.id },
-						],
-					},
+					where: whereClause,
 				},
 			);
 			if (userRegistered)

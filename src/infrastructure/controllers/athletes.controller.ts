@@ -62,6 +62,7 @@ export class AthletesController {
 	) {}
 
 	@UseInterceptors(AnyFilesInterceptor())
+	@Roles(RoleMap.Athlete.name, RoleMap.Umpire.name)
 	@Post("register-tournament")
 	registerTournament(
 		@Body() registerTournamentDTO: RegisterTournamentDTO,
