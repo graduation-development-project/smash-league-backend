@@ -141,10 +141,17 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			imageUrls,
 			0,
 			3,
-			"creator",
+			isUmpire ? "umpire" : "creator",
 		);
 
-		registrationDocumentPartner = this.extractFiles(imageUrls, 3, 6, "partner");
+		if (isDoubleEvent) {
+			registrationDocumentPartner = this.extractFiles(
+				imageUrls,
+				3,
+				6,
+				"partner",
+			);
+		}
 
 		return this.prisma.tournamentRegistration.create({
 			data: {
@@ -203,10 +210,14 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			role === TournamentRegistrationRole.UMPIRE
 				? { tournamentId }
 				: {
-						tournamentId,
 						OR: [
-							{ userId, tournamentEventId },
-							{ partnerId: userId, tournamentEventId },
+							{ tournamentId: tournamentId },
+							{
+								OR: [
+									{ userId, tournamentEventId },
+									{ partnerId: userId, tournamentEventId },
+								],
+							},
 						],
 					};
 		const existing = await this.prisma.tournamentRegistration.findFirst({
@@ -214,7 +225,11 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		});
 		if (existing)
 			throw new BadRequestException(
-				"You are already registered for this tournament",
+				role === TournamentRegistrationRole.UMPIRE
+					? "You are already registered for this tournament"
+					: existing.registrationRole === TournamentRegistrationRole.UMPIRE
+						? "You already register tournament as umpire"
+						: "You are already registered for this tournament event",
 			);
 	}
 
