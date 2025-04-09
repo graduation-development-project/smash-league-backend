@@ -206,23 +206,23 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		tournamentEventId: string,
 		role: TournamentRegistrationRole,
 	) {
-		const whereClause =
-			role === TournamentRegistrationRole.UMPIRE
-				? { tournamentId }
-				: {
-						OR: [
-							{ tournamentId: tournamentId },
-							{
-								OR: [
-									{ userId, tournamentEventId },
-									{ partnerId: userId, tournamentEventId },
-								],
-							},
-						],
-					};
+		const whereClause = {
+			OR: [
+				{ tournamentId: tournamentId, userId },
+				{
+					OR: [
+						{ userId, tournamentEventId },
+						{ partnerId: userId, tournamentEventId },
+					],
+				},
+			],
+		};
 		const existing = await this.prisma.tournamentRegistration.findFirst({
 			where: whereClause,
 		});
+
+		console.log(existing);
+
 		if (existing)
 			throw new BadRequestException(
 				role === TournamentRegistrationRole.UMPIRE
