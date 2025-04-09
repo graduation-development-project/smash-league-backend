@@ -213,7 +213,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				userRoles: roles,
 			} as TUserWithRole;
 		} catch (e) {
-			throw new e();
+			throw e;
 		}
 	}
 
