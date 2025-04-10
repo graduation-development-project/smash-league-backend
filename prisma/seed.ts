@@ -467,16 +467,22 @@ async function main() {
 			phoneNumber: "0921222324",
 			isVerified: false,
 			gender: "FEMALE",
-		},
-		{
-			name: "Admin",
-			email: "admin@smashleague.com",
-			password: await bcrypt.hash("12345678", 10),
-			phoneNumber: "0921238324",
-			isVerified: true,
-			gender: "MALE",
-		},
+		}
 	];
+
+	const adminAccount: Prisma.UserCreateManyInput = 
+	{
+		name: "Admin",
+		email: "admin@smashleague.com",
+		password: await bcrypt.hash("12345678", 10),
+		phoneNumber: "0921238324",
+		isVerified: true,
+		gender: "MALE",
+	};
+
+	const admninCreate = await prisma.user.create({
+		data: adminAccount
+	});
 
 	// const accountCreates = accounts.forEach(async (account) => {
 

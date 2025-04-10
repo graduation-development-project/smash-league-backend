@@ -13,7 +13,10 @@ async function main() {
 	console.log(tournamentEvent);
 	const participants = await prisma.user.findMany({
 		where: {
-			gender: "MALE"
+			gender: "MALE",
+			email: {
+				not: "admin@smashleague.com"
+			}
 		}
 	});
 	console.log(participants.length);
