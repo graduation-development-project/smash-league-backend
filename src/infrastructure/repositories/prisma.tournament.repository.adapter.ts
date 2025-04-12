@@ -118,6 +118,8 @@ export class PrismaTournamentRepositorAdapter
 			// Create a where clause that is applied only if searchTerm is provided
 			const whereClause = searchTerm
 				? {
+						status: { not: TournamentStatus.FINISHED },
+
 						OR: [
 							{ name: { contains: searchTerm, mode: "insensitive" as const } },
 							{
@@ -128,7 +130,9 @@ export class PrismaTournamentRepositorAdapter
 							},
 						],
 					}
-				: {};
+				: {
+						status: { not: TournamentStatus.FINISHED },
+					};
 
 			const [total, tournaments] = await Promise.all([
 				this.prisma.tournament.count({ where: whereClause }),
