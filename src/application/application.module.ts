@@ -135,6 +135,7 @@ import { PaybackRegistrationFeeUseCase } from "./usecases/payment/payback-regist
 import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-tournaments.usecase";
 import { GetTournamentsByOrganizerIdUseCase } from "./usecases/tournament/get-tournaments-by-organizer-id.usecase";
 import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
+import { RemoveTournamentRegistrationUseCase } from "./usecases/athletes/remove-tournament-registration.usecase";
 
 @Module({
 	imports: [
@@ -269,6 +270,7 @@ import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/t
 		GetTournamentRegistrationByUserIdUseCase,
 		GetUserTransactionUseCase,
 		AddBankAccountUseCase,
+		RemoveTournamentRegistrationUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -409,6 +411,7 @@ import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/t
 		GetTournamentRegistrationByUserIdUseCase,
 		GetUserTransactionUseCase,
 		AddBankAccountUseCase,
+		RemoveTournamentRegistrationUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

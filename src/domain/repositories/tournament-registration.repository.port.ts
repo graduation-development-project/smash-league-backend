@@ -16,4 +16,7 @@ export interface TournamentRegistrationRepositoryPort {
 
 	createTournamentRegistration(
 		createTournamentRegistrationDTO: CreateTournamentRegistrationDTO,
-	): Promise<TournamentRegistration>;}
+	): Promise<TournamentRegistration>;
+
+	removeTournamentRegistration(tournamentRegistrationId: string): Promise<void>;
+}
