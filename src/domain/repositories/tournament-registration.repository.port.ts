@@ -19,4 +19,8 @@ export interface TournamentRegistrationRepositoryPort {
 	): Promise<TournamentRegistration>;
 
 	removeTournamentRegistration(tournamentRegistrationId: string): Promise<void>;
+
+	removeManyTournamentRegistration(
+		tournamentRegistrationIds: string[],
+	): Promise<void>;
 }

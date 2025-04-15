@@ -136,6 +136,9 @@ import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-
 import { GetTournamentsByOrganizerIdUseCase } from "./usecases/tournament/get-tournaments-by-organizer-id.usecase";
 import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 import { RemoveTournamentRegistrationUseCase } from "./usecases/athletes/remove-tournament-registration.usecase";
+import {
+	RemoveManyTournamentRegistrationsUseCase
+} from "./usecases/athletes/remove-many-tournament-registrations.usecase";
 
 @Module({
 	imports: [
@@ -271,6 +274,7 @@ import { RemoveTournamentRegistrationUseCase } from "./usecases/athletes/remove-
 		GetUserTransactionUseCase,
 		AddBankAccountUseCase,
 		RemoveTournamentRegistrationUseCase,
+		RemoveManyTournamentRegistrationsUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -412,6 +416,7 @@ import { RemoveTournamentRegistrationUseCase } from "./usecases/athletes/remove-
 		GetUserTransactionUseCase,
 		AddBankAccountUseCase,
 		RemoveTournamentRegistrationUseCase,
+		RemoveManyTournamentRegistrationsUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

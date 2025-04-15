@@ -84,4 +84,25 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 			throw e;
 		}
 	}
+
+	async removeManyTournamentRegistration(
+		tournamentRegistrationIds: string[],
+	): Promise<void> {
+		try {
+			await this.prismaService.tournamentRegistration.updateMany({
+				where: {
+					id: {
+						in: tournamentRegistrationIds,
+					},
+				},
+				data: {
+					isDeleted: true,
+				},
+			});
+			return;
+		} catch (e) {
+			console.error("remove many tournament registration failed", e);
+			throw e;
+		}
+	}
 }

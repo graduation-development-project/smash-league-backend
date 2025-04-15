@@ -47,6 +47,7 @@ import { ApiResponse } from "../../domain/dtos/api-response";
 import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournament/tournament.interface";
 import { GetTournamentRegistrationByUserIdUseCase } from "../../application/usecases/athletes/get-tournament-registration-by-user-id.usecase";
 import { RemoveTournamentRegistrationUseCase } from "../../application/usecases/athletes/remove-tournament-registration.usecase";
+import { RemoveManyTournamentRegistrationsUseCase } from "../../application/usecases/athletes/remove-many-tournament-registrations.usecase";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -62,6 +63,7 @@ export class AthletesController {
 		private responseTransferTeamLeaderUseCase: ResponseTransferTeamLeaderUseCase,
 		private getTournamentRegistrationByUserIdUseCase: GetTournamentRegistrationByUserIdUseCase,
 		private removeTournamentRegistrationUseCase: RemoveTournamentRegistrationUseCase,
+		private removeManyTournamentRegistrationUseCase: RemoveManyTournamentRegistrationsUseCase,
 		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
@@ -80,14 +82,24 @@ export class AthletesController {
 		});
 	}
 
-	@UseInterceptors(AnyFilesInterceptor())
 	@Roles(RoleMap.Athlete.name, RoleMap.Umpire.name)
-	@Delete("register-tournament/:tournamentRegistrationId")
+	@Put("register-tournament/:tournamentRegistrationId")
 	removeTournamentRegistration(
 		@Param("tournamentRegistrationId") tournamentRegistrationId: string,
 	): Promise<ApiResponse<void>> {
 		return this.removeTournamentRegistrationUseCase.execute(
 			tournamentRegistrationId,
+		);
+	}
+
+	@Roles(RoleMap.Athlete.name, RoleMap.Umpire.name)
+	@Put("remove-register-tournament-list")
+	removeTournamentRegistrationList(
+		@Body()
+		{ tournamentRegistrationIds }: { tournamentRegistrationIds: string[] },
+	): Promise<ApiResponse<void>> {
+		return this.removeManyTournamentRegistrationUseCase.execute(
+			tournamentRegistrationIds,
 		);
 	}
 
