@@ -21,6 +21,7 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 			return this.prismaService.tournamentRegistration.findUnique({
 				where: {
 					id: tournamentRegistrationId,
+					isDeleted: false,
 				},
 
 				include: {

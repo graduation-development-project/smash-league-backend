@@ -654,6 +654,7 @@ export class PrismaTeamLeadersRepositoryAdapter
 					await this.prismaService.tournamentRegistration.findFirst({
 						where: {
 							tournamentId,
+							isDeleted: false,
 							OR: [
 								{ userId: playerId, tournamentEventId },
 								{ partnerId: playerId, tournamentEventId },
@@ -678,8 +679,8 @@ export class PrismaTeamLeadersRepositoryAdapter
 					},
 				});
 
-				if(!teamExisted) {
-					throw new BadRequestException("Team not found")
+				if (!teamExisted) {
+					throw new BadRequestException("Team not found");
 				}
 
 				if (existingRegistration) {

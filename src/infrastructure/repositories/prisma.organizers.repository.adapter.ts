@@ -48,6 +48,7 @@ export class PrismaOrganizersRepositoryAdapter
 			await this.prismaService.tournamentRegistration.findUnique({
 				where: {
 					id: tournamentRegistrationId,
+					isDeleted: false,
 				},
 
 				include: {
@@ -191,6 +192,7 @@ export class PrismaOrganizersRepositoryAdapter
 			return await this.prismaService.tournamentRegistration.findMany({
 				where: {
 					tournamentEventId,
+					isDeleted: false,
 				},
 
 				include: {
@@ -250,6 +252,7 @@ export class PrismaOrganizersRepositoryAdapter
 				where: {
 					tournamentId,
 					registrationRole: TournamentRegistrationRole.UMPIRE,
+					isDeleted: false,
 				},
 
 				include: {

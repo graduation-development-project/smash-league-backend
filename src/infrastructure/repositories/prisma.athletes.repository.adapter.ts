@@ -207,6 +207,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		role: TournamentRegistrationRole,
 	) {
 		const whereClause = {
+			isDeleted: false,
 			OR: [
 				{ tournamentId: tournamentId, userId },
 				{
@@ -285,6 +286,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		const existing = await this.prisma.tournamentRegistration.findFirst({
 			where: {
 				tournamentId,
+				isDeleted: false,
 				OR: [
 					{ userId: partnerId, tournamentEventId: eventId },
 					{ partnerId, tournamentEventId: eventId },
@@ -311,6 +313,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				where: {
 					userId: userID,
 					status: TournamentRegistrationStatus.PENDING,
+					isDeleted: false
 				},
 
 				include: {
@@ -756,6 +759,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		try {
 			return this.prisma.tournamentRegistration.findMany({
 				where: {
+					isDeleted: false,
 					OR: [
 						{
 							userId: userID,

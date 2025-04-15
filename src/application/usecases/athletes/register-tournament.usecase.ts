@@ -66,12 +66,18 @@ export class RegisterTournamentUseCase {
 			isDoubleEvent = event.tournamentEvent.toUpperCase().includes("DOUBLE");
 		}
 
-		const checkFullParticipant = await this.tournamentEventRepository.getParticipantsOfTournamentEvent(tournamentEventId)
+		const checkFullParticipant =
+			await this.tournamentEventRepository.getParticipantsOfTournamentEvent(
+				tournamentEventId,
+			);
 
-		console.log(checkFullParticipant.numberOfParticipants, event.maximumAthlete);
+		console.log(
+			checkFullParticipant.numberOfParticipants,
+			event.maximumAthlete,
+		);
 
-		if(checkFullParticipant.numberOfParticipants === event.maximumAthlete) {
-			throw new BadRequestException("This is event is full participants")
+		if (checkFullParticipant.numberOfParticipants === event.maximumAthlete) {
+			throw new BadRequestException("This is event is full participants");
 		}
 
 		await this.validateUserNotRegistered(
@@ -208,6 +214,7 @@ export class RegisterTournamentUseCase {
 		role: TournamentRegistrationRole,
 	) {
 		const whereClause = {
+			isDeleted: false,
 			OR: [
 				{ tournamentId: tournamentId, userId },
 				{
