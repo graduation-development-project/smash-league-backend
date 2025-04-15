@@ -2,6 +2,7 @@ import {
 	TournamentRegistration,
 	TournamentRegistrationStatus,
 } from "@prisma/client";
+import { CreateTournamentRegistrationDTO } from "../dtos/tournament-registration/create-tournament-registration.dto";
 
 export interface TournamentRegistrationRepositoryPort {
 	getTournamentRegistrationById(
@@ -12,4 +13,7 @@ export interface TournamentRegistrationRepositoryPort {
 		tournamentRegistrationId: string,
 		status: TournamentRegistrationStatus,
 	): Promise<TournamentRegistration>;
-}
+
+	createTournamentRegistration(
+		createTournamentRegistrationDTO: CreateTournamentRegistrationDTO,
+	): Promise<TournamentRegistration>;}

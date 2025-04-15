@@ -5,6 +5,8 @@ import {
 } from "@prisma/client";
 import { TournamentRegistrationRepositoryPort } from "../../domain/repositories/tournament-registration.repository.port";
 import { PrismaService } from "../services/prisma.service";
+import { RegisterTournamentDTO } from "../../domain/dtos/athletes/register-tournament.dto";
+import { CreateTournamentRegistrationDTO } from "../../domain/dtos/tournament-registration/create-tournament-registration.dto";
 
 @Injectable()
 export class PrismaTournamentRegistrationRepositoryAdapter
@@ -47,6 +49,18 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("Update tournament registration status failed", e);
+			throw e;
+		}
+	}
+
+	createTournamentRegistration(
+		createTournamentRegistrationDTO: CreateTournamentRegistrationDTO,
+	): Promise<TournamentRegistration> {
+		try {
+			return this.prismaService.tournamentRegistration.create({
+				data: createTournamentRegistrationDTO,
+			});
+		} catch (e) {
 			throw e;
 		}
 	}
