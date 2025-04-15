@@ -66,20 +66,6 @@ export class RegisterTournamentUseCase {
 			isDoubleEvent = event.tournamentEvent.toUpperCase().includes("DOUBLE");
 		}
 
-		const checkFullParticipant =
-			await this.tournamentEventRepository.getParticipantsOfTournamentEvent(
-				tournamentEventId,
-			);
-
-		console.log(
-			checkFullParticipant.numberOfParticipants,
-			event.maximumAthlete,
-		);
-
-		if (checkFullParticipant.numberOfParticipants === event.maximumAthlete) {
-			throw new BadRequestException("This is event is full participants");
-		}
-
 		await this.validateUserNotRegistered(
 			user.id,
 			tournamentId,
@@ -88,6 +74,20 @@ export class RegisterTournamentUseCase {
 		);
 
 		if (isAthlete) {
+			const checkFullParticipant =
+				await this.tournamentEventRepository.getParticipantsOfTournamentEvent(
+					tournamentEventId,
+				);
+
+			console.log(
+				checkFullParticipant.numberOfParticipants,
+				event.maximumAthlete,
+			);
+
+			if (checkFullParticipant.numberOfParticipants === event.maximumAthlete) {
+				throw new BadRequestException("This is event is full participants");
+			}
+
 			await this.validateMaxEventPerPerson(
 				tournamentId,
 				user.id,
@@ -215,15 +215,15 @@ export class RegisterTournamentUseCase {
 	) {
 		const whereClause = {
 			isDeleted: false,
-			OR: [
-				{ tournamentId: tournamentId, userId },
-				{
-					OR: [
-						{ userId, tournamentEventId },
-						{ partnerId: userId, tournamentEventId },
-					],
-				},
-			],
+			...(role === TournamentRegistrationRole.UMPIRE
+				? { tournamentId: tournamentId, userId: userId }
+				: {
+						OR: [
+							{ userId: userId, tournamentId: tournamentId, registrationRole: TournamentRegistrationRole.UMPIRE },
+							{ userId: userId, tournamentEventId: tournamentEventId },
+							{ partnerId: userId, tournamentEventId: tournamentEventId },
+						],
+					}),
 		};
 		const existing = await this.prisma.tournamentRegistration.findFirst({
 			where: whereClause,
@@ -231,14 +231,32 @@ export class RegisterTournamentUseCase {
 
 		console.log(existing);
 
-		if (existing)
-			throw new BadRequestException(
+		if (existing) {
+			let message = "You are already registered for this tournament event";
+
+			if (
+				existing.registrationRole === TournamentRegistrationRole.ATHLETE &&
 				role === TournamentRegistrationRole.UMPIRE
-					? "You are already registered for this tournament"
-					: existing.registrationRole === TournamentRegistrationRole.UMPIRE
-						? "You already register tournament as umpire"
-						: "You are already registered for this tournament event",
-			);
+			) {
+				message = "You already register tournament as athlete";
+			}
+
+			if (
+				existing.registrationRole === TournamentRegistrationRole.UMPIRE &&
+				role === TournamentRegistrationRole.UMPIRE
+			) {
+				message = "You are already registered for this tournament";
+			}
+
+			if (
+				existing.registrationRole === TournamentRegistrationRole.UMPIRE &&
+				role === TournamentRegistrationRole.ATHLETE
+			) {
+				message = "You already register tournament as umpire";
+			}
+
+			throw new BadRequestException(message);
+		}
 	}
 
 	private async validateMaxEventPerPerson(

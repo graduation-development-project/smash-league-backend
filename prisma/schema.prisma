@@ -434,7 +434,7 @@ model TournamentRegistration {
   isDeleted                   Boolean                      @default(false)
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
-  @@unique([tournamentId, partnerId]) // Ensure a unique pair for doubles
+  @@unique([tournamentId, tournamentEventId, userId, partnerId]) // Ensure a unique pair for doubles
 }
 
 model TournamentParticipants {
