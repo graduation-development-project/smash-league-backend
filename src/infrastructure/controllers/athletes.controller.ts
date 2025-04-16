@@ -51,6 +51,7 @@ import { RemoveTournamentRegistrationUseCase } from "../../application/usecases/
 import { RemoveManyTournamentRegistrationsUseCase } from "../../application/usecases/athletes/remove-many-tournament-registrations.usecase";
 import { CreateFeedbackUseCase } from "../../application/usecases/feedback/create-feedback.usecase";
 import { CreateFeedbackDTO } from "../../domain/dtos/feedback/createFeedback.dto";
+import { GetFeedbacksByUserUseCase } from "../../application/usecases/feedback/get-feedbacks-by-user.usecase";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -68,6 +69,7 @@ export class AthletesController {
 		private removeTournamentRegistrationUseCase: RemoveTournamentRegistrationUseCase,
 		private removeManyTournamentRegistrationUseCase: RemoveManyTournamentRegistrationsUseCase,
 		private createFeedbackUseCase: CreateFeedbackUseCase,
+		private getFeedbacksByUserUseCase: GetFeedbacksByUserUseCase,
 		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
@@ -198,5 +200,13 @@ export class AthletesController {
 			...createFeedbackDTO,
 			accountId: user.id,
 		});
+	}
+
+	@Get("/get-feedbacks-by-user")
+	getFeedbackByUser(
+		@Req() { user }: IRequestUser,
+		@Query() paginateOption: IPaginateOptions,
+	): Promise<ApiResponse<IPaginatedOutput<Feedback>>> {
+		return this.getFeedbacksByUserUseCase.execute(user.id, paginateOption);
 	}
 }

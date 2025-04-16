@@ -140,6 +140,7 @@ import { RemoveManyTournamentRegistrationsUseCase } from "./usecases/athletes/re
 import { PrismaFeedbackRepositoryAdapter } from "../infrastructure/repositories/prisma.feedback.repository.adapter";
 import { CreateFeedbackUseCase } from "./usecases/feedback/create-feedback.usecase";
 import { GetFeedbacksByTournamentUseCase } from "./usecases/feedback/get-feedbacks-by-tournament.usecase";
+import { GetFeedbacksByUserUseCase } from "./usecases/feedback/get-feedbacks-by-user.usecase";
 
 @Module({
 	imports: [
@@ -283,6 +284,7 @@ import { GetFeedbacksByTournamentUseCase } from "./usecases/feedback/get-feedbac
 		RemoveManyTournamentRegistrationsUseCase,
 		CreateFeedbackUseCase,
 		GetFeedbacksByTournamentUseCase,
+		GetFeedbacksByUserUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -427,6 +429,7 @@ import { GetFeedbacksByTournamentUseCase } from "./usecases/feedback/get-feedbac
 		RemoveManyTournamentRegistrationsUseCase,
 		CreateFeedbackUseCase,
 		GetFeedbacksByTournamentUseCase,
+		GetFeedbacksByUserUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
