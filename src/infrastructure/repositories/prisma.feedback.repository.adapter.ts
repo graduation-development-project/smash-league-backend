@@ -18,4 +18,36 @@ export class PrismaFeedbackRepositoryAdapter implements FeedbackRepositoryPort {
 			throw e;
 		}
 	}
+
+	async getFeedbacksByTournamentId(
+		tournamentId: string,
+		take: number,
+		skip: number,
+	): Promise<Feedback[]> {
+		try {
+			return this.prismaService.feedback.findMany({
+				where: {
+					tournamentId,
+				},
+
+				include: {
+					tournament: {
+						include: {
+							organizer: {
+								select: {
+									id: true,
+									name: true,
+								},
+							},
+						},
+					},
+				},
+				take,
+				skip,
+			});
+		} catch (e) {
+			console.error("get feedbacks by tournament failed: ", e);
+			throw e;
+		}
+	}
 }

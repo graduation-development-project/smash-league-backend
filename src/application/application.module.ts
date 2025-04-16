@@ -136,11 +136,10 @@ import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-
 import { GetTournamentsByOrganizerIdUseCase } from "./usecases/tournament/get-tournaments-by-organizer-id.usecase";
 import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 import { RemoveTournamentRegistrationUseCase } from "./usecases/athletes/remove-tournament-registration.usecase";
-import {
-	RemoveManyTournamentRegistrationsUseCase
-} from "./usecases/athletes/remove-many-tournament-registrations.usecase";
+import { RemoveManyTournamentRegistrationsUseCase } from "./usecases/athletes/remove-many-tournament-registrations.usecase";
 import { PrismaFeedbackRepositoryAdapter } from "../infrastructure/repositories/prisma.feedback.repository.adapter";
 import { CreateFeedbackUseCase } from "./usecases/feedback/create-feedback.usecase";
+import { GetFeedbacksByTournamentUseCase } from "./usecases/feedback/get-feedbacks-by-tournament.usecase";
 
 @Module({
 	imports: [
@@ -253,7 +252,6 @@ import { CreateFeedbackUseCase } from "./usecases/feedback/create-feedback.useca
 			useClass: PrismaBankRepositoryAdapter,
 		},
 
-
 		{
 			provide: "FeedbackRepositoryPort",
 			useClass: PrismaFeedbackRepositoryAdapter,
@@ -284,6 +282,7 @@ import { CreateFeedbackUseCase } from "./usecases/feedback/create-feedback.useca
 		RemoveTournamentRegistrationUseCase,
 		RemoveManyTournamentRegistrationsUseCase,
 		CreateFeedbackUseCase,
+		GetFeedbacksByTournamentUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -427,6 +426,7 @@ import { CreateFeedbackUseCase } from "./usecases/feedback/create-feedback.useca
 		RemoveTournamentRegistrationUseCase,
 		RemoveManyTournamentRegistrationsUseCase,
 		CreateFeedbackUseCase,
+		GetFeedbacksByTournamentUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
