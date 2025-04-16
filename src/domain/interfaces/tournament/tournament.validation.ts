@@ -374,3 +374,41 @@ export class UpdateTournament {
 	isLiveDraw: boolean;
 	hasLiveStream: boolean;
 }
+
+export class UpdateTournamentInformation {
+	@IsString()
+	@IsNotEmpty()
+	id: string;
+
+	@IsString()
+	@IsNotEmpty()
+	name: string;
+
+	@IsString()
+	@Allow()
+	shortName: string;
+	@IsString()
+	@MaxLength(512, {
+		message: "Description maximum is under 512 characters.",
+	})
+	description: string;
+	@IsString()
+	@MaxLength(512, {
+		message: "Introduction maximum is under 512 characters.",
+	})
+	introduction: string;
+
+	@IsString()
+	backgroundTournament: string;
+	@IsString()
+	mainColor: string;
+	@IsNumber()
+	@Max(1000000000, {
+		message: "Prize pool must be smaller than 1.000.000.000VND.",
+	})
+	prizePool: number;
+
+	@IsString()
+	@IsNotEmpty()
+	location: string;
+}

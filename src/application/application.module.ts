@@ -139,6 +139,7 @@ import { RemoveTournamentRegistrationUseCase } from "./usecases/athletes/remove-
 import {
 	RemoveManyTournamentRegistrationsUseCase
 } from "./usecases/athletes/remove-many-tournament-registrations.usecase";
+import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update-tournament-information.usecase";
 
 @Module({
 	imports: [
@@ -340,7 +341,7 @@ import {
 		RegisterTournamentForTeamUseCase,
 		GetFeatureTournamentsUseCase,
 		GetTournamentsByOrganizerIdUseCase,
-
+		UpdateTournamentInformationUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -491,6 +492,7 @@ import {
 		RegisterTournamentForTeamUseCase,
 		GetFeatureTournamentsUseCase,
 		GetTournamentsByOrganizerIdUseCase,
+		UpdateTournamentInformationUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

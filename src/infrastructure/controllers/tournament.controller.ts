@@ -1,5 +1,5 @@
 import { GenerateBracketUseCase } from "./../../application/usecases/tournament/generate-bracket.usecase";
-import { UpdateTournament } from "./../../domain/interfaces/tournament/tournament.validation";
+import { UpdateTournament, UpdateTournamentInformation } from "./../../domain/interfaces/tournament/tournament.validation";
 import {
 	Body,
 	Controller,
@@ -83,6 +83,7 @@ import { GetFeatureTournamentsUseCase } from "../../application/usecases/tournam
 import { GetTournamentsByOrganizerIdUseCase } from "../../application/usecases/tournament/get-tournaments-by-organizer-id.usecase";
 import { IParticipantsByTournamentEventResponse } from "src/domain/interfaces/user/athlete.interface";
 import { GetParticipantsByTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
+import { UpdateTournamentInformationUseCase } from "src/application/usecases/tournament/update-tournament-information.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -113,7 +114,8 @@ export class TournamentController {
 		private readonly getTournamentEventStandingBoardUseCase: GetTournamentEventStandingBoardUseCase,
 		private readonly getFeatureTournamentsUseCase: GetFeatureTournamentsUseCase,
 		private readonly getTournamentsByOrganizerIdUseCase: GetTournamentsByOrganizerIdUseCase,
-		private readonly getParticipantsByTournamentEventUseCase: GetParticipantsByTournamentEventUseCase
+		private readonly getParticipantsByTournamentEventUseCase: GetParticipantsByTournamentEventUseCase,
+		private readonly updateTournamentInformationUseCase: UpdateTournamentInformationUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -360,5 +362,12 @@ export class TournamentController {
 	@Get("/feature-tournaments")
 	async getFeatureTournament(): Promise<ApiResponse<Tournament[]>> {
 		return this.getFeatureTournamentsUseCase.execute();
+	}
+
+	@Put("/update-tournament-information")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async updateTournamentInformation(@Body() updateTournament: UpdateTournamentInformation): Promise<ApiResponse<Tournament>> {
+		return await this.updateTournamentInformationUseCase.execute(updateTournament);
 	}
 }

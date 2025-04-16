@@ -4,6 +4,7 @@ import {
 	ITournamentDetailResponse,
 	ITournamentResponse,
 	IUpdateTournament,
+	IUpdateTournamentInformation,
 } from "../interfaces/tournament/tournament.interface";
 import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
 
@@ -47,4 +48,5 @@ export interface TournamentRepositoryPort {
 	getTournamentUmpire(tournamentId: string): Promise<TournamentUmpires[]>;
 
 	getFeatureTournaments(): Promise<Tournament[]>;
+	updateTournamentInformation(updateTournament: IUpdateTournamentInformation): Promise<Tournament>;
 }
