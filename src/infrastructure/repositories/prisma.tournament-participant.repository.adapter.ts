@@ -30,4 +30,21 @@ export class PrismaTournamentParticipantRepositoryAdapter
 			throw e;
 		}
 	}
+
+	async getParticipantInTournament(
+		tournamentId: string,
+		userId: string,
+	): Promise<TournamentParticipants[]> {
+		try {
+			return this.prismaService.tournamentParticipants.findMany({
+				where: {
+					userId,
+					tournamentId,
+				},
+			});
+		} catch (e) {
+			console.error("Error getParticipantInTournament", e);
+			throw e;
+		}
+	}
 }

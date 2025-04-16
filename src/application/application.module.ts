@@ -139,6 +139,8 @@ import { RemoveTournamentRegistrationUseCase } from "./usecases/athletes/remove-
 import {
 	RemoveManyTournamentRegistrationsUseCase
 } from "./usecases/athletes/remove-many-tournament-registrations.usecase";
+import { PrismaFeedbackRepositoryAdapter } from "../infrastructure/repositories/prisma.feedback.repository.adapter";
+import { CreateFeedbackUseCase } from "./usecases/feedback/create-feedback.usecase";
 
 @Module({
 	imports: [
@@ -250,6 +252,12 @@ import {
 			provide: "BankRepositoryPort",
 			useClass: PrismaBankRepositoryAdapter,
 		},
+
+
+		{
+			provide: "FeedbackRepositoryPort",
+			useClass: PrismaFeedbackRepositoryAdapter,
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -275,6 +283,7 @@ import {
 		AddBankAccountUseCase,
 		RemoveTournamentRegistrationUseCase,
 		RemoveManyTournamentRegistrationsUseCase,
+		CreateFeedbackUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -417,6 +426,7 @@ import {
 		AddBankAccountUseCase,
 		RemoveTournamentRegistrationUseCase,
 		RemoveManyTournamentRegistrationsUseCase,
+		CreateFeedbackUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

@@ -55,6 +55,7 @@ model User {
   UserBankAccount               UserBankAccount[]        @relation(name: "FK_User_UserBankAccount")
   paybackTransaction            Transaction[]            @relation(name: "FK_User_Transaction")
   transactions                  Transaction[]            @relation(name: "FK_Transaction_Owner")
+  feedback                      Feedback[]               @relation(name: "FK_Feedback_User")
 }
 
 enum Gender {
@@ -270,6 +271,7 @@ model Tournament {
   TournamentParticipants   TournamentParticipants[] @relation(name: "FK_TournamentParticipants_Tournament")
   TournamentUmpires        TournamentUmpires[]      @relation(name: "FK_TournamentUmpires_Tournament")
   courts                   Court[]                  @relation(name: "FK_Court_Tournament")
+  feedback                 Feedback[]               @relation(name: "FK_Feedback_Tournament")
 }
 
 enum TournamentStatus {
@@ -480,6 +482,24 @@ enum TournamentRegistrationStatus {
 enum TournamentRegistrationRole {
   ATHLETE
   UMPIRE
+}
+
+model Feedback {
+  id           String @id @default(uuid())
+  tournamentId String
+  accountId    String
+
+  rating  Int
+  comment String?
+
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  tournament Tournament @relation(name: "FK_Feedback_Tournament", fields: [tournamentId], references: [id])
+  account    User       @relation(name: "FK_Feedback_User", fields: [accountId], references: [id])
+
+  @@unique([tournamentId, accountId])
 }
 
 model TournamentPost {
