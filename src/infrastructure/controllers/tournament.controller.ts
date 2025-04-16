@@ -17,6 +17,7 @@ import {
 	UseInterceptors,
 } from "@nestjs/common";
 import {
+	Feedback,
 	Tournament,
 	TournamentEvent,
 	TournamentPost,
@@ -64,7 +65,10 @@ import { GetTournamentDetailUseCase } from "src/application/usecases/tournament/
 import { GetMyTournamentSerieUseCase } from "src/application/usecases/tournament-serie/get-my-tournament-serie.usecase";
 import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie/tournament-serie.interface";
 import { UpdateTournamentUseCase } from "src/application/usecases/tournament/update-tournament.usecase";
-import { IParticipantsOfTournamentEvent, ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
+import {
+	IParticipantsOfTournamentEvent,
+	ITournamentEventParticipants,
+} from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { GetParticipantsOfTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase";
 import { UploadMerchandiseImagesUseCase } from "src/application/usecases/tournament/upload-merchandise-images.usecase";
 import { BadmintonParticipantType } from "src/domain/interfaces/tournament/badminton-participant-type.interface";
@@ -84,6 +88,7 @@ import { GetTournamentsByOrganizerIdUseCase } from "../../application/usecases/t
 import { IParticipantsByTournamentEventResponse } from "src/domain/interfaces/user/athlete.interface";
 import { GetParticipantsByTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 import { UpdateTournamentInformationUseCase } from "src/application/usecases/tournament/update-tournament-information.usecase";
+import { GetFeedbacksByTournamentUseCase } from "../../application/usecases/feedback/get-feedbacks-by-tournament.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -115,7 +120,8 @@ export class TournamentController {
 		private readonly getFeatureTournamentsUseCase: GetFeatureTournamentsUseCase,
 		private readonly getTournamentsByOrganizerIdUseCase: GetTournamentsByOrganizerIdUseCase,
 		private readonly getParticipantsByTournamentEventUseCase: GetParticipantsByTournamentEventUseCase,
-		private readonly updateTournamentInformationUseCase: UpdateTournamentInformationUseCase
+		private readonly updateTournamentInformationUseCase: UpdateTournamentInformationUseCase,
+		private readonly getFeedbacksByTournamentUseCase: GetFeedbacksByTournamentUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -280,7 +286,9 @@ export class TournamentController {
 	async getAllParticipantsByTournamentEvent(
 		@Param("tournamentEventId") tournamentEventId: string,
 	): Promise<ApiResponse<IParticipantsOfTournamentEvent>> {
-		return this.getParticipantsByTournamentEventUseCase.execute(tournamentEventId);
+		return this.getParticipantsByTournamentEventUseCase.execute(
+			tournamentEventId,
+		);
 	}
 
 	@Get("/generate-brackets/:tournamentEventId")
@@ -336,7 +344,10 @@ export class TournamentController {
 		@Query() paginateOption: IPaginateOptions,
 	): Promise<ApiResponse<IPaginatedOutput<ITournamentResponse>>> {
 		console.log(user);
-		return await this.getTournamentsByUserIdUseCase.execute(user.id, paginateOption);
+		return await this.getTournamentsByUserIdUseCase.execute(
+			user.id,
+			paginateOption,
+		);
 	}
 
 	@Get("/get-tournaments-by-organizer-id/:organizerId")
@@ -362,6 +373,17 @@ export class TournamentController {
 	@Get("/feature-tournaments")
 	async getFeatureTournament(): Promise<ApiResponse<Tournament[]>> {
 		return this.getFeatureTournamentsUseCase.execute();
+	}
+
+	@Get("/tournament-feedbacks/:tournamentId")
+	async getTournamentFeedbacks(
+		@Query() paginateOption: IPaginateOptions,
+		@Param("tournamentId") tournamentId: string,
+	): Promise<ApiResponse<IPaginatedOutput<Feedback>>> {
+		return this.getFeedbacksByTournamentUseCase.execute(
+			paginateOption,
+			tournamentId,
+		);
 	}
 
 	@Put("/update-tournament-information")

@@ -136,6 +136,10 @@ import { GetFeatureTournamentsUseCase } from "./usecases/tournament/get-feature-
 import { GetTournamentsByOrganizerIdUseCase } from "./usecases/tournament/get-tournaments-by-organizer-id.usecase";
 import { GetParticipantsByTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 import { RemoveTournamentRegistrationUseCase } from "./usecases/athletes/remove-tournament-registration.usecase";
+import { PrismaFeedbackRepositoryAdapter } from "../infrastructure/repositories/prisma.feedback.repository.adapter";
+import { CreateFeedbackUseCase } from "./usecases/feedback/create-feedback.usecase";
+import { GetFeedbacksByTournamentUseCase } from "./usecases/feedback/get-feedbacks-by-tournament.usecase";
+import { GetFeedbacksByUserUseCase } from "./usecases/feedback/get-feedbacks-by-user.usecase";
 import {
 	RemoveManyTournamentRegistrationsUseCase
 } from "./usecases/athletes/remove-many-tournament-registrations.usecase";
@@ -251,6 +255,11 @@ import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update
 			provide: "BankRepositoryPort",
 			useClass: PrismaBankRepositoryAdapter,
 		},
+
+		{
+			provide: "FeedbackRepositoryPort",
+			useClass: PrismaFeedbackRepositoryAdapter,
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -276,6 +285,9 @@ import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update
 		AddBankAccountUseCase,
 		RemoveTournamentRegistrationUseCase,
 		RemoveManyTournamentRegistrationsUseCase,
+		CreateFeedbackUseCase,
+		GetFeedbacksByTournamentUseCase,
+		GetFeedbacksByUserUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -418,6 +430,9 @@ import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update
 		AddBankAccountUseCase,
 		RemoveTournamentRegistrationUseCase,
 		RemoveManyTournamentRegistrationsUseCase,
+		CreateFeedbackUseCase,
+		GetFeedbacksByTournamentUseCase,
+		GetFeedbacksByUserUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

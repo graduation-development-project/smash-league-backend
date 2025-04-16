@@ -19,6 +19,7 @@ import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import {
+	Feedback,
 	Tournament,
 	TournamentRegistration,
 	UserVerification,
@@ -48,6 +49,9 @@ import { IParticipatedTournamentResponse } from "../../domain/interfaces/tournam
 import { GetTournamentRegistrationByUserIdUseCase } from "../../application/usecases/athletes/get-tournament-registration-by-user-id.usecase";
 import { RemoveTournamentRegistrationUseCase } from "../../application/usecases/athletes/remove-tournament-registration.usecase";
 import { RemoveManyTournamentRegistrationsUseCase } from "../../application/usecases/athletes/remove-many-tournament-registrations.usecase";
+import { CreateFeedbackUseCase } from "../../application/usecases/feedback/create-feedback.usecase";
+import { CreateFeedbackDTO } from "../../domain/dtos/feedback/createFeedback.dto";
+import { GetFeedbacksByUserUseCase } from "../../application/usecases/feedback/get-feedbacks-by-user.usecase";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -64,6 +68,8 @@ export class AthletesController {
 		private getTournamentRegistrationByUserIdUseCase: GetTournamentRegistrationByUserIdUseCase,
 		private removeTournamentRegistrationUseCase: RemoveTournamentRegistrationUseCase,
 		private removeManyTournamentRegistrationUseCase: RemoveManyTournamentRegistrationsUseCase,
+		private createFeedbackUseCase: CreateFeedbackUseCase,
+		private getFeedbacksByUserUseCase: GetFeedbacksByUserUseCase,
 		// private uploadVerificationImagesUseCase: UploadVerificationImagesUseCase,
 	) {}
 
@@ -183,5 +189,24 @@ export class AthletesController {
 			...responseTeamLeaderTransferDTO,
 			user,
 		});
+	}
+
+	@Post("/create-feedback")
+	createFeedback(
+		@Body() createFeedbackDTO: CreateFeedbackDTO,
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<Feedback>> {
+		return this.createFeedbackUseCase.execute({
+			...createFeedbackDTO,
+			accountId: user.id,
+		});
+	}
+
+	@Get("/get-feedbacks-by-user")
+	getFeedbackByUser(
+		@Req() { user }: IRequestUser,
+		@Query() paginateOption: IPaginateOptions,
+	): Promise<ApiResponse<IPaginatedOutput<Feedback>>> {
+		return this.getFeedbacksByUserUseCase.execute(user.id, paginateOption);
 	}
 }
