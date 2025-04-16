@@ -76,6 +76,7 @@ export interface ICreateTournament {
 	name: string;
 	shortName?: string;
 	description: string;
+	introduction: string;
 	organizerId: string;
 	contactPhone: string;
 	contactEmail: string;
@@ -260,4 +261,17 @@ export interface IUpdateTournament {
 	numberOfMerchandise: number;
 	merchandiseImages: string[];
 	requiredAttachment: string[];
+}
+
+export interface IUpdateTournamentInformation {
+	id: string;
+	name: string;
+	shortName: string;
+	mainColor: string;
+	backgroundTournament: string;
+	location: string;
+	prizePool: number;
+	introduction: string;
+	description: string;
+	
 }

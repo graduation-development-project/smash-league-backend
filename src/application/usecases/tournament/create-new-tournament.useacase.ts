@@ -211,6 +211,7 @@ export class CreateNewTournamentUseCase {
 			contactEmail: createTournament.contactEmail,
 			contactPhone: createTournament.contactPhone,
 			description: createTournament.description,
+			introduction: createTournament.introduction,
 			isRecruit: createTournament.isRecruit,
 			isLiveDraw: createTournament.isLiveDraw,
 			isPrivate: createTournament.isPrivate,
