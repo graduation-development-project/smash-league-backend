@@ -313,3 +313,18 @@ export interface IUpdateTournamentRegistrationInformation {
 	registrationClosingDate: Date;
 	requiredAttachment: RequiredAttachment[];
 }
+
+export interface ITournamentRegistrationInformation {
+	id: string;
+
+	registrationFeePerPerson: number;
+
+	registrationFeePerPair: number;
+
+	protestFeePerTime: number | 0;
+
+	registrationOpeningDate: Date;
+
+	registrationClosingDate: Date;
+	requiredAttachment: string[];
+}

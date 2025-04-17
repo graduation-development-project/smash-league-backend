@@ -35,6 +35,7 @@ import {
 	ITournamentContact,
 	ITournamentDetailResponse,
 	ITournamentInformation,
+	ITournamentRegistrationInformation,
 	ITournamentResponse,
 } from "src/domain/interfaces/tournament/tournament.interface";
 import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
@@ -95,6 +96,7 @@ import { GetFeedbacksByTournamentUseCase } from "../../application/usecases/feed
 import { UpdateContactForTournamentUseCase } from "src/application/usecases/tournament/update-contact-for-tournament.usecase";
 import { GetTournamentContactUseCase } from 'src/application/usecases/tournament/get-tournament-contact.usecase';
 import { UpdateRegistrationInformationUseCase } from 'src/application/usecases/tournament/update-registration-information.usecase';
+import { GetTournamentRegistrationInformationUseCase } from 'src/application/usecases/tournament/get-tournament-registration-information.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -131,7 +133,8 @@ export class TournamentController {
 		private readonly updateTournamentContactUseCase: UpdateContactForTournamentUseCase,
 		private readonly getTournamentInformationUseCase: GetTournamentInformationUseCase,
 		private readonly getTournamentContactUseCase: GetTournamentContactUseCase,
-		private readonly updateTournamentRegistrationUseCase: UpdateRegistrationInformationUseCase
+		private readonly updateTournamentRegistrationUseCase: UpdateRegistrationInformationUseCase,
+		private readonly getTournamentRegistrationInformationUseCase: GetTournamentRegistrationInformationUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -426,4 +429,10 @@ export class TournamentController {
 	async updateTournamentRegistrationInformation(@Body() updateTournamentRegistration: UpdateTournamentRegistrationInformation): Promise<ApiResponse<Tournament>> {
 		return await this.updateTournamentRegistrationUseCase.execute(updateTournamentRegistration);
 	}
+
+	@Get("/get-tournament-registration-information/:tournamentId")
+	async getTournamentRegistrationInformation(@Param("tournamentId") tournamentId: string): Promise<ApiResponse<ITournamentRegistrationInformation>> {
+		return await this.getTournamentRegistrationInformationUseCase.execute(tournamentId);
+	}
+
 }

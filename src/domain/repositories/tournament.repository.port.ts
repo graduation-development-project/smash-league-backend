@@ -4,6 +4,7 @@ import {
 	ITournamentContact,
 	ITournamentDetailResponse,
 	ITournamentInformation,
+	ITournamentRegistrationInformation,
 	ITournamentResponse,
 	IUpdateTournament,
 	IUpdateTournamentInformation,
@@ -56,4 +57,5 @@ export interface TournamentRepositoryPort {
 	getTournamentInformation(id: string): Promise<ITournamentInformation>;
 	getTournamentContact(id: string): Promise<ITournamentContact>;
 	updateTournamentRegistrationInformation(updateTournamentRegistration: IUpdateTournamentRegistrationInformation): Promise<Tournament>;
+	getTournamentRegistration(id: string): Promise<ITournamentRegistrationInformation>;
 }
