@@ -1,3 +1,4 @@
+import { GetTournamentInformationUseCase } from './../../application/usecases/tournament/get-tournament-information.usecase';
 import { GenerateBracketUseCase } from "./../../application/usecases/tournament/generate-bracket.usecase";
 import { UpdateTournament, UpdateTournamentContact, UpdateTournamentInformation } from "./../../domain/interfaces/tournament/tournament.validation";
 import {
@@ -32,6 +33,7 @@ import { ApiResponse } from "src/domain/dtos/api-response";
 import {
 	FormatType,
 	ITournamentDetailResponse,
+	ITournamentInformation,
 	ITournamentResponse,
 } from "src/domain/interfaces/tournament/tournament.interface";
 import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
@@ -123,7 +125,8 @@ export class TournamentController {
 		private readonly getParticipantsByTournamentEventUseCase: GetParticipantsByTournamentEventUseCase,
 		private readonly updateTournamentInformationUseCase: UpdateTournamentInformationUseCase,
 		private readonly getFeedbacksByTournamentUseCase: GetFeedbacksByTournamentUseCase,
-		private readonly updateTournamentContactUseCase: UpdateContactForTournamentUseCase
+		private readonly updateTournamentContactUseCase: UpdateContactForTournamentUseCase,
+		private readonly getTournamentInformationUseCase: GetTournamentInformationUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -400,5 +403,10 @@ export class TournamentController {
 	@Roles(RoleMap.Organizer.name)
 	async updateTournamentContact(@Body() updateTournamentContact: UpdateTournamentContact): Promise<ApiResponse<Tournament>> {
 		return await this.updateTournamentContactUseCase.execute(updateTournamentContact);
+	}
+
+	@Get("/get-tournament-information/:tournamentId")
+	async getTournamentInformation(@Param("tournamentId") tournamentId: string): Promise<ApiResponse<ITournamentInformation>> {
+		return await this.getTournamentInformationUseCase.execute(tournamentId);
 	}
 }

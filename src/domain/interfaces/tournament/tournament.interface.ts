@@ -273,10 +273,27 @@ export interface IUpdateTournamentInformation {
 	prizePool: number;
 	introduction: string;
 	description: string;
-	
 }
 
 export interface IUpdateTournamentContact {
+	id: string;
+	contactPhone: string;
+	contactEmail: string;
+}
+
+export interface ITournamentInformation {
+	id: string;
+	name: string;
+	shortName: string;
+	mainColor: string;
+	backgroundTournament: string;
+	location: string;
+	prizePool: number;
+	introduction: string;
+	description: string;
+}
+
+export interface ITournamentContact {
 	id: string;
 	contactPhone: string;
 	contactEmail: string;
