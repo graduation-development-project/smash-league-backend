@@ -2,6 +2,7 @@ import {
 	ITournamentContact,
 	ITournamentDetailResponse,
 	ITournamentInformation,
+	ITournamentRegistrationInformation,
 	ITournamentResponse,
 	IUpdateTournament,
 	IUpdateTournamentContact,
@@ -33,6 +34,22 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async getTournamentRegistration(id: string): Promise<ITournamentRegistrationInformation> {
+		return await this.prisma.tournament.findUnique({
+			where: {
+				id: id
+			},
+			select: {
+				id: true,
+				registrationOpeningDate: true,
+				registrationClosingDate: true,
+				registrationFeePerPerson: true,
+				registrationFeePerPair: true,
+				protestFeePerTime: true,
+				requiredAttachment: true
+			}
+		});
+	}
 	async updateTournamentRegistrationInformation(updateTournamentRegistration: IUpdateTournamentRegistrationInformation): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {
