@@ -1,5 +1,5 @@
 import { GenerateBracketUseCase } from "./../../application/usecases/tournament/generate-bracket.usecase";
-import { UpdateTournament, UpdateTournamentInformation } from "./../../domain/interfaces/tournament/tournament.validation";
+import { UpdateTournament, UpdateTournamentContact, UpdateTournamentInformation } from "./../../domain/interfaces/tournament/tournament.validation";
 import {
 	Body,
 	Controller,
@@ -89,6 +89,7 @@ import { IParticipantsByTournamentEventResponse } from "src/domain/interfaces/us
 import { GetParticipantsByTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-by-tournament-event.usecase";
 import { UpdateTournamentInformationUseCase } from "src/application/usecases/tournament/update-tournament-information.usecase";
 import { GetFeedbacksByTournamentUseCase } from "../../application/usecases/feedback/get-feedbacks-by-tournament.usecase";
+import { UpdateContactForTournamentUseCase } from "src/application/usecases/tournament/update-contact-for-tournament.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -122,6 +123,7 @@ export class TournamentController {
 		private readonly getParticipantsByTournamentEventUseCase: GetParticipantsByTournamentEventUseCase,
 		private readonly updateTournamentInformationUseCase: UpdateTournamentInformationUseCase,
 		private readonly getFeedbacksByTournamentUseCase: GetFeedbacksByTournamentUseCase,
+		private readonly updateTournamentContactUseCase: UpdateContactForTournamentUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -391,5 +393,12 @@ export class TournamentController {
 	@Roles(RoleMap.Organizer.name)
 	async updateTournamentInformation(@Body() updateTournament: UpdateTournamentInformation): Promise<ApiResponse<Tournament>> {
 		return await this.updateTournamentInformationUseCase.execute(updateTournament);
+	}
+
+	@Put("/update-tournament-contact")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async updateTournamentContact(@Body() updateTournamentContact: UpdateTournamentContact): Promise<ApiResponse<Tournament>> {
+		return await this.updateTournamentContactUseCase.execute(updateTournamentContact);
 	}
 }
