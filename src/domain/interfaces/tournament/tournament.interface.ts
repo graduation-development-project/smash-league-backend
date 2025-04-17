@@ -275,3 +275,9 @@ export interface IUpdateTournamentInformation {
 	description: string;
 	
 }
+
+export interface IUpdateTournamentContact {
+	id: string;
+	contactPhone: string;
+	contactEmail: string;
+}

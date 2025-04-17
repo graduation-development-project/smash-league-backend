@@ -412,3 +412,17 @@ export class UpdateTournamentInformation {
 	@IsNotEmpty()
 	location: string;
 }
+
+export class UpdateTournamentContact {
+	@IsString()
+	@IsNotEmpty()
+	id: string;
+
+	@IsString()
+	@IsPhoneNumber("VN")
+	contactPhone: string;
+	
+	@IsString()
+	@IsEmail()
+	contactEmail: string;
+}

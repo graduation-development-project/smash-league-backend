@@ -76,7 +76,7 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
 import { PrismaOrganizersRepositoryAdapter } from "../infrastructure/repositories/prisma.organizers.repository.adapter";
 import { ResponseTournamentRegistrationUseCase } from "./usecases/organizers/response-tournament-registration.usecase";
-import { CreateTournamentSerie } from "src/domain/interfaces/tournament/tournament.validation";
+import { CreateTournamentSerie, UpdateTournamentContact } from "src/domain/interfaces/tournament/tournament.validation";
 import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
@@ -144,6 +144,7 @@ import {
 	RemoveManyTournamentRegistrationsUseCase
 } from "./usecases/athletes/remove-many-tournament-registrations.usecase";
 import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update-tournament-information.usecase";
+import { UpdateContactForTournamentUseCase } from "./usecases/tournament/update-contact-for-tournament.usecase";
 
 @Module({
 	imports: [
@@ -354,6 +355,7 @@ import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update
 		GetFeatureTournamentsUseCase,
 		GetTournamentsByOrganizerIdUseCase,
 		UpdateTournamentInformationUseCase,
+		UpdateContactForTournamentUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -508,6 +510,7 @@ import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update
 		GetFeatureTournamentsUseCase,
 		GetTournamentsByOrganizerIdUseCase,
 		UpdateTournamentInformationUseCase,
+		UpdateContactForTournamentUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

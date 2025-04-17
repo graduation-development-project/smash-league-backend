@@ -2,6 +2,7 @@ import {
 	ITournamentDetailResponse,
 	ITournamentResponse,
 	IUpdateTournament,
+	IUpdateTournamentContact,
 	IUpdateTournamentInformation,
 } from "./../../domain/interfaces/tournament/tournament.interface";
 import {
@@ -29,6 +30,16 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async updateTournamentContact(updateContact: IUpdateTournamentContact): Promise<Tournament> {
+		return await this.prisma.tournament.update({
+			where: {
+				id: updateContact.id
+			},
+			data: {
+				...updateContact
+			}
+		});
+	}
 	async updateTournamentInformation(updateTournament: IUpdateTournamentInformation): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {

@@ -49,4 +49,5 @@ export interface TournamentRepositoryPort {
 
 	getFeatureTournaments(): Promise<Tournament[]>;
 	updateTournamentInformation(updateTournament: IUpdateTournamentInformation): Promise<Tournament>;
+	updateTournamentContact(updateContact: any): Promise<Tournament>;
 }
