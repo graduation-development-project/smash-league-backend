@@ -1,6 +1,7 @@
 import { Tournament, TournamentPost, TournamentUmpires } from "@prisma/client";
 import {
 	ICreateTournament,
+	ITournamentContact,
 	ITournamentDetailResponse,
 	ITournamentInformation,
 	ITournamentResponse,
@@ -52,4 +53,5 @@ export interface TournamentRepositoryPort {
 	updateTournamentInformation(updateTournament: IUpdateTournamentInformation): Promise<Tournament>;
 	updateTournamentContact(updateContact: any): Promise<Tournament>;
 	getTournamentInformation(id: string): Promise<ITournamentInformation>;
+	getTournamentContact(id: string): Promise<ITournamentContact>;
 }

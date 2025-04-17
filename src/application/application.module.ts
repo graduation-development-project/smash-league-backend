@@ -146,6 +146,7 @@ import {
 import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update-tournament-information.usecase";
 import { UpdateContactForTournamentUseCase } from "./usecases/tournament/update-contact-for-tournament.usecase";
 import { GetTournamentInformationUseCase } from "./usecases/tournament/get-tournament-information.usecase";
+import { GetTournamentContactUseCase } from "./usecases/tournament/get-tournament-contact.usecase";
 
 @Module({
 	imports: [
@@ -358,6 +359,7 @@ import { GetTournamentInformationUseCase } from "./usecases/tournament/get-tourn
 		UpdateTournamentInformationUseCase,
 		UpdateContactForTournamentUseCase,
 		GetTournamentInformationUseCase,
+		GetTournamentContactUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -514,6 +516,7 @@ import { GetTournamentInformationUseCase } from "./usecases/tournament/get-tourn
 		UpdateTournamentInformationUseCase,
 		UpdateContactForTournamentUseCase,
 		GetTournamentInformationUseCase,
+		GetTournamentContactUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
