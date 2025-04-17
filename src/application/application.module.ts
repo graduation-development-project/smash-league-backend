@@ -1,3 +1,4 @@
+import { UpdateRegistrationInformationUseCase } from './usecases/tournament/update-registration-information.usecase';
 import { GetParticipantsOfTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase";
 import { forwardRef, Module } from "@nestjs/common";
 import { ApplicationFunction } from "./usecases/application.function";
@@ -76,7 +77,7 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
 import { PrismaOrganizersRepositoryAdapter } from "../infrastructure/repositories/prisma.organizers.repository.adapter";
 import { ResponseTournamentRegistrationUseCase } from "./usecases/organizers/response-tournament-registration.usecase";
-import { CreateTournamentSerie, UpdateTournamentContact } from "src/domain/interfaces/tournament/tournament.validation";
+import { CreateTournamentSerie, UpdateTournamentContact, UpdateTournamentRegistrationInformation } from "src/domain/interfaces/tournament/tournament.validation";
 import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
@@ -146,6 +147,7 @@ import {
 import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update-tournament-information.usecase";
 import { UpdateContactForTournamentUseCase } from "./usecases/tournament/update-contact-for-tournament.usecase";
 import { GetTournamentInformationUseCase } from "./usecases/tournament/get-tournament-information.usecase";
+import { GetTournamentContactUseCase } from "./usecases/tournament/get-tournament-contact.usecase";
 
 @Module({
 	imports: [
@@ -358,6 +360,8 @@ import { GetTournamentInformationUseCase } from "./usecases/tournament/get-tourn
 		UpdateTournamentInformationUseCase,
 		UpdateContactForTournamentUseCase,
 		GetTournamentInformationUseCase,
+		GetTournamentContactUseCase,
+		UpdateRegistrationInformationUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -514,6 +518,8 @@ import { GetTournamentInformationUseCase } from "./usecases/tournament/get-tourn
 		UpdateTournamentInformationUseCase,
 		UpdateContactForTournamentUseCase,
 		GetTournamentInformationUseCase,
+		GetTournamentContactUseCase,
+		UpdateRegistrationInformationUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

@@ -1,10 +1,12 @@
 import {
+	ITournamentContact,
 	ITournamentDetailResponse,
 	ITournamentInformation,
 	ITournamentResponse,
 	IUpdateTournament,
 	IUpdateTournamentContact,
 	IUpdateTournamentInformation,
+	IUpdateTournamentRegistrationInformation,
 } from "./../../domain/interfaces/tournament/tournament.interface";
 import {
 	BadmintonParticipantType,
@@ -31,6 +33,28 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async updateTournamentRegistrationInformation(updateTournamentRegistration: IUpdateTournamentRegistrationInformation): Promise<Tournament> {
+		return await this.prisma.tournament.update({
+			where: {
+				id: updateTournamentRegistration.id
+			},
+			data: {
+				...updateTournamentRegistration
+			}
+		});
+	}
+	async getTournamentContact(id: string): Promise<ITournamentContact> {
+		return await this.prisma.tournament.findUnique({
+			where: {
+				id: id
+			},
+			select: {
+				id: true,
+				contactEmail: true,
+				contactPhone: true
+			}
+		});
+	}
 	async getTournamentInformation(id: string): Promise<ITournamentInformation> {
 		return await this.prisma.tournament.findUnique({
 			where: {

@@ -426,3 +426,49 @@ export class UpdateTournamentContact {
 	@IsEmail()
 	contactEmail: string;
 }
+
+export class UpdateTournamentRegistrationInformation {
+	@IsString()
+	@IsNotEmpty()
+	id: string;
+
+	@IsNumber()
+	@Min(0, {
+		message: "Registration fee per person must be positive value!",
+	})
+	@Max(1000000000, {
+		message: "Registration fee per person must be under 1.000.000.000VND!",
+	})
+	registrationFeePerPerson: number;
+
+	@IsNumber()
+	@Min(0, {
+		message: "Registration fee per pair must be positive value!",
+	})
+	@Max(1000000000, {
+		message: "Registration fee per pair must be under 1.000.000.000VND!",
+	})
+	registrationFeePerPair: number;
+	@IsNumber()
+	@Max(1000000000, {
+		message: "Protest fee per time must be under 1.000.000.000VND.",
+	})
+	protestFeePerTime: number | 0;
+	@IsDateString()
+	@IsISO8601()
+	registrationOpeningDate: Date;
+
+	@IsDateString()
+	@IsISO8601()
+	registrationClosingDate: Date;
+
+	@IsArray()
+	@IsEnum(RequiredAttachment, {
+		message:
+			"Required attachment must be one of the following: " +
+			"IDENTIFICATION_CARD, " +
+			"PORTRAIT_PHOTO",
+		each: true,
+	})
+	requiredAttachment: RequiredAttachment[];
+}

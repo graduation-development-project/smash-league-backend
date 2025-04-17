@@ -298,3 +298,18 @@ export interface ITournamentContact {
 	contactPhone: string;
 	contactEmail: string;
 }
+
+export interface IUpdateTournamentRegistrationInformation {
+	id: string;
+
+	registrationFeePerPerson: number;
+
+	registrationFeePerPair: number;
+
+	protestFeePerTime: number | 0;
+
+	registrationOpeningDate: Date;
+
+	registrationClosingDate: Date;
+	requiredAttachment: RequiredAttachment[];
+}
