@@ -160,20 +160,37 @@ export class RegisterTournamentUseCase {
 		// 	},
 		// });
 
+		const restored = await this.reactivateIfDeleted({
+			tournamentId,
+			userId: user.id,
+			tournamentEventId: isUmpire ? null : tournamentEventId,
+			partnerId: isUmpire ? null : partnerId,
+			role: registrationRole.toUpperCase() as TournamentRegistrationRole,
+			registrationDocumentCreator,
+			registrationDocumentPartner,
+			fromTeamId: fromTeamId || null,
+		});
+
+		const registration = restored
+			? restored
+			: await this.tournamentRegistrationRepository.createTournamentRegistration(
+					{
+						tournamentId,
+						userId: user.id,
+						tournamentEventId: isUmpire ? null : tournamentEventId,
+						partnerId: isUmpire ? null : partnerId,
+						registrationDocumentCreator,
+						registrationDocumentPartner,
+						registrationRole:
+							registrationRole.toUpperCase() as TournamentRegistrationRole,
+						fromTeamId: fromTeamId || null,
+					},
+				);
+
 		return new ApiResponse<TournamentRegistration>(
 			HttpStatus.CREATED,
 			"Register to tournament successfully",
-			await this.tournamentRegistrationRepository.createTournamentRegistration({
-				tournamentId,
-				userId: user.id,
-				tournamentEventId: isUmpire ? null : tournamentEventId,
-				partnerId: isUmpire ? null : partnerId,
-				registrationDocumentCreator,
-				registrationDocumentPartner,
-				registrationRole:
-					registrationRole.toUpperCase() as TournamentRegistrationRole,
-				fromTeamId: fromTeamId || null,
-			}),
+			registration,
 		);
 	}
 
@@ -219,14 +236,18 @@ export class RegisterTournamentUseCase {
 				? { tournamentId: tournamentId, userId: userId }
 				: {
 						OR: [
-							{ userId: userId, tournamentId: tournamentId, registrationRole: TournamentRegistrationRole.UMPIRE },
+							{
+								userId: userId,
+								tournamentId: tournamentId,
+								registrationRole: TournamentRegistrationRole.UMPIRE,
+							},
 							{ userId: userId, tournamentEventId: tournamentEventId },
 							{ partnerId: userId, tournamentEventId: tournamentEventId },
 						],
 					}),
 		};
 		const existing = await this.prisma.tournamentRegistration.findFirst({
-			where: whereClause,
+			where: { ...whereClause, isDeleted: false },
 		});
 
 		console.log(existing);
@@ -257,6 +278,42 @@ export class RegisterTournamentUseCase {
 
 			throw new BadRequestException(message);
 		}
+	}
+
+	private async reactivateIfDeleted(data: {
+		tournamentId: string;
+		userId: string;
+		tournamentEventId: string | null;
+		partnerId: string | null;
+		role: TournamentRegistrationRole;
+		registrationDocumentCreator: string[];
+		registrationDocumentPartner: string[];
+		fromTeamId: string | null;
+	}): Promise<TournamentRegistration | null> {
+		const existing = await this.prisma.tournamentRegistration.findFirst({
+			where: {
+				tournamentId: data.tournamentId,
+				userId: data.userId,
+				tournamentEventId: data.tournamentEventId,
+				partnerId: data.partnerId,
+				isDeleted: true,
+			},
+		});
+
+		if (existing) {
+			return this.prisma.tournamentRegistration.update({
+				where: { id: existing.id },
+				data: {
+					isDeleted: false,
+					registrationDocumentCreator: data.registrationDocumentCreator,
+					registrationDocumentPartner: data.registrationDocumentPartner,
+					registrationRole: data.role,
+					fromTeamId: data.fromTeamId,
+				},
+			});
+		}
+
+		return null;
 	}
 
 	private async validateMaxEventPerPerson(
