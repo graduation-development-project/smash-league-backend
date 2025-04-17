@@ -1,6 +1,6 @@
 import { GetTournamentInformationUseCase } from './../../application/usecases/tournament/get-tournament-information.usecase';
 import { GenerateBracketUseCase } from "./../../application/usecases/tournament/generate-bracket.usecase";
-import { UpdateTournament, UpdateTournamentContact, UpdateTournamentInformation } from "./../../domain/interfaces/tournament/tournament.validation";
+import { UpdateTournament, UpdateTournamentContact, UpdateTournamentInformation, UpdateTournamentRegistrationInformation } from "./../../domain/interfaces/tournament/tournament.validation";
 import {
 	Body,
 	Controller,
@@ -94,6 +94,7 @@ import { UpdateTournamentInformationUseCase } from "src/application/usecases/tou
 import { GetFeedbacksByTournamentUseCase } from "../../application/usecases/feedback/get-feedbacks-by-tournament.usecase";
 import { UpdateContactForTournamentUseCase } from "src/application/usecases/tournament/update-contact-for-tournament.usecase";
 import { GetTournamentContactUseCase } from 'src/application/usecases/tournament/get-tournament-contact.usecase';
+import { UpdateRegistrationInformationUseCase } from 'src/application/usecases/tournament/update-registration-information.usecase';
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -129,7 +130,8 @@ export class TournamentController {
 		private readonly getFeedbacksByTournamentUseCase: GetFeedbacksByTournamentUseCase,
 		private readonly updateTournamentContactUseCase: UpdateContactForTournamentUseCase,
 		private readonly getTournamentInformationUseCase: GetTournamentInformationUseCase,
-		private readonly getTournamentContactUseCase: GetTournamentContactUseCase
+		private readonly getTournamentContactUseCase: GetTournamentContactUseCase,
+		private readonly updateTournamentRegistrationUseCase: UpdateRegistrationInformationUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -416,5 +418,12 @@ export class TournamentController {
 	@Get("/get-tournament-contact/:tournamentId")
 	async getTournamentContact(@Param("tournamentId") tournamentId: string): Promise<ApiResponse<ITournamentContact>> {
 		return await this.getTournamentContactUseCase.execute(tournamentId);
+	}
+
+	@Put("/update-tournament-registration-information")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async updateTournamentRegistrationInformation(@Body() updateTournamentRegistration: UpdateTournamentRegistrationInformation): Promise<ApiResponse<Tournament>> {
+		return await this.updateTournamentRegistrationUseCase.execute(updateTournamentRegistration);
 	}
 }
