@@ -1,4 +1,4 @@
-import { UpdateRegistrationInformationUseCase } from './usecases/tournament/update-registration-information.usecase';
+import { UpdateRegistrationInformationUseCase } from "./usecases/tournament/update-registration-information.usecase";
 import { GetParticipantsOfTournamentEventUseCase } from "./usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase";
 import { forwardRef, Module } from "@nestjs/common";
 import { ApplicationFunction } from "./usecases/application.function";
@@ -77,7 +77,11 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
 import { PrismaOrganizersRepositoryAdapter } from "../infrastructure/repositories/prisma.organizers.repository.adapter";
 import { ResponseTournamentRegistrationUseCase } from "./usecases/organizers/response-tournament-registration.usecase";
-import { CreateTournamentSerie, UpdateTournamentContact, UpdateTournamentRegistrationInformation } from "src/domain/interfaces/tournament/tournament.validation";
+import {
+	CreateTournamentSerie,
+	UpdateTournamentContact,
+	UpdateTournamentRegistrationInformation,
+} from "src/domain/interfaces/tournament/tournament.validation";
 import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
@@ -141,14 +145,16 @@ import { PrismaFeedbackRepositoryAdapter } from "../infrastructure/repositories/
 import { CreateFeedbackUseCase } from "./usecases/feedback/create-feedback.usecase";
 import { GetFeedbacksByTournamentUseCase } from "./usecases/feedback/get-feedbacks-by-tournament.usecase";
 import { GetFeedbacksByUserUseCase } from "./usecases/feedback/get-feedbacks-by-user.usecase";
-import {
-	RemoveManyTournamentRegistrationsUseCase
-} from "./usecases/athletes/remove-many-tournament-registrations.usecase";
+import { RemoveManyTournamentRegistrationsUseCase } from "./usecases/athletes/remove-many-tournament-registrations.usecase";
 import { UpdateTournamentInformationUseCase } from "./usecases/tournament/update-tournament-information.usecase";
 import { UpdateContactForTournamentUseCase } from "./usecases/tournament/update-contact-for-tournament.usecase";
 import { GetTournamentInformationUseCase } from "./usecases/tournament/get-tournament-information.usecase";
 import { GetTournamentContactUseCase } from "./usecases/tournament/get-tournament-contact.usecase";
-import { GetTournamentRegistrationInformationUseCase } from './usecases/tournament/get-tournament-registration-information.usecase';
+import { GetTournamentRegistrationInformationUseCase } from "./usecases/tournament/get-tournament-registration-information.usecase";
+import { PrismaSponsorsRepositoryAdapter } from "../infrastructure/repositories/prisma.sponsors.repository.adapter";
+import { PrismaTournamentSponsorAdapter } from "../infrastructure/repositories/prisma.tournament-sponsor.adapter";
+import { CreateTournamentSponsorUseCase } from "./usecases/tournament/sponsor/create-tournament-sponsor.usecase";
+import { FindTournamentSponsorUseCase } from "./usecases/tournament/sponsor/find-tournament-sponsor.usecase";
 
 @Module({
 	imports: [
@@ -265,6 +271,16 @@ import { GetTournamentRegistrationInformationUseCase } from './usecases/tourname
 			provide: "FeedbackRepositoryPort",
 			useClass: PrismaFeedbackRepositoryAdapter,
 		},
+
+		{
+			provide: "SponsorRepositoryPort",
+			useClass: PrismaSponsorsRepositoryAdapter,
+		},
+
+		{
+			provide: "TournamentSponsorRepositoryPort",
+			useClass: PrismaTournamentSponsorAdapter,
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -364,6 +380,8 @@ import { GetTournamentRegistrationInformationUseCase } from './usecases/tourname
 		GetTournamentContactUseCase,
 		UpdateRegistrationInformationUseCase,
 		GetTournamentRegistrationInformationUseCase,
+		CreateTournamentSponsorUseCase,
+		FindTournamentSponsorUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -523,6 +541,8 @@ import { GetTournamentRegistrationInformationUseCase } from './usecases/tourname
 		GetTournamentContactUseCase,
 		UpdateRegistrationInformationUseCase,
 		GetTournamentRegistrationInformationUseCase,
+		CreateTournamentSponsorUseCase,
+		FindTournamentSponsorUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

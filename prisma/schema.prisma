@@ -272,6 +272,7 @@ model Tournament {
   TournamentUmpires        TournamentUmpires[]      @relation(name: "FK_TournamentUmpires_Tournament")
   courts                   Court[]                  @relation(name: "FK_Court_Tournament")
   feedback                 Feedback[]               @relation(name: "FK_Feedback_Tournament")
+  TournamentSponsor        TournamentSponsor[]
 }
 
 enum TournamentStatus {
@@ -333,6 +334,34 @@ enum BadmintonParticipantType {
   MENS_DOUBLE
   WOMENS_DOUBLE
   MIXED_DOUBLE
+}
+
+model Sponsor {
+  id                     String                   @id @default(uuid())
+  name                   String                   @unique
+  logo                   String?
+  website                String?
+  description            String?
+  tournamentSponsors     TournamentSponsor[]
+  TournamentParticipants TournamentParticipants[]
+}
+
+enum SponsorTier {
+  DIAMOND
+  PLATINUM
+  GOLD
+  SILVER
+  BRONZE
+}
+
+model TournamentSponsor {
+  tournamentId String
+  tournament   Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  sponsorId    String
+  sponsor      Sponsor     @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  tier         SponsorTier
+
+  @@id([tournamentId, sponsorId])
 }
 
 model Court {
@@ -459,6 +488,8 @@ model TournamentParticipants {
   runnerUps         TournamentEvent[] @relation(name: "FK_RunnerUp_TournamentParticipants")
   thirdPlaces       TournamentEvent[] @relation(name: "FK_ThirdPlace_TournamentParticipants")
   jointThirdPlaces  TournamentEvent[] @relation(name: "FK_JointThirdPlace_TournamentParticipants")
+  Sponsor           Sponsor?          @relation(fields: [sponsorId], references: [id])
+  sponsorId         String?
 }
 
 model TournamentUmpires {
