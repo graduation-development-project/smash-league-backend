@@ -53,25 +53,11 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 		}
 	}
 
-	async getAssignedMatches(
-		umpireId: string,
-		tournamentId: string,
-	): Promise<Match[]> {
+	async getAssignedMatches(umpireId: string): Promise<Match[]> {
 		try {
 			return this.prismaService.match.findMany({
 				where: {
-					tournamentEvent: {
-						tournamentId,
-					},
 					umpireId,
-				},
-
-				include: {
-					tournamentEvent: {
-						include: {
-							tournament: true,
-						},
-					},
 				},
 			});
 		} catch (e) {
@@ -93,7 +79,6 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 				});
 
 			return tournamentUmpireList.map((tournament) => tournament.tournament);
-
 		} catch (e) {
 			console.error("Get Participate Tournaments failed", e);
 			throw e;

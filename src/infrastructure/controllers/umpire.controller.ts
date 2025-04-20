@@ -40,12 +40,11 @@ export class UmpireController {
 		});
 	}
 
-	@Get("/assigned-matches/:tournamentId")
+	@Get("/assigned-matches")
 	async getAssignedMatches(
 		@Req() { user }: IRequestUser,
-		@Param("tournamentId") tournamentId: string,
 	): Promise<ApiResponse<Match[]>> {
-		return this.getAssignedMatchUseCase.execute(user.id, tournamentId);
+		return this.getAssignedMatchUseCase.execute(user.id);
 	}
 
 	@Get("/participate-tournaments")

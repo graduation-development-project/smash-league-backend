@@ -11,17 +11,11 @@ export class GetAssignedMatchUseCase {
 		private readonly umpireRepositoryPort: UmpireRepositoryPort,
 	) {}
 
-	async execute(
-		umpireId: string,
-		tournamentId: string,
-	): Promise<ApiResponse<Match[]>> {
+	async execute(umpireId: string): Promise<ApiResponse<Match[]>> {
 		return new ApiResponse<Match[]>(
 			HttpStatus.OK,
 			"Get umpire's assigned matches successfully",
-			await this.umpireRepositoryPort.getAssignedMatches(
-				umpireId,
-				tournamentId,
-			),
+			await this.umpireRepositoryPort.getAssignedMatches(umpireId),
 		);
 	}
 }
