@@ -39,18 +39,21 @@ export class CreateTournamentSponsorUseCase {
 			throw new BadRequestException("You are not organizer of this tournament");
 		}
 
-		const existingSponsorsMap = new Map<string, string>(); // Map tên sponsor -> id
+		const existingSponsorsMapInsensitive = new Map<string, string>(); // Map tên sponsor (lowercase) -> id
 
 		const existingSponsors = await this.sponsorRepository.findSponsorByNames(
 			sponsorList.map((s) => s.name),
 		);
 
 		existingSponsors.forEach((sponsor) => {
-			existingSponsorsMap.set(sponsor.name, sponsor.id);
+			existingSponsorsMapInsensitive.set(
+				sponsor.name.toLowerCase(),
+				sponsor.id,
+			);
 		});
 
 		const newSponsorsToCreate = sponsorList.filter(
-			(s) => !existingSponsorsMap.has(s.name),
+			(s) => !existingSponsorsMapInsensitive.has(s.name.toLowerCase()),
 		);
 
 		await this.sponsorRepository.createNewSponsors(
@@ -65,23 +68,33 @@ export class CreateTournamentSponsorUseCase {
 		const allRelevantSponsors = await this.sponsorRepository.findSponsorByNames(
 			sponsorList.map((s) => s.name),
 		);
-		const allRelevantSponsorsMap = new Map<string, string>();
+		const allRelevantSponsorsMapInsensitive = new Map<string, string>();
 		allRelevantSponsors.forEach((sponsor) => {
-			allRelevantSponsorsMap.set(sponsor.name, sponsor.id);
+			allRelevantSponsorsMapInsensitive.set(
+				sponsor.name.toLowerCase(),
+				sponsor.id,
+			);
 		});
 
 		const existingTournamentLinks =
 			await this.prismaService.tournamentSponsor.findMany({
 				where: {
 					tournamentId: tournamentId,
-					sponsorId: {
-						in: allRelevantSponsors.map((s) => s.id),
+					sponsor: {
+						name: {
+							in: allRelevantSponsors.map((s) => s.name),
+							mode: "insensitive",
+						},
 					},
+				},
+
+				include: {
+					sponsor: true,
 				},
 			});
 
-		const existingSponsorIdsInTournament = new Set(
-			existingTournamentLinks.map((link) => link.sponsorId),
+		const existingSponsorNamesInTournamentInsensitive = new Set(
+			existingTournamentLinks.map((link) => link.sponsor.name.toLowerCase()),
 		);
 
 		const tournamentSponsorDataToCreate: {
@@ -92,8 +105,12 @@ export class CreateTournamentSponsorUseCase {
 		const duplicateSponsors: string[] = [];
 
 		for (const s of sponsorList) {
-			const sponsorId = allRelevantSponsorsMap.get(s.name)!;
-			if (!existingSponsorIdsInTournament.has(sponsorId)) {
+			const sponsorId = allRelevantSponsorsMapInsensitive.get(
+				s.name.toLowerCase(),
+			)!;
+			if (
+				!existingSponsorNamesInTournamentInsensitive.has(s.name.toLowerCase())
+			) {
 				tournamentSponsorDataToCreate.push({
 					tournamentId: tournamentId,
 					sponsorId: sponsorId,

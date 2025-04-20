@@ -25,11 +25,20 @@ export class PrismaSponsorsRepositoryAdapter implements SponsorRepositoryPort {
 		try {
 			return this.prismaService.sponsor.findMany({
 				where: {
-					name: { in: names },
+					name: { in: names, mode: "insensitive" },
 				},
 			});
 		} catch (e) {
 			console.error("Find sponsor by name failed");
+			throw e;
+		}
+	}
+
+	async getAllSponsors(): Promise<Sponsor[]> {
+		try {
+			return this.prismaService.sponsor.findMany({});
+		} catch (e) {
+			console.error("Get all sponsors failed");
 			throw e;
 		}
 	}

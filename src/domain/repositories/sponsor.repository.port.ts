@@ -4,4 +4,5 @@ import { Sponsor } from "@prisma/client";
 export interface SponsorRepositoryPort {
 	createNewSponsors(createSponsorDTO: CreateSponsorDTO[]): Promise<Sponsor[]>;
 	findSponsorByNames(names: string[]): Promise<Sponsor[]>;
+	getAllSponsors(): Promise<Sponsor[]>;
 }

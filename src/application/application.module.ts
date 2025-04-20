@@ -155,6 +155,7 @@ import { PrismaSponsorsRepositoryAdapter } from "../infrastructure/repositories/
 import { PrismaTournamentSponsorAdapter } from "../infrastructure/repositories/prisma.tournament-sponsor.adapter";
 import { CreateTournamentSponsorUseCase } from "./usecases/tournament/sponsor/create-tournament-sponsor.usecase";
 import { FindTournamentSponsorUseCase } from "./usecases/tournament/sponsor/find-tournament-sponsor.usecase";
+import { GetAllSponsorUseCase } from "./usecases/tournament/sponsor/get-all-sponsor.usecase";
 
 @Module({
 	imports: [
@@ -382,6 +383,7 @@ import { FindTournamentSponsorUseCase } from "./usecases/tournament/sponsor/find
 		GetTournamentRegistrationInformationUseCase,
 		CreateTournamentSponsorUseCase,
 		FindTournamentSponsorUseCase,
+		GetAllSponsorUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -543,6 +545,7 @@ import { FindTournamentSponsorUseCase } from "./usecases/tournament/sponsor/find
 		GetTournamentRegistrationInformationUseCase,
 		CreateTournamentSponsorUseCase,
 		FindTournamentSponsorUseCase,
+		GetAllSponsorUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
