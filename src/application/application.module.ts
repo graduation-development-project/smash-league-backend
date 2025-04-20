@@ -156,9 +156,10 @@ import { PrismaTournamentSponsorAdapter } from "../infrastructure/repositories/p
 import { CreateTournamentSponsorUseCase } from "./usecases/tournament/sponsor/create-tournament-sponsor.usecase";
 import { FindTournamentSponsorUseCase } from "./usecases/tournament/sponsor/find-tournament-sponsor.usecase";
 import { GetAllSponsorUseCase } from "./usecases/tournament/sponsor/get-all-sponsor.usecase";
-import {
-	CheckEnoughPlayerQueueModule
-} from "../infrastructure/background-jobs/check-enough-player/check-enough-player.queue.module";
+import { CheckEnoughPlayerQueueModule } from "../infrastructure/background-jobs/check-enough-player/check-enough-player.queue.module";
+import { PaybackFeeListRepositoryPort } from "../domain/repositories/payback-fee-list.repository.port";
+import { PrismaPaybackFeeListRepositoryAdapter } from "../infrastructure/repositories/prisma.payback-fee-list.repository.adapter";
+import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament.usecase";
 
 @Module({
 	imports: [
@@ -286,6 +287,10 @@ import {
 			provide: "TournamentSponsorRepositoryPort",
 			useClass: PrismaTournamentSponsorAdapter,
 		},
+		{
+			provide: "PaybackFeeListRepositoryPort",
+			useClass: PrismaPaybackFeeListRepositoryAdapter,
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -388,6 +393,7 @@ import {
 		CreateTournamentSponsorUseCase,
 		FindTournamentSponsorUseCase,
 		GetAllSponsorUseCase,
+		CancelTournamentUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -550,6 +556,7 @@ import {
 		CreateTournamentSponsorUseCase,
 		FindTournamentSponsorUseCase,
 		GetAllSponsorUseCase,
+		CancelTournamentUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

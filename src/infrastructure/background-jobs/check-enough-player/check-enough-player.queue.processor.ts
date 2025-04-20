@@ -2,6 +2,7 @@ import { Processor, WorkerHost } from "@nestjs/bullmq";
 import { Job } from "bullmq";
 import { PrismaService } from "../../services/prisma.service";
 import { TournamentEvent, TournamentEventStatus } from "@prisma/client";
+import { getRegistrationFee } from "../../util/get-registration-fee.util";
 
 @Processor("checkEnoughPlayerQueue", { concurrency: 3 })
 export class CheckEnoughPlayerQueueProcessor extends WorkerHost {
@@ -38,7 +39,7 @@ export class CheckEnoughPlayerQueueProcessor extends WorkerHost {
 						userId: participant.userId,
 						tournamentId: tournament.id,
 						tournamentEventId: event.id,
-						value: this.getRegistrationFee(event),
+						value: getRegistrationFee(event),
 						isPaid: false,
 					}),
 				);
@@ -54,12 +55,5 @@ export class CheckEnoughPlayerQueueProcessor extends WorkerHost {
 
 			}
 		}
-	}
-
-	private getRegistrationFee(event: any): number {
-		const isDouble = event.tournamentEvent.toUpperCase().includes("DOUBLE");
-		return isDouble
-			? event.tournament.registrationFeePerPair
-			: event.tournament.registrationFeePerPerson;
 	}
 }

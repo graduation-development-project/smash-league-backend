@@ -632,7 +632,7 @@ model PaybackFeeList {
   tournamentId      String
   tournamentEventId String
   value             Int
-  isPaid            Boolean
+  isPaid            Boolean         @default(false)
   user              User?           @relation("FK_PaybackFeeList_User", fields: [userId], references: [id])
   tournament        Tournament      @relation("FK_PaybackFeeList_Tournament", fields: [tournamentId], references: [id])
   tournamentEvent   TournamentEvent @relation("FK_PaybackFeeList_TournamentEvent", fields: [tournamentEventId], references: [id])

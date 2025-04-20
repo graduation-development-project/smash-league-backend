@@ -701,6 +701,14 @@ export class PrismaTournamentRepositorAdapter
 				data: {
 					status: TournamentStatus.CANCELED,
 				},
+
+				include: {
+					tournamentEvents: {
+						include: {
+							tournamentParticipants: true,
+						},
+					},
+				},
 			});
 		} catch (e) {
 			console.error("cancelTournament failed: ", e);

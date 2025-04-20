@@ -107,6 +107,7 @@ import { GetTournamentRegistrationInformationUseCase } from "src/application/use
 import { CreateTournamentSponsorUseCase } from "../../application/usecases/tournament/sponsor/create-tournament-sponsor.usecase";
 import { CreateTournamentSponsorRequestDTO } from "../../domain/dtos/tournament-sponsor/create-tournament-sponsor-request.dto";
 import { FindTournamentSponsorUseCase } from "../../application/usecases/tournament/sponsor/find-tournament-sponsor.usecase";
+import { CancelTournamentUseCase } from "../../application/usecases/tournament/cancel-tournament.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -147,6 +148,7 @@ export class TournamentController {
 		private readonly getTournamentRegistrationInformationUseCase: GetTournamentRegistrationInformationUseCase,
 		private readonly createTournamentSponsorUseCase: CreateTournamentSponsorUseCase,
 		private readonly findTournamentSponsorUseCase: FindTournamentSponsorUseCase,
+		private readonly cancelTournamentUseCase: CancelTournamentUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -473,6 +475,16 @@ export class TournamentController {
 		@Param("tournamentId") tournamentId: string,
 	): Promise<ApiResponse<Sponsor[]>> {
 		return this.findTournamentSponsorUseCase.execute(tournamentId);
+	}
+
+	@Put("/cancel-tournament/:tournamentId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async cancelTournament(
+		@Param("tournamentId") tournamentId: string,
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<null>> {
+		return this.cancelTournamentUseCase.execute(tournamentId);
 	}
 
 	@Post("/create-tournament-sponsor/:tournamentId")
