@@ -45,13 +45,18 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	}
 
 	async searchUserByEmail(email: string): Promise<IUserResponse[]> {
-		return await this.prisma.user.findMany({
-			where: {
-				email: {
-					contains: email,
-				},
-				isVerified: true,
-			},
+		const whereClause = {
+			isVerified: true,
+		};
+
+		if (email && email.trim() !== "") {
+			whereClause["email"] = {
+				contains: email,
+			};
+		}
+
+		return this.prisma.user.findMany({
+			where: whereClause,
 			select: {
 				id: true,
 				avatarURL: true,

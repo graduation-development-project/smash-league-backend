@@ -160,6 +160,7 @@ import { CheckEnoughPlayerQueueModule } from "../infrastructure/background-jobs/
 import { PaybackFeeListRepositoryPort } from "../domain/repositories/payback-fee-list.repository.port";
 import { PrismaPaybackFeeListRepositoryAdapter } from "../infrastructure/repositories/prisma.payback-fee-list.repository.adapter";
 import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament.usecase";
+import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
 
 @Module({
 	imports: [
@@ -319,6 +320,7 @@ import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament
 		CreateFeedbackUseCase,
 		GetFeedbacksByTournamentUseCase,
 		GetFeedbacksByUserUseCase,
+		UploadAvatarUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -473,6 +475,7 @@ import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament
 		CreateFeedbackUseCase,
 		GetFeedbacksByTournamentUseCase,
 		GetFeedbacksByUserUseCase,
+		UploadAvatarUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

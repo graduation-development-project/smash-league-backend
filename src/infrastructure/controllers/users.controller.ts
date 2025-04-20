@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	Get,
+	HttpStatus,
 	Param,
 	ParseIntPipe,
 	Patch,
@@ -9,7 +10,9 @@ import {
 	Put,
 	Query,
 	Req,
+	UploadedFiles,
 	UseGuards,
+	UseInterceptors,
 } from "@nestjs/common";
 import { GetUserByIdUseCase } from "../../application/usecases/users/get-user-by-id.usecase";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
@@ -29,6 +32,8 @@ import { IUserResponse } from "src/domain/interfaces/user/user.interface";
 import { GetUserProfileUseCase } from "../../application/usecases/users/get-user-profile.usecase";
 import { AddBankAccountUseCase } from "../../application/usecases/users/add-bank-account.usecase";
 import { AddBankAccountDTO } from "../../domain/dtos/users/add-bank-account.dto";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
+import { UploadAvatarUseCase } from "../../application/usecases/users/upload-avatar.usecase";
 
 @Controller("/users")
 export class UsersController {
@@ -39,8 +44,8 @@ export class UsersController {
 		private searchUserByEmail: SearchUserByEmailUseCase,
 		private getUserProfileUseCase: GetUserProfileUseCase,
 		private addBankAccountUseCase: AddBankAccountUseCase,
-	) {
-	}
+		private uploadAvatarUseCase: UploadAvatarUseCase,
+	) {}
 
 	@Get("/id/:id")
 	// @Roles(RoleMap.Admin.id, RoleMap.Athlete.id)
@@ -90,6 +95,23 @@ export class UsersController {
 		@Req() { user }: IRequestUser,
 		@Body() addBankAccountDTO: AddBankAccountDTO,
 	): Promise<ApiResponse<UserBankAccount>> {
-		return await this.addBankAccountUseCase.execute({ ...addBankAccountDTO, userId: user.id });
+		return await this.addBankAccountUseCase.execute({
+			...addBankAccountDTO,
+			userId: user.id,
+		});
+	}
+
+	@UseInterceptors(AnyFilesInterceptor())
+	@Post("/upload-avatar")
+	async uploadAvatar(
+		@UploadedFiles() files: Express.Multer.File[],
+	): Promise<ApiResponse<string>> {
+		if (files.length > 1)
+			return new ApiResponse<null | undefined>(
+				HttpStatus.BAD_REQUEST,
+				"Files limit to 1.",
+				null,
+			);
+		return this.uploadAvatarUseCase.execute(files);
 	}
 }
