@@ -348,7 +348,6 @@ model Sponsor {
 
 enum SponsorTier {
   DIAMOND
-  PLATINUM
   GOLD
   SILVER
   BRONZE
