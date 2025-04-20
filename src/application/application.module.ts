@@ -156,6 +156,9 @@ import { PrismaTournamentSponsorAdapter } from "../infrastructure/repositories/p
 import { CreateTournamentSponsorUseCase } from "./usecases/tournament/sponsor/create-tournament-sponsor.usecase";
 import { FindTournamentSponsorUseCase } from "./usecases/tournament/sponsor/find-tournament-sponsor.usecase";
 import { GetAllSponsorUseCase } from "./usecases/tournament/sponsor/get-all-sponsor.usecase";
+import {
+	CheckEnoughPlayerQueueModule
+} from "../infrastructure/background-jobs/check-enough-player/check-enough-player.queue.module";
 
 @Module({
 	imports: [
@@ -163,6 +166,7 @@ import { GetAllSponsorUseCase } from "./usecases/tournament/sponsor/get-all-spon
 		EmailQueueModule,
 		NotificationQueueModule,
 		TeamQueueModule,
+		CheckEnoughPlayerQueueModule,
 		ConfigModule,
 		forwardRef(() => InfrastructureModule),
 	],

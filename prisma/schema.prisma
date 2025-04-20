@@ -56,6 +56,7 @@ model User {
   paybackTransaction            Transaction[]            @relation(name: "FK_User_Transaction")
   transactions                  Transaction[]            @relation(name: "FK_Transaction_Owner")
   feedback                      Feedback[]               @relation(name: "FK_Feedback_User")
+  paybackFeeList                PaybackFeeList[]         @relation(name: "FK_PaybackFeeList_User")
 }
 
 enum Gender {
@@ -273,6 +274,7 @@ model Tournament {
   courts                   Court[]                  @relation(name: "FK_Court_Tournament")
   feedback                 Feedback[]               @relation(name: "FK_Feedback_Tournament")
   TournamentSponsor        TournamentSponsor[]
+  paybackFeeList           PaybackFeeList[]         @relation(name: "FK_PaybackFeeList_Tournament")
 }
 
 enum TournamentStatus {
@@ -282,12 +284,14 @@ enum TournamentStatus {
   DRAWING
   ON_GOING
   FINISHED
+  CANCELED
 }
 
 enum TournamentEventStatus {
   CREATED
   ON_GOING
   ENDED
+  CANCELED
 }
 
 model TournamentEvent {
@@ -321,6 +325,7 @@ model TournamentEvent {
   matches                Match[]                  @relation(name: "FK_Match_TournamentEvent")
   tournamentRegistration TournamentRegistration[] @relation(name: "FK_TournamentRegistration_TournamentEvent")
   tournamentParticipants TournamentParticipants[] @relation(name: "FK_TournamentParticipants_TournamentEvent")
+  paybackFeeList         PaybackFeeList[]         @relation(name: "FK_PaybackFeeList_TournamentEvent")
 }
 
 enum TypeOfFormat {
@@ -619,6 +624,18 @@ model Package {
   isRecommended           Boolean
   isAvailable             Boolean
   orders                  Order[]  @relation(name: "FK_Order_Package")
+}
+
+model PaybackFeeList {
+  id                String          @id @default(uuid())
+  userId            String
+  tournamentId      String
+  tournamentEventId String
+  value             Int
+  isPaid            Boolean
+  user              User?           @relation("FK_PaybackFeeList_User", fields: [userId], references: [id])
+  tournament        Tournament      @relation("FK_PaybackFeeList_Tournament", fields: [tournamentId], references: [id])
+  tournamentEvent   TournamentEvent @relation("FK_PaybackFeeList_TournamentEvent", fields: [tournamentEventId], references: [id])
 }
 
 // model TransactionType {

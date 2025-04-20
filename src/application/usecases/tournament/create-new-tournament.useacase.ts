@@ -15,12 +15,15 @@ import {
 } from "src/domain/interfaces/tournament/tournament.interface";
 import {
 	CreateTournament,
-	CreateTournamentEvent, CreateTournamentEventsDTO,
+	CreateTournamentEvent,
+	CreateTournamentEventsDTO,
 } from "src/domain/interfaces/tournament/tournament.validation";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
 import { TournamentRepositoryPort } from "src/domain/repositories/tournament.repository.port";
 import { UploadService } from "src/infrastructure/services/upload.service";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @Injectable()
 export class CreateNewTournamentUseCase {
@@ -32,6 +35,8 @@ export class CreateNewTournamentUseCase {
 		@Inject("TournamentEventRepository")
 		private readonly tournamentEventRepository: TournamentEventRepositoryPort,
 		private readonly uploadService: UploadService,
+		@InjectQueue("checkEnoughPlayerQueue")
+		private checkEnoughPlayerQueue: Queue,
 	) {}
 
 	async execute(
@@ -59,6 +64,28 @@ export class CreateNewTournamentUseCase {
 			createTournament,
 			request.user,
 		);
+
+		const now = Date.now();
+		const startDate = new Date(tournament.startDate);
+
+		const delayBeforeStart = 60 * 60 * 1000;
+
+		const delayTimeInMilliseconds =
+			startDate.getTime() - now - delayBeforeStart;
+
+		console.log(startDate.getTime(), now, tournament.startDate, new Date().toISOString());
+		console.log(delayTimeInMilliseconds);
+
+		await this.checkEnoughPlayerQueue.add(
+			"CHECK_EVENT_ENOUGH_PLAYER",
+			{
+				tournamentId: tournament.id,
+			},
+			{
+				delay: delayTimeInMilliseconds,
+			},
+		);
+
 		return new ApiResponse<Tournament>(
 			HttpStatus.OK,
 			"Create new tournament successfully!",
@@ -94,7 +121,7 @@ export class CreateNewTournamentUseCase {
 	transformTournamentEvents = (data: any, tournamentId: string): any[] => {
 		const tournamentEvents: any[] = [];
 
-		console.log(data)
+		console.log(data);
 
 		data.forEach((event: any) => {
 			for (const eventType in event) {
@@ -109,7 +136,8 @@ export class CreateNewTournamentUseCase {
 										tournamentEventEnum = BadmintonParticipantType.MENS_SINGLE;
 										break;
 									case "WOMENS_SINGLE":
-										tournamentEventEnum = BadmintonParticipantType.WOMENS_SINGLE;
+										tournamentEventEnum =
+											BadmintonParticipantType.WOMENS_SINGLE;
 										break;
 
 									case "MENS_DOUBLE":
@@ -153,7 +181,7 @@ export class CreateNewTournamentUseCase {
 			}
 		});
 
-		console.log(tournamentEvents)
+		console.log(tournamentEvents);
 
 		return tournamentEvents;
 	};

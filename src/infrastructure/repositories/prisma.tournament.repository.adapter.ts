@@ -34,10 +34,13 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
-	async getTournamentRegistration(id: string): Promise<ITournamentRegistrationInformation> {
+
+	async getTournamentRegistration(
+		id: string,
+	): Promise<ITournamentRegistrationInformation> {
 		return await this.prisma.tournament.findUnique({
 			where: {
-				id: id
+				id: id,
 			},
 			select: {
 				id: true,
@@ -46,36 +49,41 @@ export class PrismaTournamentRepositorAdapter
 				registrationFeePerPerson: true,
 				registrationFeePerPair: true,
 				protestFeePerTime: true,
-				requiredAttachment: true
-			}
+				requiredAttachment: true,
+			},
 		});
 	}
-	async updateTournamentRegistrationInformation(updateTournamentRegistration: IUpdateTournamentRegistrationInformation): Promise<Tournament> {
+
+	async updateTournamentRegistrationInformation(
+		updateTournamentRegistration: IUpdateTournamentRegistrationInformation,
+	): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {
-				id: updateTournamentRegistration.id
+				id: updateTournamentRegistration.id,
 			},
 			data: {
-				...updateTournamentRegistration
-			}
+				...updateTournamentRegistration,
+			},
 		});
 	}
+
 	async getTournamentContact(id: string): Promise<ITournamentContact> {
 		return await this.prisma.tournament.findUnique({
 			where: {
-				id: id
+				id: id,
 			},
 			select: {
 				id: true,
 				contactEmail: true,
-				contactPhone: true
-			}
+				contactPhone: true,
+			},
 		});
 	}
+
 	async getTournamentInformation(id: string): Promise<ITournamentInformation> {
 		return await this.prisma.tournament.findUnique({
 			where: {
-				id: id
+				id: id,
 			},
 			select: {
 				id: true,
@@ -86,28 +94,34 @@ export class PrismaTournamentRepositorAdapter
 				description: true,
 				introduction: true,
 				prizePool: true,
-				location: true
-			}
+				location: true,
+			},
 		});
 	}
-	async updateTournamentContact(updateContact: IUpdateTournamentContact): Promise<Tournament> {
+
+	async updateTournamentContact(
+		updateContact: IUpdateTournamentContact,
+	): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {
-				id: updateContact.id
+				id: updateContact.id,
 			},
 			data: {
-				...updateContact
-			}
+				...updateContact,
+			},
 		});
 	}
-	async updateTournamentInformation(updateTournament: IUpdateTournamentInformation): Promise<Tournament> {
+
+	async updateTournamentInformation(
+		updateTournament: IUpdateTournamentInformation,
+	): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {
-				id: updateTournament.id
+				id: updateTournament.id,
 			},
 			data: {
-				...updateTournament
-			}
+				...updateTournament,
+			},
 		});
 	}
 
@@ -674,6 +688,22 @@ export class PrismaTournamentRepositorAdapter
 			});
 		} catch (e) {
 			console.error("getFeatureTournament failed: ", e);
+			throw e;
+		}
+	}
+
+	async cancelTournament(tournamentId: string): Promise<Tournament> {
+		try {
+			return this.prisma.tournament.update({
+				where: {
+					id: tournamentId,
+				},
+				data: {
+					status: TournamentStatus.CANCELED,
+				},
+			});
+		} catch (e) {
+			console.error("cancelTournament failed: ", e);
 			throw e;
 		}
 	}

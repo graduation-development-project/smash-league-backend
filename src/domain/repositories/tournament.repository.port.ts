@@ -58,4 +58,5 @@ export interface TournamentRepositoryPort {
 	getTournamentContact(id: string): Promise<ITournamentContact>;
 	updateTournamentRegistrationInformation(updateTournamentRegistration: IUpdateTournamentRegistrationInformation): Promise<Tournament>;
 	getTournamentRegistration(id: string): Promise<ITournamentRegistrationInformation>;
+	cancelTournament(tournamentId: string): Promise<Tournament>;
 }

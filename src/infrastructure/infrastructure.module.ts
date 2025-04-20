@@ -27,14 +27,15 @@ import { TournamentController } from "./controllers/tournament.controller";
 import { UploadService } from "./services/upload.service";
 import { TeamLeaderController } from "./controllers/team-leader.controller";
 import { TeamQueueModule } from "./background-jobs/team/team.queue.module";
-import {GoogleStrategy} from "./strategies/auth/google.strategy";
-import {TeamController} from "./controllers/team.controller";
-import {OrganizerController} from "./controllers/organizers.controller";
+import { GoogleStrategy } from "./strategies/auth/google.strategy";
+import { TeamController } from "./controllers/team.controller";
+import { OrganizerController } from "./controllers/organizers.controller";
 import { PaymentPayOSService } from "../application/services/payment.service";
 import { UmpireController } from "./controllers/umpire.controller";
 import { MatchController } from "./controllers/match.controller";
 import { BankController } from "./controllers/bank.controller";
 import { SponsorController } from "./controllers/sponsor.controller";
+import { CheckEnoughPlayerQueueModule } from "./background-jobs/check-enough-player/check-enough-player.queue.module";
 
 @Module({
 	imports: [
@@ -45,6 +46,7 @@ import { SponsorController } from "./controllers/sponsor.controller";
 		EmailQueueModule,
 		NotificationQueueModule,
 		TeamQueueModule,
+		CheckEnoughPlayerQueueModule,
 		MailerModule.forRootAsync({
 			useFactory: (configService: ConfigService) => ({
 				transport: {
@@ -110,7 +112,7 @@ import { SponsorController } from "./controllers/sponsor.controller";
 			},
 			inject: [ConfigService],
 		},
-		PaymentPayOSService
+		PaymentPayOSService,
 	],
 	exports: [MailService, UploadService],
 })
