@@ -123,8 +123,13 @@ export class PrismaTransactionRepositoryAdapter
 	async createPaybackTransaction(
 		createPayback: ICreatePaybackTransactionRequest,
 	): Promise<Transaction> {
-		const { paybackToUserId, paybackImage, transactionDetail, value } =
-			createPayback;
+		const {
+			paybackToUserId,
+			paybackImage,
+			transactionDetail,
+			value,
+			paybackFeeId,
+		} = createPayback;
 
 		try {
 			return await this.prisma.transaction.create({
@@ -136,6 +141,7 @@ export class PrismaTransactionRepositoryAdapter
 					transactionDetail,
 					transactionType: TransactionType.PAYBACK_REGISTRATION_FEE,
 					status: TransactionStatus.SUCCESSFUL,
+					paybackFeeId,
 				},
 			});
 		} catch (e) {
