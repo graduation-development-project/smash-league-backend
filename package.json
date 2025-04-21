@@ -23,7 +23,8 @@
     "match-seed": "ts-node prisma/match-seed.ts",
     "bracket-seed": "ts-node prisma/bracket-seed.ts",
     "bank-seed": "ts-node prisma/bank-seed.ts",
-    "team-seed": "ts-node prisma/team-seed.ts"
+    "team-seed": "ts-node prisma/team-seed.ts",
+    "umpire-seed": "ts-node prisma/umpire-seed.ts"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
