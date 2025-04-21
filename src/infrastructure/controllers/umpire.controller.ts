@@ -18,6 +18,7 @@ import { RoleMap } from "../enums/role.enum";
 import { Match, Tournament } from "@prisma/client";
 import { GetAssignedMatchUseCase } from "../../application/usecases/umpires/get-assigned-match.usecase";
 import { GetUmpireParticipatedTournamentsUseCase } from "../../application/usecases/umpires/get-participated-tournaments.usecase";
+import { GetAllAssignedMatchesUsecase } from "../../application/usecases/umpires/get-all-assigned-matches.usecase";
 
 @Controller("/umpires")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -26,6 +27,7 @@ export class UmpireController {
 	constructor(
 		private umpireUpdateMatchUseCase: UmpireUpdateMatchUseCase,
 		private getAssignedMatchUseCase: GetAssignedMatchUseCase,
+		private getAllAssignedMatchesUsecase: GetAllAssignedMatchesUsecase,
 		private getUmpireParticipatedTournamentsUseCase: GetUmpireParticipatedTournamentsUseCase,
 	) {}
 
@@ -40,11 +42,19 @@ export class UmpireController {
 		});
 	}
 
-	@Get("/assigned-matches")
+	@Get("/assigned-matches/:tournamentId")
 	async getAssignedMatches(
 		@Req() { user }: IRequestUser,
+		@Param("tournamentId") tournamentId: string,
 	): Promise<ApiResponse<Match[]>> {
-		return this.getAssignedMatchUseCase.execute(user.id);
+		return this.getAssignedMatchUseCase.execute(tournamentId, user.id);
+	}
+
+	@Get("/all-assigned-matches")
+	async getAllAssignedMatches(
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<Match[]>> {
+		return this.getAllAssignedMatchesUsecase.execute(user.id);
 	}
 
 	@Get("/participate-tournaments")
