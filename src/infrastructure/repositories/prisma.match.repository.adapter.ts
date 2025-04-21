@@ -523,31 +523,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			}
 		});
 		const updatedPoint = await this.updatePointForMatch(game, winningId, tournamentEvent);
-		// if (match.leftCompetitorId === winningId) {
-		// 	const updatePoint = await this.prisma.game.update({
-		// 		where: {
-		// 			id: gameId
-		// 		},
-		// 		data: {
-		// 			leftCompetitorPoint: game.leftCompetitorPoint + 1
-		// 		}
-		// 	});
-			
-		// } else {
-		// 	return await this.prisma.game.update({
-		// 		where: {
-		// 			id: gameId
-		// 		},
-		// 		data: {
-		// 			rightCompetitorPoint: game.rightCompetitorPoint + 1
-		// 		}
-		// 	});
-		// }
 		return updatedPoint;
-		// const [isWonGame, gameWon] = await this.checkWonGame(game, match, winningId, tournamentEvent.numberOfGames, 
-		// 	tournamentEvent.winningPoint, tournamentEvent.lastPoint
-		// );
-		// console.log(gameWon);
 	}
 
 	async updatePointForMatch(game: Game, winningId: string, tournamentEvent: TournamentEvent): Promise<IGameAfterUpdatePointResponse> {
@@ -557,43 +533,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			}
 		});
 		const [leftCompetitorPoint, rightCompetitorPoint] = [game.leftCompetitorPoint, game.rightCompetitorPoint];
-		// if (match.leftCompetitorId === winningId) {
-		// 	const updatedGamePoint = await this.prisma.game.update({
-		// 		where: {
-		// 			id: game.id,
-		// 		}, 
-		// 		data: {
-		// 			leftCompetitorPoint: game.leftCompetitorPoint + 1,
-		// 		}
-		// 	});
-		// 	if (updatedGamePoint.leftCompetitorPoint < tournamentEvent.winningPoint || updatedGamePoint.rightCompetitorPoint < tournamentEvent.winningPoint)
-		// 		return {
-		// 			currentGameNumber: updatedGamePoint.gameNumber,
-		// 			currentServerId: winningId,
-		// 			message: "Game continues!",
-		// 			isEnd: false,
-		// 			currentPoint: await this.getAllGamesOfMatch(updatedGamePoint.matchId),
-		// 		}
-		// 	} else {
-		// 		const updatedGamePoint = await this.prisma.game.update({
-		// 			where: {
-		// 				id: game.id,
-		// 			}, 
-		// 			data: {
-		// 				rightCompetitorPoint: game.rightCompetitorPoint + 1,
-		// 			}
-		// 		});
-		// 	if (updatedGamePoint.leftCompetitorPoint < tournamentEvent.winningPoint && updatedGamePoint.rightCompetitorPoint < tournamentEvent.winningPoint)
-		// 		return {
-		// 			currentGameNumber: updatedGamePoint.gameNumber,
-		// 			message: "Game continues!",
-
-		// 			currentServerId: winningId,
-		// 			isEnd: false,
-		// 			currentPoint: await this.getAllGamesOfMatch(updatedGamePoint.matchId),
-		// 		}
-		// 	return await this.processWonGame(game, winningId, tournamentEvent);		
-		// }
 		let pointUpdated: Game;
 		if (match.leftCompetitorId === winningId) {
 			pointUpdated = await this.prisma.game.update({
@@ -683,25 +622,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			game.rightCompetitorPoint >= tournamentEvent.winningPoint
 		) {
 			if (Math.abs(game.leftCompetitorPoint - game.rightCompetitorPoint) >= 2) {
-				// const updatedGame = await this.prisma.game.update({
-				// 	where: {
-				// 		id: game.id
-				// 	},
-				// 	data: {
-				// 		currentServerId: winningId,
-				// 		gameWonByCompetitorId: winningId,
-
-				// 	}
-				// })
-				// return {
-				// 	currentGameNumber: game.gameNumber,
-				// 	winningCompetitor: await this.getWinningCompetitor(winningId),
-				// 	currentPoint: await this.getAllGamesOfMatch(game.matchId),
-				// 	currentServerId: winningId,
-				// 	isEnd: true,
-				// 	message: "Game ended!"
-				// };
-				console.log("Ket thuc 1");
+				console.log("");
 				const gameEnded = await this.prisma.game.update({
 					where: {
 						id: game.id
@@ -806,16 +727,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					matchStatus: MatchStatus.ENDED,
 				}
 			});
-			// const matchesOfCurrentStage = await this.prisma.match.count({
-			// 	where: {
-			// 		stageId: matchUpdated.stageId
-			// 	}
-			// });
-			const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
-				where: {
-					id: match.tournamentEventId
-				}
-			});
 			const umpireOfMatch = await this.prisma.tournamentUmpires.findFirst({
 				where: {
 					tournamentId: tournamentEvent.tournamentId,
@@ -837,19 +748,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			});
 			if (matchUpdated.nextMatchId === null && matchStage.stageName === StageOfMatch.Final) {
 				await this.updateStandingOfTournamentEvent(matchUpdated.id);
-				const thirdPlaceMatch = await this.getThirdPlaceMatch(matchUpdated.tournamentEventId);
-				if (thirdPlaceMatch !== null) {
-					if (thirdPlaceMatch.matchWonByCompetitorId !== null) {
-						const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
-							where: { 
-								id: matchUpdated.tournamentEventId
-							},
-							data: {
-								tournamentEventStatus: TournamentEventStatus.ENDED
-							}
-						});
-					}
-				} else {
+				const checkThirdPlaceMatchExistedOrEnded = await this.checkThirdPlaceMatchExistOrEnded(tournamentEvent);
+				if (checkThirdPlaceMatchExistedOrEnded) {
 					const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
 						where: { 
 							id: matchUpdated.tournamentEventId
@@ -858,32 +758,42 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 							tournamentEventStatus: TournamentEventStatus.ENDED
 						}
 					});
+					return {
+						currentGameNumber: 0,
+						currentPoint: await this.getAllGamesOfMatch(match.id),
+						currentServerId: winningId,
+						isEnd: true, 
+						message: "Final ended!",
+						newGame: null,
+						winningCompetitor: await this.getWinningCompetitor(winningId)
+					}
 				}
-			}
-			else if (matchStage.stageName === StageOfMatch.Semi_Final) {
-				// const thirdPlaceMatch = await this.getThirdPlaceMatch(matchUpdated.tournamentEventId);
-				// const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
-				// 	where: {
-				// 		id: matchUpdated.tournamentEventId
-				// 	}
-				// });
-				// if (thirdPlaceMatch === null) {
-				// 	const thirdPlaceMatch = await this.createThirdPlaceMatch(matchUpdated.stageId);
-				// }
+			} else if (matchUpdated.nextMatchId === null && matchStage.stageName === StageOfMatch.ThirdPlaceMatch) {
+				const checkFinalMatchExistOrEnded = await this.checkFinalMatchExistOrEnded(tournamentEvent);
+				if (checkFinalMatchExistOrEnded) {
+					const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
+						where: { 
+							id: matchUpdated.tournamentEventId
+						},
+						data: {
+							tournamentEventStatus: TournamentEventStatus.ENDED
+						}
+					});
+					return {
+						currentGameNumber: 0,
+						currentPoint: await this.getAllGamesOfMatch(match.id),
+						currentServerId: winningId,
+						isEnd: true, 
+						message: "Third place match ended!",
+						newGame: null,
+						winningCompetitor: await this.getWinningCompetitor(winningId)
+					}
+				}
+			} else if (matchStage.stageName === StageOfMatch.Semi_Final) {
 				const loseCompetitorId = matchUpdated.leftCompetitorId === winningId? matchUpdated.rightCompetitorId : matchUpdated.leftCompetitorId;
 				const processThirdPlaceMatch = await this.processSemiFinalMatch(matchUpdated, loseCompetitorId);
-			} else if (matchStage.stageName === StageOfMatch.ThirdPlaceMatch) {
-				
 			}
 			console.log("Won matches!");
-			// const nextMatch = await this.prisma.match.findUnique({
-			// 	where: {
-			// 		id: matchUpdated.nextMatchId
-			// 	}
-			// });
-			// const stage = await this.prisma.stage.findUnique({
-
-			// })
 			return {
 				currentGameNumber: 0,
 				currentPoint: await this.getAllGamesOfMatch(match.id),
@@ -916,6 +826,34 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		}
 	}
 
+	async checkThirdPlaceMatchExistOrEnded(tournamentEvent: TournamentEvent): Promise<boolean> {
+		const thirdPlaceMatch = await this.prisma.match.findFirst({
+			where: {
+				stage: {
+					stageName: {
+						equals: StageOfMatch.ThirdPlaceMatch
+					}
+				}
+			}
+		});
+		if (thirdPlaceMatch === null) return false;
+		return thirdPlaceMatch.matchWonByCompetitorId !== null;
+	}
+
+	async checkFinalMatchExistOrEnded(tournamentEvent: TournamentEvent): Promise<boolean> {
+		const finalMatch = await this.prisma.match.findFirst({
+			where: {
+				stage: {
+					stageName: {
+						equals: StageOfMatch.Final
+					}
+				}
+			}
+		});
+		// if (finalMatch === null) return false;
+		return finalMatch.matchWonByCompetitorId !== null;
+	}
+
 	async processSemiFinalMatch(match: Match, competitorId: string): Promise<any> {
 		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
 			where: {
@@ -926,16 +864,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			const thirdPlaceMatch = await this.getThirdPlaceMatch(match.tournamentEventId);
 			if (thirdPlaceMatch === null) {
 				const createThirdPlaceMatch = await this.createThirdPlaceMatch(match.tournamentEventId);
-				const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(createThirdPlaceMatch.id, competitorId, null);
+				const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(createThirdPlaceMatch.id, competitorId);
 				console.log(updatedThirdPlaceMatch);
 			} else {
-				if (thirdPlaceMatch.leftCompetitorId !== null) {
-					const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(thirdPlaceMatch.id, thirdPlaceMatch.leftCompetitorId, competitorId);
-					console.log(updatedThirdPlaceMatch);
-				} else if (thirdPlaceMatch.rightCompetitorId !== null) {
-					const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(thirdPlaceMatch.id, competitorId, thirdPlaceMatch.rightCompetitorId);
-					console.log(updatedThirdPlaceMatch);
-				} 
+				const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(thirdPlaceMatch.id, competitorId);
+				console.log(updatedThirdPlaceMatch);
 			}		
 		}
 	}
@@ -1026,15 +959,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			message: "Match ended!"
 		};
 	}
-
-	// async updatePointForLeftCompetitorInGame(gameId: string, leftCompetitorId: string): Promise<any> {
-	// 	const tournamentParticipants = await this.prisma.tournamentParticipants.findUnique({
-	// 		where: {
-	// 			id: leftCompetitorId
-	// 		}
-	// 	});
-
-	// }
 
 	transformGameData(game: Game) : IPointOfGameResponse {
 		return {
@@ -1184,18 +1108,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		return matches;
 	}
 
-	// transformMatchKeys(match: Match) : IMatchDetailBracketResponse{
-  //   return {
-  //       ...match,
-  //       startTime: match.startedWhen.toISOString(),
-  //       tournamentRoundText: match.stageId,
-  //       state: match.matchStatus,
-	// 			name: match.matchNumber.toString(),
-	// 			id: match.id,
-	// 			nextMatchId: match.nextMatchId,
-	// 		};
-	// }
-
 	transformMatchData(match) {
     return {
         id: match.id,
@@ -1249,14 +1161,27 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		});
 	}
 
-	async updateThirdPlaceMatch(matchId: string, leftCompetitorId: string, rightCompetitorId: string): Promise<Match> {
+	async updateThirdPlaceMatch(matchId: string, competitorId: string): Promise<Match> {
+		const match = await this.prisma.match.findUnique({
+			where: {
+				id: matchId
+			}
+		});
+		if (match.leftCompetitorId === null) 
+			return await this.prisma.match.update({
+				where: {
+					id: matchId
+				},
+				data: {
+					leftCompetitorId: competitorId
+				}
+			});
 		return await this.prisma.match.update({
 			where: {
 				id: matchId
 			},
 			data: {
-				leftCompetitorId: leftCompetitorId,
-				rightCompetitorId: rightCompetitorId,
+				rightCompetitorId: competitorId,
 				nextMatchId: null
 			}
 		});
