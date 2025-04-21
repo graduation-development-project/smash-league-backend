@@ -10,8 +10,8 @@ export class CreateNotificationDTO {
 	message: string;
 
 	@IsString()
-	@IsNotEmpty()
-	type: string;
+	@IsOptional()
+	type?: string;
 
 	@IsOptional()
 	teamInvitationId?: string;

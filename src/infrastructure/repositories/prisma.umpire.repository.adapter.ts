@@ -87,7 +87,11 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 					umpireId,
 				},
 				include: {
-					tournamentEvent: true
+					tournamentEvent: {
+						include: {
+							tournament: true,
+						},
+					},
 				},
 			});
 		} catch (e) {

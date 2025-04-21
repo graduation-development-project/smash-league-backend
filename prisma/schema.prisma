@@ -174,8 +174,8 @@ model Notification {
   id                       String                  @id @default(uuid())
   title                    String
   message                  String
-  typeId                   String
-  type                     NotificationType        @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
+  typeId                   String?
+  type                     NotificationType?       @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
   userNotification         UserNotification[]      @relation("FK_UserNotification_Notification")
   teamInvitationId         String?
   teamInvitation           TeamInvitation?         @relation("FK_TeamInvitation_Notification", fields: [teamInvitationId], references: [id], onDelete: Cascade)
