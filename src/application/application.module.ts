@@ -162,6 +162,7 @@ import { PrismaPaybackFeeListRepositoryAdapter } from "../infrastructure/reposit
 import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament.usecase";
 import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
 import { GetAllAssignedMatchesUsecase } from "./usecases/umpires/get-all-assigned-matches.usecase";
+import { GetAllPaybackFeeListUseCase } from "./usecases/staffs/get-all-payback-fee-list.usecase";
 
 @Module({
 	imports: [
@@ -445,6 +446,7 @@ import { GetAllAssignedMatchesUsecase } from "./usecases/umpires/get-all-assigne
 		//Staff Use Case
 		VerifyUserInformationUseCase,
 		GetAllVerificationRequestUseCase,
+		GetAllPaybackFeeListUseCase,
 
 		//Umpire Use Case
 		UmpireUpdateMatchUseCase,
@@ -608,6 +610,7 @@ import { GetAllAssignedMatchesUsecase } from "./usecases/umpires/get-all-assigne
 		//Staff Use Case
 		VerifyUserInformationUseCase,
 		GetAllVerificationRequestUseCase,
+		GetAllPaybackFeeListUseCase,
 
 		//Umpire Use Case
 		UmpireUpdateMatchUseCase,

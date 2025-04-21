@@ -5,4 +5,5 @@ export interface PaybackFeeListRepositoryPort {
 	createManyPaybackFee(createPaybackFeeListDTO: CreatePaybackFeeListDTO[]): Promise<PaybackFeeList[]>;
 	updatePaybackStatus(paybackId: string, status: boolean): Promise<PaybackFeeList>;
 	getById(paybackId: string): Promise<PaybackFeeList>;
+	getPaybackFeeList(): Promise<PaybackFeeList[]>;
 }

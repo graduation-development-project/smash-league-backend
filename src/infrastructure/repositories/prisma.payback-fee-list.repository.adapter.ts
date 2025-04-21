@@ -48,11 +48,25 @@ export class PrismaPaybackFeeListRepositoryAdapter
 				where: { id: paybackId },
 				include: {
 					tournamentEvent: true,
-					tournament: true
-				}
+					tournament: true,
+				},
 			});
 		} catch (e) {
 			console.error("Get payback fee failed");
+			throw e;
+		}
+	}
+
+	async getPaybackFeeList(): Promise<PaybackFeeList[]> {
+		try {
+			return this.prismaService.paybackFeeList.findMany({
+				include: {
+					tournamentEvent: true,
+					tournament: true,
+				},
+			});
+		} catch (e) {
+			console.error("Get payback  list failed");
 			throw e;
 		}
 	}
