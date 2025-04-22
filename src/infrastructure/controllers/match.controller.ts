@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Put, Query, UseGuards } from "@nestjs/common";
+import {
+	Controller,
+	Get,
+	Param,
+	Put,
+	Query,
+	Req,
+	UseGuards,
+} from "@nestjs/common";
 import { UpdateAttendanceUseCase } from "src/application/usecases/tournament/match/update-attendance.usecase";
 import { UpdateForfeitCompetitorUseCase } from "src/application/usecases/tournament/match/update-forfeit-competitor.usecase,";
 import { ApiResponse } from "src/domain/dtos/api-response";
@@ -14,6 +22,8 @@ import { AssignCourtForMatchUseCase } from "src/application/usecases/tournament/
 import { GetMatchByIdUseCase } from "src/application/usecases/tournament/match/get-match-by-id.usecase";
 import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
 import { AssignAthleteIntoMatchUseCase } from "src/application/usecases/tournament/match/assign-athlete-into-match.usecase";
+import { IRequestUser } from "../../domain/interfaces/interfaces";
+import { GetMatchesOfUserUseCase } from "../../application/usecases/athletes/get-matches-of-user.usecase";
 
 @Controller("match")
 export class MatchController {
@@ -25,12 +35,14 @@ export class MatchController {
 		private readonly getCourtsAvailableUseCase: GetCourtAvailableUseCase,
 		private readonly assignCourtForMatchUseCase: AssignCourtForMatchUseCase,
 		private readonly getMatchByIdUseCase: GetMatchByIdUseCase,
-		private readonly assignAthleteIntoMatchUseCase: AssignAthleteIntoMatchUseCase
-	) {
-	}
+		private readonly assignAthleteIntoMatchUseCase: AssignAthleteIntoMatchUseCase,
+		private readonly getMatchesOfUserUseCase: GetMatchesOfUserUseCase,
+	) {}
 
 	@Get("get-match/:matchId")
-	async getMatchById(@Param("matchId") matchId: string): Promise<ApiResponse<IMatchQueryResponse>> {
+	async getMatchById(
+		@Param("matchId") matchId: string,
+	): Promise<ApiResponse<IMatchQueryResponse>> {
 		return await this.getMatchByIdUseCase.execute(matchId);
 	}
 
@@ -40,46 +52,75 @@ export class MatchController {
 	async updateAttendance(
 		@Param("matchId") matchId: string,
 		@Query("leftCompetitorAttendance") leftCompetitorAttendance: boolean,
-		@Query("rightCompetitorAttendance") rightCompetitorAttendance: boolean): Promise<ApiResponse<any>> {
-			// console.log(leftCompetitorAttendance, ' ', rightCompetitorAttendance);
-			// return;
-			return await this.updateAttendanceUseCase.execute(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
-		} 
-	
+		@Query("rightCompetitorAttendance") rightCompetitorAttendance: boolean,
+	): Promise<ApiResponse<any>> {
+		// console.log(leftCompetitorAttendance, ' ', rightCompetitorAttendance);
+		// return;
+		return await this.updateAttendanceUseCase.execute(
+			matchId,
+			leftCompetitorAttendance,
+			rightCompetitorAttendance,
+		);
+	}
+
 	@Put("update-start-time/:matchId")
-	async updateStartTimeForMatch(@Param("matchId") matchId: string, @Query("currentServerId") currentServerId: string): Promise<ApiResponse<Game>> {
+	async updateStartTimeForMatch(
+		@Param("matchId") matchId: string,
+		@Query("currentServerId") currentServerId: string,
+	): Promise<ApiResponse<Game>> {
 		console.log(currentServerId);
 		return await this.startMatchUseCase.execute(matchId, currentServerId);
-	}	
+	}
 
 	@Put("update-point/:gameId")
-	async updatePointOfGame(@Param("gameId") gameId: string,
-				@Query("winningId") winningId: string): Promise<ApiResponse<any>> {
-					// console.log(gameId);
-					return await this.updatePointUseCase.execute(gameId, winningId);
-				}				
+	async updatePointOfGame(
+		@Param("gameId") gameId: string,
+		@Query("winningId") winningId: string,
+	): Promise<ApiResponse<any>> {
+		// console.log(gameId);
+		return await this.updatePointUseCase.execute(gameId, winningId);
+	}
 
 	@Get("get-courts-available/:tournamentId")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Organizer.name)
-	async getCourtsAvailable(@Param("tournamentId") tournamentId: string): Promise<ApiResponse<Court[]>> {
+	async getCourtsAvailable(
+		@Param("tournamentId") tournamentId: string,
+	): Promise<ApiResponse<Court[]>> {
 		return await this.getCourtsAvailableUseCase.execute(tournamentId);
-	}			
+	}
 
 	@Get("assign-court-for-match")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Organizer.name)
-	async assignCourtForMatch(@Query("matchId") matchId: string, @Query("courtId") courtId: string): Promise<ApiResponse<Match>> {
+	async assignCourtForMatch(
+		@Query("matchId") matchId: string,
+		@Query("courtId") courtId: string,
+	): Promise<ApiResponse<Match>> {
 		return await this.assignCourtForMatchUseCase.execute(matchId, courtId);
 	}
 
 	@Get("assign-athlete-into-match/:matchId")
 	// @UseGuards(JwtAccessTokenGuard, RolesGuard)
 	// @Roles(RoleMap.Organizer.name)
-	async assignAthleteIntoMatch(@Param("matchId") matchId: string,
-			@Query("leftCompetitorId") leftCompetitorId: string,
-			@Query("rightCompetitorId") rightCompetitorId: string): Promise<ApiResponse<Match>> {
-				console.log(matchId, " ", leftCompetitorId, " ", rightCompetitorId);
-				return await this.assignAthleteIntoMatchUseCase.execute(matchId, leftCompetitorId, rightCompetitorId);
-			}
+	async assignAthleteIntoMatch(
+		@Param("matchId") matchId: string,
+		@Query("leftCompetitorId") leftCompetitorId: string,
+		@Query("rightCompetitorId") rightCompetitorId: string,
+	): Promise<ApiResponse<Match>> {
+		console.log(matchId, " ", leftCompetitorId, " ", rightCompetitorId);
+		return await this.assignAthleteIntoMatchUseCase.execute(
+			matchId,
+			leftCompetitorId,
+			rightCompetitorId,
+		);
+	}
+
+	@Get("get-athlete-matches")
+	@UseGuards(JwtAccessTokenGuard)
+	async getMatchesOfUser(
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<Match[]>> {
+		return this.getMatchesOfUserUseCase.execute(user.id);
+	}
 }
