@@ -5,23 +5,17 @@ import { UmpireRepositoryPort } from "../../../domain/repositories/umpire.reposi
 import { UmpireUpdateMatchDTO } from "../../../domain/dtos/umpire/umpire-update-match.dto";
 import { Match } from "@prisma/client";
 
-export class GetAssignedMatchUseCase {
+export class GetAllAssignedMatchesUsecase {
 	constructor(
 		@Inject("UmpireRepository")
 		private readonly umpireRepositoryPort: UmpireRepositoryPort,
 	) {}
 
-	async execute(
-		tournamentId: string,
-		umpireId: string,
-	): Promise<ApiResponse<Match[]>> {
+	async execute(umpireId: string): Promise<ApiResponse<Match[]>> {
 		return new ApiResponse<Match[]>(
 			HttpStatus.OK,
-			"Get umpire's assigned matches successfully",
-			await this.umpireRepositoryPort.getAssignedMatches(
-				tournamentId,
-				umpireId,
-			),
+			"Get all umpire's assigned matches successfully",
+			await this.umpireRepositoryPort.getAllAssignedMatches(umpireId),
 		);
 	}
 }

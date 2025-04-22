@@ -3,10 +3,18 @@ import { Job } from "bullmq";
 import { PrismaService } from "../../services/prisma.service";
 import { TournamentEvent, TournamentEventStatus } from "@prisma/client";
 import { getRegistrationFee } from "../../util/get-registration-fee.util";
+import { NotificationsRepositoryPort } from "../../../domain/repositories/notifications.repository.port";
+import { CreateNotificationDTO } from "../../../domain/dtos/notifications/create-notification.dto";
+import { NotificationTypeMap } from "../../enums/notification-type.enum";
+import { Inject } from "@nestjs/common";
 
 @Processor("checkEnoughPlayerQueue", { concurrency: 3 })
 export class CheckEnoughPlayerQueueProcessor extends WorkerHost {
-	constructor(private readonly prisma: PrismaService) {
+	constructor(
+		private readonly prisma: PrismaService,
+		@Inject("NotificationRepository")
+		private notificationRepository: NotificationsRepositoryPort,
+	) {
 		super();
 	}
 
@@ -49,10 +57,18 @@ export class CheckEnoughPlayerQueueProcessor extends WorkerHost {
 						data: paybackRecords,
 						skipDuplicates: true,
 					});
+
+					const notificationData: CreateNotificationDTO = {
+						title: "The event you participate in is canceled",
+						message: `The event  ${event.tournamentEvent} from tournament ${tournament.name} has been canceled. You registration fee will be refunded soon`,
+					};
+					await this.notificationRepository.createNotification(
+						notificationData,
+						paybackRecords.map((user) => user.userId),
+					);
 				}
 
 				console.log("end checkEnoughPlayerQueue");
-
 			}
 		}
 	}

@@ -12,4 +12,5 @@ export interface ICreatePaybackTransactionRequest {
 	value: number;
 	paybackToUserId: string;
 	paybackImage: string;
+	paybackFeeId: string;
 }

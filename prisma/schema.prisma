@@ -174,8 +174,8 @@ model Notification {
   id                       String                  @id @default(uuid())
   title                    String
   message                  String
-  typeId                   String
-  type                     NotificationType        @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
+  typeId                   String?
+  type                     NotificationType?       @relation("FK_Notification_NotificationType", fields: [typeId], references: [id], onDelete: Cascade)
   userNotification         UserNotification[]      @relation("FK_UserNotification_Notification")
   teamInvitationId         String?
   teamInvitation           TeamInvitation?         @relation("FK_TeamInvitation_Notification", fields: [teamInvitationId], references: [id], onDelete: Cascade)
@@ -462,8 +462,8 @@ model TournamentRegistration {
   fromTeam                    Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
   reasonId                    String?                      @unique
   Notification                Notification[]               @relation(name: "FK_TournamentRegistration_Notification")
-  transaction                 Transaction[]                @relation(name: "FK_TournamentRegistration_Transaction")
   isDeleted                   Boolean                      @default(false)
+  transaction                 Transaction[]                @relation(name: "FK_TournamentRegistration_Transaction")
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, tournamentEventId, userId, partnerId]) // Ensure a unique pair for doubles
@@ -631,6 +631,7 @@ model PaybackFeeList {
   user              User?           @relation("FK_PaybackFeeList_User", fields: [userId], references: [id])
   tournament        Tournament      @relation("FK_PaybackFeeList_Tournament", fields: [tournamentId], references: [id])
   tournamentEvent   TournamentEvent @relation("FK_PaybackFeeList_TournamentEvent", fields: [tournamentEventId], references: [id])
+  transaction       Transaction[]   @relation(name: "FK_TournamentRegistration_PaybackFeeList")
 }
 
 // model TransactionType {
@@ -658,6 +659,8 @@ model Transaction {
   transactionType          TransactionType
   orderId                  String?
   order                    Order?                  @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
+  paybackFeeId             String?
+  paybackFee               PaybackFeeList?         @relation(name: "FK_TournamentRegistration_PaybackFeeList", fields: [paybackFeeId], references: [id], onDelete: Cascade)
   tournamentRegistrationId String?
   tournamentRegistration   TournamentRegistration? @relation(name: "FK_TournamentRegistration_Transaction", fields: [tournamentRegistrationId], references: [id], onDelete: Cascade)
   value                    Int

@@ -23,6 +23,7 @@ import { NotificationsRepositoryPort } from "../../../domain/repositories/notifi
 import { CreateNotificationDTO } from "../../../domain/dtos/notifications/create-notification.dto";
 import { NotificationTypeMap } from "../../../infrastructure/enums/notification-type.enum";
 import { TournamentRegistrationRepositoryPort } from "../../../domain/repositories/tournament-registration.repository.port";
+import { PaybackFeeListRepositoryPort } from "../../../domain/repositories/payback-fee-list.repository.port";
 
 @Injectable()
 export class PaybackRegistrationFeeUseCase {
@@ -31,60 +32,67 @@ export class PaybackRegistrationFeeUseCase {
 		private readonly transactionRepository: TransactionRepositoryPort,
 		@Inject("NotificationRepository")
 		private readonly notificationsRepository: NotificationsRepositoryPort,
-		@Inject("TournamentRegistrationRepositoryPort")
-		private readonly tournamentRegistrationRepository: TournamentRegistrationRepositoryPort,
+		@Inject("PaybackFeeListRepositoryPort")
+		private readonly paybackFeeListRepository: PaybackFeeListRepositoryPort,
 		private readonly uploadService: UploadService,
 	) {}
 
 	async execute(
 		createPayback: CreatePaybackTransactionDTO,
 	): Promise<ApiResponse<Transaction>> {
-		const {
-			paybackImage,
-			paybackToUserId,
-			value,
-			transactionDetail,
-			tournamentRegistrationId,
-		} = createPayback;
+		const { paybackImage, transactionDetail, paybackFeeId } = createPayback;
 
-		const tournamentRegistration: any =
-			await this.tournamentRegistrationRepository.getTournamentRegistrationById(
-				tournamentRegistrationId,
-			);
+		const paybackFee: any =
+			await this.paybackFeeListRepository.getById(paybackFeeId);
+		if (!paybackFee) throw new BadRequestException("Payback Fee not found");
 
-		const folderName = `payback-registration-fee/${new Date().toISOString().split("T")[0]}/${paybackToUserId}}`;
+		console.log(paybackFee);
+
+		const folderName = `payback-registration-fee/${new Date().toISOString().split("T")[0]}/${paybackFee.userId}}`;
 
 		const imgURLs = await this.uploadService.uploadFiles(
 			paybackImage,
 			folderName,
-			paybackToUserId,
+			paybackFee.userId,
 		);
+
+		console.log("imgURLs", imgURLs);
 
 		if (!imgURLs) {
 			throw new BadRequestException("Upload images fail");
 		}
 
 		const notificationDTO: CreateNotificationDTO = {
-			tournamentRegistrationId,
 			title: "Your registration fee has been refunded",
-			message: `Your registration fee for event ${tournamentRegistration.tournamentEvent.tournamentEvent} of tournament ${tournamentRegistration.tournament.name} has been refunded`,
+			message: `Your registration fee for event ${paybackFee.tournamentEvent.tournamentEvent} of tournament ${paybackFee.tournament.name} has been refunded`,
 			type: NotificationTypeMap.Refund.id,
 		};
 
 		await this.notificationsRepository.createNotification(notificationDTO, [
-			paybackToUserId,
+			paybackFee.userId,
 		]);
 
-		return new ApiResponse<Transaction>(
-			HttpStatus.CREATED,
-			"Create payback tournament fee successfully!!",
+		const paybackTransaction =
 			await this.transactionRepository.createPaybackTransaction({
 				userId: createPayback.userId,
 				transactionDetail,
 				paybackImage: imgURLs[0].secure_url,
-				value: parseInt(value),
-				paybackToUserId,
-			}),
+				value: parseInt(paybackFee.value),
+				paybackToUserId: paybackFee.userId,
+				paybackFeeId,
+			});
+
+		if (paybackTransaction) {
+			await this.paybackFeeListRepository.updatePaybackStatus(
+				paybackFeeId,
+				true,
+			);
+		}
+
+		return new ApiResponse<Transaction>(
+			HttpStatus.CREATED,
+			"Create payback tournament fee successfully!!",
+			paybackTransaction,
 		);
 	}
 }

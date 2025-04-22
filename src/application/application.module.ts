@@ -161,6 +161,8 @@ import { PaybackFeeListRepositoryPort } from "../domain/repositories/payback-fee
 import { PrismaPaybackFeeListRepositoryAdapter } from "../infrastructure/repositories/prisma.payback-fee-list.repository.adapter";
 import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament.usecase";
 import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
+import { GetAllAssignedMatchesUsecase } from "./usecases/umpires/get-all-assigned-matches.usecase";
+import { GetAllPaybackFeeListUseCase } from "./usecases/staffs/get-all-payback-fee-list.usecase";
 import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/update-tournament-event-information.usecase";
 
 @Module({
@@ -446,10 +448,12 @@ import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/u
 		//Staff Use Case
 		VerifyUserInformationUseCase,
 		GetAllVerificationRequestUseCase,
+		GetAllPaybackFeeListUseCase,
 
 		//Umpire Use Case
 		UmpireUpdateMatchUseCase,
 		GetAssignedMatchUseCase,
+		GetAllAssignedMatchesUsecase,
 		GetUmpireParticipatedTournamentsUseCase,
 
 		//Bank Use Case
@@ -609,10 +613,12 @@ import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/u
 		//Staff Use Case
 		VerifyUserInformationUseCase,
 		GetAllVerificationRequestUseCase,
+		GetAllPaybackFeeListUseCase,
 
 		//Umpire Use Case
 		UmpireUpdateMatchUseCase,
 		GetAssignedMatchUseCase,
+		GetAllAssignedMatchesUsecase,
 		GetUmpireParticipatedTournamentsUseCase,
 
 		//Bank Use Case

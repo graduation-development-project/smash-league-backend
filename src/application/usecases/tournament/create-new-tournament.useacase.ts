@@ -66,14 +66,16 @@ export class CreateNewTournamentUseCase {
 		);
 
 		const now = Date.now();
-		const startDate = new Date(tournament.startDate);
+		const closeFormDate = new Date(tournament.registrationClosingDate);
 
-		const delayBeforeStart = 60 * 60 * 1000;
+		const delayTimeInMilliseconds = closeFormDate.getTime() - now;
 
-		const delayTimeInMilliseconds =
-			startDate.getTime() - now - delayBeforeStart;
-
-		console.log(startDate.getTime(), now, tournament.startDate, new Date().toISOString());
+		console.log(
+			closeFormDate.getTime(),
+			now,
+			tournament.startDate,
+			new Date().toISOString(),
+		);
 		console.log(delayTimeInMilliseconds);
 
 		await this.checkEnoughPlayerQueue.add(
