@@ -5,6 +5,7 @@ import {
 } from "../interfaces/tournament/match/match.interface";
 import { IMatchQueryResponse } from "../interfaces/tournament/match/match.query";
 import { IGameAfterUpdatePointResponse } from "../interfaces/tournament/match/game.interface";
+import { UpdateMatchDTO } from "../dtos/match/update-match.dto";
 
 export interface MatchRepositoryPort {
 	getMatchDetail(matchId: string): Promise<Match>;
@@ -19,13 +20,13 @@ export interface MatchRepositoryPort {
 
 	getAllMatchesOfTournamentEvent(tournamentEventId: string): Promise<any[]>;
 
-	updateMatch(): Promise<any>;
+	updateMatch(matchId: string, updateMatchDTO: UpdateMatchDTO): Promise<any>;
 
 	updateAttendance(
 		matchId: string,
 		leftCompetitorAttendance: boolean,
 		rightCompetitorAttendance: boolean,
-	): Promise<any>;
+	): Promise<Match>;
 
 	updateForfeitCompetitor(
 		matchId: string,

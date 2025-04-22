@@ -118,4 +118,21 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 			throw e;
 		}
 	}
+
+	async getUmpireDetail(
+		umpireId: string,
+		tournamentId: string,
+	): Promise<TournamentUmpires> {
+		try {
+			return this.prismaService.tournamentUmpires.findFirst({
+				where: {
+					tournamentId,
+					userId: umpireId,
+				},
+			});
+		} catch (e) {
+			console.error("Get Umpire Detail failed", e);
+			throw e;
+		}
+	}
 }

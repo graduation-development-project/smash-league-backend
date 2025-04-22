@@ -1,4 +1,5 @@
 import {
+	Body,
 	Controller,
 	Get,
 	Param,
@@ -24,6 +25,8 @@ import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/matc
 import { AssignAthleteIntoMatchUseCase } from "src/application/usecases/tournament/match/assign-athlete-into-match.usecase";
 import { IRequestUser } from "../../domain/interfaces/interfaces";
 import { GetMatchesOfUserUseCase } from "../../application/usecases/athletes/get-matches-of-user.usecase";
+import { UpdateMatchUseCase } from "../../application/usecases/organizers/update-match.usecase";
+import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 
 @Controller("match")
 export class MatchController {
@@ -37,6 +40,7 @@ export class MatchController {
 		private readonly getMatchByIdUseCase: GetMatchByIdUseCase,
 		private readonly assignAthleteIntoMatchUseCase: AssignAthleteIntoMatchUseCase,
 		private readonly getMatchesOfUserUseCase: GetMatchesOfUserUseCase,
+		private readonly updateMatchUseCase: UpdateMatchUseCase,
 	) {}
 
 	@Get("get-match/:matchId")
@@ -44,6 +48,14 @@ export class MatchController {
 		@Param("matchId") matchId: string,
 	): Promise<ApiResponse<IMatchQueryResponse>> {
 		return await this.getMatchByIdUseCase.execute(matchId);
+	}
+
+	@Put("update-match-info/:matchId")
+	async updateMatchInfo(
+		@Param("matchId") matchId: string,
+		@Body() updateMatchDTO: UpdateMatchDTO,
+	): Promise<ApiResponse<Match>> {
+		return this.updateMatchUseCase.execute(matchId, updateMatchDTO);
 	}
 
 	@Put("update-attendance/:matchId")

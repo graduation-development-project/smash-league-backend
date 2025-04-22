@@ -1,4 +1,3 @@
-import { count } from "node:console";
 import { Injectable } from "@nestjs/common";
 import {
 	Game,
@@ -9,11 +8,7 @@ import {
 	TournamentEvent,
 	TournamentEventStatus,
 } from "@prisma/client";
-import { create } from "domain";
-import {
-	ICreateMatch,
-	IMatchDetailBracketResponse,
-} from "src/domain/interfaces/tournament/match/match.interface";
+import { ICreateMatch } from "src/domain/interfaces/tournament/match/match.interface";
 import { IMatchQueryResponse } from "src/domain/interfaces/tournament/match/match.query";
 import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
 import { convertToLocalTime } from "../util/convert-to-local-time.util";
@@ -24,6 +19,7 @@ import {
 } from "src/domain/interfaces/tournament/match/game.interface";
 import { IParticipantResponse } from "src/domain/interfaces/tournament/match/competitor.interface";
 import { StageOfMatch } from "../enums/tournament/tournament-match.enum";
+import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
@@ -1308,6 +1304,10 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			where: {
 				id: matchId,
 			},
+
+			include: {
+				tournamentEvent: true
+			}
 		});
 	}
 
@@ -1378,8 +1378,21 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		});
 	}
 
-	updateMatch(): Promise<any> {
-		throw new Error("Method not implemented.");
+	async updateMatch(
+		matchId: string,
+		updateMatchDTO: UpdateMatchDTO,
+	): Promise<Match> {
+		try {
+			return await this.prisma.match.update({
+				where: { id: matchId },
+				data: {
+					...updateMatchDTO,
+				},
+			});
+		} catch (e) {
+			console.error("Update match failed", e);
+			throw e;
+		}
 	}
 
 	async getMatchesOfUser(userId: string): Promise<Match[]> {
