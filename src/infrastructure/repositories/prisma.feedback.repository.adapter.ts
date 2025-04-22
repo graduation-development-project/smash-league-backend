@@ -39,14 +39,11 @@ export class PrismaFeedbackRepositoryAdapter implements FeedbackRepositoryPort {
 				},
 
 				include: {
-					tournament: {
-						include: {
-							organizer: {
-								select: {
-									id: true,
-									name: true,
-								},
-							},
+					account: {
+						select: {
+							id: true,
+							name: true,
+							avatarURL: true,
 						},
 					},
 				},
@@ -82,6 +79,14 @@ export class PrismaFeedbackRepositoryAdapter implements FeedbackRepositoryPort {
 						accountId: userId,
 					},
 					include: {
+						account: {
+							select: {
+								id: true,
+								name: true,
+								avatarURL: true,
+							},
+						},
+
 						tournament: {
 							include: {
 								organizer: {
@@ -115,6 +120,25 @@ export class PrismaFeedbackRepositoryAdapter implements FeedbackRepositoryPort {
 			};
 		} catch (e) {
 			console.error("get feedbacks by user failed: ", e);
+			throw e;
+		}
+	}
+
+	async getUserFeedbackInTournament(
+		userId: string,
+		tournamentId: string,
+	): Promise<Feedback> {
+		try {
+			return this.prismaService.feedback.findUnique({
+				where: {
+					tournamentId_accountId: {
+						tournamentId,
+						accountId: userId,
+					},
+				},
+			});
+		} catch (e) {
+			console.error("getUserFeedbackInTournament failed: ", e);
 			throw e;
 		}
 	}

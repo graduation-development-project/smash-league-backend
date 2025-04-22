@@ -53,6 +53,16 @@ export class CreateFeedbackUseCase {
 			);
 		}
 
+		const checkAlreadyFeedback =
+			await this.feedbackRepository.getUserFeedbackInTournament(
+				accountId,
+				tournamentId,
+			);
+
+		if (checkAlreadyFeedback) {
+			throw new BadRequestException("You already feedback this tournament");
+		}
+
 		return new ApiResponse<Feedback>(
 			HttpStatus.CREATED,
 			"Create Feedback successfully",

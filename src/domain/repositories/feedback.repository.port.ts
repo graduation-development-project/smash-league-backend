@@ -15,4 +15,9 @@ export interface FeedbackRepositoryPort {
 		userId: string,
 		options: IPaginateOptions,
 	): Promise<IPaginatedOutput<Feedback>>;
+
+	getUserFeedbackInTournament(
+		userId: string,
+		tournamentId: string,
+	): Promise<Feedback>;
 }
