@@ -166,6 +166,7 @@ import { GetAllPaybackFeeListUseCase } from "./usecases/staffs/get-all-payback-f
 import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/update-tournament-event-information.usecase";
 import { GetMatchesOfUserUseCase } from "./usecases/athletes/get-matches-of-user.usecase";
 import { UpdateMatchUseCase } from "./usecases/organizers/update-match.usecase";
+import { UpdateTournamentScheduleInformationUseCase } from "./usecases/tournament/update-tournament-schedule-information.usecase";
 
 @Module({
 	imports: [
@@ -403,6 +404,7 @@ import { UpdateMatchUseCase } from "./usecases/organizers/update-match.usecase";
 		GetAllSponsorUseCase,
 		CancelTournamentUseCase,
 		UpdateTournamentEventInformationUseCase,
+		UpdateTournamentScheduleInformationUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -572,6 +574,7 @@ import { UpdateMatchUseCase } from "./usecases/organizers/update-match.usecase";
 		GetAllSponsorUseCase,
 		CancelTournamentUseCase,
 		UpdateTournamentEventInformationUseCase,
+		UpdateTournamentScheduleInformationUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
