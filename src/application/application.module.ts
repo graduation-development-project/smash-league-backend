@@ -164,6 +164,7 @@ import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
 import { GetAllAssignedMatchesUsecase } from "./usecases/umpires/get-all-assigned-matches.usecase";
 import { GetAllPaybackFeeListUseCase } from "./usecases/staffs/get-all-payback-fee-list.usecase";
 import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/update-tournament-event-information.usecase";
+import { GetMatchesOfUserUseCase } from "./usecases/athletes/get-matches-of-user.usecase";
 
 @Module({
 	imports: [
@@ -324,6 +325,7 @@ import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/u
 		GetFeedbacksByTournamentUseCase,
 		GetFeedbacksByUserUseCase,
 		UploadAvatarUseCase,
+		GetMatchesOfUserUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -482,6 +484,7 @@ import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/u
 		GetFeedbacksByTournamentUseCase,
 		GetFeedbacksByUserUseCase,
 		UploadAvatarUseCase,
+		GetMatchesOfUserUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
