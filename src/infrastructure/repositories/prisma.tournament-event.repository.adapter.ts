@@ -10,6 +10,21 @@ export class PrismaTournamentEventRepositoryAdapter
 	implements TournamentEventRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async updateManyTournamentEvent(tournamentEvents: TournamentEvent[]): Promise<TournamentEvent[]> {
+		let tournamentEventsUpdated: TournamentEvent[] = [];
+		for (const item of tournamentEvents) {
+			const updatedTournamentEvent = await this.prisma.tournamentEvent.update({
+				where: {
+					id: item.id,
+				},
+				data: {
+					...item,
+				},
+			});
+			tournamentEventsUpdated.push(updatedTournamentEvent);
+		}
+		return tournamentEventsUpdated;
+	}
 	async getParticipantsByTournamentEvent(tournamentEventId: string): Promise<IParticipantsOfTournamentEvent> {
 		const [numberOfParticipants, listParticipants] = await Promise.all([
 			await this.prisma.tournamentParticipants.count({

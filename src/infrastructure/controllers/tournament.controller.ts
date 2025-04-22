@@ -3,6 +3,7 @@ import { GenerateBracketUseCase } from "./../../application/usecases/tournament/
 import {
 	UpdateTournament,
 	UpdateTournamentContact,
+	UpdateTournamentEventsDTO,
 	UpdateTournamentInformation,
 	UpdateTournamentRegistrationInformation,
 } from "./../../domain/interfaces/tournament/tournament.validation";
@@ -108,6 +109,7 @@ import { CreateTournamentSponsorUseCase } from "../../application/usecases/tourn
 import { CreateTournamentSponsorRequestDTO } from "../../domain/dtos/tournament-sponsor/create-tournament-sponsor-request.dto";
 import { FindTournamentSponsorUseCase } from "../../application/usecases/tournament/sponsor/find-tournament-sponsor.usecase";
 import { CancelTournamentUseCase } from "../../application/usecases/tournament/cancel-tournament.usecase";
+import { UpdateTournamentEventInformationUseCase } from "src/application/usecases/tournament/update-tournament-event-information.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -149,6 +151,7 @@ export class TournamentController {
 		private readonly createTournamentSponsorUseCase: CreateTournamentSponsorUseCase,
 		private readonly findTournamentSponsorUseCase: FindTournamentSponsorUseCase,
 		private readonly cancelTournamentUseCase: CancelTournamentUseCase,
+		private readonly updateTournamentEventInformationUseCase: UpdateTournamentEventInformationUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -500,6 +503,19 @@ export class TournamentController {
 			tournamentId,
 			user.id,
 			createTournamentSponsor,
+		);
+	}
+
+	@Put("/update-tournament-event/:tournamentId")
+	// @UseGuards(JwtAccessTokenGuard, RolesGuard)
+	// @Roles(RoleMap.Organizer.name)
+	async updateTournamentEvent(
+		@Param("tournamentId") tournamentId: string,
+		@Body() updateTournamentEvent: UpdateTournamentEventsDTO,
+	): Promise<ApiResponse<TournamentEvent[]>> {
+		return await this.updateTournamentEventInformationUseCase.execute(
+			tournamentId,
+			updateTournamentEvent,
 		);
 	}
 }

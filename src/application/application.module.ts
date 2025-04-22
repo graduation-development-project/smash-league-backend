@@ -161,6 +161,7 @@ import { PaybackFeeListRepositoryPort } from "../domain/repositories/payback-fee
 import { PrismaPaybackFeeListRepositoryAdapter } from "../infrastructure/repositories/prisma.payback-fee-list.repository.adapter";
 import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament.usecase";
 import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
+import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/update-tournament-event-information.usecase";
 
 @Module({
 	imports: [
@@ -396,6 +397,7 @@ import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
 		FindTournamentSponsorUseCase,
 		GetAllSponsorUseCase,
 		CancelTournamentUseCase,
+		UpdateTournamentEventInformationUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -560,6 +562,7 @@ import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
 		FindTournamentSponsorUseCase,
 		GetAllSponsorUseCase,
 		CancelTournamentUseCase,
+		UpdateTournamentEventInformationUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
