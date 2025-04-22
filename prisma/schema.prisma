@@ -31,9 +31,9 @@ model User {
   hands                         Hands?
   dateOfBirth                   DateTime?
   location                      String?
-  startPlayingCompetitively     DateTime?
+  startPlayingCompetitively     String?
   placeOfBirth                  String?
-  startPlayingSport             DateTime?
+  startPlayingSport             String?
   sportAmbitions                String?
   tournamentSeries              TournamentSerie[]        @relation(name: "FK_TournamentSerie_User")
   orders                        Order[]                  @relation(name: "FK_Order_User")
@@ -341,12 +341,12 @@ enum BadmintonParticipantType {
 }
 
 model Sponsor {
-  id                     String                   @id @default(uuid())
-  name                   String                   @unique
-  logo                   String?
-  website                String?
-  description            String?
-  tournamentSponsors     TournamentSponsor[]
+  id                 String              @id @default(uuid())
+  name               String              @unique
+  logo               String?
+  website            String?
+  description        String?
+  tournamentSponsors TournamentSponsor[]
 }
 
 enum SponsorTier {
@@ -362,6 +362,7 @@ model TournamentSponsor {
   sponsorId    String
   sponsor      Sponsor     @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
   tier         SponsorTier
+
   @@id([tournamentId, sponsorId])
 }
 

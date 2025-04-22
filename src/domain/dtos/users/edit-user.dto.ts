@@ -12,10 +12,10 @@ export class EditUserDTO extends PartialType(CreateUserDTO) {
 	placeOfBirth: string;
 
 	@IsOptional()
-	startPlayingCompetitively: Date;
+	startPlayingCompetitively: string;
 
 	@IsOptional()
-	startPlayingSport: Date;
+	startPlayingSport: string;
 
 	@IsOptional()
 	@IsString()
