@@ -330,7 +330,6 @@ model TournamentEvent {
 
 enum TypeOfFormat {
   SINGLE_ELIMINATION
-  ROUND_ROBIN
 }
 
 enum BadmintonParticipantType {
@@ -348,7 +347,6 @@ model Sponsor {
   website                String?
   description            String?
   tournamentSponsors     TournamentSponsor[]
-  TournamentParticipants TournamentParticipants[]
 }
 
 enum SponsorTier {
@@ -364,7 +362,6 @@ model TournamentSponsor {
   sponsorId    String
   sponsor      Sponsor     @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
   tier         SponsorTier
-
   @@id([tournamentId, sponsorId])
 }
 
@@ -492,8 +489,6 @@ model TournamentParticipants {
   runnerUps         TournamentEvent[] @relation(name: "FK_RunnerUp_TournamentParticipants")
   thirdPlaces       TournamentEvent[] @relation(name: "FK_ThirdPlace_TournamentParticipants")
   jointThirdPlaces  TournamentEvent[] @relation(name: "FK_JointThirdPlace_TournamentParticipants")
-  Sponsor           Sponsor?          @relation(fields: [sponsorId], references: [id])
-  sponsorId         String?
 }
 
 model TournamentUmpires {

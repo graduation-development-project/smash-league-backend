@@ -792,7 +792,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			} else if (matchStage.stageName === StageOfMatch.Semi_Final) {
 				const loseCompetitorId = matchUpdated.leftCompetitorId === winningId? matchUpdated.rightCompetitorId : matchUpdated.leftCompetitorId;
 				const processThirdPlaceMatch = await this.processSemiFinalMatch(matchUpdated, loseCompetitorId);
-			}
+			} else await this.assignCompetitorForNextMatch(winningId, match.nextMatchId, match.id);
 			console.log("Won matches!");
 			return {
 				currentGameNumber: 0,

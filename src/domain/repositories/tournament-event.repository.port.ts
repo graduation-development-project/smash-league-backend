@@ -17,5 +17,5 @@ export interface TournamentEventRepositoryPort {
 	getTournamentEventStandingBoard(tournamentEventId: string): Promise<ITournamentStandingBoardInterface>
 	getTournamentEventById(tournamentEventId: string): Promise<TournamentEvent>;
 	getTournamentOfTournamentEvent(tournamentEventId: string): Promise<Tournament>;
-
+	updateManyTournamentEvent(tournamentEvents: TournamentEvent[]): Promise<TournamentEvent[]>;
 }

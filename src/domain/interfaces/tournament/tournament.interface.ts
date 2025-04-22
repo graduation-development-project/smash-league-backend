@@ -28,7 +28,6 @@ import { ITournamentSerieResponse } from "../tournament-serie/tournament-serie.i
 
 export enum FormatType {
 	SINGLE_ELIMINATION = "SINGLE_ELIMINATION",
-	ROUND_ROBIN = "ROUND_ROBIN",
 }
 
 export enum TournamentStatus {

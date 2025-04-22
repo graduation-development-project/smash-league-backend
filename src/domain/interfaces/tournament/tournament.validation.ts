@@ -45,9 +45,8 @@ export class CreateTournamentEvent {
 	@IsEnum(FormatType, {
 		message:
 			"Format type must be one of the following: " +
-			"SINGLE_ELIMINATION, " +
-			"ROUND_ROBIN",
-	})
+			"SINGLE_ELIMINATION, "
+		})
 	typeOfFormat: FormatType;
 	@Min(11, {
 		message: "Winning point must be bigger than 11.",
@@ -111,6 +110,93 @@ export class CreateTournamentEventsDTO {
 	createTournamentEvent: {
 		[key in BadmintonParticipantType]: CreateTournamentEvent[];
 	}[];
+}
+
+export class UpdateTournamentEventsDTO {
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => Object)
+	updateTournamentEvent: {
+		[key in BadmintonParticipantType]: UpdateTournamentEventDTO[];
+	}[];
+}
+
+export class UpdateTournamentEventDTO {
+	id: string;
+	@Min(6, {
+		message: "Age for participating must be older than 6 years old.",
+	})
+	@Max(90, {
+		message: "Age for participating must be younger than 90 years old.",
+	})
+	fromAge?: number;
+	@Min(6, {
+		message: "Age for participating must be older than 6 years old.",
+	})
+	@Max(90, {
+		message: "Age for participating must be younger than 90 years old.",
+	})
+	toAge?: number;
+
+	@IsEnum(FormatType, {
+		message:
+			"Format type must be one of the following: " +
+			"SINGLE_ELIMINATION, "
+		})
+	typeOfFormat: FormatType;
+	@Min(11, {
+		message: "Winning point must be bigger than 11.",
+	})
+	@Max(31, {
+		message: "Winning point must be under 31.",
+	})
+	winningPoint?: number;
+	@Min(30, {
+		message: "Last point must be bigger than 30.",
+	})
+	@Max(51, {
+		message: "Last point must be under 51.",
+	})
+	lastPoint: number;
+	@Min(1, {
+		message: "Number of games must be bigger than 1.",
+	})
+	@Max(5, {
+		message: "Number of games must be under 5.",
+	})
+	numberOfGames: number;
+	ruleOfEventExtension?: string;
+	@IsNumber()
+	@Min(0, {
+		message: "Maximum athlete must be positive number.",
+	})
+	maximumAthlete: number;
+	@IsNumber()
+	@Min(0, {
+		message: "Minimum athlete must be positive number.",
+	})
+	minimumAthlete: number;
+	@IsEnum(BadmintonParticipantType, {
+		message:
+			"Participant type must be one of the following: " +
+			"MENS_SINGLE, " +
+			"WOMENS_SINGLE, " +
+			"MENS_DOUBLE, " +
+			"WOMENS_DOUBLE, " +
+			"MIXED_DOUBLE",
+	})
+	tournamentEvent: BadmintonParticipantType;
+
+	@IsNotEmpty({
+		message: "Championship prize must exist!",
+	})
+	championshipPrize: string;
+	@IsNotEmpty({
+		message: "Runner-up prize must exist!",
+	})
+	runnerUpPrize: string;
+	thirdPlacePrize?: string;
+	jointThirdPlacePrize?: string;
 }
 
 export class CreateTournament {
