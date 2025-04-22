@@ -6,6 +6,7 @@ import {
 	UpdateTournamentEventsDTO,
 	UpdateTournamentInformation,
 	UpdateTournamentRegistrationInformation,
+	UpdateTournamentScheduleInformation,
 } from "./../../domain/interfaces/tournament/tournament.validation";
 import {
 	Body,
@@ -110,6 +111,7 @@ import { CreateTournamentSponsorRequestDTO } from "../../domain/dtos/tournament-
 import { FindTournamentSponsorUseCase } from "../../application/usecases/tournament/sponsor/find-tournament-sponsor.usecase";
 import { CancelTournamentUseCase } from "../../application/usecases/tournament/cancel-tournament.usecase";
 import { UpdateTournamentEventInformationUseCase } from "src/application/usecases/tournament/update-tournament-event-information.usecase";
+import { UpdateTournamentScheduleInformationUseCase } from "src/application/usecases/tournament/update-tournament-schedule-information.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -151,7 +153,8 @@ export class TournamentController {
 		private readonly createTournamentSponsorUseCase: CreateTournamentSponsorUseCase,
 		private readonly findTournamentSponsorUseCase: FindTournamentSponsorUseCase,
 		private readonly cancelTournamentUseCase: CancelTournamentUseCase,
-		private readonly updateTournamentEventInformationUseCase: UpdateTournamentEventInformationUseCase
+		private readonly updateTournamentEventInformationUseCase: UpdateTournamentEventInformationUseCase,
+		private readonly updateTournamentScheduleInformationUseCase: UpdateTournamentScheduleInformationUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -507,8 +510,8 @@ export class TournamentController {
 	}
 
 	@Put("/update-tournament-event/:tournamentId")
-	// @UseGuards(JwtAccessTokenGuard, RolesGuard)
-	// @Roles(RoleMap.Organizer.name)
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
 	async updateTournamentEvent(
 		@Param("tournamentId") tournamentId: string,
 		@Body() updateTournamentEvent: UpdateTournamentEventsDTO,
@@ -517,5 +520,12 @@ export class TournamentController {
 			tournamentId,
 			updateTournamentEvent,
 		);
+	}
+
+	@Put("/update-tournament-schedule-information")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)	
+	@Roles(RoleMap.Organizer.name)
+	async updateTournamentScheduleInformation(@Body() updateTournamentScheduleInformation: UpdateTournamentScheduleInformation): Promise<ApiResponse<Tournament>> {
+		return await this.updateTournamentScheduleInformationUseCase.execute(updateTournamentScheduleInformation);
 	}
 }

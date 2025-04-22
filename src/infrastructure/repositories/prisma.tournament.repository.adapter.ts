@@ -8,6 +8,7 @@ import {
 	IUpdateTournamentContact,
 	IUpdateTournamentInformation,
 	IUpdateTournamentRegistrationInformation,
+	IUpdateTournamentScheduleInformation,
 } from "./../../domain/interfaces/tournament/tournament.interface";
 import {
 	BadmintonParticipantType,
@@ -34,6 +35,17 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async updateTournamentScheduleInformation(updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation): Promise<Tournament> {
+		return await this.prisma.tournament.update({
+			where: {
+				id: updateTournamentScheduleInformation.id
+			},
+
+			data: {
+				...updateTournamentScheduleInformation
+			}
+		});
+	}
 
 	async getTournamentRegistration(
 		id: string,

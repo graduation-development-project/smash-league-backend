@@ -558,3 +558,30 @@ export class UpdateTournamentRegistrationInformation {
 	})
 	requiredAttachment: RequiredAttachment[];
 }
+
+export class UpdateTournamentScheduleInformation {
+	@IsString()
+	@IsNotEmpty()
+	id: string;
+	@IsDateString()
+	@IsISO8601()
+	drawDate: Date;
+
+	@IsDateString()
+	@IsISO8601()
+	startDate: Date;
+
+	@IsDateString()
+	@IsISO8601()
+	endDate: Date;
+
+	@IsDateString()
+	@IsISO8601()
+	checkInBeforeStart: Date;
+
+	@IsNumber()
+	@Min(1, {
+		message: "Umpire per match must be more than 1.",
+	})
+	umpirePerMatch: number;
+}

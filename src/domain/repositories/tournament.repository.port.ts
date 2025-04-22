@@ -9,6 +9,7 @@ import {
 	IUpdateTournament,
 	IUpdateTournamentInformation,
 	IUpdateTournamentRegistrationInformation,
+	IUpdateTournamentScheduleInformation,
 } from "../interfaces/tournament/tournament.interface";
 import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
 
@@ -59,4 +60,5 @@ export interface TournamentRepositoryPort {
 	updateTournamentRegistrationInformation(updateTournamentRegistration: IUpdateTournamentRegistrationInformation): Promise<Tournament>;
 	getTournamentRegistration(id: string): Promise<ITournamentRegistrationInformation>;
 	cancelTournament(tournamentId: string): Promise<Tournament>;
+	updateTournamentScheduleInformation(updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation): Promise<Tournament>;
 }
