@@ -327,3 +327,12 @@ export interface ITournamentRegistrationInformation {
 	registrationClosingDate: Date;
 	requiredAttachment: string[];
 }
+
+export interface IUpdateTournamentScheduleInformation {
+	id: string;
+	drawDate: Date;
+	startDate: Date;
+	endDate: Date;
+	checkInBeforeStart: Date;
+	umpirePerMatch: number;
+}
