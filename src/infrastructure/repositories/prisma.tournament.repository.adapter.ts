@@ -35,6 +35,16 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async updateTournamentStatusToDrawing(tournamentId: string): Promise<Tournament> {
+		return await this.prisma.tournament.update({
+			where: {
+				id: tournamentId
+			},
+			data: {
+				status: "DRAWING"
+			}
+		});
+	}
 	async updateTournamentScheduleInformation(updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {
