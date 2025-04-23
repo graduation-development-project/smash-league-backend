@@ -26,6 +26,9 @@ export class GenerateBracketUseCase {
 	}
 
 	async execute(tournamentEventId: string): Promise<ApiResponse<number>> {
+		const tournamentEvent = await this.tournamentEventRepository.getTournamentEventById(tournamentEventId);
+		const tournament = await this.tournamentRepository.getTournament(tournamentEvent.tournamentId);
+		if (tournament.status === "OPENING_FOR_REGISTRATION") await this.tournamentRepository.updateTournamentStatusToDrawing(tournament.id);
 		const listParticipants = await this.tournamentEventRepository.getParticipantsOfTournamentEvent(tournamentEventId);
 		let numberOfBracket = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1) - 1;
 		const numberOfByeParticipants = this.getTheNearestNumberOfFullParticipants(listParticipants.numberOfParticipants, 1) - listParticipants.numberOfParticipants;
