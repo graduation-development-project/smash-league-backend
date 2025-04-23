@@ -36,6 +36,7 @@ import { MatchController } from "./controllers/match.controller";
 import { BankController } from "./controllers/bank.controller";
 import { SponsorController } from "./controllers/sponsor.controller";
 import { CheckEnoughPlayerQueueModule } from "./background-jobs/check-enough-player/check-enough-player.queue.module";
+import { BankLookUpService } from "./services/bank-lookup.service";
 
 @Module({
 	imports: [
@@ -101,6 +102,7 @@ import { CheckEnoughPlayerQueueModule } from "./background-jobs/check-enough-pla
 		PrismaService,
 		UploadService,
 		ConfigService,
+		BankLookUpService,
 		{
 			provide: "CLOUDINARY",
 			useFactory: (configService: ConfigService) => {
@@ -114,6 +116,6 @@ import { CheckEnoughPlayerQueueModule } from "./background-jobs/check-enough-pla
 		},
 		PaymentPayOSService,
 	],
-	exports: [MailService, UploadService],
+	exports: [MailService, UploadService, BankLookUpService, ConfigService],
 })
 export class InfrastructureModule {}

@@ -167,6 +167,8 @@ import { UpdateTournamentEventInformationUseCase } from "./usecases/tournament/u
 import { GetMatchesOfUserUseCase } from "./usecases/athletes/get-matches-of-user.usecase";
 import { UpdateMatchUseCase } from "./usecases/organizers/update-match.usecase";
 import { UpdateTournamentScheduleInformationUseCase } from "./usecases/tournament/update-tournament-schedule-information.usecase";
+import { BankLookUpService } from "src/infrastructure/services/bank-lookup.service";
+import { CheckBankAccountExistUseCase } from "./usecases/bank/check-bank-account-exist.usecase";
 import { GetLatestFinishTournamentUseCase } from "./usecases/tournament/get-latest-finish-tournament.usecase";
 import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/edit-tournament-sponsor-tier.usecase";
 
@@ -305,7 +307,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 		UploadService,
 		PaymentPayOSService,
 		PrismaService,
-
+		BankLookUpService,
 		//Authentication Service
 		AuthService,
 		//Prisma Service
@@ -468,6 +470,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 
 		//Bank Use Case
 		GetAllBanksUseCase,
+		CheckBankAccountExistUseCase
 	],
 	exports: [
 		//Auth Service
@@ -638,6 +641,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 
 		//Bank Use Case
 		GetAllBanksUseCase,
+		CheckBankAccountExistUseCase
 	],
 })
 export class ApplicationModule {}
