@@ -13,7 +13,7 @@ import {
 import {
 	BadmintonParticipantType,
 	PrismaClient,
-	Tournament,
+	Tournament, TournamentEventStatus,
 	TournamentPost,
 	TournamentStatus,
 	TournamentUmpires,
@@ -35,25 +35,31 @@ export class PrismaTournamentRepositorAdapter
 	implements TournamentRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
-	async updateTournamentStatusToDrawing(tournamentId: string): Promise<Tournament> {
+
+	async updateTournamentStatusToDrawing(
+		tournamentId: string,
+	): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {
-				id: tournamentId
+				id: tournamentId,
 			},
 			data: {
-				status: "DRAWING"
-			}
+				status: "DRAWING",
+			},
 		});
 	}
-	async updateTournamentScheduleInformation(updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation): Promise<Tournament> {
+
+	async updateTournamentScheduleInformation(
+		updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation,
+	): Promise<Tournament> {
 		return await this.prisma.tournament.update({
 			where: {
-				id: updateTournamentScheduleInformation.id
+				id: updateTournamentScheduleInformation.id,
 			},
 
 			data: {
-				...updateTournamentScheduleInformation
-			}
+				...updateTournamentScheduleInformation,
+			},
 		});
 	}
 
@@ -236,7 +242,7 @@ export class PrismaTournamentRepositorAdapter
 			// Create a where clause that is applied only if searchTerm is provided
 			const whereClause = searchTerm
 				? {
-						status: { not: TournamentStatus.FINISHED },
+						// status: { not: TournamentStatus.FINISHED },
 
 						OR: [
 							{ name: { contains: searchTerm, mode: "insensitive" as const } },
@@ -249,7 +255,7 @@ export class PrismaTournamentRepositorAdapter
 						],
 					}
 				: {
-						status: { not: TournamentStatus.FINISHED },
+						// status: { not: TournamentStatus.FINISHED },
 					};
 
 			const [total, tournaments] = await Promise.all([
@@ -272,6 +278,7 @@ export class PrismaTournamentRepositorAdapter
 						name: true,
 						shortName: true,
 						mainColor: true,
+						status: true,
 						organizer: {
 							select: {
 								id: true,
@@ -322,12 +329,18 @@ export class PrismaTournamentRepositorAdapter
 				}),
 			);
 
+			const sorted = tournamentsResponse.sort((a, b) => {
+				if (a.status === "FINISHED" && b.status !== "FINISHED") return 1;
+				if (a.status !== "FINISHED" && b.status === "FINISHED") return -1;
+				return 0;
+			});
+
 			const lastPage: number = Math.ceil(total / perPage);
 			const nextPage: number = page < lastPage ? page + 1 : null;
 			const prevPage: number = page > 1 ? page - 1 : null;
 
 			return {
-				data: tournamentsResponse,
+				data: sorted,
 				meta: {
 					total,
 					lastPage,
@@ -734,6 +747,143 @@ export class PrismaTournamentRepositorAdapter
 			});
 		} catch (e) {
 			console.error("cancelTournament failed: ", e);
+			throw e;
+		}
+	}
+
+	async getLatestFinishTournament(limit: number = 10): Promise<Tournament[]> {
+		try {
+			return this.prisma.tournament.findMany({
+				where: {
+					status: TournamentStatus.FINISHED,
+				},
+				orderBy: {
+					endDate: "desc",
+				},
+				take: 10,
+
+				include: {
+					tournamentEvents: {
+						where: {
+								tournamentEventStatus: TournamentEventStatus.ENDED,
+						},
+						select: {
+							id: true,
+							tournamentEvent: true,
+							championship: {
+								select: {
+									user: {
+										select: {
+											id: true,
+											name: true,
+											gender: true,
+											dateOfBirth: true,
+											height: true,
+											avatarURL: true,
+											location: true,
+										},
+									},
+
+									partner: {
+										select: {
+											id: true,
+											name: true,
+											gender: true,
+											dateOfBirth: true,
+											height: true,
+											avatarURL: true,
+											location: true,
+										},
+									},
+								},
+							},
+							runnerUp: {
+								select: {
+									user: {
+										select: {
+											id: true,
+											name: true,
+											gender: true,
+											dateOfBirth: true,
+											height: true,
+											avatarURL: true,
+											location: true,
+										},
+									},
+
+									partner: {
+										select: {
+											id: true,
+											name: true,
+											gender: true,
+											dateOfBirth: true,
+											height: true,
+											avatarURL: true,
+											location: true,
+										},
+									},
+								},
+							},
+							thirdPlace: {
+								select: {
+									user: {
+										select: {
+											id: true,
+											name: true,
+											gender: true,
+											dateOfBirth: true,
+											height: true,
+											avatarURL: true,
+											location: true,
+										},
+									},
+
+									partner: {
+										select: {
+											id: true,
+											name: true,
+											gender: true,
+											dateOfBirth: true,
+											height: true,
+											avatarURL: true,
+											location: true,
+										},
+									},
+								},
+							},
+							jointThirdPlace: {
+								select: {
+									user: {
+										select: {
+											id: true,
+											name: true,
+											gender: true,
+											dateOfBirth: true,
+											height: true,
+											avatarURL: true,
+											location: true,
+										},
+									},
+
+									partner: {
+										select: {
+											id: true,
+											name: true,
+											gender: true,
+											dateOfBirth: true,
+											height: true,
+											avatarURL: true,
+											location: true,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			});
+		} catch (e) {
+			console.error("getLatestFinishTournament failed: ", e);
 			throw e;
 		}
 	}

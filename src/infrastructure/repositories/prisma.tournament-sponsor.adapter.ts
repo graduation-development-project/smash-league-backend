@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../services/prisma.service";
 import { TournamentSponsorRepositoryPort } from "../../domain/repositories/tournament-sponsor.repository.port";
-import { Sponsor, TournamentSponsor } from "@prisma/client";
+import { Sponsor, SponsorTier, TournamentSponsor } from "@prisma/client";
 import { CreateTournamentSponsorDTO } from "../../domain/dtos/tournament-sponsor/create-tournament-sponsor.dto";
 
 @Injectable()
@@ -38,6 +38,30 @@ export class PrismaTournamentSponsorAdapter
 			return sponsorsData.map((data) => data.sponsor);
 		} catch (e) {
 			console.error("findSponsorInTournament failed", e);
+			throw e;
+		}
+	}
+
+	async editTournamentSponsorTier(
+		tournamentId: string,
+		sponsorId: string,
+		tier: SponsorTier,
+	): Promise<TournamentSponsor> {
+		try {
+			return this.prismaService.tournamentSponsor.update({
+				where: {
+					tournamentId_sponsorId: {
+						tournamentId,
+						sponsorId,
+					},
+				},
+
+				data: {
+					tier,
+				},
+			});
+		} catch (e) {
+			console.error("editTournamentSponsorTier failed", e);
 			throw e;
 		}
 	}

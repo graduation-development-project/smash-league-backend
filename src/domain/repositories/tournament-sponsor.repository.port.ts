@@ -3,8 +3,14 @@ import { CreateTournamentSponsorDTO } from "../dtos/tournament-sponsor/create-to
 
 export interface TournamentSponsorRepositoryPort {
 	createNewTournamentSponsor(
-		createTournamentSponsorDTO: CreateTournamentSponsorDTO[]
+		createTournamentSponsorDTO: CreateTournamentSponsorDTO[],
 	): Promise<TournamentSponsor[]>;
 
-	findSponsorInTournament(tournamentId: string): Promise<Sponsor[]>
+	findSponsorInTournament(tournamentId: string): Promise<Sponsor[]>;
+
+	editTournamentSponsorTier(
+		tournamentId: string,
+		sponsorId: string,
+		tier: SponsorTier
+	): Promise<TournamentSponsor>;
 }

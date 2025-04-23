@@ -62,4 +62,5 @@ export interface TournamentRepositoryPort {
 	cancelTournament(tournamentId: string): Promise<Tournament>;
 	updateTournamentScheduleInformation(updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation): Promise<Tournament>;
 	updateTournamentStatusToDrawing(tournamentId: string): Promise<Tournament>;
+	getLatestFinishTournament(limit: number): Promise<Tournament[]>
 }

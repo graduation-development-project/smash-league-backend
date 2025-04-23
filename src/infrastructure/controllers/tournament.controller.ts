@@ -27,6 +27,7 @@ import {
 import {
 	Feedback,
 	Sponsor,
+	SponsorTier,
 	Tournament,
 	TournamentEvent,
 	TournamentPost,
@@ -112,6 +113,8 @@ import { FindTournamentSponsorUseCase } from "../../application/usecases/tournam
 import { CancelTournamentUseCase } from "../../application/usecases/tournament/cancel-tournament.usecase";
 import { UpdateTournamentEventInformationUseCase } from "src/application/usecases/tournament/update-tournament-event-information.usecase";
 import { UpdateTournamentScheduleInformationUseCase } from "src/application/usecases/tournament/update-tournament-schedule-information.usecase";
+import { GetLatestFinishTournamentUseCase } from "../../application/usecases/tournament/get-latest-finish-tournament.usecase";
+import { EditTournamentSponsorTierUseCase } from "../../application/usecases/tournament/sponsor/edit-tournament-sponsor-tier.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -154,7 +157,9 @@ export class TournamentController {
 		private readonly findTournamentSponsorUseCase: FindTournamentSponsorUseCase,
 		private readonly cancelTournamentUseCase: CancelTournamentUseCase,
 		private readonly updateTournamentEventInformationUseCase: UpdateTournamentEventInformationUseCase,
-		private readonly updateTournamentScheduleInformationUseCase: UpdateTournamentScheduleInformationUseCase
+		private readonly updateTournamentScheduleInformationUseCase: UpdateTournamentScheduleInformationUseCase,
+		private readonly getLatestFinishTournamentUseCase: GetLatestFinishTournamentUseCase,
+		private readonly editTournamentSponsorTierUseCase: EditTournamentSponsorTierUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -408,6 +413,13 @@ export class TournamentController {
 		return this.getFeatureTournamentsUseCase.execute();
 	}
 
+	@Get("/latest-finish-tournaments")
+	async getLatestFinishTournaments(
+		@Query("limit") limit: number,
+	): Promise<ApiResponse<Tournament[]>> {
+		return this.getLatestFinishTournamentUseCase.execute(limit);
+	}
+
 	@Get("/tournament-feedbacks/:tournamentId")
 	async getTournamentFeedbacks(
 		@Query() paginateOption: IPaginateOptions,
@@ -523,9 +535,36 @@ export class TournamentController {
 	}
 
 	@Put("/update-tournament-schedule-information")
-	@UseGuards(JwtAccessTokenGuard, RolesGuard)	
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Organizer.name)
-	async updateTournamentScheduleInformation(@Body() updateTournamentScheduleInformation: UpdateTournamentScheduleInformation): Promise<ApiResponse<Tournament>> {
-		return await this.updateTournamentScheduleInformationUseCase.execute(updateTournamentScheduleInformation);
+	async updateTournamentScheduleInformation(
+		@Body()
+		updateTournamentScheduleInformation: UpdateTournamentScheduleInformation,
+	): Promise<ApiResponse<Tournament>> {
+		return await this.updateTournamentScheduleInformationUseCase.execute(
+			updateTournamentScheduleInformation,
+		);
+	}
+
+	@Put("/edit-tournament-sponsor")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async editTournamentSponsor(
+		@Body()
+		{
+			tournamentId,
+			sponsorId,
+			tier,
+		}: {
+			tournamentId: string;
+			sponsorId: string;
+			tier: SponsorTier;
+		},
+	): Promise<ApiResponse<TournamentSponsor>> {
+		return await this.editTournamentSponsorTierUseCase.execute(
+			tournamentId,
+			sponsorId,
+			tier,
+		);
 	}
 }
