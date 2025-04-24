@@ -17,9 +17,6 @@ jobs:
           docker container stop smash_league_api || true
           docker container rm smash_league_api || true
           docker volume rm smash-league-backend_backend_service || true
-          docker container stop database || true
-          docker container rm database || true
-          docker volume rm smash-league-backend_postgres_data || true
     - name: Set up environment variable for docker
       run: |
           touch .env
