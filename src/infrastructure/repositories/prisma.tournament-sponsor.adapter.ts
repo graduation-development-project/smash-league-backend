@@ -65,4 +65,42 @@ export class PrismaTournamentSponsorAdapter
 			throw e;
 		}
 	}
+
+	async removeTournamentSponsor(
+		tournamentId: string,
+		sponsorId: string,
+	): Promise<void> {
+		try {
+			await this.prismaService.tournamentSponsor.delete({
+				where: {
+					tournamentId_sponsorId: {
+						tournamentId,
+						sponsorId,
+					},
+				},
+			});
+		} catch (e) {
+			console.error("removeTournamentSponsor failed", e);
+			throw e;
+		}
+	}
+
+	async findTournamentSponsor(
+		tournamentId: string,
+		sponsorId: string,
+	): Promise<TournamentSponsor> {
+		try {
+			return this.prismaService.tournamentSponsor.findUnique({
+				where: {
+					tournamentId_sponsorId: {
+						tournamentId,
+						sponsorId,
+					},
+				},
+			});
+		} catch (e) {
+			console.error("findTournamentSponsor failed", e);
+			throw e;
+		}
+	}
 }

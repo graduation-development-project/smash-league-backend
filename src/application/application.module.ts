@@ -171,6 +171,7 @@ import { BankLookUpService } from "src/infrastructure/services/bank-lookup.servi
 import { CheckBankAccountExistUseCase } from "./usecases/bank/check-bank-account-exist.usecase";
 import { GetLatestFinishTournamentUseCase } from "./usecases/tournament/get-latest-finish-tournament.usecase";
 import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/edit-tournament-sponsor-tier.usecase";
+import { RemoveTournamentSponsorUseCase } from "./usecases/tournament/sponsor/remove-tournament-sponsor.usecase";
 
 @Module({
 	imports: [
@@ -411,6 +412,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 		UpdateTournamentScheduleInformationUseCase,
 		GetLatestFinishTournamentUseCase,
 		EditTournamentSponsorTierUseCase,
+		RemoveTournamentSponsorUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -584,6 +586,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 		UpdateTournamentScheduleInformationUseCase,
 		GetLatestFinishTournamentUseCase,
 		EditTournamentSponsorTierUseCase,
+		RemoveTournamentSponsorUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
