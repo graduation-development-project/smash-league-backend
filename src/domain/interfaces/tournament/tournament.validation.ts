@@ -333,12 +333,6 @@ export class CreateTournament {
 		message: "Umpire per match must be more than 1.",
 	})
 	umpirePerMatch: number;
-
-	@IsNumber()
-	@Min(1, {
-		message: "Number of court must be more than 1.",
-	})
-	numberOfCourt: number;
 	createCourts: CreateCourtsDTO;
 
 	@IsArray()

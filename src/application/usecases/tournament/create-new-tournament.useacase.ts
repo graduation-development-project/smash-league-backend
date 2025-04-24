@@ -11,6 +11,8 @@ import { create } from "domain";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IRequestUser } from "src/domain/interfaces/interfaces";
 import {
+	ICreateCourt,
+	ICreateCourts,
 	ICreateTournament,
 	ICreateTournamentEvent,
 } from "src/domain/interfaces/tournament/tournament.interface";
@@ -121,7 +123,7 @@ export class CreateNewTournamentUseCase {
 			createTournament.createTournamentEvent,
 			tournament.id,
 		);
-		const courts = await this.createMultipleCourtForMaintaining(tournament.id, tournament.numberOfCourt);
+		const courts = await this.createMultipleCourtForMaintaining(tournament.id, createTournament.createCourts);
 
 		return tournament;
 	}
@@ -234,7 +236,7 @@ export class CreateNewTournamentUseCase {
 			prizePool: createTournament.prizePool,
 			mainColor: createTournament.mainColor,
 			umpirePerMatch: createTournament.umpirePerMatch,
-			numberOfCourt: createTournament.numberOfCourt,
+			numberOfCourt: createTournament.createCourts.createCourts.length,
 			protestFeePerTime: createTournament.protestFeePerTime,
 			hasMerchandise: createTournament.hasMerchandise,
 			merchandiseImages: createTournament.merchandiseImages,
@@ -256,7 +258,7 @@ export class CreateNewTournamentUseCase {
 		return tournament;
 	}
 
-	async createMultipleCourtForMaintaining(tournamentId: string, numberOfCourt: number): Promise<Court[]> {
-		return await this.courtRepository.createMultipleCourts(tournamentId, numberOfCourt);
+	async createMultipleCourtForMaintaining(tournamentId: string, createCourts: ICreateCourts): Promise<Court[]> {
+		return await this.courtRepository.createMultipleCourtsWithCourtCode(tournamentId, createCourts);
 	}
 }
