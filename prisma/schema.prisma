@@ -248,6 +248,7 @@ model Tournament {
   endDate                  DateTime
   checkInBeforeStart       DateTime
   umpirePerMatch           Int
+  numberOfCourt            Int
   registrationFeePerPerson Int
   registrationFeePerPair   Int?
   maxEventPerPerson        Int

@@ -1,6 +1,7 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import {
 	BadmintonParticipantType,
+	Court,
 	Tournament,
 	TournamentEvent,
 	TournamentSerie,
@@ -24,6 +25,7 @@ import { TournamentRepositoryPort } from "src/domain/repositories/tournament.rep
 import { UploadService } from "src/infrastructure/services/upload.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
+import { CourtRepositoryPort } from "src/domain/repositories/court.repository.port";
 
 @Injectable()
 export class CreateNewTournamentUseCase {
@@ -34,6 +36,8 @@ export class CreateNewTournamentUseCase {
 		private readonly tournamentSerieRepository: TournamentSerieRepositoryPort,
 		@Inject("TournamentEventRepository")
 		private readonly tournamentEventRepository: TournamentEventRepositoryPort,
+		@Inject("CourtRepository")
+		private readonly courtRepository: CourtRepositoryPort,
 		private readonly uploadService: UploadService,
 		@InjectQueue("checkEnoughPlayerQueue")
 		private checkEnoughPlayerQueue: Queue,
@@ -117,6 +121,8 @@ export class CreateNewTournamentUseCase {
 			createTournament.createTournamentEvent,
 			tournament.id,
 		);
+		const courts = await this.createMultipleCourtForMaintaining(tournament.id, tournament.numberOfCourt);
+
 		return tournament;
 	}
 
@@ -228,6 +234,7 @@ export class CreateNewTournamentUseCase {
 			prizePool: createTournament.prizePool,
 			mainColor: createTournament.mainColor,
 			umpirePerMatch: createTournament.umpirePerMatch,
+			numberOfCourt: createTournament.numberOfCourt,
 			protestFeePerTime: createTournament.protestFeePerTime,
 			hasMerchandise: createTournament.hasMerchandise,
 			merchandiseImages: createTournament.merchandiseImages,
@@ -247,5 +254,9 @@ export class CreateNewTournamentUseCase {
 			hasLiveStream: createTournament.hasLiveStream,
 		});
 		return tournament;
+	}
+
+	async createMultipleCourtForMaintaining(tournamentId: string, numberOfCourt: number): Promise<Court[]> {
+		return await this.courtRepository.createMultipleCourts(tournamentId, numberOfCourt);
 	}
 }

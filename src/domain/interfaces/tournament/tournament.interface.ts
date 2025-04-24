@@ -112,12 +112,21 @@ export interface ICreateTournament {
 	numberOfMerchandise: number;
 	merchandiseImages: string[];
 	umpirePerMatch: number;
+	numberOfCourt: number;
 	requiredAttachment: RequiredAttachment[];
 	isRecruit: boolean;
 	isPrivate: boolean;
 	isRegister: boolean;
 	isLiveDraw: boolean;
 	hasLiveStream: boolean;
+}
+
+export interface ICreateCourts {
+	createCourts: ICreateCourt[];
+}
+
+export interface ICreateCourt {
+	courtCode: string;
 }
 
 export interface IParticipatedTournamentResponse {
