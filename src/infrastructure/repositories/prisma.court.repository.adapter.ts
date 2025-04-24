@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Court, Match, Prisma, PrismaClient } from "@prisma/client";
+import { ICreateCourts } from "src/domain/interfaces/tournament/tournament.interface";
 import { CourtRepositoryPort } from "src/domain/repositories/court.repository.port";
 
 @Injectable()
@@ -7,6 +8,18 @@ export class PrismaCourtRepositoryAdapter implements CourtRepositoryPort {
 	constructor(
 		private readonly prisma: PrismaClient
 	){
+	}
+	async createMultipleCourtsWithCourtCode(tournamentId: string, courts: ICreateCourts): Promise<Court[]> {
+		let courtsCreate: Prisma.CourtCreateManyInput[] = [];
+		for(let i = 0; i < courts.createCourts.length; i++) {
+			courtsCreate.push({
+				courtCode: courts.createCourts[i].courtCode,
+				tournamentId: tournamentId
+			});
+		}
+		return await this.prisma.court.createManyAndReturn({
+			data: courtsCreate
+		});
 	}
 	async getCourtDetail(courtId: string): Promise<Court> {
 		return await this.prisma.court.findUnique({
@@ -27,7 +40,7 @@ export class PrismaCourtRepositoryAdapter implements CourtRepositoryPort {
 		const data: Prisma.CourtCreateManyInput[] = [];
 		for (let i = 1; i <= numberOfCourt; i++) {
 			data.push({
-				courtCode: i.toString(),
+				courtCode: "Court: " + i.toString(),
 				courtAvailable: true,
 				tournamentId: tournamentId
 			});

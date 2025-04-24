@@ -103,6 +103,19 @@ export class CreateTournamentEvent {
 	jointThirdPlacePrize?: string;
 }
 
+export class CreateCourtsDTO {
+	@IsArray()
+	@ValidateNested({each: true})
+	@Type(() => Object)
+	createCourts: CourtDTO[];
+}
+
+export class CourtDTO {
+	@IsString()
+	@IsNotEmpty()
+	courtCode: string;
+}
+
 export class CreateTournamentEventsDTO {
 	@IsArray()
 	@ValidateNested({ each: true })
@@ -320,6 +333,13 @@ export class CreateTournament {
 		message: "Umpire per match must be more than 1.",
 	})
 	umpirePerMatch: number;
+
+	@IsNumber()
+	@Min(1, {
+		message: "Number of court must be more than 1.",
+	})
+	numberOfCourt: number;
+	createCourts: CreateCourtsDTO;
 
 	@IsArray()
 	@IsEnum(RequiredAttachment, {

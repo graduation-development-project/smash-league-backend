@@ -268,6 +268,8 @@ export class TournamentController {
 		// @UploadedFile() backgroundImage: Express.Multer.File,
 		// @UploadedFile() merchandiseImages: Express.Multer.File[]
 	): Promise<ApiResponse<Tournament>> {
+		// console.log(createTournament);
+		// return;
 		return await this.createNewTournamentUseCase.execute(
 			request,
 			createTournament,
