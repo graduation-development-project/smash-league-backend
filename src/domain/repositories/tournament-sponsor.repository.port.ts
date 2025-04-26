@@ -8,9 +8,19 @@ export interface TournamentSponsorRepositoryPort {
 
 	findSponsorInTournament(tournamentId: string): Promise<Sponsor[]>;
 
+	findTournamentSponsor(
+		tournamentId: string,
+		sponsorId: string,
+	): Promise<TournamentSponsor>;
+
 	editTournamentSponsorTier(
 		tournamentId: string,
 		sponsorId: string,
-		tier: SponsorTier
+		tier: SponsorTier,
 	): Promise<TournamentSponsor>;
+
+	removeTournamentSponsor(
+		tournamentId: string,
+		sponsorId: string,
+	): Promise<void>;
 }

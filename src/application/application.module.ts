@@ -171,6 +171,8 @@ import { BankLookUpService } from "src/infrastructure/services/bank-lookup.servi
 import { CheckBankAccountExistUseCase } from "./usecases/bank/check-bank-account-exist.usecase";
 import { GetLatestFinishTournamentUseCase } from "./usecases/tournament/get-latest-finish-tournament.usecase";
 import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/edit-tournament-sponsor-tier.usecase";
+import { RemoveTournamentSponsorUseCase } from "./usecases/tournament/sponsor/remove-tournament-sponsor.usecase";
+import { PrismaTournamentUmpireRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-umpire.repository.adapter";
 
 @Module({
 	imports: [
@@ -277,6 +279,10 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 		{
 			provide: "TournamentParticipantRepositoryPort",
 			useClass: PrismaTournamentParticipantRepositoryAdapter,
+		},
+		{
+			provide: "TournamentUmpireRepositoryPort",
+			useClass: PrismaTournamentUmpireRepositoryAdapter,
 		},
 
 		{
@@ -411,6 +417,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 		UpdateTournamentScheduleInformationUseCase,
 		GetLatestFinishTournamentUseCase,
 		EditTournamentSponsorTierUseCase,
+		RemoveTournamentSponsorUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -470,7 +477,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 
 		//Bank Use Case
 		GetAllBanksUseCase,
-		CheckBankAccountExistUseCase
+		CheckBankAccountExistUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -584,6 +591,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 		UpdateTournamentScheduleInformationUseCase,
 		GetLatestFinishTournamentUseCase,
 		EditTournamentSponsorTierUseCase,
+		RemoveTournamentSponsorUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -641,7 +649,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 
 		//Bank Use Case
 		GetAllBanksUseCase,
-		CheckBankAccountExistUseCase
+		CheckBankAccountExistUseCase,
 	],
 })
 export class ApplicationModule {}

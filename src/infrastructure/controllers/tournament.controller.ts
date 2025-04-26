@@ -11,6 +11,7 @@ import {
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
@@ -115,6 +116,7 @@ import { UpdateTournamentEventInformationUseCase } from "src/application/usecase
 import { UpdateTournamentScheduleInformationUseCase } from "src/application/usecases/tournament/update-tournament-schedule-information.usecase";
 import { GetLatestFinishTournamentUseCase } from "../../application/usecases/tournament/get-latest-finish-tournament.usecase";
 import { EditTournamentSponsorTierUseCase } from "../../application/usecases/tournament/sponsor/edit-tournament-sponsor-tier.usecase";
+import { RemoveTournamentSponsorUseCase } from "../../application/usecases/tournament/sponsor/remove-tournament-sponsor.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -160,6 +162,7 @@ export class TournamentController {
 		private readonly updateTournamentScheduleInformationUseCase: UpdateTournamentScheduleInformationUseCase,
 		private readonly getLatestFinishTournamentUseCase: GetLatestFinishTournamentUseCase,
 		private readonly editTournamentSponsorTierUseCase: EditTournamentSponsorTierUseCase,
+		private readonly removeTournamentSponsorUseCase: RemoveTournamentSponsorUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -567,6 +570,19 @@ export class TournamentController {
 			tournamentId,
 			sponsorId,
 			tier,
+		);
+	}
+
+	@Delete("/remove-tournament-sponsor/:tournamentId/:sponsorId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async removeTournamentSponsor(
+		@Param("tournamentId") tournamentId: string,
+		@Param("sponsorId") sponsorId: string,
+	): Promise<ApiResponse<void>> {
+		return await this.removeTournamentSponsorUseCase.execute(
+			tournamentId,
+			sponsorId,
 		);
 	}
 }

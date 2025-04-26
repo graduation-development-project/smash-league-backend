@@ -938,6 +938,16 @@ async function main() {
 			data: tournamentEvents,
 		});
 	console.log(tournamentEventCreates);
+
+	for(let i = 1; i <= tournament.numberOfCourt; i++) {
+		const createCourt = await prisma.court.create({
+			data: {
+				courtCode: "Court " + i.toString(),
+				courtAvailable: true,
+				tournamentId: tournament.id
+			}
+		});
+	}
 }
 
 main()
