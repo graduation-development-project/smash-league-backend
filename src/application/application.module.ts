@@ -172,6 +172,7 @@ import { CheckBankAccountExistUseCase } from "./usecases/bank/check-bank-account
 import { GetLatestFinishTournamentUseCase } from "./usecases/tournament/get-latest-finish-tournament.usecase";
 import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/edit-tournament-sponsor-tier.usecase";
 import { RemoveTournamentSponsorUseCase } from "./usecases/tournament/sponsor/remove-tournament-sponsor.usecase";
+import { PrismaTournamentUmpireRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-umpire.repository.adapter";
 
 @Module({
 	imports: [
@@ -278,6 +279,10 @@ import { RemoveTournamentSponsorUseCase } from "./usecases/tournament/sponsor/re
 		{
 			provide: "TournamentParticipantRepositoryPort",
 			useClass: PrismaTournamentParticipantRepositoryAdapter,
+		},
+		{
+			provide: "TournamentUmpireRepositoryPort",
+			useClass: PrismaTournamentUmpireRepositoryAdapter,
 		},
 
 		{
@@ -472,7 +477,7 @@ import { RemoveTournamentSponsorUseCase } from "./usecases/tournament/sponsor/re
 
 		//Bank Use Case
 		GetAllBanksUseCase,
-		CheckBankAccountExistUseCase
+		CheckBankAccountExistUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -644,7 +649,7 @@ import { RemoveTournamentSponsorUseCase } from "./usecases/tournament/sponsor/re
 
 		//Bank Use Case
 		GetAllBanksUseCase,
-		CheckBankAccountExistUseCase
+		CheckBankAccountExistUseCase,
 	],
 })
 export class ApplicationModule {}

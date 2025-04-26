@@ -121,6 +121,7 @@ model Team {
   invitations            TeamInvitation[]         @relation("FK_Team_TeamInvitation")
   Reason                 Reason[]                 @relation("FK_Team_Reason")
   TeamRequest            TeamRequest[]            @relation("FK_Team_TeamRequest")
+  tournamentParticipants TournamentParticipants[] @relation("FK_TournamentParticipants_Team")
 }
 
 enum TeamStatus {
@@ -300,7 +301,7 @@ model TournamentEvent {
   tournamentEvent        BadmintonParticipantType
   fromAge                Int?                     @default(6)
   toAge                  Int?                     @default(90)
-  winningPoint           Int?                     @default(21)
+  winningPoint           Int?
   lastPoint              Int                      @default(31)
   numberOfGames          Int                      @default(3)
   typeOfFormat           TypeOfFormat
@@ -483,6 +484,8 @@ model TournamentParticipants {
   partner           User?             @relation("FK_TournamentParticipants_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
   tournamentEvent   TournamentEvent   @relation(name: "FK_TournamentParticipants_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
   tournament        Tournament        @relation(name: "FK_TournamentParticipants_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  fromTeamId        String?
+  fromTeam          Team?             @relation(name: "FK_TournamentParticipants_Team", fields: [fromTeamId], references: [id], onDelete: Cascade)
   matches           Match[]           @relation(name: "FK_Match_TournamentParticipants")
   matchesWon        Match[]           @relation(name: "FK_Match_MatchWonByCompetitor")
   leftCompetitors   Match[]           @relation(name: "FK_Match_LeftCompetitor")
