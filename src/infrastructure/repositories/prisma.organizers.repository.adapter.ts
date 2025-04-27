@@ -438,6 +438,7 @@ export class PrismaOrganizersRepositoryAdapter
 					drawDate: true,
 					startDate: true,
 					endDate: true,
+					isRecruit: true,
 					organizer: {
 						select: {
 							id: true,
@@ -500,6 +501,7 @@ export class PrismaOrganizersRepositoryAdapter
 						liveStreamRooms: [],
 						tournamentEvents: groupedEvents,
 						expiredTimeLeft: "",
+						isRecruit: tournament.isRecruit
 					};
 				},
 			);
