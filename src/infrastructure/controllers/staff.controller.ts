@@ -19,7 +19,7 @@ import { GetAllPaybackFeeListUseCase } from "../../application/usecases/staffs/g
 
 @Controller("/staffs")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
-@Roles(RoleMap.Staff.name)
+@Roles(RoleMap.Staff.name, RoleMap.Admin.name)
 export class StaffController {
 	constructor(
 		private verifyUserInformationUseCase: VerifyUserInformationUseCase,
