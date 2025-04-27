@@ -51,6 +51,8 @@ export class MatchController {
 	}
 
 	@Put("update-match-info/:matchId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
 	async updateMatchInfo(
 		@Param("matchId") matchId: string,
 		@Body() updateMatchDTO: UpdateMatchDTO,

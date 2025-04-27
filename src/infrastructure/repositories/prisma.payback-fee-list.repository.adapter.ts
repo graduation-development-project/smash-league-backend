@@ -63,6 +63,11 @@ export class PrismaPaybackFeeListRepositoryAdapter
 				include: {
 					tournamentEvent: true,
 					tournament: true,
+					user: {
+						include: {
+							UserBankAccount: true,
+						},
+					},
 				},
 			});
 		} catch (e) {
