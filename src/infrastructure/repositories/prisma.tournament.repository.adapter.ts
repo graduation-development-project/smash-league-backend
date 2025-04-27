@@ -397,6 +397,7 @@ export class PrismaTournamentRepositorAdapter
 				hasMerchandise: true,
 				hasLiveStream: true,
 				location: true,
+				isRecruit: true,
 				registrationFeePerPerson: true,
 				registrationFeePerPair: true,
 				maxEventPerPerson: true,

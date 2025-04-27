@@ -243,6 +243,7 @@ export interface ITournamentDetailResponse {
 			id: string;
 		}[];
 	};
+	isRecruit: boolean;
 }
 
 export interface IUpdateTournament {
