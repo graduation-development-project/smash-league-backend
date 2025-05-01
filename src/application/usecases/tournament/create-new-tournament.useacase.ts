@@ -28,6 +28,7 @@ import { UploadService } from "src/infrastructure/services/upload.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { CourtRepositoryPort } from "src/domain/repositories/court.repository.port";
+import { UsersRepositoryPort } from "src/domain/repositories/users.repository.port";
 
 @Injectable()
 export class CreateNewTournamentUseCase {
@@ -40,6 +41,8 @@ export class CreateNewTournamentUseCase {
 		private readonly tournamentEventRepository: TournamentEventRepositoryPort,
 		@Inject("CourtRepository")
 		private readonly courtRepository: CourtRepositoryPort,
+		@Inject("UserRepository")
+		private readonly userRepository: UsersRepositoryPort,
 		private readonly uploadService: UploadService,
 		@InjectQueue("checkEnoughPlayerQueue")
 		private checkEnoughPlayerQueue: Queue,
@@ -66,11 +69,18 @@ export class CreateNewTournamentUseCase {
 				"Tournament ID exists!",
 				null,
 			);
+		const user = await this.userRepository.getUser(request.user.id);	
+		if (user.creditsRemain === null || user.creditsRemain === 0) return new ApiResponse<null | undefined>(
+			HttpStatus.BAD_REQUEST,
+			"Credit remain is 0.",
+			null
+		);
 		tournament = await this.createTournamentWithNoTournamentSerie(
 			createTournament,
 			request.user,
 		);
 
+		const minusCreditAfterCreate = await this.userRepository.minusCredit(request.user.id);
 		const now = Date.now();
 		const closeFormDate = new Date(tournament.registrationClosingDate);
 

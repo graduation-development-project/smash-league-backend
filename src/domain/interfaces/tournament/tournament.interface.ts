@@ -41,6 +41,9 @@ export enum TournamentStatus {
 export enum RequiredAttachment {
 	Identification_Card = "IDENTIFICATION_CARD",
 	Portrait_Photo = "PORTRAIT_PHOTO",
+	Student_Card = "STUDENT_CARD",
+	Employee_Card = "EMPLOYEE_CARD",
+	Passport = "PASSPORT"
 }
 
 export interface ICreateTournamentSerie {
