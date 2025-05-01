@@ -464,7 +464,10 @@ export class UpdateTournament {
 		message:
 			"Required attachment must be one of the following: " +
 			"IDENTIFICATION_CARD, " +
-			"PORTRAIT_PHOTO",
+			"PORTRAIT_PHOTO, " + 
+			"STUDENT_CARD, " + 
+			"PASSPORT, " +
+			"EMPLOYEE_CARD",
 		each: true,
 	})
 	requiredAttachment: RequiredAttachment[];
