@@ -56,7 +56,7 @@ model User {
   paybackTransaction            Transaction[]            @relation(name: "FK_User_Transaction")
   transactions                  Transaction[]            @relation(name: "FK_Transaction_Owner")
   feedback                      Feedback[]               @relation(name: "FK_Feedback_User")
-  paybackFeeList                PaybackFeeList[]         @relation(name: "FK_PaybackFeeList_User")
+  paybackFees                   PaybackFee[]             @relation(name: "FK_PaybackFee_User")
   userReport                    UserReport[]             @relation(name: "FK_UserReport_User")
 }
 
@@ -277,7 +277,7 @@ model Tournament {
   courts                   Court[]                  @relation(name: "FK_Court_Tournament")
   feedback                 Feedback[]               @relation(name: "FK_Feedback_Tournament")
   TournamentSponsor        TournamentSponsor[]
-  paybackFeeList           PaybackFeeList[]         @relation(name: "FK_PaybackFeeList_Tournament")
+  paybackFees              PaybackFee[]             @relation(name: "FK_PaybackFee_Tournament")
   userReport               UserReport[]             @relation(name: "FK_UserReport_Tournament")
 }
 
@@ -327,7 +327,7 @@ model TournamentEvent {
   matches                Match[]                  @relation(name: "FK_Match_TournamentEvent")
   tournamentRegistration TournamentRegistration[] @relation(name: "FK_TournamentRegistration_TournamentEvent")
   tournamentParticipants TournamentParticipants[] @relation(name: "FK_TournamentParticipants_TournamentEvent")
-  paybackFeeList         PaybackFeeList[]         @relation(name: "FK_PaybackFeeList_TournamentEvent")
+  paybackFees            PaybackFee[]             @relation(name: "FK_PaybackFee_TournamentEvent")
 }
 
 enum TypeOfFormat {
@@ -627,17 +627,17 @@ model Package {
   orders                  Order[]  @relation(name: "FK_Order_Package")
 }
 
-model PaybackFeeList {
+model PaybackFee {
   id                String          @id @default(uuid())
   userId            String
   tournamentId      String
   tournamentEventId String
   value             Int
   isPaid            Boolean         @default(false)
-  user              User?           @relation("FK_PaybackFeeList_User", fields: [userId], references: [id])
-  tournament        Tournament      @relation("FK_PaybackFeeList_Tournament", fields: [tournamentId], references: [id])
-  tournamentEvent   TournamentEvent @relation("FK_PaybackFeeList_TournamentEvent", fields: [tournamentEventId], references: [id])
-  transaction       Transaction[]   @relation(name: "FK_TournamentRegistration_PaybackFeeList")
+  user              User?           @relation("FK_PaybackFee_User", fields: [userId], references: [id])
+  tournament        Tournament      @relation("FK_PaybackFee_Tournament", fields: [tournamentId], references: [id])
+  tournamentEvent   TournamentEvent @relation("FK_PaybackFee_TournamentEvent", fields: [tournamentEventId], references: [id])
+  transaction       Transaction[]   @relation(name: "FK_TournamentRegistration_PaybackFee")
 }
 
 // model TransactionType {
@@ -666,7 +666,7 @@ model Transaction {
   orderId                  String?
   order                    Order?                  @relation(name: "FK_Order_Transaction", fields: [orderId], references: [id], onDelete: Cascade)
   paybackFeeId             String?
-  paybackFee               PaybackFeeList?         @relation(name: "FK_TournamentRegistration_PaybackFeeList", fields: [paybackFeeId], references: [id], onDelete: Cascade)
+  paybackFee               PaybackFee?             @relation(name: "FK_TournamentRegistration_PaybackFee", fields: [paybackFeeId], references: [id], onDelete: Cascade)
   tournamentRegistrationId String?
   tournamentRegistration   TournamentRegistration? @relation(name: "FK_TournamentRegistration_Transaction", fields: [tournamentRegistrationId], references: [id], onDelete: Cascade)
   value                    Int

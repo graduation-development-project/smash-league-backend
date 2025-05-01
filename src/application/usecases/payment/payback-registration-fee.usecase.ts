@@ -23,7 +23,7 @@ import { NotificationsRepositoryPort } from "../../../domain/repositories/notifi
 import { CreateNotificationDTO } from "../../../domain/dtos/notifications/create-notification.dto";
 import { NotificationTypeMap } from "../../../infrastructure/enums/notification-type.enum";
 import { TournamentRegistrationRepositoryPort } from "../../../domain/repositories/tournament-registration.repository.port";
-import { PaybackFeeListRepositoryPort } from "../../../domain/repositories/payback-fee-list.repository.port";
+import { PaybackFeeRepositoryPort } from "../../../domain/repositories/payback-fee-list.repository.port";
 
 @Injectable()
 export class PaybackRegistrationFeeUseCase {
@@ -32,8 +32,8 @@ export class PaybackRegistrationFeeUseCase {
 		private readonly transactionRepository: TransactionRepositoryPort,
 		@Inject("NotificationRepository")
 		private readonly notificationsRepository: NotificationsRepositoryPort,
-		@Inject("PaybackFeeListRepositoryPort")
-		private readonly paybackFeeListRepository: PaybackFeeListRepositoryPort,
+		@Inject("PaybackFeeRepositoryPort")
+		private readonly paybackFeeListRepository: PaybackFeeRepositoryPort,
 		private readonly uploadService: UploadService,
 	) {}
 

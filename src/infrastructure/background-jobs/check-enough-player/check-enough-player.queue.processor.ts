@@ -53,7 +53,7 @@ export class CheckEnoughPlayerQueueProcessor extends WorkerHost {
 				);
 
 				if (paybackRecords.length > 0) {
-					await this.prisma.paybackFeeList.createMany({
+					await this.prisma.paybackFee.createMany({
 						data: paybackRecords,
 						skipDuplicates: true,
 					});
