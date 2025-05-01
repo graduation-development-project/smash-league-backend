@@ -2,7 +2,7 @@ import { ApiResponse } from "../../../domain/dtos/api-response";
 import { BadRequestException, HttpStatus, Inject } from "@nestjs/common";
 import { TournamentRepositoryPort } from "../../../domain/repositories/tournament.repository.port";
 import { getRegistrationFee } from "../../../infrastructure/util/get-registration-fee.util";
-import { PaybackFeeListRepositoryPort } from "../../../domain/repositories/payback-fee-list.repository.port";
+import { PaybackFeeRepositoryPort } from "../../../domain/repositories/payback-fee-list.repository.port";
 import { PrismaService } from "../../../infrastructure/services/prisma.service";
 import { NotificationsRepositoryPort } from "../../../domain/repositories/notifications.repository.port";
 import { CreateNotificationDTO } from "../../../domain/dtos/notifications/create-notification.dto";
@@ -12,8 +12,8 @@ export class CancelTournamentUseCase {
 		private prismaService: PrismaService,
 		@Inject("TournamentRepository")
 		private tournamentRepository: TournamentRepositoryPort,
-		@Inject("PaybackFeeListRepositoryPort")
-		private paybackFeeListRepository: PaybackFeeListRepositoryPort,
+		@Inject("PaybackFeeRepositoryPort")
+		private paybackFeeRepository: PaybackFeeRepositoryPort,
 		@Inject("NotificationRepository")
 		private notificationRepository: NotificationsRepositoryPort,
 	) {}
@@ -52,7 +52,7 @@ export class CancelTournamentUseCase {
 			);
 
 			if (paybackRecords.length > 0) {
-				await this.paybackFeeListRepository.createManyPaybackFee(
+				await this.paybackFeeRepository.createManyPaybackFee(
 					paybackRecords,
 				);
 

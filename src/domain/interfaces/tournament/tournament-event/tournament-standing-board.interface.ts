@@ -13,10 +13,6 @@ export interface ITournamentStandingBoardInterface {
 		user: ITournamentStandingBoardUserInterface;
 		partner: ITournamentStandingBoardUserInterface;
 	};
-	jointThirdPlace: {
-		user: ITournamentStandingBoardUserInterface;
-		partner: ITournamentStandingBoardUserInterface;
-	};
 }
 
 interface ITournamentStandingBoardUserInterface {

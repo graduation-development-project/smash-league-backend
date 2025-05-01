@@ -157,8 +157,8 @@ import { CreateTournamentSponsorUseCase } from "./usecases/tournament/sponsor/cr
 import { FindTournamentSponsorUseCase } from "./usecases/tournament/sponsor/find-tournament-sponsor.usecase";
 import { GetAllSponsorUseCase } from "./usecases/tournament/sponsor/get-all-sponsor.usecase";
 import { CheckEnoughPlayerQueueModule } from "../infrastructure/background-jobs/check-enough-player/check-enough-player.queue.module";
-import { PaybackFeeListRepositoryPort } from "../domain/repositories/payback-fee-list.repository.port";
-import { PrismaPaybackFeeListRepositoryAdapter } from "../infrastructure/repositories/prisma.payback-fee-list.repository.adapter";
+import { PaybackFeeRepositoryPort } from "../domain/repositories/payback-fee-list.repository.port";
+import { PrismaPaybackFeeRepositoryAdapter } from "../infrastructure/repositories/prisma.payback-fee.repository.adapter";
 import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament.usecase";
 import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
 import { GetAllAssignedMatchesUsecase } from "./usecases/umpires/get-all-assigned-matches.usecase";
@@ -307,8 +307,8 @@ import { UpdatePackageUseCase } from "./usecases/packages/update-package.usecase
 			useClass: PrismaTournamentSponsorAdapter,
 		},
 		{
-			provide: "PaybackFeeListRepositoryPort",
-			useClass: PrismaPaybackFeeListRepositoryAdapter,
+			provide: "PaybackFeeRepositoryPort",
+			useClass: PrismaPaybackFeeRepositoryAdapter,
 		},
 		//Third Party Service
 		MailService,

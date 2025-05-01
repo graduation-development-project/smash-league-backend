@@ -1,9 +1,9 @@
 import { CreatePaybackFeeListDTO } from "../dtos/payback-list/create-payback-fee-list.dto";
-import { PaybackFeeList } from "@prisma/client";
+import { PaybackFee } from "@prisma/client";
 
-export interface PaybackFeeListRepositoryPort {
-	createManyPaybackFee(createPaybackFeeListDTO: CreatePaybackFeeListDTO[]): Promise<PaybackFeeList[]>;
-	updatePaybackStatus(paybackId: string, status: boolean): Promise<PaybackFeeList>;
-	getById(paybackId: string): Promise<PaybackFeeList>;
-	getPaybackFeeList(): Promise<PaybackFeeList[]>;
+export interface PaybackFeeRepositoryPort {
+	createManyPaybackFee(createPaybackFeeListDTO: CreatePaybackFeeListDTO[]): Promise<PaybackFee[]>;
+	updatePaybackStatus(paybackId: string, status: boolean): Promise<PaybackFee>;
+	getById(paybackId: string): Promise<PaybackFee>;
+	getPaybackFeeList(): Promise<PaybackFee[]>;
 }

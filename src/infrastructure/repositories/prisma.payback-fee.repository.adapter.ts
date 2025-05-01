@@ -1,21 +1,21 @@
 import { Injectable } from "@nestjs/common";
 
-import { PaybackFeeListRepositoryPort } from "../../domain/repositories/payback-fee-list.repository.port";
 import { PrismaService } from "../services/prisma.service";
 import { CreatePaybackFeeListDTO } from "../../domain/dtos/payback-list/create-payback-fee-list.dto";
-import { PaybackFeeList } from "@prisma/client";
+import { PaybackFee } from "@prisma/client";
+import { PaybackFeeRepositoryPort } from "src/domain/repositories/payback-fee-list.repository.port";
 
 @Injectable()
-export class PrismaPaybackFeeListRepositoryAdapter
-	implements PaybackFeeListRepositoryPort
+export class PrismaPaybackFeeRepositoryAdapter
+	implements PaybackFeeRepositoryPort
 {
 	constructor(private prismaService: PrismaService) {}
 
 	async createManyPaybackFee(
 		createPaybackFeeListDTO: CreatePaybackFeeListDTO[],
-	): Promise<PaybackFeeList[]> {
+	): Promise<PaybackFee[]> {
 		try {
-			return this.prismaService.paybackFeeList.createManyAndReturn({
+			return this.prismaService.paybackFee.createManyAndReturn({
 				data: createPaybackFeeListDTO,
 				skipDuplicates: true,
 			});
@@ -28,9 +28,9 @@ export class PrismaPaybackFeeListRepositoryAdapter
 	async updatePaybackStatus(
 		paybackId: string,
 		status: boolean,
-	): Promise<PaybackFeeList> {
+	): Promise<PaybackFee> {
 		try {
-			return this.prismaService.paybackFeeList.update({
+			return this.prismaService.paybackFee.update({
 				where: { id: paybackId },
 				data: {
 					isPaid: status,
@@ -42,9 +42,9 @@ export class PrismaPaybackFeeListRepositoryAdapter
 		}
 	}
 
-	async getById(paybackId: string): Promise<PaybackFeeList> {
+	async getById(paybackId: string): Promise<PaybackFee> {
 		try {
-			return this.prismaService.paybackFeeList.findUnique({
+			return this.prismaService.paybackFee.findUnique({
 				where: { id: paybackId },
 				include: {
 					tournamentEvent: true,
@@ -57,9 +57,9 @@ export class PrismaPaybackFeeListRepositoryAdapter
 		}
 	}
 
-	async getPaybackFeeList(): Promise<PaybackFeeList[]> {
+	async getPaybackFeeList(): Promise<PaybackFee[]> {
 		try {
-			return this.prismaService.paybackFeeList.findMany({
+			return this.prismaService.paybackFee.findMany({
 				include: {
 					tournamentEvent: true,
 					tournament: true,

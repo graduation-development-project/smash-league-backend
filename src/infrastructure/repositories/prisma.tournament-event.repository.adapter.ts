@@ -284,32 +284,7 @@ export class PrismaTournamentEventRepositoryAdapter
 								},
 							},
 						},
-					},
-					jointThirdPlace: {
-						select: {
-							user: {
-								select: {
-									id: true,
-									name: true,
-									gender: true,
-									dateOfBirth: true,
-									height: true,
-									avatarURL: true,
-								},
-							},
-
-							partner: {
-								select: {
-									id: true,
-									name: true,
-									gender: true,
-									dateOfBirth: true,
-									height: true,
-									avatarURL: true,
-								},
-							},
-						},
-					},
+					}
 				},
 			});
 		} catch (e) {

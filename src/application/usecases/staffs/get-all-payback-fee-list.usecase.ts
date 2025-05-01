@@ -1,19 +1,19 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ApiResponse } from "../../../domain/dtos/api-response";
-import { PaybackFeeList, UserVerification } from "@prisma/client";
-import { PaybackFeeListRepositoryPort } from "../../../domain/repositories/payback-fee-list.repository.port";
+import { PaybackFee, UserVerification } from "@prisma/client";
+import { PaybackFeeRepositoryPort } from "../../../domain/repositories/payback-fee-list.repository.port";
 
 @Injectable()
 export class GetAllPaybackFeeListUseCase {
 	constructor(
-		@Inject("PaybackFeeListRepositoryPort")
-		private paybackFeeListRepository: PaybackFeeListRepositoryPort,	) {}
+		@Inject("PaybackFeeRepositoryPort")
+		private paybackFeeRepository: PaybackFeeRepositoryPort,	) {}
 
-	async execute(): Promise<ApiResponse<PaybackFeeList[]>> {
-		return new ApiResponse<PaybackFeeList[]>(
+	async execute(): Promise<ApiResponse<PaybackFee[]>> {
+		return new ApiResponse<PaybackFee[]>(
 			HttpStatus.OK,
 			"Get payback fee list successfully",
-			await this.paybackFeeListRepository.getPaybackFeeList(),
+			await this.paybackFeeRepository.getPaybackFeeList(),
 		);
 	}
 }
