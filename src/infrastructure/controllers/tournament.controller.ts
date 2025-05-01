@@ -1,3 +1,4 @@
+import { GetAllRequiredAttachmentUseCase } from './../../application/usecases/tournament/get-all-required-attachment.usecase';
 import { GetTournamentInformationUseCase } from "./../../application/usecases/tournament/get-tournament-information.usecase";
 import { GenerateBracketUseCase } from "./../../application/usecases/tournament/generate-bracket.usecase";
 import {
@@ -48,6 +49,7 @@ import {
 	ITournamentInformation,
 	ITournamentRegistrationInformation,
 	ITournamentResponse,
+	RequiredAttachment,
 } from "src/domain/interfaces/tournament/tournament.interface";
 import { CreateTournament } from "src/domain/interfaces/tournament/tournament.validation";
 import {
@@ -163,6 +165,7 @@ export class TournamentController {
 		private readonly getLatestFinishTournamentUseCase: GetLatestFinishTournamentUseCase,
 		private readonly editTournamentSponsorTierUseCase: EditTournamentSponsorTierUseCase,
 		private readonly removeTournamentSponsorUseCase: RemoveTournamentSponsorUseCase,
+		private readonly getAllRequiredAttachmentUseCase: GetAllRequiredAttachmentUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -287,6 +290,11 @@ export class TournamentController {
 	@Get("/get-all-format-types")
 	async getAllFormatTypes(): Promise<ApiResponse<KeyValueType<string>[]>> {
 		return await this.getAllFormatTypeUseCase.execute();
+	}
+
+	@Get("/get-all-required-attachment")
+	async getAllRequiredAttachment(): Promise<ApiResponse<KeyValueType<string>[]>> {
+		return await this.getAllRequiredAttachmentUseCase.execute();
 	}
 
 	@Post("/create-tournament-serie")
