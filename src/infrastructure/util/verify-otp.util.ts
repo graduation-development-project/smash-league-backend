@@ -11,18 +11,19 @@ export const verifyOTP = async (
 		where: { email },
 	});
 
-	console.log("USER", user, email)
+	console.log("USER", user, email);
 
 	if (!user) {
 		throw new BadRequestException("This email is not registered yet");
 	}
 
-	console.log(user.otpExpiresTime, " - ", convertToLocalTime(new Date()));
-
 	//* Check OTP expires or not
 	if (user.otpExpiresTime < convertToLocalTime(new Date())) {
 		throw new BadRequestException("OTP expired");
 	}
+
+	console.log("OTP expires at (UTC):", user.otpExpiresTime);
+	console.log("Current time (UTC):",convertToLocalTime(new Date()));
 
 	if (user.otp !== otp) {
 		throw new BadRequestException("Invalid OTP");

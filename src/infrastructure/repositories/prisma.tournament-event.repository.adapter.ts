@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient, Tournament, TournamentEvent } from "@prisma/client";
-import { IParticipantsOfTournamentEvent, ITournamentEventParticipants } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
+import {
+	IParticipantsOfTournamentEvent,
+	ITournamentEventParticipants,
+} from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
@@ -10,7 +13,10 @@ export class PrismaTournamentEventRepositoryAdapter
 	implements TournamentEventRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
-	async updateManyTournamentEvent(tournamentEvents: TournamentEvent[]): Promise<TournamentEvent[]> {
+
+	async updateManyTournamentEvent(
+		tournamentEvents: TournamentEvent[],
+	): Promise<TournamentEvent[]> {
 		let tournamentEventsUpdated: TournamentEvent[] = [];
 		for (const item of tournamentEvents) {
 			const updatedTournamentEvent = await this.prisma.tournamentEvent.update({
@@ -25,7 +31,10 @@ export class PrismaTournamentEventRepositoryAdapter
 		}
 		return tournamentEventsUpdated;
 	}
-	async getParticipantsByTournamentEvent(tournamentEventId: string): Promise<IParticipantsOfTournamentEvent> {
+
+	async getParticipantsByTournamentEvent(
+		tournamentEventId: string,
+	): Promise<IParticipantsOfTournamentEvent> {
 		const [numberOfParticipants, listParticipants] = await Promise.all([
 			await this.prisma.tournamentParticipants.count({
 				where: {
@@ -64,6 +73,8 @@ export class PrismaTournamentEventRepositoryAdapter
 							avatarURL: true,
 						},
 					},
+
+					fromTeam: true,
 				},
 			}),
 		]);
@@ -72,25 +83,29 @@ export class PrismaTournamentEventRepositoryAdapter
 			listParticipants: listParticipants,
 		};
 	}
-	async getTournamentOfTournamentEvent(tournamentEventId: string): Promise<Tournament> {
+
+	async getTournamentOfTournamentEvent(
+		tournamentEventId: string,
+	): Promise<Tournament> {
 		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
 			where: {
-				id: tournamentEventId
+				id: tournamentEventId,
 			},
 			select: {
-				tournament: true
-			}
+				tournament: true,
+			},
 		});
 		return tournamentEvent.tournament;
 	}
+
 	async getTournamentEventById(tournamentEventId: string): Promise<any> {
 		return await this.prisma.tournamentEvent.findUnique({
 			where: {
-				id: tournamentEventId
+				id: tournamentEventId,
 			},
 			include: {
-				tournament: true
-			}
+				tournament: true,
+			},
 		});
 	}
 
@@ -284,7 +299,7 @@ export class PrismaTournamentEventRepositoryAdapter
 								},
 							},
 						},
-					}
+					},
 				},
 			});
 		} catch (e) {

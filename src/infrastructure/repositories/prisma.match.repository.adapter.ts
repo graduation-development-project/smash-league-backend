@@ -1306,8 +1306,12 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			},
 
 			include: {
-				tournamentEvent: true
-			}
+				tournamentEvent: {
+					include: {
+						tournament: true,
+					},
+				},
+			},
 		});
 	}
 

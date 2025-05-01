@@ -64,4 +64,17 @@ export class PrismaTournamentParticipantRepositoryAdapter
 			throw e;
 		}
 	}
+
+	async getTournamentParticipantDetail(
+		id: string,
+	): Promise<TournamentParticipants> {
+		try {
+			return this.prismaService.tournamentParticipants.findUnique({
+				where: { id },
+			});
+		} catch (e) {
+			console.error("Error getTournamentParticipantDetail", e);
+			throw e;
+		}
+	}
 }

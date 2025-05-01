@@ -143,12 +143,14 @@ export class PrismaAuthRepositoryAdapter implements AuthRepositoryPort {
 
 			console.log(convertToLocalTime(otpExpiresTime));
 			console.log(convertToLocalTime(new Date()));
+			console.log(otpExpiresTime);
+			console.log(new Date());
 
 			const user: User = await this.userRepository.createUser({
 				...signUpDTO,
 				password: hashedPassword,
 				otp,
-				otpExpiresTime: otpExpiresTime,
+				otpExpiresTime: convertToLocalTime(otpExpiresTime),
 			});
 
 			await this.emailQueue.add("sendEmail", {
