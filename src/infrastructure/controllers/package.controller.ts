@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post, Put, Res, UseGuards } from "@nestjs/common";
 import { LocalAuthGuard } from "../guards/auth/local.guard";
 import { GetPackagesUseCase } from "src/application/usecases/packages/get-packages.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
@@ -11,6 +11,8 @@ import { CreatePackageUseCase } from "src/application/usecases/packages/create-p
 import { CreatePackageDto } from "src/domain/dtos/packages/package.dto";
 import { create } from "domain";
 import { InactivatePackageUseCase } from "src/application/usecases/packages/inactivate-package.usecase";
+import { UpdatePackageUseCase } from "src/application/usecases/packages/update-package.usecase";
+import { UpdatePackageDTO } from "src/domain/interfaces/package/package.validation";
 
 @Controller("/package")
 export class PackageController {
@@ -18,7 +20,8 @@ export class PackageController {
 		private getPackages: GetPackagesUseCase,
 		private getPackageDetailUseCase: GetPackageDetailUseCase,
 		private readonly createPackageUseCase: CreatePackageUseCase,
-		private readonly inactivatePackageUseCase: InactivatePackageUseCase
+		private readonly inactivatePackageUseCase: InactivatePackageUseCase,
+		private readonly updatePackageUseCase: UpdatePackageUseCase
 	) {
 	}
 
@@ -49,5 +52,14 @@ export class PackageController {
 	@HttpCode(HttpStatus.BAD_REQUEST)
 	async inactivatePackage(@Param("id") id: string) : Promise<ApiResponse<Package>> {
 		return await this.inactivatePackageUseCase.execute(id);
+	}
+
+	@Put("/update-package")
+	@HttpCode(HttpStatus.OK)
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async updatePackage(@Body() updatePackage: UpdatePackageDTO): Promise<ApiResponse<Package>> {
+		// console.log(updatePackage);
+		// return;
+		return await this.updatePackageUseCase.execute(updatePackage);
 	}
 }

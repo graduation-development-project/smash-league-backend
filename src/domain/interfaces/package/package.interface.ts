@@ -16,3 +16,14 @@ export interface IPackageDefaultResponse {
 	price: number;
 	credits: number;
 }
+
+export interface IUpdatePackage {
+	id: string;
+	packageName: string;
+	currentDiscountByAmount: number;
+	price: number;
+	credits: number;
+	advantages: string[];
+	isRecommend: boolean;
+	isAvailable: boolean;
+}
