@@ -9,6 +9,11 @@ export interface TournamentRegistrationRepositoryPort {
 		tournamentRegistrationId: string,
 	): Promise<TournamentRegistration>;
 
+	getTournamentRegistrationListByEvent(
+		tournamentId: string,
+		tournamentEventId: string,
+	): Promise<TournamentRegistration[]>;
+
 	updateStatus(
 		tournamentRegistrationId: string,
 		status: TournamentRegistrationStatus,
@@ -21,6 +26,10 @@ export interface TournamentRegistrationRepositoryPort {
 	removeTournamentRegistration(tournamentRegistrationId: string): Promise<void>;
 
 	removeManyTournamentRegistration(
+		tournamentRegistrationIds: string[],
+	): Promise<void>;
+
+	cancelManyTournamentRegistration(
 		tournamentRegistrationIds: string[],
 	): Promise<void>;
 }

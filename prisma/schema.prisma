@@ -57,6 +57,7 @@ model User {
   transactions                  Transaction[]            @relation(name: "FK_Transaction_Owner")
   feedback                      Feedback[]               @relation(name: "FK_Feedback_User")
   paybackFeeList                PaybackFeeList[]         @relation(name: "FK_PaybackFeeList_User")
+  userReport                    UserReport[]             @relation(name: "FK_UserReport_User")
 }
 
 enum Gender {
@@ -277,6 +278,7 @@ model Tournament {
   feedback                 Feedback[]               @relation(name: "FK_Feedback_Tournament")
   TournamentSponsor        TournamentSponsor[]
   paybackFeeList           PaybackFeeList[]         @relation(name: "FK_PaybackFeeList_Tournament")
+  userReport               UserReport[]             @relation(name: "FK_UserReport_Tournament")
 }
 
 enum TournamentStatus {
@@ -717,4 +719,23 @@ model UserBankAccount {
   bank          Bank   @relation(name: "FK_Bank_UserBankAccount", fields: [bankId], references: [id])
 
   @@unique([accountNumber, bankId])
+}
+
+model UserReport {
+  id           String       @id @default(uuid())
+  userId       String
+  tournamentId String
+  reason       String
+  status       ReportStatus @default(PENDING)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  user       User       @relation(name: "FK_UserReport_User", fields: [userId], references: [id], onDelete: Cascade)
+  tournament Tournament @relation(name: "FK_UserReport_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+}
+
+enum ReportStatus {
+  PENDING
+  HANDLED
+  REJECTED
 }

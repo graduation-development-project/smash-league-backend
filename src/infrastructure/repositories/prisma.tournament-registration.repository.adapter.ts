@@ -105,4 +105,41 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 			throw e;
 		}
 	}
+
+	async getTournamentRegistrationListByEvent(
+		tournamentId: string,
+		tournamentEventId: string,
+	): Promise<TournamentRegistration[]> {
+		try {
+			return await this.prismaService.tournamentRegistration.findMany({
+				where: {
+					tournamentId,
+					tournamentEventId,
+				},
+			});
+		} catch (e) {
+			console.error("getTournamentRegistrationListByEvent failed", e);
+			throw e;
+		}
+	}
+
+	async cancelManyTournamentRegistration(
+		tournamentRegistrationIds: string[],
+	): Promise<void> {
+		try {
+			await this.prismaService.tournamentRegistration.updateMany({
+				where: {
+					id: {
+						in: tournamentRegistrationIds,
+					},
+				},
+				data: {
+					status: TournamentRegistrationStatus.REJECTED,
+				},
+			});
+		} catch (e) {
+			console.error("cancelManyTournamentRegistration failed", e);
+			throw e;
+		}
+	}
 }

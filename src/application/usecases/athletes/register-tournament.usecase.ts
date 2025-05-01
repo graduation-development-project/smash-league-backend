@@ -20,6 +20,7 @@ import { TournamentEventRepositoryPort } from "../../../domain/repositories/tour
 import { TeamRepositoryPort } from "../../../domain/repositories/team.repository.port";
 import { UsersRepositoryPort } from "../../../domain/repositories/users.repository.port";
 import { TournamentRepositoryPort } from "../../../domain/repositories/tournament.repository.port";
+import { BankRepositoryPort } from "../../../domain/repositories/bank.repository.port";
 
 @Injectable()
 export class RegisterTournamentUseCase {
@@ -34,6 +35,8 @@ export class RegisterTournamentUseCase {
 		private userRepository: UsersRepositoryPort,
 		@Inject("TournamentRepository")
 		private tournamentRepository: TournamentRepositoryPort,
+		@Inject("BankRepositoryPort")
+		private bankRepository: BankRepositoryPort,
 		private prisma: PrismaService,
 		private uploadService: UploadService,
 	) {}
@@ -50,6 +53,16 @@ export class RegisterTournamentUseCase {
 			fromTeamId,
 			files,
 		} = registerTournamentDTO;
+
+		const haveBankAccounts = await this.bankRepository.getUserBankAccounts(
+			user.id,
+		);
+
+		if (haveBankAccounts.length <= 0) {
+			throw new BadRequestException(
+				"Please add your bank account before register to tournament",
+			);
+		}
 
 		const isUmpire = registrationRole === TournamentRegistrationRole.UMPIRE;
 		const isAthlete =

@@ -39,4 +39,17 @@ export class PrismaBankRepositoryAdapter implements BankRepositoryPort {
 			throw e;
 		}
 	}
+
+	async getUserBankAccounts(userId: string): Promise<UserBankAccount[]> {
+		try {
+			return await this.prismaService.userBankAccount.findMany({
+				where: {
+					userId,
+				},
+			});
+		} catch (e) {
+			console.error("getUserBankAccounts failed", e);
+			throw e;
+		}
+	}
 }

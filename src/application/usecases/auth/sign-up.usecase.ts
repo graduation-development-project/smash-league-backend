@@ -5,7 +5,7 @@ import { AuthRepositoryPort } from "../../../domain/repositories/auth.repository
 import {ISignUpResponse} from "../../../domain/interfaces/interfaces";
 
 @Injectable()
-export class SignUpUseCase {
+	export class SignUpUseCase {
 	constructor(
 		@Inject("AuthRepository") private authRepository: AuthRepositoryPort,
 	) {}
