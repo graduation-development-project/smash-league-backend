@@ -7,6 +7,7 @@ import { IUserResponse } from "../interfaces/user/user.interface";
 import { AddBankAccountDTO } from "../dtos/users/add-bank-account.dto";
 
 export interface UsersRepositoryPort {
+	getUser(userId: string): Promise<User>;
 	findUserById(userID: string): Promise<TUserWithRole>;
 
 	getAuthenticatedUser(email: string, password: string): Promise<User>;
@@ -32,7 +33,7 @@ export interface UsersRepositoryPort {
 	searchUserByEmail(email: string): Promise<IUserResponse[]>;
 
 	addCreditForUser(userId: string, credit: number): Promise<any>;
-
+	minusCredit(userId: string): Promise<User>;
 	addBankAccount(
 		addBankAccountDTO: AddBankAccountDTO,
 	): Promise<UserBankAccount>;

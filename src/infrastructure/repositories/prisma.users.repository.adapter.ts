@@ -13,10 +13,33 @@ import { EditUserDTO } from "../../domain/dtos/users/edit-user.dto";
 import { ChangePasswordDTO } from "../../domain/dtos/users/change-password.dto";
 import { IUserResponse } from "src/domain/interfaces/user/user.interface";
 import { AddBankAccountDTO } from "../../domain/dtos/users/add-bank-account.dto";
+import { userInfo } from "os";
 
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
+	async getUser(userId: string): Promise<User> {
+		return await this.prisma.user.findUnique({
+			where: {
+				id: userId
+			}
+		});
+	}
+	async minusCredit(userId: string): Promise<User> {
+		const credit = await this.prisma.user.findUnique({
+			where: {
+				id: userId
+			}
+		});
+		return await this.prisma.user.update({
+			where: {
+				id: userId
+			},
+			data: {
+				creditsRemain: credit.creditsRemain - 1
+			}
+		});
+	}
 
 	async addCreditForUser(userId: string, credit: number): Promise<any> {
 		const creditsRemain = await this.prisma.user.findUnique({

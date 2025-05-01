@@ -321,8 +321,6 @@ model TournamentEvent {
   runnerUp               TournamentParticipants?  @relation(name: "FK_RunnerUp_TournamentParticipants", fields: [runnerUpId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   thirdPlaceId           String?
   thirdPlace             TournamentParticipants?  @relation(name: "FK_ThirdPlace_TournamentParticipants", fields: [thirdPlaceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  jointThirdPlaceId      String?
-  jointThirdPlace        TournamentParticipants?  @relation(name: "FK_JointThirdPlace_TournamentParticipants", fields: [jointThirdPlaceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tournamentId           String
   tournament             Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stages                 Stage[]                  @relation(name: "FK_Stage_TournamentEvent")
@@ -497,7 +495,6 @@ model TournamentParticipants {
   championships     TournamentEvent[] @relation(name: "FK_Championship_TournamentParticipants")
   runnerUps         TournamentEvent[] @relation(name: "FK_RunnerUp_TournamentParticipants")
   thirdPlaces       TournamentEvent[] @relation(name: "FK_ThirdPlace_TournamentParticipants")
-  jointThirdPlaces  TournamentEvent[] @relation(name: "FK_JointThirdPlace_TournamentParticipants")
 }
 
 model TournamentUmpires {

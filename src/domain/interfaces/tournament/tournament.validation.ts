@@ -302,7 +302,7 @@ export class CreateTournament {
 	@IsNumber()
 	@Min(1)
 	maxEventPerPerson: number;
-
+	
 	tournamentSerieId?: string;
 
 	createTournamentEvent: CreateTournamentEventsDTO;
@@ -574,7 +574,7 @@ export class UpdateTournamentRegistrationInformation {
 }
 
 export class UpdateTournamentScheduleInformation {
-	@IsString()
+	@IsString() 
 	@IsNotEmpty()
 	id: string;
 	@IsDateString()
