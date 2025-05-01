@@ -246,7 +246,10 @@ model Tournament {
   registrationOpeningDate  DateTime
   registrationClosingDate  DateTime
   drawDate                 DateTime
+  startDateFirstTime       DateTime
+  countUpdateOccurTime     Int                      @default(0)
   startDate                DateTime
+  endDateFirstTime         DateTime
   endDate                  DateTime
   checkInBeforeStart       DateTime
   umpirePerMatch           Int

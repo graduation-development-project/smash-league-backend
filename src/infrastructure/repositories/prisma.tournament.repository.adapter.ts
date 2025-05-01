@@ -223,7 +223,10 @@ export class PrismaTournamentRepositorAdapter
 		return await this.prisma.tournament.create({
 			data: {
 				...tournament,
-				status: TournamentStatus.CREATED, // Make sure this matches TournamentStatus enum
+				status: TournamentStatus.CREATED,
+				endDateFirstTime: tournament.endDate,
+				startDateFirstTime: tournament.startDate,
+				countUpdateOccurTime: 0
 			},
 		});
 	}
