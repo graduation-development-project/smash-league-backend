@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PackageEntity } from "../entities/transaction/package.entity";
 import { ICreatePackage } from "../interfaces/package/package.interface";
 import { Package } from "@prisma/client";
+import { UpdatePackageDTO } from "../interfaces/package/package.validation";
 
 export interface PackageRepositoryPort {
 	getPackages(): Promise<PackageEntity[]>;
@@ -10,7 +11,7 @@ export interface PackageRepositoryPort {
 
 	createPackage(createPackageDto: ICreatePackage): Promise<Package>;
 
-	modifyPackage(modifyPackageDto: any): Promise<any>;
+	modifyPackage(updatePackage: UpdatePackageDTO): Promise<any>;
 
 	deletePackage(id: string): Promise<any>;
 

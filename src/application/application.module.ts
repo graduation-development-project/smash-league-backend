@@ -174,6 +174,7 @@ import { EditTournamentSponsorTierUseCase } from "./usecases/tournament/sponsor/
 import { RemoveTournamentSponsorUseCase } from "./usecases/tournament/sponsor/remove-tournament-sponsor.usecase";
 import { PrismaTournamentUmpireRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-umpire.repository.adapter";
 import { GetAllRequiredAttachmentUseCase } from "./usecases/tournament/get-all-required-attachment.usecase";
+import { UpdatePackageUseCase } from "./usecases/packages/update-package.usecase";
 
 @Module({
 	imports: [
@@ -447,6 +448,7 @@ import { GetAllRequiredAttachmentUseCase } from "./usecases/tournament/get-all-r
 		GetPackageDetailUseCase,
 		CreatePackageUseCase,
 		InactivatePackageUseCase,
+		UpdatePackageUseCase,
 		//Payment Use Case
 		CreatePaymentLinkUseCase,
 		BuyPackageUseCase,
@@ -620,6 +622,7 @@ import { GetAllRequiredAttachmentUseCase } from "./usecases/tournament/get-all-r
 		GetPackageDetailUseCase,
 		CreatePackageUseCase,
 		InactivatePackageUseCase,
+		UpdatePackageUseCase,
 		//Payment Use Case
 		CreatePaymentLinkUseCase,
 		BuyPackageUseCase,
