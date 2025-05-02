@@ -18,12 +18,12 @@ export const verifyOTP = async (
 	}
 
 	//* Check OTP expires or not
-	if (user.otpExpiresTime < convertToLocalTime(new Date())) {
+	if (user.otpExpiresTime < new Date()) {
 		throw new BadRequestException("OTP expired");
 	}
 
 	console.log("OTP expires at (UTC):", user.otpExpiresTime);
-	console.log("Current time (UTC):",convertToLocalTime(new Date()));
+	console.log("Current time (UTC):", new Date());
 
 	if (user.otp !== otp) {
 		throw new BadRequestException("Invalid OTP");

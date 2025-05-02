@@ -13,7 +13,8 @@ import {
 import {
 	BadmintonParticipantType,
 	PrismaClient,
-	Tournament, TournamentEventStatus,
+	Tournament,
+	TournamentEventStatus,
 	TournamentPost,
 	TournamentStatus,
 	TournamentUmpires,
@@ -29,12 +30,13 @@ import {
 	IPaginatedOutput,
 	IPaginateOptions,
 } from "../../domain/interfaces/interfaces";
+import { PrismaService } from "../services/prisma.service";
 
 @Injectable()
-export class PrismaTournamentRepositorAdapter
+export class PrismaTournamentRepositoryAdapter
 	implements TournamentRepositoryPort
 {
-	constructor(private prisma: PrismaClient) {}
+	constructor(private prisma: PrismaService) {}
 
 	async updateTournamentStatusToDrawing(
 		tournamentId: string,
@@ -226,7 +228,7 @@ export class PrismaTournamentRepositorAdapter
 				status: TournamentStatus.CREATED,
 				endDateFirstTime: tournament.endDate,
 				startDateFirstTime: tournament.startDate,
-				countUpdateOccurTime: 0
+				countUpdateOccurTime: 0,
 			},
 		});
 	}
@@ -769,7 +771,7 @@ export class PrismaTournamentRepositorAdapter
 				include: {
 					tournamentEvents: {
 						where: {
-								tournamentEventStatus: TournamentEventStatus.ENDED,
+							tournamentEventStatus: TournamentEventStatus.ENDED,
 						},
 						select: {
 							id: true,
@@ -861,6 +863,23 @@ export class PrismaTournamentRepositorAdapter
 			});
 		} catch (e) {
 			console.error("getLatestFinishTournament failed: ", e);
+			throw e;
+		}
+	}
+
+	async updateTournamentStatus(
+		tournamentId: string,
+		status: TournamentStatus,
+	): Promise<Tournament> {
+		try {
+			return this.prisma.tournament.update({
+				where: { id: tournamentId },
+				data: {
+					status: status,
+				},
+			});
+		} catch (e) {
+			console.error("updateTournamentStatus failed: ", e);
 			throw e;
 		}
 	}

@@ -4,21 +4,13 @@ import {
 	Court,
 	Tournament,
 	TournamentEvent,
-	TournamentSerie,
 	User,
 } from "@prisma/client";
-import { create } from "domain";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { IRequestUser } from "src/domain/interfaces/interfaces";
-import {
-	ICreateCourt,
-	ICreateCourts,
-	ICreateTournament,
-	ICreateTournamentEvent,
-} from "src/domain/interfaces/tournament/tournament.interface";
+import { ICreateCourts } from "src/domain/interfaces/tournament/tournament.interface";
 import {
 	CreateTournament,
-	CreateTournamentEvent,
 	CreateTournamentEventsDTO,
 } from "src/domain/interfaces/tournament/tournament.validation";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
@@ -29,6 +21,8 @@ import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { CourtRepositoryPort } from "src/domain/repositories/court.repository.port";
 import { UsersRepositoryPort } from "src/domain/repositories/users.repository.port";
+import { TournamentTimeJobType } from "../../../infrastructure/enums/tournament-time-job.enum";
+import { scheduleOrUpdateTournamentJob } from "../../../infrastructure/util/job/tournament-scheduler";
 
 @Injectable()
 export class CreateNewTournamentUseCase {
@@ -44,8 +38,8 @@ export class CreateNewTournamentUseCase {
 		@Inject("UserRepository")
 		private readonly userRepository: UsersRepositoryPort,
 		private readonly uploadService: UploadService,
-		@InjectQueue("checkEnoughPlayerQueue")
-		private checkEnoughPlayerQueue: Queue,
+		@InjectQueue("tournamentQueue")
+		private tournamentQueue: Queue,
 	) {}
 
 	async execute(
@@ -69,40 +63,75 @@ export class CreateNewTournamentUseCase {
 				"Tournament ID exists!",
 				null,
 			);
-		const user = await this.userRepository.getUser(request.user.id);	
-		if (user.creditsRemain === null || user.creditsRemain === 0) return new ApiResponse<null | undefined>(
-			HttpStatus.BAD_REQUEST,
-			"Credit remain is 0.",
-			null
-		);
+		const user = await this.userRepository.getUser(request.user.id);
+		if (user.creditsRemain === null || user.creditsRemain === 0)
+			return new ApiResponse<null | undefined>(
+				HttpStatus.BAD_REQUEST,
+				"Credit remain is 0.",
+				null,
+			);
 		tournament = await this.createTournamentWithNoTournamentSerie(
 			createTournament,
 			request.user,
 		);
 
-		const minusCreditAfterCreate = await this.userRepository.minusCredit(request.user.id);
-		const now = Date.now();
-		const closeFormDate = new Date(tournament.registrationClosingDate);
+		const minusCreditAfterCreate = await this.userRepository.minusCredit(
+			request.user.id,
+		);
 
-		const delayTimeInMilliseconds = closeFormDate.getTime() - now;
+		await scheduleOrUpdateTournamentJob(
+			this.tournamentQueue,
+			TournamentTimeJobType.OPEN_REGISTRATION,
+			tournament.id,
+			tournament.registrationOpeningDate,
+		);
 
-		console.log(
-			closeFormDate.getTime(),
-			now,
+		await scheduleOrUpdateTournamentJob(
+			this.tournamentQueue,
+			TournamentTimeJobType.CLOSE_REGISTRATION,
+			tournament.id,
+			tournament.registrationClosingDate,
+		);
+
+		await scheduleOrUpdateTournamentJob(
+			this.tournamentQueue,
+			TournamentTimeJobType.DRAW_DATE,
+			tournament.id,
+			tournament.drawDate,
+		);
+
+		await scheduleOrUpdateTournamentJob(
+			this.tournamentQueue,
+			TournamentTimeJobType.START_TOURNAMENT,
+			tournament.id,
 			tournament.startDate,
-			new Date().toISOString(),
 		);
-		console.log(delayTimeInMilliseconds);
 
-		await this.checkEnoughPlayerQueue.add(
-			"CHECK_EVENT_ENOUGH_PLAYER",
-			{
-				tournamentId: tournament.id,
-			},
-			{
-				delay: delayTimeInMilliseconds,
-			},
+		console.log("END DATE",tournament.endDate);
+
+		await scheduleOrUpdateTournamentJob(
+			this.tournamentQueue,
+			TournamentTimeJobType.END_TOURNAMENT,
+			tournament.id,
+			tournament.endDate,
 		);
+
+		await scheduleOrUpdateTournamentJob(
+			this.tournamentQueue,
+			TournamentTimeJobType.CHECK_ENOUGH_PLAYER,
+			tournament.id,
+			tournament.registrationClosingDate,
+		);
+
+		// await this.tournamentQueue.add(
+		// 	TournamentTimeJobType.CHECK_ENOUGH_PLAYER,
+		// 	{
+		// 		tournamentId: tournament.id,
+		// 	},
+		// 	{
+		// 		delay: delayTimeInMilliseconds,
+		// 	},
+		// );
 
 		return new ApiResponse<Tournament>(
 			HttpStatus.OK,
@@ -133,7 +162,10 @@ export class CreateNewTournamentUseCase {
 			createTournament.createTournamentEvent,
 			tournament.id,
 		);
-		const courts = await this.createMultipleCourtForMaintaining(tournament.id, createTournament.createCourts);
+		const courts = await this.createMultipleCourtForMaintaining(
+			tournament.id,
+			createTournament.createCourts,
+		);
 
 		return tournament;
 	}
@@ -156,7 +188,8 @@ export class CreateNewTournamentUseCase {
 										tournamentEventEnum = BadmintonParticipantType.MENS_SINGLE;
 										break;
 									case "WOMENS_SINGLE":
-										tournamentEventEnum = BadmintonParticipantType.WOMENS_SINGLE;
+										tournamentEventEnum =
+											BadmintonParticipantType.WOMENS_SINGLE;
 										break;
 
 									case "MENS_DOUBLE":
@@ -164,7 +197,8 @@ export class CreateNewTournamentUseCase {
 										break;
 
 									case "WOMENS_DOUBLE":
-										tournamentEventEnum = BadmintonParticipantType.WOMENS_DOUBLE;
+										tournamentEventEnum =
+											BadmintonParticipantType.WOMENS_DOUBLE;
 										break;
 
 									case "MIXED_DOUBLE":
@@ -268,7 +302,13 @@ export class CreateNewTournamentUseCase {
 		return tournament;
 	}
 
-	async createMultipleCourtForMaintaining(tournamentId: string, createCourts: ICreateCourts): Promise<Court[]> {
-		return await this.courtRepository.createMultipleCourtsWithCourtCode(tournamentId, createCourts);
+	async createMultipleCourtForMaintaining(
+		tournamentId: string,
+		createCourts: ICreateCourts,
+	): Promise<Court[]> {
+		return await this.courtRepository.createMultipleCourtsWithCourtCode(
+			tournamentId,
+			createCourts,
+		);
 	}
 }

@@ -25,7 +25,8 @@
     "bank-seed": "ts-node prisma/bank-seed.ts",
     "team-seed": "ts-node prisma/team-seed.ts",
     "umpire-seed": "ts-node prisma/umpire-seed.ts",
-    "staff-seed": "ts-node prisma/staff-seed.ts"
+    "staff-seed": "ts-node prisma/staff-seed.ts",
+    "redis-commander": "redis-commander --host redis.smashit.com.vn --port 6380 --redis-host redis.smashit.com.vn --redis-port 6380"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

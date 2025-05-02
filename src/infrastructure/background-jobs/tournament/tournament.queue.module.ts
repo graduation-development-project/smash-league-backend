@@ -1,26 +1,31 @@
 import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
-import { PrismaService } from "../../services/prisma.service";
-import { CheckEnoughPlayerQueueProcessor } from "./check-enough-player.queue.processor";
 import { PrismaNotificationsRepositoryAdapter } from "../../repositories/prisma.notifications.repository.adapter";
 import { NotificationQueueModule } from "../notification/notification.queue.module";
+import { TournamentQueueProcessor } from "./tournament.queue.processor";
+import { PrismaService } from "../../services/prisma.service";
+import { PrismaTournamentRepositoryAdapter } from "../../repositories/prisma.tournament.repository.adapter";
 
 @Module({
 	imports: [
 		BullModule.registerQueue({
-			name: "checkEnoughPlayerQueue",
+			name: "tournamentQueue",
 		}),
 
 		NotificationQueueModule,
 	],
 	providers: [
-		CheckEnoughPlayerQueueProcessor,
+		TournamentQueueProcessor,
 		PrismaService,
 		{
 			provide: "NotificationRepository",
 			useClass: PrismaNotificationsRepositoryAdapter,
 		},
+		{
+			provide: "TournamentRepository",
+			useClass: PrismaTournamentRepositoryAdapter,
+		},
 	],
 	exports: [BullModule],
 })
-export class CheckEnoughPlayerQueueModule {}
+export class TournamentQueueModule {}

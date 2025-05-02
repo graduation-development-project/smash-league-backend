@@ -35,8 +35,8 @@ import { UmpireController } from "./controllers/umpire.controller";
 import { MatchController } from "./controllers/match.controller";
 import { BankController } from "./controllers/bank.controller";
 import { SponsorController } from "./controllers/sponsor.controller";
-import { CheckEnoughPlayerQueueModule } from "./background-jobs/check-enough-player/check-enough-player.queue.module";
 import { BankLookUpService } from "./services/bank-lookup.service";
+import { TournamentQueueModule } from "./background-jobs/tournament/tournament.queue.module";
 
 @Module({
 	imports: [
@@ -47,7 +47,7 @@ import { BankLookUpService } from "./services/bank-lookup.service";
 		EmailQueueModule,
 		NotificationQueueModule,
 		TeamQueueModule,
-		CheckEnoughPlayerQueueModule,
+		TournamentQueueModule,
 		MailerModule.forRootAsync({
 			useFactory: (configService: ConfigService) => ({
 				transport: {

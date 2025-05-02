@@ -39,7 +39,7 @@ import { InfrastructureModule } from "src/infrastructure/infrastructure.module";
 import { PaymentPayOSService } from "./services/payment.service";
 import { ConfigModule } from "@nestjs/config";
 import { ResendOtpUseCase } from "./usecases/auth/resend-otp.usecase";
-import { PrismaTournamentRepositorAdapter } from "src/infrastructure/repositories/prisma.tournament.repository.adapter";
+import { PrismaTournamentRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament.repository.adapter";
 import { UploadService } from "../infrastructure/services/upload.service";
 import { PrismaTeamLeadersRepositoryAdapter } from "../infrastructure/repositories/prisma.team-leaders.repository.adapter";
 import { CreateTeamUseCase } from "./usecases/team-leader/create-team.usecase";
@@ -77,11 +77,6 @@ import { SearchUserByEmailUseCase } from "./usecases/users/search-user-by-email.
 import { GetAllTournamentSeriesUseCase } from "./usecases/tournament-serie/get-all-tournament-series.usecase";
 import { PrismaOrganizersRepositoryAdapter } from "../infrastructure/repositories/prisma.organizers.repository.adapter";
 import { ResponseTournamentRegistrationUseCase } from "./usecases/organizers/response-tournament-registration.usecase";
-import {
-	CreateTournamentSerie,
-	UpdateTournamentContact,
-	UpdateTournamentRegistrationInformation,
-} from "src/domain/interfaces/tournament/tournament.validation";
 import { CreateTournamentSerieUseCase } from "./usecases/tournament-serie/create-tournament-serie.usecase";
 import { CheckExistTournamentURLUseCase } from "./usecases/tournament/check-exist-tournament-url.usecase";
 import { CreateRandomURLUseCase } from "./usecases/tournament/create-random-url.usecase";
@@ -156,8 +151,6 @@ import { PrismaTournamentSponsorAdapter } from "../infrastructure/repositories/p
 import { CreateTournamentSponsorUseCase } from "./usecases/tournament/sponsor/create-tournament-sponsor.usecase";
 import { FindTournamentSponsorUseCase } from "./usecases/tournament/sponsor/find-tournament-sponsor.usecase";
 import { GetAllSponsorUseCase } from "./usecases/tournament/sponsor/get-all-sponsor.usecase";
-import { CheckEnoughPlayerQueueModule } from "../infrastructure/background-jobs/check-enough-player/check-enough-player.queue.module";
-import { PaybackFeeRepositoryPort } from "../domain/repositories/payback-fee-list.repository.port";
 import { PrismaPaybackFeeRepositoryAdapter } from "../infrastructure/repositories/prisma.payback-fee.repository.adapter";
 import { CancelTournamentUseCase } from "./usecases/tournament/cancel-tournament.usecase";
 import { UploadAvatarUseCase } from "./usecases/users/upload-avatar.usecase";
@@ -175,6 +168,7 @@ import { RemoveTournamentSponsorUseCase } from "./usecases/tournament/sponsor/re
 import { PrismaTournamentUmpireRepositoryAdapter } from "../infrastructure/repositories/prisma.tournament-umpire.repository.adapter";
 import { GetAllRequiredAttachmentUseCase } from "./usecases/tournament/get-all-required-attachment.usecase";
 import { UpdatePackageUseCase } from "./usecases/packages/update-package.usecase";
+import { TournamentQueueModule } from "../infrastructure/background-jobs/tournament/tournament.queue.module";
 
 @Module({
 	imports: [
@@ -182,7 +176,7 @@ import { UpdatePackageUseCase } from "./usecases/packages/update-package.usecase
 		EmailQueueModule,
 		NotificationQueueModule,
 		TeamQueueModule,
-		CheckEnoughPlayerQueueModule,
+		TournamentQueueModule,
 		ConfigModule,
 		forwardRef(() => InfrastructureModule),
 	],
@@ -222,7 +216,7 @@ import { UpdatePackageUseCase } from "./usecases/packages/update-package.usecase
 		},
 		{
 			provide: "TournamentRepository",
-			useClass: PrismaTournamentRepositorAdapter,
+			useClass: PrismaTournamentRepositoryAdapter,
 		},
 		{
 			provide: "TeamLeaderRepository",
