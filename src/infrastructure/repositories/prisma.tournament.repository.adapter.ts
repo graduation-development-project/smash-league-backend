@@ -54,6 +54,11 @@ export class PrismaTournamentRepositoryAdapter
 	async updateTournamentScheduleInformation(
 		updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation,
 	): Promise<Tournament> {
+		const tournament = await this.prisma.tournament.findUnique({
+			where: {
+				id: updateTournamentScheduleInformation.id
+			}
+		});
 		return await this.prisma.tournament.update({
 			where: {
 				id: updateTournamentScheduleInformation.id,
@@ -61,6 +66,7 @@ export class PrismaTournamentRepositoryAdapter
 
 			data: {
 				...updateTournamentScheduleInformation,
+				countUpdateOccurTime: tournament.countUpdateOccurTime + 1
 			},
 		});
 	}
