@@ -11,6 +11,7 @@ export async function scheduleOrUpdateTournamentJob(
 	const jobId = `${tournamentId}-${jobType}`;
 
 	const existingJob = await queue.getJob(jobId);
+	console.log(existingJob);
 	if (existingJob) {
 		await existingJob.remove();
 		console.log(`Removed old job: ${jobId}`);

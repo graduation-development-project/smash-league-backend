@@ -107,8 +107,6 @@ export class CreateNewTournamentUseCase {
 			tournament.startDate,
 		);
 
-		console.log("END DATE",tournament.endDate);
-
 		await scheduleOrUpdateTournamentJob(
 			this.tournamentQueue,
 			TournamentTimeJobType.END_TOURNAMENT,
