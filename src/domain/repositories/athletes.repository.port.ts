@@ -1,7 +1,7 @@
 import { RegisterTournamentDTO } from "../dtos/athletes/register-tournament.dto";
 import {
 	Tournament,
-	TournamentRegistration,
+	TournamentRegistration, TournamentStatus,
 	UserVerification,
 } from "@prisma/client";
 import { RegisterNewRoleDTO } from "../dtos/athletes/register-new-role.dto";
@@ -20,7 +20,7 @@ export interface AthletesRepositoryPort {
 	getParticipatedTournaments(
 		options: IPaginateOptions,
 		userID: string,
-		tournamentStatus: string,
+		tournamentStatus: TournamentStatus,
 	): Promise<IPaginatedOutput<IParticipatedTournamentResponse>>;
 
 	// uploadVerificationImage(

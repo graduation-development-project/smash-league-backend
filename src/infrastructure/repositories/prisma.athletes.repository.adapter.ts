@@ -300,7 +300,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 	async getParticipatedTournaments(
 		options: IPaginateOptions,
 		userID: string,
-		tournamentStatus: string,
+		tournamentStatus: TournamentStatus,
 	): Promise<IPaginatedOutput<IParticipatedTournamentResponse>> {
 		try {
 			const page: number =
@@ -309,11 +309,12 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				parseInt(options.perPage?.toString()) || DEFAULT_PAGE_SIZE;
 			const skip: number = (page - 1) * perPage;
 
-			const tournaments = await this.prisma.tournamentRegistration.findMany({
+			const tournaments = await this.prisma.tournamentParticipants.findMany({
 				where: {
 					userId: userID,
-					status: TournamentRegistrationStatus.PENDING,
-					isDeleted: false
+					tournament: {
+						status: tournamentStatus,
+					},
 				},
 
 				include: {
@@ -321,17 +322,17 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				},
 			});
 
-			const groupedData = tournaments.reduce((acc, registration) => {
-				const tournamentId = registration.tournament.id;
+			const groupedData = tournaments.reduce((acc, participant) => {
+				const tournamentId = participant.tournament.id;
 
 				if (!acc[tournamentId]) {
 					acc[tournamentId] = {
-						tournament: registration.tournament,
-						registrations: [],
+						tournament: participant.tournament,
+						participants: [],
 					};
 				}
-				delete registration.tournament;
-				acc[tournamentId].registrations.push(registration);
+				delete participant.tournament;
+				acc[tournamentId].participants.push(participant);
 
 				return acc;
 			}, {});

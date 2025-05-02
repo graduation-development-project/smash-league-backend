@@ -193,7 +193,7 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				...rest,
 				avatarURL:
 					avatarURL ||
-					"https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png",
+					"https://i.pinimg.com/736x/09/80/62/098062ede8791dc791c3110250d2a413.jpg?fbclid=IwY2xjawKB8YZleHRuA2FlbQIxMABicmlkETFFTkZhTVR5S3F2eExBRVpOAR6hZsCbfSSIenqqWrj_wI0NWNk2fYlYKe5oQNizgxcsSaWZtwfPiI1LjW1cHQ_aem_-RMAiNCnrXtlFNXJyyVpYQ",
 				currentRefreshToken: currentRefreshToken ?? null,
 				creditsRemain: 0,
 				isVerified: provider === "google",

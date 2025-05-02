@@ -134,7 +134,7 @@ export interface ICreateCourt {
 
 export interface IParticipatedTournamentResponse {
 	tournament: Tournament;
-	registrations: TournamentRegistration[];
+	participants: TournamentParticipants[];
 }
 
 export interface ITournamentRegistrationResponse {
