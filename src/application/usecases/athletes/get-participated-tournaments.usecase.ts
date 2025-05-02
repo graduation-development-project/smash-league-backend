@@ -1,6 +1,6 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
-import { Tournament } from "@prisma/client";
+import { Tournament, TournamentStatus } from "@prisma/client";
 import { ApiResponse } from "../../../domain/dtos/api-response";
 import {
 	IPaginatedOutput,
@@ -18,7 +18,7 @@ export class GetParticipatedTournamentsUseCase {
 	async execute(
 		options: IPaginateOptions,
 		userID: string,
-		tournamentStatus: string,
+		tournamentStatus: TournamentStatus,
 	): Promise<ApiResponse<IPaginatedOutput<IParticipatedTournamentResponse>>> {
 		return new ApiResponse(
 			HttpStatus.OK,

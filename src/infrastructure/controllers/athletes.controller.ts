@@ -22,6 +22,7 @@ import {
 	Feedback,
 	Tournament,
 	TournamentRegistration,
+	TournamentStatus,
 	UserVerification,
 } from "@prisma/client";
 import { GetParticipatedTournamentsUseCase } from "../../application/usecases/athletes/get-participated-tournaments.usecase";
@@ -113,7 +114,7 @@ export class AthletesController {
 	getParticipatedTournaments(
 		@Req() { user }: IRequestUser,
 		@Query() paginateOption: IPaginateOptions,
-		@Query("status") tournamentStatus: string,
+		@Query("status") tournamentStatus: TournamentStatus,
 	): Promise<ApiResponse<IPaginatedOutput<IParticipatedTournamentResponse>>> {
 		return this.getParticipatedTournamentsUseCase.execute(
 			paginateOption,
