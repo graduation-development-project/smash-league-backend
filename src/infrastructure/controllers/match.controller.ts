@@ -3,6 +3,7 @@ import {
 	Controller,
 	Get,
 	Param,
+	Post,
 	Put,
 	Query,
 	Req,
@@ -16,7 +17,7 @@ import { RolesGuard } from "../guards/auth/role.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { RoleMap } from "../enums/role.enum";
 import { StartMatchUseCase } from "src/application/usecases/tournament/match/start-match.usecase";
-import { Court, Game, Match } from "@prisma/client";
+import { Court, Game, Match, MatchLog } from "@prisma/client";
 import { UpdatePointUseCase } from "src/application/usecases/tournament/match/update-point.usecase";
 import { GetCourtAvailableUseCase } from "src/application/usecases/tournament/court/get-court-available.usecase";
 import { AssignCourtForMatchUseCase } from "src/application/usecases/tournament/court/assign-court-for-match.usecase";
@@ -27,6 +28,8 @@ import { IRequestUser } from "../../domain/interfaces/interfaces";
 import { GetMatchesOfUserUseCase } from "../../application/usecases/athletes/get-matches-of-user.usecase";
 import { UpdateMatchUseCase } from "../../application/usecases/organizers/update-match.usecase";
 import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
+import { CreateEventLogUseCase } from "src/application/usecases/tournament/match/create-event-log.usecase";
+import { CreateLogEventDto } from "src/domain/dtos/match/create-log-event.dto";
 
 @Controller("match")
 export class MatchController {
@@ -41,6 +44,7 @@ export class MatchController {
 		private readonly assignAthleteIntoMatchUseCase: AssignAthleteIntoMatchUseCase,
 		private readonly getMatchesOfUserUseCase: GetMatchesOfUserUseCase,
 		private readonly updateMatchUseCase: UpdateMatchUseCase,
+		private readonly createEventlogUseCase: CreateEventLogUseCase
 	) {}
 
 	@Get("get-match/:matchId")
@@ -136,5 +140,12 @@ export class MatchController {
 		@Req() { user }: IRequestUser,
 	): Promise<ApiResponse<Match[]>> {
 		return this.getMatchesOfUserUseCase.execute(user.id);
+	}
+	
+	@Post("/create-event-log")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Umpire.name)
+	async createEventLog(@Body() createEventLog: CreateLogEventDto): Promise<ApiResponse<MatchLog>> {
+		return await this.createEventlogUseCase.execute(createEventLog);
 	}
 }

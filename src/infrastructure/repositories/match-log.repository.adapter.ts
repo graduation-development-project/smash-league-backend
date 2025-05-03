@@ -1,22 +1,50 @@
+import { Injectable } from "@nestjs/common";
 import { MatchLog, PrismaClient } from "@prisma/client";
 import { ICreateLogEvent } from "src/domain/interfaces/tournament/match/log-event.interface";
 import { MatchLogRepositoryPort } from "src/domain/repositories/match-log.repository.port";
 
+@Injectable()
 export class PrismaMatchLogRepositoryAdapter implements MatchLogRepositoryPort {
 	constructor(
-		private readonly prismaClient: PrismaClient
+		private readonly prisma: PrismaClient
 	) {
 	}
-	getAllMatchLogOfGames(gameId: string): Promise<MatchLog[]> {
-		throw new Error("Method not implemented.");
+	async getAllMatchLogOfGames(gameId: string): Promise<MatchLog[]> {
+		return await this.prisma.matchLog.findMany({
+			where: {
+				gameId: gameId
+			}
+		});
 	}
-	getAllMatchLogOfMatch(matchId: string): Promise<MatchLog[]> {
-		throw new Error("Method not implemented.");
+	async getAllMatchLogOfMatch(matchId: string): Promise<MatchLog[]> {
+		const games = await this.prisma.game.findMany({
+			where: {
+				matchId: matchId
+			}
+		});
+		var matchLogs: MatchLog[] = [];
+		for (let i = 0; i < games.length; i++) {
+			const logs = await this.prisma.matchLog.findMany({
+				where: {
+					gameId: games[i].id
+				}
+			});
+			matchLogs.push(...logs);
+		}
+		return matchLogs;
 	}
-	createEventLogForGame(createLogEvent: ICreateLogEvent): Promise<MatchLog> {
-		throw new Error("Method not implemented.");
+	async createEventLogForGame(createLogEvent: ICreateLogEvent): Promise<MatchLog> {
+		return await this.prisma.matchLog.create({ 
+			data: {
+				...createLogEvent
+			}
+		});
 	}
-	deleteEventLogForGame(matchLogId: string): Promise<MatchLog> {
-		throw new Error("Method not implemented.");
+	async deleteEventLogForGame(matchLogId: string): Promise<MatchLog> {
+		return await this.prisma.matchLog.delete({
+			where: {
+				id: matchLogId
+			}
+		});
 	}
 }

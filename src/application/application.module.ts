@@ -169,6 +169,8 @@ import { PrismaTournamentUmpireRepositoryAdapter } from "../infrastructure/repos
 import { GetAllRequiredAttachmentUseCase } from "./usecases/tournament/get-all-required-attachment.usecase";
 import { UpdatePackageUseCase } from "./usecases/packages/update-package.usecase";
 import { TournamentQueueModule } from "../infrastructure/background-jobs/tournament/tournament.queue.module";
+import { PrismaMatchLogRepositoryAdapter } from "src/infrastructure/repositories/match-log.repository.adapter";
+import { CreateEventLogUseCase } from "./usecases/tournament/match/create-event-log.usecase";
 
 @Module({
 	imports: [
@@ -304,6 +306,10 @@ import { TournamentQueueModule } from "../infrastructure/background-jobs/tournam
 			provide: "PaybackFeeRepositoryPort",
 			useClass: PrismaPaybackFeeRepositoryAdapter,
 		},
+		{
+			provide: "MatchLogRepositoryPort",
+			useClass: PrismaMatchLogRepositoryAdapter
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -429,6 +435,7 @@ import { TournamentQueueModule } from "../infrastructure/background-jobs/tournam
 		GetMatchByIdUseCase,
 		AssignAthleteIntoMatchUseCase,
 		UpdateMatchUseCase,
+		CreateEventLogUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
@@ -605,6 +612,7 @@ import { TournamentQueueModule } from "../infrastructure/background-jobs/tournam
 		GetMatchByIdUseCase,
 		AssignAthleteIntoMatchUseCase,
 		UpdateMatchUseCase,
+		CreateEventLogUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
