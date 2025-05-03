@@ -907,7 +907,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					currentServerId: winningId,
 					matchId: match.id,
 					status: GameStatus.ON_GOING,
-					timeStart: new Date()
+					timeStart: new Date(),
 				},
 			});
 			return {
@@ -1101,7 +1101,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				gameNumber: 1,
 				matchId: matchId,
 				currentServerId: currentServerId,
-				timeStart: new Date()
+				timeStart: new Date(),
 			},
 		});
 		const matchUpdated = await this.prisma.match.update({
@@ -1293,7 +1293,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			name: `Match ${match.matchNumber}`,
 			nextMatchId: match.nextMatchId,
 			startTime: match.startedWhen || new Date().toISOString(),
-			games: match.games
+			games: match.games,
 		};
 	}
 
@@ -1420,6 +1420,14 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 							},
 						},
 					],
+				},
+
+				include: {
+					tournamentEvent: {
+						include: {
+							tournament: true,
+						},
+					},
 				},
 			});
 		} catch (e) {
