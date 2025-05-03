@@ -1160,6 +1160,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						matches: {
 							select: {
 								id: true,
+								games: true,
 								leftCompetitor: {
 									select: {
 										id: true,
@@ -1292,6 +1293,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			name: `Match ${match.matchNumber}`,
 			nextMatchId: match.nextMatchId,
 			startTime: match.startedWhen || new Date().toISOString(),
+			games: match.games
 		};
 	}
 
