@@ -1405,11 +1405,15 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				where: {
 					OR: [
 						{
-							leftCompetitorId: userId,
+							leftCompetitor: {
+								userId,
+							},
 						},
 
 						{
-							rightCompetitorId: userId,
+							rightCompetitor: {
+								userId,
+							},
 						},
 					],
 				},
