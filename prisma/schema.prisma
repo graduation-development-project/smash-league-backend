@@ -411,6 +411,8 @@ model Match {
   stage                     Stage                   @relation(name: "FK_Match_Stage", fields: [stageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   matchNumber               Int
   isByeMatch                Boolean
+  timeStart                 DateTime?
+  timeEnd                   DateTime?
   courtId                   String?
   court                     Court?                  @relation(name: "FK_Match_Court", fields: [courtId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tournamentEventId         String
@@ -419,6 +421,7 @@ model Match {
   nextMatch                 Match?                  @relation(name: "FK_Match_NextMatch", fields: [nextMatchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   games                     Game[]                  @relation(name: "FK_Game_Match")
   matchesPrevious           Match[]                 @relation(name: "FK_Match_NextMatch")
+  matchLogs                 MatchLog[]              @relation(name: "FK_MatchLog_Match")
 }
 
 model Game {
@@ -429,6 +432,8 @@ model Game {
   gameNumber            Int
   currentServerId       String?
   currentServer         TournamentParticipants? @relation(name: "FK_Game_CurrentServer", fields: [currentServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  timeStart             DateTime
+  timeEnd               DateTime?
   matchId               String
   gameWonByCompetitorId String?
   gameWonByCompetitor   TournamentParticipants? @relation(name: "FK_Game_GameWonByCompetitor", fields: [gameWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -440,8 +445,21 @@ enum GameStatus {
   ENDED
 }
 
-model Point {
-  id String @id @default(uuid())
+enum LogType {
+  WARNING
+  MEDICAL
+  FAULT
+  MISCONDUCT
+  COACHING_VIOLATION
+}
+
+model MatchLog {
+  id      String   @id @default(uuid())
+  log     String
+  time    DateTime
+  logType LogType
+  matchId String
+  match   Match    @relation(name: "FK_MatchLog_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum MatchStatus {
