@@ -421,7 +421,6 @@ model Match {
   nextMatch                 Match?                  @relation(name: "FK_Match_NextMatch", fields: [nextMatchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   games                     Game[]                  @relation(name: "FK_Game_Match")
   matchesPrevious           Match[]                 @relation(name: "FK_Match_NextMatch")
-  matchLogs                 MatchLog[]              @relation(name: "FK_MatchLog_Match")
 }
 
 model Game {
@@ -438,6 +437,7 @@ model Game {
   gameWonByCompetitorId String?
   gameWonByCompetitor   TournamentParticipants? @relation(name: "FK_Game_GameWonByCompetitor", fields: [gameWonByCompetitorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   match                 Match                   @relation(name: "FK_Game_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  matchlogs             MatchLog[]              @relation(name: "FK_MatchLog_Game")
 }
 
 enum GameStatus {
@@ -458,8 +458,8 @@ model MatchLog {
   log     String
   time    DateTime
   logType LogType
-  matchId String
-  match   Match    @relation(name: "FK_MatchLog_Match", fields: [matchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  gameId String
+  game   Game    @relation(name: "FK_MatchLog_Game", fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum MatchStatus {
