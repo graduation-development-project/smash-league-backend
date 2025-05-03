@@ -102,9 +102,7 @@ export class PrismaTransactionRepositoryAdapter
 		try {
 			return await this.prisma.transaction.findMany({
 				where: {
-					order: {
-						userId: userId,
-					},
+					userId
 				},
 				include: {
 					order: {
@@ -112,6 +110,9 @@ export class PrismaTransactionRepositoryAdapter
 							package: true,
 						},
 					},
+					tournamentRegistration: true,
+					paybackFee: true,
+					paybackToUser: true,
 				},
 			});
 		} catch (e) {
