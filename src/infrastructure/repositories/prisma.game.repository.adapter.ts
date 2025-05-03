@@ -15,7 +15,8 @@ export class PrismaGameRepositoryAdapter implements GameRepositoryPort {
 				currentServerId: currentServerId,
 				leftCompetitorPoint: 0,
 				rightCompetitorPoint: 0,
-				matchId: matchId
+				matchId: matchId,
+				timeStart: new Date()
 			}
 		});
 	}
