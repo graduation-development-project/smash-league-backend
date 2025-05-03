@@ -46,6 +46,14 @@ export enum RequiredAttachment {
 	Passport = "PASSPORT"
 }
 
+export enum LogType {
+	WARNING = "WARNING",
+	MEDICAL = "MEDICAL",
+	FAULT = "FAULT",
+	MISCONDUCT = "MISCONDUCT",
+	COACHING_VIOLATION = "COACHING_VIOLATION"
+}
+
 export interface ICreateTournamentSerie {
 	tournamentSerieName: string;
 	belongsToUserId: string;
