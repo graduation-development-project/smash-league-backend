@@ -3,7 +3,6 @@ import { LocalAuthGuard } from "../guards/auth/local.guard";
 import { GetPackagesUseCase } from "src/application/usecases/packages/get-packages.usecase";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { PackageEntity } from "src/domain/entities/transaction/package.entity";
-import { HTTPStatusCodeEnum } from "../enums/http-status-code.enum";
 import { Package } from "@prisma/client";
 import { GetPackageDetailUseCase } from "src/application/usecases/packages/get-package-detail.usecase";
 import { ICreatePackage } from "src/domain/interfaces/package/package.interface";
@@ -27,7 +26,7 @@ export class PackageController {
 
 
 	@Get("/get-all")
-	@HttpCode(HTTPStatusCodeEnum.OK)
+	@HttpCode(HttpStatus.OK)
 	async getPackage() : Promise<ApiResponse<PackageEntity[]>> {
 		return await this.getPackages.execute();
 	}
