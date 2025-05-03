@@ -310,6 +310,7 @@ export class PrismaTournamentRepositoryAdapter
 						requiredAttachment: true,
 						umpirePerMatch: true,
 						protestFeePerTime: true,
+						isRecruit: true,
 						tournamentSerie: {
 							select: {
 								id: true,
@@ -565,6 +566,7 @@ export class PrismaTournamentRepositoryAdapter
 						requiredAttachment: true,
 						umpirePerMatch: true,
 						protestFeePerTime: true,
+						isRecruit: true,
 						tournamentSerie: {
 							select: {
 								id: true,
@@ -671,6 +673,7 @@ export class PrismaTournamentRepositoryAdapter
 						requiredAttachment: true,
 						umpirePerMatch: true,
 						protestFeePerTime: true,
+						isRecruit: true,
 						tournamentSerie: {
 							select: {
 								id: true,

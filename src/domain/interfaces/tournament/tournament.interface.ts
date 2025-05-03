@@ -180,6 +180,7 @@ export interface ITournamentResponse {
 	numberOfMerchandise: number;
 	merchandiseImages: string[];
 	requiredAttachment: string[];
+	isRecruit: boolean;
 	tournamentSerie: ITournamentSerieResponse;
 }
 
