@@ -1429,12 +1429,45 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						},
 					},
 
-					court: true
+					court: true,
 				},
 			});
 		} catch (e) {
 			console.error("get matches of athlete failed", e);
 			throw e;
+		}
+	}
+
+	async getLatestMatchesOfUser(userId: string): Promise<Match[]> {
+		try {
+			return this.prisma.match.findMany({
+				where: {
+					matchStatus: MatchStatus.ENDED,
+					timeEnd: {
+						not: null,
+					},
+					OR: [
+						{
+							leftCompetitor: {
+								userId,
+							},
+						},
+
+						{
+							rightCompetitor: {
+								userId,
+							},
+						},
+					],
+				},
+				orderBy: {
+					timeEnd: "desc",
+				},
+				take: 2,
+			});
+		} catch (error) {
+			console.error("Failed to get two most recent ended matches:", error);
+			throw error;
 		}
 	}
 }

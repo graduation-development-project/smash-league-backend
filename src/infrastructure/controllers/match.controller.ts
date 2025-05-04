@@ -34,6 +34,7 @@ import { GetAllLogMessageUseCase } from "src/application/usecases/tournament/mat
 import { MatchLogDetail } from "src/domain/enums/match/match-log.enum";
 import { KeyValueType } from "src/domain/dtos/key-value-type.type";
 import { GetAllLogTypeUseCase } from "src/application/usecases/tournament/match/get-all-logtype.usecase";
+import { GetLatestMatchesUseCase } from "../../application/usecases/athletes/get-latest-matches.usecase";
 
 @Controller("match")
 export class MatchController {
@@ -50,7 +51,8 @@ export class MatchController {
 		private readonly updateMatchUseCase: UpdateMatchUseCase,
 		private readonly createEventlogUseCase: CreateEventLogUseCase,
 		private readonly getAllLogMessageUseCase: GetAllLogMessageUseCase,
-		private readonly getAllLogTypeUseCase: GetAllLogTypeUseCase
+		private readonly getAllLogTypeUseCase: GetAllLogTypeUseCase,
+		private readonly getLatestMatchesUseCase: GetLatestMatchesUseCase,
 	) {}
 
 	@Get("get-match/:matchId")
@@ -147,11 +149,21 @@ export class MatchController {
 	): Promise<ApiResponse<Match[]>> {
 		return this.getMatchesOfUserUseCase.execute(user.id);
 	}
-	
+
+	@Get("get-athlete-latest-matches")
+	@UseGuards(JwtAccessTokenGuard)
+	async getAthleteLatestMatches(
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<Match[]>> {
+		return this.getLatestMatchesUseCase.execute(user.id);
+	}
+
 	@Post("/create-event-log")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Umpire.name)
-	async createEventLog(@Body() createEventLog: CreateLogEventDto): Promise<ApiResponse<MatchLog>> {
+	async createEventLog(
+		@Body() createEventLog: CreateLogEventDto,
+	): Promise<ApiResponse<MatchLog>> {
 		return await this.createEventlogUseCase.execute(createEventLog);
 	}
 
@@ -164,5 +176,4 @@ export class MatchController {
 	async getAllLogType(): Promise<ApiResponse<KeyValueType<string>[]>> {
 		return await this.getAllLogTypeUseCase.execute();
 	}
-
 }

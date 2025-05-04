@@ -174,6 +174,7 @@ import { CreateEventLogUseCase } from "./usecases/tournament/match/create-event-
 import { GetAllLogMessageUseCase } from "./usecases/tournament/match/get-all-log-message.usecase";
 import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtype.usecase";
 import { GetUserByRoleUseCase } from "./usecases/users/get-user-by-role.usecase";
+import { GetLatestMatchesUseCase } from "./usecases/athletes/get-latest-matches.usecase";
 
 @Module({
 	imports: [
@@ -311,7 +312,7 @@ import { GetUserByRoleUseCase } from "./usecases/users/get-user-by-role.usecase"
 		},
 		{
 			provide: "MatchLogRepositoryPort",
-			useClass: PrismaMatchLogRepositoryAdapter
+			useClass: PrismaMatchLogRepositoryAdapter,
 		},
 		//Third Party Service
 		MailService,
@@ -344,6 +345,7 @@ import { GetUserByRoleUseCase } from "./usecases/users/get-user-by-role.usecase"
 		UploadAvatarUseCase,
 		GetMatchesOfUserUseCase,
 		GetUserByRoleUseCase,
+		GetLatestMatchesUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -515,7 +517,7 @@ import { GetUserByRoleUseCase } from "./usecases/users/get-user-by-role.usecase"
 		UploadAvatarUseCase,
 		GetMatchesOfUserUseCase,
 		GetUserByRoleUseCase,
-
+		GetLatestMatchesUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
