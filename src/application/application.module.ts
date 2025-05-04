@@ -173,6 +173,7 @@ import { PrismaMatchLogRepositoryAdapter } from "src/infrastructure/repositories
 import { CreateEventLogUseCase } from "./usecases/tournament/match/create-event-log.usecase";
 import { GetAllLogMessageUseCase } from "./usecases/tournament/match/get-all-log-message.usecase";
 import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtype.usecase";
+import { ContinueMatchUseCase } from "./usecases/tournament/match/continue-match.usecase";
 
 @Module({
 	imports: [
@@ -440,6 +441,7 @@ import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtyp
 		CreateEventLogUseCase,
 		GetAllLogMessageUseCase,
 		GetAllLogTypeUseCase,
+		ContinueMatchUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
@@ -619,6 +621,7 @@ import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtyp
 		CreateEventLogUseCase,
 		GetAllLogMessageUseCase,
 		GetAllLogTypeUseCase,
+		ContinueMatchUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
