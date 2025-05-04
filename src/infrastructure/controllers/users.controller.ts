@@ -34,11 +34,13 @@ import { AddBankAccountUseCase } from "../../application/usecases/users/add-bank
 import { AddBankAccountDTO } from "../../domain/dtos/users/add-bank-account.dto";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { UploadAvatarUseCase } from "../../application/usecases/users/upload-avatar.usecase";
+import { GetUserByRoleUseCase } from "../../application/usecases/users/get-user-by-role.usecase";
 
 @Controller("/users")
 export class UsersController {
 	constructor(
 		private getUserByIdUseCase: GetUserByIdUseCase,
+		private getUserByRoleUseCase: GetUserByRoleUseCase,
 		private editUserProfileUseCase: EditUserProfileUseCase,
 		private changePasswordUseCase: ChangePasswordUseCase,
 		private searchUserByEmail: SearchUserByEmailUseCase,
@@ -53,6 +55,11 @@ export class UsersController {
 	// @UseGuards(JwtAccessTokenGuard)
 	getUserById(@Param("id") userID: string): Promise<TUserWithRole> {
 		return this.getUserByIdUseCase.execute(userID);
+	}
+
+	@Get("/get-user-by-role/:role")
+	getUserByRole(@Param("role") role: string): Promise<User[]> {
+		return this.getUserByRoleUseCase.execute(role);
 	}
 
 	@Get("/profile")

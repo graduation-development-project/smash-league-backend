@@ -72,6 +72,8 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 							tournament: true,
 						},
 					},
+
+					court: true,
 				},
 			});
 		} catch (e) {
@@ -92,6 +94,8 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 							tournament: true,
 						},
 					},
+
+					court: true,
 				},
 			});
 		} catch (e) {

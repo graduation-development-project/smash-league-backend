@@ -173,6 +173,7 @@ import { PrismaMatchLogRepositoryAdapter } from "src/infrastructure/repositories
 import { CreateEventLogUseCase } from "./usecases/tournament/match/create-event-log.usecase";
 import { GetAllLogMessageUseCase } from "./usecases/tournament/match/get-all-log-message.usecase";
 import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtype.usecase";
+import { GetUserByRoleUseCase } from "./usecases/users/get-user-by-role.usecase";
 
 @Module({
 	imports: [
@@ -342,6 +343,7 @@ import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtyp
 		GetFeedbacksByUserUseCase,
 		UploadAvatarUseCase,
 		GetMatchesOfUserUseCase,
+		GetUserByRoleUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -512,6 +514,8 @@ import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtyp
 		GetFeedbacksByUserUseCase,
 		UploadAvatarUseCase,
 		GetMatchesOfUserUseCase,
+		GetUserByRoleUseCase,
+
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

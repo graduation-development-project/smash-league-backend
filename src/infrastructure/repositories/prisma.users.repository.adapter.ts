@@ -18,26 +18,28 @@ import { userInfo } from "os";
 @Injectable()
 export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 	constructor(private prisma: PrismaClient) {}
+
 	async getUser(userId: string): Promise<User> {
 		return await this.prisma.user.findUnique({
 			where: {
-				id: userId
-			}
+				id: userId,
+			},
 		});
 	}
+
 	async minusCredit(userId: string): Promise<User> {
 		const credit = await this.prisma.user.findUnique({
 			where: {
-				id: userId
-			}
+				id: userId,
+			},
 		});
 		return await this.prisma.user.update({
 			where: {
-				id: userId
+				id: userId,
 			},
 			data: {
-				creditsRemain: credit.creditsRemain - 1
-			}
+				creditsRemain: credit.creditsRemain - 1,
+			},
 		});
 	}
 
@@ -322,6 +324,34 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			});
 		} catch (e) {
 			console.error("add bank account failed", e);
+			throw e;
+		}
+	}
+
+	async getUsersByRole(role: string): Promise<User[]> {
+		try {
+			// @ts-ignore
+			return this.prisma.user.findMany({
+				where: {
+					userRoles: {
+						some: {
+							role: {
+								roleName: role,
+							},
+						},
+					},
+				},
+
+				omit: {
+					password: true,
+					creditsRemain: true,
+					currentRefreshToken: true,
+					otp: true,
+					otpExpiresTime: true,
+				},
+			});
+		} catch (e) {
+			console.error("getUsersByRole failed", e);
 			throw e;
 		}
 	}
