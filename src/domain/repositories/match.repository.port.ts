@@ -8,6 +8,7 @@ import { IGameAfterUpdatePointResponse } from "../interfaces/tournament/match/ga
 import { UpdateMatchDTO } from "../dtos/match/update-match.dto";
 
 export interface MatchRepositoryPort {
+	undoUpdatePoint(gameId: string): Promise<Game>;
 	getMatchDetail(matchId: string): Promise<Match>;
 
 	getMatchDetailById(matchId: string): Promise<IMatchQueryResponse>;

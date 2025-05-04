@@ -24,6 +24,9 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
+	async undoUpdatePoint(gameId: string): Promise<Game> {
+		return;
+	}
 	async continueMatch(matchId: string): Promise<Match> {
 		return await this.prisma.match.update({
 			where: {
@@ -610,8 +613,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			});
 		}
 		if (
-			pointUpdated.leftCompetitorPoint < tournamentEvent.winningPoint &&
-			pointUpdated.rightCompetitorPoint < tournamentEvent.winningPoint
+			pointUpdated.leftCompetitorPoint < tournamentEvent.winningPoint - 1 &&
+			pointUpdated.rightCompetitorPoint < tournamentEvent.winningPoint - 1
 		) {
 			return {
 				currentGameNumber: pointUpdated.gameNumber,
@@ -764,7 +767,17 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					};
 				}
 			}
-		}
+		} else if ((game.leftCompetitorPoint === tournamentEvent.winningPoint - 1 && game.leftCompetitorPoint > game.rightCompetitorPoint) ||
+			(game.rightCompetitorPoint === tournamentEvent.winningPoint - 1 && game.rightCompetitorPoint > game.leftCompetitorPoint)) {
+				return {
+					currentGameNumber: game.gameNumber,
+					message: "Game continues!",
+					currentServerId: winningId,
+					isGamePoint: true,
+					isEnd: false,
+					currentPoint: await this.getAllGamesOfMatch(game.matchId),
+				};
+			}
 	}
 
 	async getWinningCompetitor(
