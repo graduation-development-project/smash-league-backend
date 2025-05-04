@@ -57,12 +57,17 @@ async function main() {
 		const accountCreate = await prisma.user.create({
 			data: account,
 		});
-		accountCreates.push(accountCreate);
-		const userRole = await prisma.userRole.create({
+		const userRoleUmpire = await prisma.userRole.create({
 			data: {
 				userId: accountCreate.id,
 				roleId: RoleMap["Umpire"].id,
 			},
+		});
+		const userRoleAthlete = await prisma.userRole.create({
+			data: {
+				userId: accountCreate.id,
+				roleId: RoleMap["Athlete"].id
+			}
 		});
 	}
 
