@@ -14,9 +14,9 @@ export class AssignAthleteIntoMatchUseCase {
 	async execute(matchId: string, leftCompetitorId?: string, rightCompetitorId?: string): Promise<ApiResponse<Match>> {
 		const matchDetail = await this.matchRepository.getMatchDetail(matchId);
 		const numberOfMatch = await this.matchRepository.countMatchesOfLastStage(matchId);
-		if (matchDetail.isByeMatch && matchDetail.matchNumber <= Math.floor(numberOfMatch)) {
+		if (matchDetail.isByeMatch && matchDetail.matchNumber <= Math.floor(numberOfMatch / 2)) {
 			return await this.checkAssignRightAthleteIntoByeMatch(matchId, leftCompetitorId, rightCompetitorId);
-		} else if (matchDetail.isByeMatch && matchDetail.matchNumber > Math.floor(numberOfMatch)) {
+		} else if (matchDetail.isByeMatch && matchDetail.matchNumber > Math.floor(numberOfMatch / 2)) {
 			return await this.checkAssignLeftAthleteIntoByeMatch(matchId, leftCompetitorId, rightCompetitorId);
 		} 
 		return await this.assignAthleteIntoMatch(matchId, leftCompetitorId, rightCompetitorId);
