@@ -50,20 +50,55 @@ export class UpdateMatchUseCase {
 
 		if (!matchDetail) throw new NotFoundException("Match not found");
 
-		console.log(matchDetail);
+		const oldCourt = matchDetail.courtId;
+		const oldUmpire = matchDetail.umpireId;
 
 		if (dataToUpdate.umpireId) {
 			const umpireDetail = await this.umpireRepository.getUmpireDetail(
 				dataToUpdate.umpireId,
 				matchDetail.tournamentEvent.tournamentId,
 			);
-			if (!umpireDetail)
-				throw new BadRequestException("This umpire not in tournament");
 
-			if (!umpireDetail.isAvailable)
-				throw new BadRequestException(
-					"This umpire is not available for this match",
-				);
+			if (oldUmpire !== dataToUpdate.umpireId) {
+				if (!umpireDetail)
+					throw new BadRequestException("This umpire not in tournament");
+
+				if (!umpireDetail.isAvailable)
+					throw new BadRequestException(
+						"This umpire is not available for this match",
+					);
+
+				if (oldUmpire !== null) {
+					const notification: CreateNotificationDTO = {
+						title: `Match Unassignment - ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}`,
+						message: `You have been unassigned from officiating the match in tournament ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}. Please check your schedule for updates.`,
+					};
+					await this.notificationsRepository.createNotification(notification, [
+						oldUmpire,
+					]);
+
+					await this.umpireRepository.updateUmpireAvailability(
+						oldUmpire,
+						matchDetail.tournamentEvent.tournamentId,
+						true,
+					);
+				}
+
+				const notification: CreateNotificationDTO = {
+					title: `Match Assignment - ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}`,
+					message: `You have been assigned from officiating the match in tournament ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}. Please check your schedule for updates.`,
+				};
+
+				await this.notificationsRepository.createNotification(notification, [
+					dataToUpdate.umpireId,
+				]);
+			}
+
+			await this.umpireRepository.updateUmpireAvailability(
+				dataToUpdate.umpireId,
+				matchDetail.tournamentEvent.tournamentId,
+				false,
+			);
 		}
 
 		if (dataToUpdate.courtId) {
@@ -71,10 +106,72 @@ export class UpdateMatchUseCase {
 				dataToUpdate.courtId,
 			);
 
-			if (!courtDetail) throw new NotFoundException("Court not found");
+			if (oldCourt !== dataToUpdate.courtId) {
+				if (!courtDetail) throw new NotFoundException("Court not found");
 
-			if (!courtDetail.courtAvailable)
-				throw new BadRequestException("Court is not available for this match");
+				if (!courtDetail.courtAvailable)
+					throw new BadRequestException(
+						"Court is not available for this match",
+					);
+
+				if (oldCourt !== null) {
+					await this.courtRepository.updateCourtAvailability(oldCourt, true);
+				}
+			}
+
+			await this.courtRepository.updateCourtAvailability(courtDetail.id, false);
+		}
+
+		if (matchDetail.isByeMatch) {
+			const numberOfMatch =
+				await this.matchRepository.countMatchesOfLastStage(matchId);
+
+			const isInLowerHalf =
+				matchDetail.matchNumber > Math.floor(numberOfMatch / 2);
+
+			if (isInLowerHalf) {
+				if (
+					updateMatchDTO.leftCompetitorId !== undefined &&
+					updateMatchDTO.leftCompetitorId !== null
+				) {
+					return new ApiResponse<null>(
+						HttpStatus.BAD_REQUEST,
+						"This match cannot have left competitor!",
+						null,
+					);
+				}
+				if (
+					updateMatchDTO.rightCompetitorId === null ||
+					updateMatchDTO.rightCompetitorId === undefined
+				) {
+					return new ApiResponse<null>(
+						HttpStatus.BAD_REQUEST,
+						"Right competitor is null!",
+						null,
+					);
+				}
+			} else {
+				if (
+					updateMatchDTO.rightCompetitorId !== undefined &&
+					updateMatchDTO.rightCompetitorId !== null
+				) {
+					return new ApiResponse<null>(
+						HttpStatus.BAD_REQUEST,
+						"This match cannot have right competitor!",
+						null,
+					);
+				}
+				if (
+					updateMatchDTO.leftCompetitorId === null ||
+					updateMatchDTO.leftCompetitorId === undefined
+				) {
+					return new ApiResponse<null>(
+						HttpStatus.BAD_REQUEST,
+						"Left competitor is null!",
+						null,
+					);
+				}
+			}
 		}
 
 		const updatedLeftCompetitorId =
@@ -84,13 +181,62 @@ export class UpdateMatchUseCase {
 		const updatedStartTime =
 			dataToUpdate.startedWhen ?? matchDetail.startedWhen;
 
-		const shouldNotify =
-			updatedLeftCompetitorId && updatedRightCompetitorId && updatedStartTime;
+		const hasStartTime = !!matchDetail.startedWhen;
+		const isNotByeMatch = !matchDetail.isByeMatch;
 
-		if (shouldNotify) {
+		const isAssignedBefore =
+			!!matchDetail.leftCompetitorId && !!matchDetail.rightCompetitorId;
+		const isAssignedNow =
+			!!updatedLeftCompetitorId && !!updatedRightCompetitorId;
+
+		const shouldNotifyAssigned =
+			isNotByeMatch && hasStartTime && isAssignedNow && !isAssignedBefore;
+
+		const isSameTime =
+			new Date(updatedStartTime).getTime() ===
+			new Date(matchDetail.startedWhen).getTime();
+
+		const shouldNotifyUpdated =
+			isNotByeMatch &&
+			isAssignedBefore &&
+			hasStartTime &&
+			(!isSameTime ||
+				updatedLeftCompetitorId !== matchDetail.leftCompetitorId ||
+				updatedRightCompetitorId !== matchDetail.rightCompetitorId ||
+				(dataToUpdate.courtId !== undefined &&
+					dataToUpdate.courtId !== matchDetail.courtId));
+
+		console.log(
+			updatedStartTime,
+			matchDetail.startedWhen,
+			updatedStartTime !== matchDetail.startedWhen,
+		);
+		console.log(
+			updatedLeftCompetitorId,
+			matchDetail.leftCompetitorId,
+			updatedLeftCompetitorId !== matchDetail.leftCompetitorId,
+		);
+		console.log(
+			updatedRightCompetitorId,
+			matchDetail.rightCompetitorId,
+			updatedRightCompetitorId !== matchDetail.rightCompetitorId,
+		);
+
+		console.log(
+			dataToUpdate.courtId,
+			matchDetail.courtId,
+			dataToUpdate.courtId !== undefined &&
+				dataToUpdate.courtId !== matchDetail.courtId,
+		);
+
+		if (shouldNotifyAssigned || shouldNotifyUpdated) {
 			const notification: CreateNotificationDTO = {
-				title: `Upcoming Match in ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}`,
-				message: `Reminder: Your match in ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent} is scheduled for ${getCurrentTime(updatedStartTime)} on ${formatDate(updatedStartTime)}`,
+				title: shouldNotifyAssigned
+					? `Match Assigned - ${matchDetail.tournamentEvent.tournament.name}`
+					: `Match Updated - ${matchDetail.tournamentEvent.tournament.name}`,
+				message: shouldNotifyAssigned
+					? `You have been assigned to a match in tournament ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}. It will take place at ${getCurrentTime(updatedStartTime)} on ${formatDate(updatedStartTime)}.`
+					: `The details of your match in tournament ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent} have been updated. Please check for the latest time, court, or opponent information.`,
 			};
 
 			const leftCompetitor =
@@ -106,6 +252,48 @@ export class UpdateMatchUseCase {
 				leftCompetitor.userId,
 				rightCompetitor.userId,
 			]);
+		}
+
+		if (
+			updatedLeftCompetitorId !== matchDetail.leftCompetitorId &&
+			matchDetail.leftCompetitorId &&
+			hasStartTime
+		) {
+			const removedLeftPlayer =
+				await this.tournamentParticipantsRepository.getTournamentParticipantDetail(
+					matchDetail.leftCompetitorId,
+				);
+
+			const removalNotification: CreateNotificationDTO = {
+				title: `Update: You've been removed from a match`,
+				message: `You have been removed from a match in ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}. Please check for further updates.`,
+			};
+
+			await this.notificationsRepository.createNotification(
+				removalNotification,
+				[removedLeftPlayer.userId],
+			);
+		}
+
+		if (
+			updatedRightCompetitorId !== matchDetail.rightCompetitorId &&
+			matchDetail.rightCompetitorId &&
+			hasStartTime
+		) {
+			const removedRightPlayer =
+				await this.tournamentParticipantsRepository.getTournamentParticipantDetail(
+					matchDetail.rightCompetitorId,
+				);
+
+			const removalNotification: CreateNotificationDTO = {
+				title: `Update: You've been removed from a match`,
+				message: `You have been removed from a match in ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}. Please check for further updates.`,
+			};
+
+			await this.notificationsRepository.createNotification(
+				removalNotification,
+				[removedRightPlayer.userId],
+			);
 		}
 
 		return new ApiResponse(

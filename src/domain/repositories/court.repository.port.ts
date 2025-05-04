@@ -7,4 +7,5 @@ export interface CourtRepositoryPort {
 	getMatchesOfCourt(courtId: string): Promise<Match[]>;
 	getCourtDetail(courtId: string): Promise<Court>;
 	createMultipleCourtsWithCourtCode(tournamentId: string, courts: ICreateCourts): Promise<Court[]>;
+	updateCourtAvailability(courtId: string, isAvailable: boolean): Promise<Court>;
 }

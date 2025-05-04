@@ -135,4 +135,27 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 			throw e;
 		}
 	}
+
+	async updateUmpireAvailability(
+		umpireId: string,
+		tournamentId: string,
+		isAvailable: boolean,
+	): Promise<TournamentUmpires> {
+		try {
+			return this.prismaService.tournamentUmpires.update({
+				where: {
+					userId_tournamentId: {
+						userId: umpireId,
+						tournamentId,
+					},
+				},
+				data: {
+					isAvailable,
+				},
+			});
+		} catch (e) {
+			console.error("updateUmpireAvailability failed", e);
+			throw e;
+		}
+	}
 }

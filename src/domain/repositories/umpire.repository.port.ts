@@ -1,4 +1,9 @@
-import { Match, Tournament, TournamentUmpires, UserVerification } from "@prisma/client";
+import {
+	Match,
+	Tournament,
+	TournamentUmpires,
+	UserVerification,
+} from "@prisma/client";
 import { UmpireUpdateMatchDTO } from "../dtos/umpire/umpire-update-match.dto";
 
 export interface UmpireRepositoryPort {
@@ -10,5 +15,14 @@ export interface UmpireRepositoryPort {
 
 	getAllAssignedMatches(umpireId: string): Promise<Match[]>;
 
-	getUmpireDetail(umpireId: string, tournamentId: string): Promise<TournamentUmpires>
+	getUmpireDetail(
+		umpireId: string,
+		tournamentId: string,
+	): Promise<TournamentUmpires>;
+
+	updateUmpireAvailability(
+		umpireId: string,
+		tournamentId: string,
+		isAvailable: boolean,
+	): Promise<TournamentUmpires>;
 }
