@@ -430,6 +430,8 @@ model Game {
   rightCompetitorPoint  Int
   status                GameStatus              @default(ON_GOING)
   gameNumber            Int
+  lastServerId          String?
+  lastServer            TournamentParticipants? @relation(name: "FK_Game_LastServer", fields: [lastServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   currentServerId       String?
   currentServer         TournamentParticipants? @relation(name: "FK_Game_CurrentServer", fields: [currentServerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   timeStart             DateTime
@@ -516,6 +518,7 @@ model TournamentParticipants {
   rightCompetitors  Match[]           @relation(name: "FK_Match_RightCompetitor")
   gamesWon          Game[]            @relation(name: "FK_Game_GameWonByCompetitor")
   serverInGame      Game[]            @relation(name: "FK_Game_CurrentServer")
+  lastServers       Game[]            @relation(name: "FK_Game_LastServer")
   championships     TournamentEvent[] @relation(name: "FK_Championship_TournamentParticipants")
   runnerUps         TournamentEvent[] @relation(name: "FK_RunnerUp_TournamentParticipants")
   thirdPlaces       TournamentEvent[] @relation(name: "FK_ThirdPlace_TournamentParticipants")
