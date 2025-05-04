@@ -102,7 +102,7 @@ export class PrismaTransactionRepositoryAdapter
 		try {
 			return await this.prisma.transaction.findMany({
 				where: {
-					userId
+					userId,
 				},
 				include: {
 					order: {
@@ -147,6 +147,24 @@ export class PrismaTransactionRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("Create payback transaction failed", e);
+			throw e;
+		}
+	}
+
+	async getAllTransactionsByDay(): Promise<Transaction[]> {
+		try {
+			// @ts-ignore
+			return this.prisma.transaction.findMany({
+				where: {
+					status: TransactionStatus.SUCCESSFUL,
+				},
+				select: {
+					createdAt: true,
+					value: true,
+				},
+			});
+		} catch (e) {
+			console.error("getAllTransactions failed", e);
 			throw e;
 		}
 	}

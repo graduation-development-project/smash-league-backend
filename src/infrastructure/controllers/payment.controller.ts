@@ -28,6 +28,7 @@ import { PayRegistrationFeeUseCase } from "../../application/usecases/payment/pa
 import { CreatePaybackTransactionDTO } from "../../domain/dtos/transactions/create-payback-transaction.dto";
 import { PaybackRegistrationFeeUseCase } from "../../application/usecases/payment/payback-registration-fee.usecase";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
+import { GetTransactionsByDayUseCase } from "../../application/usecases/payment/get-transactions-by-day.usecase";
 
 @Controller("/payment")
 export class PaymentController {
@@ -39,6 +40,7 @@ export class PaymentController {
 		private readonly getUserTransactionUseCase: GetUserTransactionUseCase,
 		private readonly payRegistrationFeeUseCase: PayRegistrationFeeUseCase,
 		private readonly paybackRegistrationFeeUseCase: PaybackRegistrationFeeUseCase,
+		private readonly getTransactionsByDayUseCase: GetTransactionsByDayUseCase,
 	) {}
 
 	@Get("/buy-package/:packageId")
@@ -60,7 +62,7 @@ export class PaymentController {
 	): Promise<ApiResponse<IPayOSPaymentResponse>> {
 		return await this.payRegistrationFeeUseCase.execute(
 			user.id,
-			tournamentRegistrationId
+			tournamentRegistrationId,
 		);
 	}
 
@@ -105,6 +107,15 @@ export class PaymentController {
 		return await this.getUserTransactionUseCase.execute(user.id);
 	}
 
+	@Get("/total-transactions-by-day")
+	@UseGuards(JwtAccessTokenGuard)
+	@Roles(RoleMap.Admin.name, RoleMap.Staff.name)
+	async getTotalTransactionsByDay(): Promise<
+		ApiResponse<{ date: string; total: number }[]>
+	> {
+		return await this.getTransactionsByDayUseCase.execute();
+	}
+
 	@UseInterceptors(AnyFilesInterceptor())
 	@Post("/payback-tournament-fee")
 	@UseGuards(JwtAccessTokenGuard)
@@ -117,7 +128,7 @@ export class PaymentController {
 		return await this.paybackRegistrationFeeUseCase.execute({
 			...createPaybackTransactionDTO,
 			paybackImage,
-			userId: user.id
+			userId: user.id,
 		});
 	}
 }

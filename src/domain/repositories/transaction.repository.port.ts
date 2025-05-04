@@ -32,4 +32,6 @@ export interface TransactionRepositoryPort {
 	createPaybackTransaction(
 		createPayback: ICreatePaybackTransactionRequest,
 	): Promise<Transaction>;
+
+	getAllTransactionsByDay(): Promise<Transaction[]>;
 }

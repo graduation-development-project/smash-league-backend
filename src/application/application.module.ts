@@ -179,6 +179,7 @@ import { ContinueMatchUseCase } from "./usecases/tournament/match/continue-match
 import { GetAllMatchLogUseCase } from "./usecases/tournament/match/get-all-match-log.usecase";
 import { UpdateCourtUseCase } from "./usecases/tournament/court/update-court.usecase";
 import { UpdateTournamentMerchandiseUseCase } from "./usecases/tournament/update-tournament-merchandise.usecase";
+import { GetTransactionsByDayUseCase } from "./usecases/payment/get-transactions-by-day.usecase";
 
 @Module({
 	imports: [
@@ -473,6 +474,7 @@ import { UpdateTournamentMerchandiseUseCase } from "./usecases/tournament/update
 		RejectPaymentUseCase,
 		PayRegistrationFeeUseCase,
 		PaybackRegistrationFeeUseCase,
+		GetTransactionsByDayUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -656,6 +658,7 @@ import { UpdateTournamentMerchandiseUseCase } from "./usecases/tournament/update
 		RejectPaymentUseCase,
 		PayRegistrationFeeUseCase,
 		PaybackRegistrationFeeUseCase,
+		GetTransactionsByDayUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
