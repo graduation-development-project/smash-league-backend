@@ -4,6 +4,7 @@ export interface IGameAfterUpdatePointResponse {
 	isEnd: boolean;
 	message: string;
 	currentServerId: string;
+	isGamePoint: boolean;
 	winningCompetitor?: IWonCompetitorResponse;
 	currentGameNumber: number;
 	currentPoint: IPointOfGameResponse[];
