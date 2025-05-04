@@ -3,6 +3,7 @@ import { Court, Match, Prisma, PrismaClient } from "@prisma/client";
 import { ICreateCourts } from "src/domain/interfaces/tournament/tournament.interface";
 import { CourtRepositoryPort } from "src/domain/repositories/court.repository.port";
 import { PrismaService } from "../services/prisma.service";
+import { UpdateCourtDTO } from "../../domain/dtos/court/update-court-dto";
 
 @Injectable()
 export class PrismaCourtRepositoryAdapter implements CourtRepositoryPort {
@@ -86,6 +87,24 @@ export class PrismaCourtRepositoryAdapter implements CourtRepositoryPort {
 			});
 		} catch (e) {
 			console.error("updateCourtAvailability failed: ", e);
+			throw e;
+		}
+	}
+
+	async updateCourtInfo(
+		courtId: string,
+		updateCourtDTO: UpdateCourtDTO,
+	): Promise<Court> {
+		try {
+			return this.prisma.court.update({
+				where: {
+					id: courtId,
+				},
+
+				data: updateCourtDTO,
+			});
+		} catch (e) {
+			console.error("updateCourtInfo failed: ", e);
 			throw e;
 		}
 	}

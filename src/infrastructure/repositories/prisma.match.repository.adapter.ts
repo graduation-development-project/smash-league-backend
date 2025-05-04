@@ -24,9 +24,11 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
+
 	async undoUpdatePoint(gameId: string): Promise<Game> {
 		return;
 	}
+
 	async continueMatch(matchId: string): Promise<Match> {
 		return await this.prisma.match.update({
 			where: {
@@ -625,7 +627,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				currentPoint: await this.getAllGamesOfMatch(pointUpdated.matchId),
 			};
 		}
-		return await this.processWonGame(pointUpdated, winningId, tournamentEvent);	
+		return await this.processWonGame(pointUpdated, winningId, tournamentEvent);
 	}
 
 	async getAllGamesOfMatch(matchId: string): Promise<IPointOfGameResponse[]> {
@@ -726,7 +728,9 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					winningId,
 					tournamentEvent,
 				);
-			} else if (Math.abs(game.leftCompetitorPoint - game.rightCompetitorPoint) === 1) {
+			} else if (
+				Math.abs(game.leftCompetitorPoint - game.rightCompetitorPoint) === 1
+			) {
 				if (match.leftCompetitorId === winningId) {
 					return {
 						currentGameNumber: game.gameNumber,
@@ -767,17 +771,21 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					};
 				}
 			}
-		} else if ((game.leftCompetitorPoint === tournamentEvent.winningPoint - 1 && game.leftCompetitorPoint > game.rightCompetitorPoint) ||
-			(game.rightCompetitorPoint === tournamentEvent.winningPoint - 1 && game.rightCompetitorPoint > game.leftCompetitorPoint)) {
-				return {
-					currentGameNumber: game.gameNumber,
-					message: "Game continues!",
-					currentServerId: winningId,
-					isGamePoint: true,
-					isEnd: false,
-					currentPoint: await this.getAllGamesOfMatch(game.matchId),
-				};
-			}
+		} else if (
+			(game.leftCompetitorPoint === tournamentEvent.winningPoint - 1 &&
+				game.leftCompetitorPoint > game.rightCompetitorPoint) ||
+			(game.rightCompetitorPoint === tournamentEvent.winningPoint - 1 &&
+				game.rightCompetitorPoint > game.leftCompetitorPoint)
+		) {
+			return {
+				currentGameNumber: game.gameNumber,
+				message: "Game continues!",
+				currentServerId: winningId,
+				isGamePoint: true,
+				isEnd: false,
+				currentPoint: await this.getAllGamesOfMatch(game.matchId),
+			};
+		}
 	}
 
 	async getWinningCompetitor(

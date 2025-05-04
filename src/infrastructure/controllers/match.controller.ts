@@ -56,7 +56,7 @@ export class MatchController {
 		private readonly getAllLogTypeUseCase: GetAllLogTypeUseCase,
 		private readonly continueMatchUseCase: ContinueMatchUseCase,
 		private readonly getLatestMatchesUseCase: GetLatestMatchesUseCase,
-		private readonly getAllMatchLogUseCase: GetAllMatchLogUseCase
+		private readonly getAllMatchLogUseCase: GetAllMatchLogUseCase,
 	) {}
 
 	@Get("get-match/:matchId")
@@ -154,12 +154,12 @@ export class MatchController {
 		return this.getMatchesOfUserUseCase.execute(user.id);
 	}
 
-	@Get("get-athlete-latest-matches")
-	@UseGuards(JwtAccessTokenGuard)
+	@Get("get-athlete-latest-matches/:userId")
+	// @UseGuards(JwtAccessTokenGuard)
 	async getAthleteLatestMatches(
-		@Req() { user }: IRequestUser,
+		@Param("userId") userId: string,
 	): Promise<ApiResponse<Match[]>> {
-		return this.getLatestMatchesUseCase.execute(user.id);
+		return this.getLatestMatchesUseCase.execute(userId);
 	}
 
 	@Post("/create-event-log")
@@ -182,12 +182,16 @@ export class MatchController {
 	}
 
 	@Put("/continue-match/:matchId")
-	async continueMatch(@Param("matchId") matchId: string): Promise<ApiResponse<Match>> {
+	async continueMatch(
+		@Param("matchId") matchId: string,
+	): Promise<ApiResponse<Match>> {
 		return await this.continueMatchUseCase.execute(matchId);
 	}
 
 	@Get("/get-all-match-log/:matchId")
-	async getAllMatchLogs(@Param("matchId") matchId: string): Promise<ApiResponse<MatchLog[]>> {
+	async getAllMatchLogs(
+		@Param("matchId") matchId: string,
+	): Promise<ApiResponse<MatchLog[]>> {
 		return await this.getAllMatchLogUseCase.execute(matchId);
 	}
 }
