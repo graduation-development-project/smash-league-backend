@@ -178,6 +178,7 @@ import { GetLatestMatchesUseCase } from "./usecases/athletes/get-latest-matches.
 import { ContinueMatchUseCase } from "./usecases/tournament/match/continue-match.usecase";
 import { GetAllMatchLogUseCase } from "./usecases/tournament/match/get-all-match-log.usecase";
 import { UpdateCourtUseCase } from "./usecases/tournament/court/update-court.usecase";
+import { UpdateTournamentMerchandiseUseCase } from "./usecases/tournament/update-tournament-merchandise.usecase";
 
 @Module({
 	imports: [
@@ -431,6 +432,7 @@ import { UpdateCourtUseCase } from "./usecases/tournament/court/update-court.use
 		RemoveTournamentSponsorUseCase,
 		GetAllRequiredAttachmentUseCase,
 		UpdateCourtUseCase,
+		UpdateTournamentMerchandiseUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -615,7 +617,7 @@ import { UpdateCourtUseCase } from "./usecases/tournament/court/update-court.use
 		RemoveTournamentSponsorUseCase,
 		GetAllRequiredAttachmentUseCase,
 		UpdateCourtUseCase,
-
+		UpdateTournamentMerchandiseUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

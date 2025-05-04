@@ -31,6 +31,7 @@ import {
 	IPaginateOptions,
 } from "../../domain/interfaces/interfaces";
 import { PrismaService } from "../services/prisma.service";
+import { UpdateTournamentMerchandiseDTO } from "../../domain/dtos/tournament/update-tournament-merchandise.dto";
 
 @Injectable()
 export class PrismaTournamentRepositoryAdapter
@@ -56,8 +57,8 @@ export class PrismaTournamentRepositoryAdapter
 	): Promise<Tournament> {
 		const tournament = await this.prisma.tournament.findUnique({
 			where: {
-				id: updateTournamentScheduleInformation.id
-			}
+				id: updateTournamentScheduleInformation.id,
+			},
 		});
 		return await this.prisma.tournament.update({
 			where: {
@@ -66,7 +67,7 @@ export class PrismaTournamentRepositoryAdapter
 
 			data: {
 				...updateTournamentScheduleInformation,
-				countUpdateOccurTime: tournament.countUpdateOccurTime + 1
+				countUpdateOccurTime: tournament.countUpdateOccurTime + 1,
 			},
 		});
 	}
@@ -889,6 +890,24 @@ export class PrismaTournamentRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("updateTournamentStatus failed: ", e);
+			throw e;
+		}
+	}
+
+	async updateTournamentMerchandise(
+		tournamentId: string,
+		updateTournamentMerchandiseDTO: UpdateTournamentMerchandiseDTO,
+	): Promise<Tournament> {
+		try {
+			return this.prisma.tournament.update({
+				where: {
+					id: tournamentId,
+				},
+
+				data: updateTournamentMerchandiseDTO,
+			});
+		} catch (e) {
+			console.error("updateTournamentMerchandise failed: ", e);
 			throw e;
 		}
 	}

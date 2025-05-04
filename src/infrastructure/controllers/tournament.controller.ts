@@ -119,6 +119,10 @@ import { UpdateTournamentScheduleInformationUseCase } from "src/application/usec
 import { GetLatestFinishTournamentUseCase } from "../../application/usecases/tournament/get-latest-finish-tournament.usecase";
 import { EditTournamentSponsorTierUseCase } from "../../application/usecases/tournament/sponsor/edit-tournament-sponsor-tier.usecase";
 import { RemoveTournamentSponsorUseCase } from "../../application/usecases/tournament/sponsor/remove-tournament-sponsor.usecase";
+import {
+	UpdateTournamentMerchandiseUseCase
+} from "../../application/usecases/tournament/update-tournament-merchandise.usecase";
+import { UpdateTournamentMerchandiseDTO } from "../../domain/dtos/tournament/update-tournament-merchandise.dto";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -165,7 +169,8 @@ export class TournamentController {
 		private readonly getLatestFinishTournamentUseCase: GetLatestFinishTournamentUseCase,
 		private readonly editTournamentSponsorTierUseCase: EditTournamentSponsorTierUseCase,
 		private readonly removeTournamentSponsorUseCase: RemoveTournamentSponsorUseCase,
-		private readonly getAllRequiredAttachmentUseCase: GetAllRequiredAttachmentUseCase
+		private readonly getAllRequiredAttachmentUseCase: GetAllRequiredAttachmentUseCase,
+		private readonly updateTournamentMerchandiseUseCase: UpdateTournamentMerchandiseUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -293,7 +298,9 @@ export class TournamentController {
 	}
 
 	@Get("/get-all-required-attachment")
-	async getAllRequiredAttachment(): Promise<ApiResponse<KeyValueType<string>[]>> {
+	async getAllRequiredAttachment(): Promise<
+		ApiResponse<KeyValueType<string>[]>
+	> {
 		return await this.getAllRequiredAttachmentUseCase.execute();
 	}
 
@@ -556,6 +563,20 @@ export class TournamentController {
 	): Promise<ApiResponse<Tournament>> {
 		return await this.updateTournamentScheduleInformationUseCase.execute(
 			updateTournamentScheduleInformation,
+		);
+	}
+
+	@Put("/update-tournament-merchandise/:tournamentId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async updateTournamentMerchandise(
+		@Param("tournamentId") tournamentId: string,
+		@Body()
+		updateTournamentMerchandiseDTO: UpdateTournamentMerchandiseDTO,
+	): Promise<ApiResponse<Tournament>> {
+		return await this.updateTournamentMerchandiseUseCase.execute(
+			tournamentId,
+			updateTournamentMerchandiseDTO,
 		);
 	}
 

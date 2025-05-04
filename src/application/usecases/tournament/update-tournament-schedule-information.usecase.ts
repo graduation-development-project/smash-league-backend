@@ -36,24 +36,6 @@ export class UpdateTournamentScheduleInformationUseCase {
 			updateTournamentScheduleInformation.endDate,
 		);
 
-		if (updateTournamentScheduleInformation.startDate) {
-			await scheduleOrUpdateTournamentJob(
-				this.tournamentQueue,
-				TournamentTimeJobType.START_TOURNAMENT,
-				tournament.id,
-				new Date(updateTournamentScheduleInformation.startDate),
-			);
-		}
-
-		if (updateTournamentScheduleInformation.endDate) {
-			await scheduleOrUpdateTournamentJob(
-				this.tournamentQueue,
-				TournamentTimeJobType.END_TOURNAMENT,
-				tournament.id,
-				new Date(updateTournamentScheduleInformation.endDate),
-			);
-		}
-
 		//console.log(checkIfOverOneMonth(tournament.startDateFirstTime, updateTournamentScheduleInformation.startDate));
 		if (
 			checkIfOverOneMonth(
@@ -83,6 +65,25 @@ export class UpdateTournamentScheduleInformationUseCase {
 				"Tournament schedule cannot be update more than 3 times",
 				null,
 			);
+
+		if (updateTournamentScheduleInformation.startDate) {
+			await scheduleOrUpdateTournamentJob(
+				this.tournamentQueue,
+				TournamentTimeJobType.START_TOURNAMENT,
+				tournament.id,
+				new Date(updateTournamentScheduleInformation.startDate),
+			);
+		}
+
+		if (updateTournamentScheduleInformation.endDate) {
+			await scheduleOrUpdateTournamentJob(
+				this.tournamentQueue,
+				TournamentTimeJobType.END_TOURNAMENT,
+				tournament.id,
+				new Date(updateTournamentScheduleInformation.endDate),
+			);
+		}
+
 		return new ApiResponse<Tournament>(
 			HttpStatus.NO_CONTENT,
 			"Tournament schedule information updated successful!",

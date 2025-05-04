@@ -1,4 +1,9 @@
-import { Tournament, TournamentPost, TournamentStatus, TournamentUmpires } from "@prisma/client";
+import {
+	Tournament,
+	TournamentPost,
+	TournamentStatus,
+	TournamentUmpires,
+} from "@prisma/client";
 import {
 	ICreateTournament,
 	ITournamentContact,
@@ -12,6 +17,7 @@ import {
 	IUpdateTournamentScheduleInformation,
 } from "../interfaces/tournament/tournament.interface";
 import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
+import { UpdateTournamentMerchandiseDTO } from "../dtos/tournament/update-tournament-merchandise.dto";
 
 export interface TournamentRepositoryPort {
 	createTournament(tournament: ICreateTournament): Promise<Tournament>;
@@ -53,15 +59,42 @@ export interface TournamentRepositoryPort {
 	getTournamentUmpire(tournamentId: string): Promise<TournamentUmpires[]>;
 
 	getFeatureTournaments(): Promise<Tournament[]>;
-	updateTournamentInformation(updateTournament: IUpdateTournamentInformation): Promise<Tournament>;
+
+	updateTournamentInformation(
+		updateTournament: IUpdateTournamentInformation,
+	): Promise<Tournament>;
+
 	updateTournamentContact(updateContact: any): Promise<Tournament>;
+
 	getTournamentInformation(id: string): Promise<ITournamentInformation>;
+
 	getTournamentContact(id: string): Promise<ITournamentContact>;
-	updateTournamentRegistrationInformation(updateTournamentRegistration: IUpdateTournamentRegistrationInformation): Promise<Tournament>;
-	getTournamentRegistration(id: string): Promise<ITournamentRegistrationInformation>;
+
+	updateTournamentRegistrationInformation(
+		updateTournamentRegistration: IUpdateTournamentRegistrationInformation,
+	): Promise<Tournament>;
+
+	getTournamentRegistration(
+		id: string,
+	): Promise<ITournamentRegistrationInformation>;
+
 	cancelTournament(tournamentId: string): Promise<Tournament>;
-	updateTournamentScheduleInformation(updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation): Promise<Tournament>;
+
+	updateTournamentScheduleInformation(
+		updateTournamentScheduleInformation: IUpdateTournamentScheduleInformation,
+	): Promise<Tournament>;
+
 	updateTournamentStatusToDrawing(tournamentId: string): Promise<Tournament>;
-	getLatestFinishTournament(limit: number): Promise<Tournament[]>
-	updateTournamentStatus(tournamentId: string, status: TournamentStatus): Promise<Tournament>
+
+	getLatestFinishTournament(limit: number): Promise<Tournament[]>;
+
+	updateTournamentStatus(
+		tournamentId: string,
+		status: TournamentStatus,
+	): Promise<Tournament>;
+
+	updateTournamentMerchandise(
+		tournamentId: string,
+		updateTournamentMerchandiseDTO: UpdateTournamentMerchandiseDTO,
+	): Promise<Tournament>;
 }
