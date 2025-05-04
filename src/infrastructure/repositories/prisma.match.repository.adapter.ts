@@ -27,11 +27,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	async continueMatch(matchId: string): Promise<Match> {
 		return await this.prisma.match.update({
 			where: {
-				id: matchId
+				id: matchId,
 			},
 			data: {
-				matchStatus: MatchStatus.ON_GOING
-			}
+				matchStatus: MatchStatus.ON_GOING,
+			},
 		});
 	}
 
@@ -592,6 +592,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					id: game.id,
 				},
 				data: {
+					currentServerId: winningId,
+					lastServerId: game.currentServerId,
 					leftCompetitorPoint: leftCompetitorPoint + 1,
 				},
 			});
@@ -601,6 +603,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					id: game.id,
 				},
 				data: {
+					currentServerId: winningId,
+					lastServerId: game.currentServerId,
 					rightCompetitorPoint: rightCompetitorPoint + 1,
 				},
 			});
@@ -612,13 +616,13 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			return {
 				currentGameNumber: pointUpdated.gameNumber,
 				message: "Game continues!",
-
 				currentServerId: winningId,
+				isGamePoint: false,
 				isEnd: false,
 				currentPoint: await this.getAllGamesOfMatch(pointUpdated.matchId),
 			};
 		}
-		return await this.processWonGame(pointUpdated, winningId, tournamentEvent);
+		return await this.processWonGame(pointUpdated, winningId, tournamentEvent);	
 	}
 
 	async getAllGamesOfMatch(matchId: string): Promise<IPointOfGameResponse[]> {
@@ -682,7 +686,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			game.rightCompetitorPoint >= tournamentEvent.winningPoint
 		) {
 			if (Math.abs(game.leftCompetitorPoint - game.rightCompetitorPoint) >= 2) {
-				console.log("");
 				const gameEnded = await this.prisma.game.update({
 					where: {
 						id: game.id,
@@ -720,6 +723,46 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					winningId,
 					tournamentEvent,
 				);
+			} else if (Math.abs(game.leftCompetitorPoint - game.rightCompetitorPoint) === 1) {
+				if (match.leftCompetitorId === winningId) {
+					return {
+						currentGameNumber: game.gameNumber,
+						message: "Game continues!",
+						currentServerId: winningId,
+						isGamePoint: true,
+						isEnd: false,
+						currentPoint: await this.getAllGamesOfMatch(game.matchId),
+					};
+				} else {
+					return {
+						currentGameNumber: game.gameNumber,
+						message: "Game continues!",
+						currentServerId: winningId,
+						isGamePoint: true,
+						isEnd: false,
+						currentPoint: await this.getAllGamesOfMatch(game.matchId),
+					};
+				}
+			} else if (game.leftCompetitorPoint - game.rightCompetitorPoint < 1) {
+				if (match.leftCompetitorId === winningId) {
+					return {
+						currentGameNumber: game.gameNumber,
+						message: "Game continues!",
+						currentServerId: winningId,
+						isGamePoint: false,
+						isEnd: false,
+						currentPoint: await this.getAllGamesOfMatch(game.matchId),
+					};
+				} else {
+					return {
+						currentGameNumber: game.gameNumber,
+						message: "Game continues!",
+						currentServerId: winningId,
+						isGamePoint: false,
+						isEnd: false,
+						currentPoint: await this.getAllGamesOfMatch(game.matchId),
+					};
+				}
 			}
 		}
 	}
@@ -851,6 +894,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						currentGameNumber: 0,
 						currentPoint: await this.getAllGamesOfMatch(match.id),
 						currentServerId: winningId,
+						isGamePoint: false,
 						isEnd: true,
 						message: "Final ended!",
 						newGame: null,
@@ -877,6 +921,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						currentGameNumber: 0,
 						currentPoint: await this.getAllGamesOfMatch(match.id),
 						currentServerId: winningId,
+						isGamePoint: false,
 						isEnd: true,
 						message: "Third place match ended!",
 						newGame: null,
@@ -903,6 +948,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				currentGameNumber: 0,
 				currentPoint: await this.getAllGamesOfMatch(match.id),
 				currentServerId: winningId,
+				isGamePoint: false,
 				isEnd: true,
 				message: "Match ended!",
 				newGame: null,
@@ -924,6 +970,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				currentGameNumber: newGame.gameNumber,
 				currentPoint: await this.getAllGamesOfMatch(newGame.matchId),
 				currentServerId: winningId,
+				isGamePoint: false,
 				isEnd: true,
 				message: "New game!",
 				newGame: newGame,
@@ -1084,6 +1131,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			currentGameNumber: 0,
 			currentPoint: await this.getAllGamesOfMatch(currentMatchId),
 			currentServerId: competitorId,
+			isGamePoint: false,
 			isEnd: true,
 			newGame: null,
 			winningCompetitor: await this.getWinningCompetitor(competitorId),
