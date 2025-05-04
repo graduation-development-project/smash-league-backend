@@ -4,6 +4,7 @@ import {
 	IsBoolean,
 	IsDateString,
 	IsEmail,
+	IsEmpty,
 	IsEnum,
 	IsISO8601,
 	IsNotEmpty,
@@ -219,21 +220,33 @@ export class CreateTournament {
 
 	@IsString()
 	@IsNotEmpty()
+	@MinLength(10, {
+		message: "Name for a tournament must be longer than 10 characters."
+	})
+	@MaxLength(100, {
+		message: "Name for a tournament must be shorter than 100 characters"
+	})
 	name: string;
 
 	@IsString()
-	@Allow()
+	@MinLength(3, {
+		message: "Short name for a tournament must be longer than 3 characters."
+	})	
+	@MaxLength(10, {
+		message: "Short name for a tournament must be shorter than 10 characters."
+	})
 	shortName?: string;
 
 	@IsString()
-	@MaxLength(512, {
-		message: "Introduction maximum is under 512 characters.",
+	@MaxLength(1000, {
+		message: "Introduction maximum is under 1000 characters.",
 	})
-	introduction: string;
+	introduction?: string;
 
 	@IsString()
-	@MaxLength(512, {
-		message: "Description maximum is under 512 characters.",
+	@IsNotEmpty()
+	@MaxLength(1000, {
+		message: "Description maximum is under 1000 characters.",
 	})
 	description: string;
 	@IsString()
@@ -326,8 +339,8 @@ export class CreateTournament {
 	@Max(1000000, {
 		message: "Number of merchandises must be under 1.000.000!",
 	})
-	numberOfMerchandise: number;
-	merchandiseImages: string[];
+	numberOfMerchandise?: number;
+	merchandiseImages?: string[];
 	@IsNumber()
 	@Min(1, {
 		message: "Umpire per match must be more than 1.",
