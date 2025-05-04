@@ -175,6 +175,7 @@ import { GetAllLogMessageUseCase } from "./usecases/tournament/match/get-all-log
 import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtype.usecase";
 import { GetUserByRoleUseCase } from "./usecases/users/get-user-by-role.usecase";
 import { GetLatestMatchesUseCase } from "./usecases/athletes/get-latest-matches.usecase";
+import { ContinueMatchUseCase } from "./usecases/tournament/match/continue-match.usecase";
 
 @Module({
 	imports: [
@@ -444,6 +445,7 @@ import { GetLatestMatchesUseCase } from "./usecases/athletes/get-latest-matches.
 		CreateEventLogUseCase,
 		GetAllLogMessageUseCase,
 		GetAllLogTypeUseCase,
+		ContinueMatchUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,
@@ -625,6 +627,7 @@ import { GetLatestMatchesUseCase } from "./usecases/athletes/get-latest-matches.
 		CreateEventLogUseCase,
 		GetAllLogMessageUseCase,
 		GetAllLogTypeUseCase,
+		ContinueMatchUseCase,
 		//Court Use Case
 		AssignCourtForMatchUseCase,
 		GetCourtAvailableUseCase,

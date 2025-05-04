@@ -24,6 +24,16 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
+	async continueMatch(matchId: string): Promise<Match> {
+		return await this.prisma.match.update({
+			where: {
+				id: matchId
+			},
+			data: {
+				matchStatus: MatchStatus.ON_GOING
+			}
+		});
+	}
 
 	async countMatchesOfLastStage(matchId: string): Promise<number> {
 		const match = await this.prisma.match.findUnique({

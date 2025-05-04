@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { MatchLog } from "@prisma/client";
+import { LogType, MatchLog } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { CreateLogEventDto } from "src/domain/dtos/match/create-log-event.dto";
 import { GameRepositoryPort } from "src/domain/repositories/game.repository.port";
@@ -24,6 +24,14 @@ export class CreateEventLogUseCase {
 			HttpStatus.BAD_REQUEST,
 			"Game not found!",
 			null
+		);
+		if (createLogEvent.logType === LogType.INTERVAL) return new ApiResponse<MatchLog>(
+			HttpStatus.CREATED,
+			"Create new log for game success!",
+			await this.matchLogRepository.setMatchInterval({
+				...createLogEvent,
+				time: new Date()
+			})
 		);
 		return new ApiResponse<MatchLog>(
 			HttpStatus.CREATED,

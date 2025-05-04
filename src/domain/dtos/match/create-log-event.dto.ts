@@ -12,7 +12,8 @@ export class CreateLogEventDto {
 				"MEDICAL, " + 
 				"FAULT, " + 
 				"MISCONDUCT, " +
-				"COACHING_VIOLATION",
+				"COACHING_VIOLATION, " + 
+				"INTERVAL",
 			each: true,
 		})
 	logType: LogType;

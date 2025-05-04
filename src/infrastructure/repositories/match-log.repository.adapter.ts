@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { MatchLog, PrismaClient } from "@prisma/client";
+import { MatchLog, MatchStatus, PrismaClient } from "@prisma/client";
 import { ICreateLogEvent } from "src/domain/interfaces/tournament/match/log-event.interface";
 import { MatchLogRepositoryPort } from "src/domain/repositories/match-log.repository.port";
 
@@ -8,6 +8,29 @@ export class PrismaMatchLogRepositoryAdapter implements MatchLogRepositoryPort {
 	constructor(
 		private readonly prisma: PrismaClient
 	) {
+	}
+	async setMatchInterval(createLogEvent: ICreateLogEvent): Promise<MatchLog> {
+		const gameOfMatch = await this.prisma.game.findUnique({
+			where: {
+				id: createLogEvent.gameId
+			},
+			select: {
+				match: true
+			}
+		});
+		const updatedMatch = await this.prisma.match.update({
+			where: {
+				id: gameOfMatch.match.id
+			},
+			data: {
+				matchStatus: MatchStatus.INTERVAL,
+			}
+		});
+		return await this.prisma.matchLog.create({
+			data: {
+				...createLogEvent
+			}
+		});
 	}
 	async getAllMatchLogOfGames(gameId: string): Promise<MatchLog[]> {
 		return await this.prisma.matchLog.findMany({
