@@ -54,4 +54,6 @@ export interface MatchRepositoryPort {
 	countMatchesOfLastStage(matchId: string): Promise<number>;
 
 	getMatchesOfUser(userId: string): Promise<Match[]>;
+
+	continueMatch(matchId: string): Promise<Match>;
 }

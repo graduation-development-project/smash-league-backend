@@ -6,4 +6,5 @@ export interface MatchLogRepositoryPort {
 	getAllMatchLogOfMatch(matchId: string): Promise<MatchLog[]>;
 	createEventLogForGame(createLogEvent: ICreateLogEvent): Promise<MatchLog>;
 	deleteEventLogForGame(matchLogId: string): Promise<MatchLog>;
+	setMatchInterval(createLogEvent: ICreateLogEvent): Promise<MatchLog>;
 }

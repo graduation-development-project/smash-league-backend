@@ -34,6 +34,7 @@ import { GetAllLogMessageUseCase } from "src/application/usecases/tournament/mat
 import { MatchLogDetail } from "src/domain/enums/match/match-log.enum";
 import { KeyValueType } from "src/domain/dtos/key-value-type.type";
 import { GetAllLogTypeUseCase } from "src/application/usecases/tournament/match/get-all-logtype.usecase";
+import { ContinueMatchUseCase } from "src/application/usecases/tournament/match/continue-match.usecase";
 
 @Controller("match")
 export class MatchController {
@@ -50,7 +51,8 @@ export class MatchController {
 		private readonly updateMatchUseCase: UpdateMatchUseCase,
 		private readonly createEventlogUseCase: CreateEventLogUseCase,
 		private readonly getAllLogMessageUseCase: GetAllLogMessageUseCase,
-		private readonly getAllLogTypeUseCase: GetAllLogTypeUseCase
+		private readonly getAllLogTypeUseCase: GetAllLogTypeUseCase,
+		private readonly continueMatchUseCase: ContinueMatchUseCase
 	) {}
 
 	@Get("get-match/:matchId")
@@ -165,4 +167,8 @@ export class MatchController {
 		return await this.getAllLogTypeUseCase.execute();
 	}
 
+	@Put("/continue-match/:matchId")
+	async continueMatch(@Param("matchId") matchId: string): Promise<ApiResponse<Match>> {
+		return await this.continueMatchUseCase.execute(matchId);
+	}
 }
