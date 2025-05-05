@@ -1,4 +1,4 @@
-import { ReportStatus } from "@prisma/client";
+import { ReportStatus, Tournament, User } from "@prisma/client";
 
 export class ICreateReport {
 	tournamentId: string;
@@ -11,8 +11,8 @@ export class ICreateReport {
 
 export class IReportResponse {
 	id: string;
-	user: string;
-	tournament: string;
+	user: User;
+	tournament: Tournament;
 	status: string;
 	createdAt: Date;
 }

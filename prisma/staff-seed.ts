@@ -53,6 +53,19 @@ async function main() {
 
 	console.log(RoleMap);
 
+	for(let i = 0; i < staffAccounts.length; i++) {
+		const staffAccount = await prisma.user.create({
+			data: {
+				...staffAccounts[i]
+			}
+		});
+		const staffRole = await prisma.userRole.create({
+			data: {
+				roleId: RoleMap.Staff.id,
+				userId: staffAccount.id
+			}
+		});
+	}
 	
 }
 

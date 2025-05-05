@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaClient, ReportStatus, UserReport } from "@prisma/client";
 import { create } from "domain";
 import { report } from "process";
-import { ICreateReport } from "src/domain/dtos/report/report.interface";
+import { ICreateReport, IReportResponse } from "src/domain/dtos/report/report.interface";
 import { ReportRepositoryPort } from "src/domain/repositories/report.repository.port";
 
 @Injectable()
@@ -11,20 +11,45 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 		private readonly prisma: PrismaClient
 	) {
 	}
-	async getAllReport(): Promise<UserReport[]> {
-		return await this.prisma.userReport.findMany();
-	}
-	async getAllReportFromUser(userId: string): Promise<UserReport[]> {
+	async getAllReport(): Promise<IReportResponse[]> {
 		return await this.prisma.userReport.findMany({
-			where: {
-				userId: userId
+			select: {
+				id: true,
+				reason: true,
+				status: true,
+				tournament: true,
+				user: true,
+				createdAt: true
 			}
 		});
 	}
-	async getAllReportOfTournament(tournamentId: string): Promise<UserReport[]> {
+	async getAllReportFromUser(userId: string): Promise<IReportResponse[]> {
+		return await this.prisma.userReport.findMany({
+			where: {
+				userId: userId
+			},
+			select: {
+				id: true,
+				reason: true,
+				status: true,
+				tournament: true,
+				user: true,
+				createdAt: true
+			}
+		});
+	}
+	async getAllReportOfTournament(tournamentId: string): Promise<IReportResponse[]> {
 		return await this.prisma.userReport.findMany({
 			where: {
 				tournamentId: tournamentId
+			},
+			select: {
+				id: true,
+				reason: true,
+				status: true,
+				tournament: true,
+				user: true,
+				createdAt: true
 			}
 		}); 
 	}

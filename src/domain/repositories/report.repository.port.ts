@@ -1,11 +1,11 @@
 import { create } from 'domain';
 import { UserReport } from "@prisma/client";
-import { ICreateReport } from '../dtos/report/report.interface';
+import { ICreateReport, IReportResponse } from '../dtos/report/report.interface';
 
 export interface ReportRepositoryPort {
-	getAllReport(): Promise<UserReport[]>;
-	getAllReportFromUser(userId: string): Promise<UserReport[]>;
-	getAllReportOfTournament(tournamentId: string): Promise<UserReport[]>;
+	getAllReport(): Promise<IReportResponse[]>;
+	getAllReportFromUser(userId: string): Promise<IReportResponse[]>;
+	getAllReportOfTournament(tournamentId: string): Promise<IReportResponse[]>;
 	createReport(createReport: ICreateReport): Promise<UserReport>;
 	approveReport(reportId: string): Promise<UserReport>;
 	rejectReport(reportId: string): Promise<UserReport>;
