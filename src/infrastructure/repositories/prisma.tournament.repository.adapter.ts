@@ -923,7 +923,11 @@ export class PrismaTournamentRepositoryAdapter
 					id: tournamentId,
 				},
 
-				data: updateTournamentRecruitmentDTO,
+				data: {
+					isRecruit: updateTournamentRecruitmentDTO.isRecruit,
+					numberOfUmpireToRecruit:
+						updateTournamentRecruitmentDTO.numberOfUmpires,
+				},
 			});
 		} catch (e) {
 			console.error("updateTournamentRecruitment failed: ", e);

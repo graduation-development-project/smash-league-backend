@@ -130,6 +130,7 @@ export interface ICreateTournament {
 	isRegister: boolean;
 	isLiveDraw: boolean;
 	hasLiveStream: boolean;
+	numberOfUmpireToRecruit: number;
 }
 
 export interface ICreateCourts {

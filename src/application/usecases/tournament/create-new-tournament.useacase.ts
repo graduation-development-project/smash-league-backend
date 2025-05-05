@@ -296,6 +296,7 @@ export class CreateNewTournamentUseCase {
 			isPrivate: createTournament.isPrivate,
 			isRegister: createTournament.isRegister,
 			hasLiveStream: createTournament.hasLiveStream,
+			numberOfUmpireToRecruit: createTournament.numberOfUmpires
 		});
 		return tournament;
 	}

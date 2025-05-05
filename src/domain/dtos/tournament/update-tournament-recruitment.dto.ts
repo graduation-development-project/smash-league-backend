@@ -3,7 +3,7 @@ import { IsBoolean, IsNumber, IsOptional } from "class-validator";
 export class UpdateTournamentRecruitmentDTO {
 	@IsNumber()
 	@IsOptional()
-	numberOfUmpireToRecruit?: number;
+	numberOfUmpires?: number;
 
 	@IsOptional()
 	@IsBoolean()

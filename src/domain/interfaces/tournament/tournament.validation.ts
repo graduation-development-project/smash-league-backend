@@ -358,7 +358,7 @@ export class CreateTournament {
 	requiredAttachment: RequiredAttachment[];
 	@IsNumber()
 	@IsOptional()
-	numberOfUmpireToRecruit?: number;
+	numberOfUmpires?: number;
 	isRecruit: boolean;
 	isPrivate: boolean;
 	isRegister: boolean;
