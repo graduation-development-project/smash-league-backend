@@ -180,6 +180,9 @@ import { GetAllMatchLogUseCase } from "./usecases/tournament/match/get-all-match
 import { UpdateCourtUseCase } from "./usecases/tournament/court/update-court.usecase";
 import { UpdateTournamentMerchandiseUseCase } from "./usecases/tournament/update-tournament-merchandise.usecase";
 import { GetTransactionsByDayUseCase } from "./usecases/payment/get-transactions-by-day.usecase";
+import { PrismaReportRepositoryAdapter } from "src/infrastructure/repositories/prisma.report.repository.adapter";
+import { CreateReportUseCase } from "./usecases/tournament/report/create-report.usecase";
+import { GetAllReportUseCase } from "./usecases/tournament/report/get-all-report.usecase";
 
 @Module({
 	imports: [
@@ -319,6 +322,10 @@ import { GetTransactionsByDayUseCase } from "./usecases/payment/get-transactions
 			provide: "MatchLogRepositoryPort",
 			useClass: PrismaMatchLogRepositoryAdapter,
 		},
+		{
+			provide: "ReportRepository",
+			useClass: PrismaReportRepositoryAdapter
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -434,6 +441,10 @@ import { GetTransactionsByDayUseCase } from "./usecases/payment/get-transactions
 		GetAllRequiredAttachmentUseCase,
 		UpdateCourtUseCase,
 		UpdateTournamentMerchandiseUseCase,
+
+		//Report use case
+		CreateReportUseCase,
+		GetAllReportUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -620,6 +631,10 @@ import { GetTransactionsByDayUseCase } from "./usecases/payment/get-transactions
 		GetAllRequiredAttachmentUseCase,
 		UpdateCourtUseCase,
 		UpdateTournamentMerchandiseUseCase,
+
+		//Report usecase
+		CreateReportUseCase,
+		GetAllReportUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

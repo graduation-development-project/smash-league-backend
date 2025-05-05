@@ -38,6 +38,7 @@ import { SponsorController } from "./controllers/sponsor.controller";
 import { BankLookUpService } from "./services/bank-lookup.service";
 import { TournamentQueueModule } from "./background-jobs/tournament/tournament.queue.module";
 import { CourtController } from "./controllers/court.controller";
+import { ReportController } from "./controllers/report.controller";
 
 @Module({
 	imports: [
@@ -93,7 +94,8 @@ import { CourtController } from "./controllers/court.controller";
 		MatchController,
 		BankController,
 		SponsorController,
-		CourtController
+		CourtController,
+		ReportController
 	],
 	providers: [
 		LocalStrategy,
