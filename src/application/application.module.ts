@@ -183,6 +183,7 @@ import { GetTransactionsByDayUseCase } from "./usecases/payment/get-transactions
 import { PrismaReportRepositoryAdapter } from "src/infrastructure/repositories/prisma.report.repository.adapter";
 import { CreateReportUseCase } from "./usecases/tournament/report/create-report.usecase";
 import { GetAllReportUseCase } from "./usecases/tournament/report/get-all-report.usecase";
+import { GetAllReportOfUserUseCase } from "./usecases/tournament/report/get-all-report-of-user.usecase";
 
 @Module({
 	imports: [
@@ -445,6 +446,7 @@ import { GetAllReportUseCase } from "./usecases/tournament/report/get-all-report
 		//Report use case
 		CreateReportUseCase,
 		GetAllReportUseCase,
+		GetAllReportOfUserUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -635,6 +637,7 @@ import { GetAllReportUseCase } from "./usecases/tournament/report/get-all-report
 		//Report usecase
 		CreateReportUseCase,
 		GetAllReportUseCase,
+		GetAllReportOfUserUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
