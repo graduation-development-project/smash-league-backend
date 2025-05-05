@@ -63,8 +63,8 @@ export class AuthController {
 	}
 
 	@Post("/sign-up")
-	signUp(@Body() signUpDTO: SignUpDTO): Promise<string> {
-		return this.signUpUseCase.execute(signUpDTO);
+	async signUp(@Body() signUpDTO: SignUpDTO): Promise<string> {
+		return await this.signUpUseCase.execute(signUpDTO);
 	}
 
 	@UseGuards(JwtRefreshTokenGuard)
