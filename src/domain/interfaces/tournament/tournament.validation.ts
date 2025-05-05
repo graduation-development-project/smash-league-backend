@@ -9,6 +9,7 @@ import {
 	IsISO8601,
 	IsNotEmpty,
 	IsNumber,
+	IsOptional,
 	IsPhoneNumber,
 	IsString,
 	Max,
@@ -45,9 +46,8 @@ export class CreateTournamentEvent {
 
 	@IsEnum(FormatType, {
 		message:
-			"Format type must be one of the following: " +
-			"SINGLE_ELIMINATION, "
-		})
+			"Format type must be one of the following: " + "SINGLE_ELIMINATION, ",
+	})
 	typeOfFormat: FormatType;
 	@Min(11, {
 		message: "Winning point must be bigger than 11.",
@@ -106,7 +106,7 @@ export class CreateTournamentEvent {
 
 export class CreateCourtsDTO {
 	@IsArray()
-	@ValidateNested({each: true})
+	@ValidateNested({ each: true })
 	@Type(() => Object)
 	createCourts: CourtDTO[];
 }
@@ -154,9 +154,8 @@ export class UpdateTournamentEventDTO {
 
 	@IsEnum(FormatType, {
 		message:
-			"Format type must be one of the following: " +
-			"SINGLE_ELIMINATION, "
-		})
+			"Format type must be one of the following: " + "SINGLE_ELIMINATION, ",
+	})
 	typeOfFormat: FormatType;
 	@Min(11, {
 		message: "Winning point must be bigger than 11.",
@@ -221,19 +220,19 @@ export class CreateTournament {
 	@IsString()
 	@IsNotEmpty()
 	@MinLength(10, {
-		message: "Name for a tournament must be longer than 10 characters."
+		message: "Name for a tournament must be longer than 10 characters.",
 	})
 	@MaxLength(100, {
-		message: "Name for a tournament must be shorter than 100 characters"
+		message: "Name for a tournament must be shorter than 100 characters",
 	})
 	name: string;
 
 	@IsString()
 	@MinLength(3, {
-		message: "Short name for a tournament must be longer than 3 characters."
-	})	
+		message: "Short name for a tournament must be longer than 3 characters.",
+	})
 	@MaxLength(10, {
-		message: "Short name for a tournament must be shorter than 10 characters."
+		message: "Short name for a tournament must be shorter than 10 characters.",
 	})
 	shortName?: string;
 
@@ -315,7 +314,7 @@ export class CreateTournament {
 	@IsNumber()
 	@Min(1)
 	maxEventPerPerson: number;
-	
+
 	tournamentSerieId?: string;
 
 	createTournamentEvent: CreateTournamentEventsDTO;
@@ -357,6 +356,9 @@ export class CreateTournament {
 		each: true,
 	})
 	requiredAttachment: RequiredAttachment[];
+	@IsNumber()
+	@IsOptional()
+	numberOfUmpireToRecruit?: number;
 	isRecruit: boolean;
 	isPrivate: boolean;
 	isRegister: boolean;
@@ -477,8 +479,8 @@ export class UpdateTournament {
 		message:
 			"Required attachment must be one of the following: " +
 			"IDENTIFICATION_CARD, " +
-			"PORTRAIT_PHOTO, " + 
-			"STUDENT_CARD, " + 
+			"PORTRAIT_PHOTO, " +
+			"STUDENT_CARD, " +
 			"PASSPORT, " +
 			"EMPLOYEE_CARD",
 		each: true,
@@ -537,7 +539,7 @@ export class UpdateTournamentContact {
 	@IsString()
 	@IsPhoneNumber("VN")
 	contactPhone: string;
-	
+
 	@IsString()
 	@IsEmail()
 	contactEmail: string;
@@ -590,7 +592,7 @@ export class UpdateTournamentRegistrationInformation {
 }
 
 export class UpdateTournamentScheduleInformation {
-	@IsString() 
+	@IsString()
 	@IsNotEmpty()
 	id: string;
 	@IsDateString()

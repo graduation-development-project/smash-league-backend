@@ -18,6 +18,7 @@ import {
 } from "../interfaces/tournament/tournament.interface";
 import { IPaginatedOutput, IPaginateOptions } from "../interfaces/interfaces";
 import { UpdateTournamentMerchandiseDTO } from "../dtos/tournament/update-tournament-merchandise.dto";
+import { UpdateTournamentRecruitmentDTO } from "../dtos/tournament/update-tournament-recruitment.dto";
 
 export interface TournamentRepositoryPort {
 	createTournament(tournament: ICreateTournament): Promise<Tournament>;
@@ -96,5 +97,10 @@ export interface TournamentRepositoryPort {
 	updateTournamentMerchandise(
 		tournamentId: string,
 		updateTournamentMerchandiseDTO: UpdateTournamentMerchandiseDTO,
+	): Promise<Tournament>;
+
+	updateTournamentRecruitment(
+		tournamentId: string,
+		updateTournamentRecruitmentDTO: UpdateTournamentRecruitmentDTO,
 	): Promise<Tournament>;
 }

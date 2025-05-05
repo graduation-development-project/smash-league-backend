@@ -32,6 +32,7 @@ import {
 } from "../../domain/interfaces/interfaces";
 import { PrismaService } from "../services/prisma.service";
 import { UpdateTournamentMerchandiseDTO } from "../../domain/dtos/tournament/update-tournament-merchandise.dto";
+import { UpdateTournamentRecruitmentDTO } from "../../domain/dtos/tournament/update-tournament-recruitment.dto";
 
 @Injectable()
 export class PrismaTournamentRepositoryAdapter
@@ -908,6 +909,24 @@ export class PrismaTournamentRepositoryAdapter
 			});
 		} catch (e) {
 			console.error("updateTournamentMerchandise failed: ", e);
+			throw e;
+		}
+	}
+
+	async updateTournamentRecruitment(
+		tournamentId: string,
+		updateTournamentRecruitmentDTO: UpdateTournamentRecruitmentDTO,
+	): Promise<Tournament> {
+		try {
+			return this.prisma.tournament.update({
+				where: {
+					id: tournamentId,
+				},
+
+				data: updateTournamentRecruitmentDTO,
+			});
+		} catch (e) {
+			console.error("updateTournamentRecruitment failed: ", e);
 			throw e;
 		}
 	}

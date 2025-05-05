@@ -122,6 +122,8 @@ import { RemoveTournamentSponsorUseCase } from "../../application/usecases/tourn
 import { UpdateTournamentMerchandiseUseCase } from "../../application/usecases/tournament/update-tournament-merchandise.usecase";
 import { UpdateTournamentMerchandiseDTO } from "../../domain/dtos/tournament/update-tournament-merchandise.dto";
 import { StaffCancelTournamentUseCase } from "../../application/usecases/tournament/staff-cancel-tournament.usecase";
+import { UpdateTournamentRecruitmentUseCase } from "../../application/usecases/tournament/update-tournament-recruitment.usecase";
+import { UpdateTournamentRecruitmentDTO } from "../../domain/dtos/tournament/update-tournament-recruitment.dto";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -170,6 +172,7 @@ export class TournamentController {
 		private readonly removeTournamentSponsorUseCase: RemoveTournamentSponsorUseCase,
 		private readonly getAllRequiredAttachmentUseCase: GetAllRequiredAttachmentUseCase,
 		private readonly updateTournamentMerchandiseUseCase: UpdateTournamentMerchandiseUseCase,
+		private readonly updateTournamentRecruitmentUseCase: UpdateTournamentRecruitmentUseCase,
 		private readonly staffCancelTournamentUseCase: StaffCancelTournamentUseCase,
 	) {}
 
@@ -586,6 +589,20 @@ export class TournamentController {
 		return await this.updateTournamentMerchandiseUseCase.execute(
 			tournamentId,
 			updateTournamentMerchandiseDTO,
+		);
+	}
+
+	@Put("/update-tournament-recruitment/:tournamentId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async updateTournamentRecruitment(
+		@Param("tournamentId") tournamentId: string,
+		@Body()
+		updateTournamentRecruitmentDTO: UpdateTournamentRecruitmentDTO,
+	): Promise<ApiResponse<Tournament>> {
+		return await this.updateTournamentRecruitmentUseCase.execute(
+			tournamentId,
+			updateTournamentRecruitmentDTO,
 		);
 	}
 

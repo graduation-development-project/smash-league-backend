@@ -185,6 +185,7 @@ import { CreateReportUseCase } from "./usecases/tournament/report/create-report.
 import { GetAllReportUseCase } from "./usecases/tournament/report/get-all-report.usecase";
 import { GetAllReportOfUserUseCase } from "./usecases/tournament/report/get-all-report-of-user.usecase";
 import { StaffCancelTournamentUseCase } from "./usecases/tournament/staff-cancel-tournament.usecase";
+import { UpdateTournamentRecruitmentUseCase } from "./usecases/tournament/update-tournament-recruitment.usecase";
 
 @Module({
 	imports: [
@@ -444,6 +445,7 @@ import { StaffCancelTournamentUseCase } from "./usecases/tournament/staff-cancel
 		UpdateCourtUseCase,
 		UpdateTournamentMerchandiseUseCase,
 		StaffCancelTournamentUseCase,
+		UpdateTournamentRecruitmentUseCase,
 		//Report use case
 		CreateReportUseCase,
 		GetAllReportUseCase,
@@ -635,6 +637,7 @@ import { StaffCancelTournamentUseCase } from "./usecases/tournament/staff-cancel
 		UpdateCourtUseCase,
 		UpdateTournamentMerchandiseUseCase,
 		StaffCancelTournamentUseCase,
+		UpdateTournamentRecruitmentUseCase,
 
 		//Report usecase
 		CreateReportUseCase,
