@@ -5,4 +5,6 @@ export interface TournamentUmpireRepositoryPort {
 		tournamentId: string,
 		userId: string,
 	): Promise<TournamentUmpires>;
+
+	getTournamentUmpiresList(tournamentId: string): Promise<TournamentUmpires[]>;
 }

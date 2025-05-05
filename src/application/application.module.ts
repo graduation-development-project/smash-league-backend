@@ -184,6 +184,7 @@ import { PrismaReportRepositoryAdapter } from "src/infrastructure/repositories/p
 import { CreateReportUseCase } from "./usecases/tournament/report/create-report.usecase";
 import { GetAllReportUseCase } from "./usecases/tournament/report/get-all-report.usecase";
 import { GetAllReportOfUserUseCase } from "./usecases/tournament/report/get-all-report-of-user.usecase";
+import { StaffCancelTournamentUseCase } from "./usecases/tournament/staff-cancel-tournament.usecase";
 
 @Module({
 	imports: [
@@ -325,7 +326,7 @@ import { GetAllReportOfUserUseCase } from "./usecases/tournament/report/get-all-
 		},
 		{
 			provide: "ReportRepository",
-			useClass: PrismaReportRepositoryAdapter
+			useClass: PrismaReportRepositoryAdapter,
 		},
 		//Third Party Service
 		MailService,
@@ -442,7 +443,7 @@ import { GetAllReportOfUserUseCase } from "./usecases/tournament/report/get-all-
 		GetAllRequiredAttachmentUseCase,
 		UpdateCourtUseCase,
 		UpdateTournamentMerchandiseUseCase,
-
+		StaffCancelTournamentUseCase,
 		//Report use case
 		CreateReportUseCase,
 		GetAllReportUseCase,
@@ -633,6 +634,7 @@ import { GetAllReportOfUserUseCase } from "./usecases/tournament/report/get-all-
 		GetAllRequiredAttachmentUseCase,
 		UpdateCourtUseCase,
 		UpdateTournamentMerchandiseUseCase,
+		StaffCancelTournamentUseCase,
 
 		//Report usecase
 		CreateReportUseCase,

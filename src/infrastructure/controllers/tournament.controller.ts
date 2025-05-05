@@ -1,4 +1,4 @@
-import { GetAllRequiredAttachmentUseCase } from './../../application/usecases/tournament/get-all-required-attachment.usecase';
+import { GetAllRequiredAttachmentUseCase } from "./../../application/usecases/tournament/get-all-required-attachment.usecase";
 import { GetTournamentInformationUseCase } from "./../../application/usecases/tournament/get-tournament-information.usecase";
 import { GenerateBracketUseCase } from "./../../application/usecases/tournament/generate-bracket.usecase";
 import {
@@ -119,10 +119,9 @@ import { UpdateTournamentScheduleInformationUseCase } from "src/application/usec
 import { GetLatestFinishTournamentUseCase } from "../../application/usecases/tournament/get-latest-finish-tournament.usecase";
 import { EditTournamentSponsorTierUseCase } from "../../application/usecases/tournament/sponsor/edit-tournament-sponsor-tier.usecase";
 import { RemoveTournamentSponsorUseCase } from "../../application/usecases/tournament/sponsor/remove-tournament-sponsor.usecase";
-import {
-	UpdateTournamentMerchandiseUseCase
-} from "../../application/usecases/tournament/update-tournament-merchandise.usecase";
+import { UpdateTournamentMerchandiseUseCase } from "../../application/usecases/tournament/update-tournament-merchandise.usecase";
 import { UpdateTournamentMerchandiseDTO } from "../../domain/dtos/tournament/update-tournament-merchandise.dto";
+import { StaffCancelTournamentUseCase } from "../../application/usecases/tournament/staff-cancel-tournament.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -171,6 +170,7 @@ export class TournamentController {
 		private readonly removeTournamentSponsorUseCase: RemoveTournamentSponsorUseCase,
 		private readonly getAllRequiredAttachmentUseCase: GetAllRequiredAttachmentUseCase,
 		private readonly updateTournamentMerchandiseUseCase: UpdateTournamentMerchandiseUseCase,
+		private readonly staffCancelTournamentUseCase: StaffCancelTournamentUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -523,6 +523,15 @@ export class TournamentController {
 		@Req() { user }: IRequestUser,
 	): Promise<ApiResponse<null>> {
 		return this.cancelTournamentUseCase.execute(tournamentId);
+	}
+
+	@Put("/staff-cancel-tournament/:tournamentId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Staff.name)
+	async staffCancelTournament(
+		@Param("tournamentId") tournamentId: string,
+	): Promise<ApiResponse<null>> {
+		return this.staffCancelTournamentUseCase.execute(tournamentId);
 	}
 
 	@Post("/create-tournament-sponsor/:tournamentId")

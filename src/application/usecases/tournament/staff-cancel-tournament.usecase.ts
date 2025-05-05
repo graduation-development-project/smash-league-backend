@@ -8,7 +8,7 @@ import { NotificationsRepositoryPort } from "../../../domain/repositories/notifi
 import { CreateNotificationDTO } from "../../../domain/dtos/notifications/create-notification.dto";
 import { TournamentUmpireRepositoryPort } from "../../../domain/repositories/tournament-umpire.repository.port";
 
-export class CancelTournamentUseCase {
+export class StaffCancelTournamentUseCase {
 	constructor(
 		private prismaService: PrismaService,
 		@Inject("TournamentRepository")
@@ -83,6 +83,14 @@ export class CancelTournamentUseCase {
 				umpiresList.map((user) => user.userId),
 			);
 		}
+
+		const notificationData: CreateNotificationDTO = {
+			title: `Tournament Canceled: ${tournament.name}`,
+			message: `We had receive many athlete's reports about tournament ${tournament.name}. After a careful consideration, we decided to cancel this tournament. Participants will be notified and refunded`,
+		};
+		await this.notificationRepository.createNotification(notificationData, [
+			tournament.organizerId,
+		]);
 
 		return new ApiResponse(
 			HttpStatus.NO_CONTENT,

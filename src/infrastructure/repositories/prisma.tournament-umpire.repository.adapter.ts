@@ -25,4 +25,17 @@ export class PrismaTournamentUmpireRepositoryAdapter
 			throw e;
 		}
 	}
+
+	async getTournamentUmpiresList(tournamentId: string): Promise<TournamentUmpires[]> {
+		try {
+			return this.prismaService.tournamentUmpires.findMany({
+				where: {
+					tournamentId,
+				},
+			});
+		} catch (e) {
+			console.error("createTournamentUmpire failed", e);
+			throw e;
+		}
+	}
 }
