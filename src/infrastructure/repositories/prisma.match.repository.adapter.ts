@@ -1539,6 +1539,67 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						},
 					],
 				},
+
+				include: {
+					leftCompetitor: {
+						select: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									avatarURL: true,
+									gender: true,
+									height: true,
+									hands: true,
+								},
+							},
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									avatarURL: true,
+									gender: true,
+									height: true,
+									hands: true,
+								},
+							},
+						},
+					},
+					rightCompetitor: {
+						select: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									avatarURL: true,
+									gender: true,
+									height: true,
+									hands: true,
+								},
+							},
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									avatarURL: true,
+									gender: true,
+									height: true,
+									hands: true,
+								},
+							},
+						},
+					},
+					court: true,
+					stage: true,
+					games: true,
+					tournamentEvent: {
+						select: {
+							tournament: true,
+							tournamentEvent: true,
+						},
+					},
+				},
+
 				orderBy: {
 					timeEnd: "desc",
 				},
