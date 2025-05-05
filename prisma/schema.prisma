@@ -270,6 +270,7 @@ model Tournament {
   isRegister               Boolean
   isLiveDraw               Boolean
   hasLiveStream            Boolean
+  numberOfUmpireToRecruit  Int?                     @default(0)
   tournamentSerieId        String?
   tournamentSerie          TournamentSerie?         @relation(name: "FK_Tournament_TournamentSerie", fields: [tournamentSerieId], references: [id], onDelete: Cascade)
   organizer                User                     @relation(name: "FK_Tournament_User", fields: [organizerId], references: [id], onDelete: Cascade)
