@@ -186,6 +186,9 @@ import { GetAllReportUseCase } from "./usecases/tournament/report/get-all-report
 import { GetAllReportOfUserUseCase } from "./usecases/tournament/report/get-all-report-of-user.usecase";
 import { StaffCancelTournamentUseCase } from "./usecases/tournament/staff-cancel-tournament.usecase";
 import { UpdateTournamentRecruitmentUseCase } from "./usecases/tournament/update-tournament-recruitment.usecase";
+import { GetAllReportOfTournamentUseCase } from "./usecases/tournament/report/get-all-report-of-tournament.usecase";
+import { ApproveReportUseCase } from "./usecases/tournament/report/approve-report.usecase";
+import { RejectReportUseCase } from "./usecases/tournament/report/reject-report.usecase";
 
 @Module({
 	imports: [
@@ -450,6 +453,9 @@ import { UpdateTournamentRecruitmentUseCase } from "./usecases/tournament/update
 		CreateReportUseCase,
 		GetAllReportUseCase,
 		GetAllReportOfUserUseCase,
+		GetAllReportOfTournamentUseCase,
+		ApproveReportUseCase,
+		RejectReportUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -643,6 +649,9 @@ import { UpdateTournamentRecruitmentUseCase } from "./usecases/tournament/update
 		CreateReportUseCase,
 		GetAllReportUseCase,
 		GetAllReportOfUserUseCase,
+		GetAllReportOfTournamentUseCase,
+		ApproveReportUseCase,
+		RejectReportUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { CreateReportUseCase } from "src/application/usecases/tournament/report/create-report.usecase";
 import { JwtAccessTokenGuard } from "../guards/auth/jwt-access-token.guard";
 import { RolesGuard } from "../guards/auth/role.guard";
@@ -12,13 +12,19 @@ import { GetAllReportUseCase } from "src/application/usecases/tournament/report/
 import { IReportResponse } from "src/domain/dtos/report/report.interface";
 import { get } from "http";
 import { GetAllReportOfUserUseCase } from "src/application/usecases/tournament/report/get-all-report-of-user.usecase";
+import { GetAllReportOfTournamentUseCase } from "src/application/usecases/tournament/report/get-all-report-of-tournament.usecase";
+import { ApproveReportUseCase } from "src/application/usecases/tournament/report/approve-report.usecase";
+import { RejectReportUseCase } from "src/application/usecases/tournament/report/reject-report.usecase";
 
 @Controller("/report")
 export class ReportController {
 	constructor(
 		private readonly createReportUseCase: CreateReportUseCase,
 		private readonly getAllReportUseCase: GetAllReportUseCase,
-		private readonly getAllReportsOfUserUseCase: GetAllReportOfUserUseCase
+		private readonly getAllReportsOfUserUseCase: GetAllReportOfUserUseCase,
+		private readonly getAllReportOfTournamentUseCase: GetAllReportOfTournamentUseCase,
+		private readonly approveReportUseCase: ApproveReportUseCase,
+		private readonly rejectReportUseCase: RejectReportUseCase
 	){
 	}
 
@@ -43,5 +49,26 @@ export class ReportController {
 	@Roles(RoleMap.Staff.name)
 	async getAllReportsOfUser(@Param("userId") userId: string): Promise<ApiResponse<IReportResponse[]>> {
 		return await this.getAllReportsOfUserUseCase.execute(userId);
+	}
+
+	@Get("/get-all-reports-of-tournament/:tournamentId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name, RoleMap.Staff.name)
+	async getAllReportsOfTournament(@Param("tournamentId") tournamentId: string): Promise<ApiResponse<IReportResponse[]>> {
+		return await this.getAllReportOfTournamentUseCase.execute(tournamentId);
+	}
+
+	@Put("/approve-report/:reportId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Staff.name)
+	async approveReport(@Param("reportId") reportId: string): Promise<ApiResponse<UserReport>> {
+		return await this.approveReportUseCase.execute(reportId);
+	}
+
+	@Put("/reject-report/:reportId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Staff.name)
+	async rejectReport(@Param("reportId") reportId: string): Promise<ApiResponse<UserReport>> {
+		return await this.rejectReportUseCase.execute(reportId);
 	}
 }
