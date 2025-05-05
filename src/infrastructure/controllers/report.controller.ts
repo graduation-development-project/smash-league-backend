@@ -71,4 +71,11 @@ export class ReportController {
 	async rejectReport(@Param("reportId") reportId: string): Promise<ApiResponse<UserReport>> {
 		return await this.rejectReportUseCase.execute(reportId);
 	}
+
+	@Get("/get-all-report-of-authenticated")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Athlete.name, RoleMap.Team_Leader.name, RoleMap.Umpire.name)
+	async getAllReportOfAuthenticated(@Req() request: IRequestUser): Promise<ApiResponse<IReportResponse[]>> {
+		return await this.getAllReportsOfUserUseCase.execute(request.user.id);
+	}
 }
