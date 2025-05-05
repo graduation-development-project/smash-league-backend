@@ -54,19 +54,21 @@ export class RegisterTournamentUseCase {
 			files,
 		} = registerTournamentDTO;
 
+		const isUmpire = registrationRole === TournamentRegistrationRole.UMPIRE;
+		const isAthlete =
+			registrationRole.toUpperCase() === TournamentRegistrationRole.ATHLETE;
+
 		const haveBankAccounts = await this.bankRepository.getUserBankAccounts(
 			user.id,
 		);
 
-		if (haveBankAccounts.length <= 0) {
+		if (!isUmpire && haveBankAccounts.length <= 0) {
 			throw new BadRequestException(
 				"Please add your bank account before register to tournament",
 			);
 		}
 
-		const isUmpire = registrationRole === TournamentRegistrationRole.UMPIRE;
-		const isAthlete =
-			registrationRole.toUpperCase() === TournamentRegistrationRole.ATHLETE;
+
 
 		const tournament = await this.getTournamentOrThrow(tournamentId);
 		this.validateUserNotOrganizer(tournament.organizerId, user.id);
@@ -85,6 +87,15 @@ export class RegisterTournamentUseCase {
 			tournamentEventId,
 			registrationRole as TournamentRegistrationRole,
 		);
+
+		if (isUmpire) {
+			const umpiresList =
+				await this.tournamentRepository.getTournamentUmpire(tournamentId);
+
+			if (tournament.numberOfUmpireToRecruit === umpiresList.length) {
+				throw new BadRequestException("This is tournament is full of umpires");
+			}
+		}
 
 		if (isAthlete) {
 			const checkFullParticipant =

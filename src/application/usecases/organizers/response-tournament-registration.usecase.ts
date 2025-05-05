@@ -89,6 +89,64 @@ export class ResponseTournamentRegistrationUseCase {
 						[existedRegistration.userId],
 					);
 				} else {
+
+					const tournament = await this.prismaService.tournament.findUnique({
+						where: {
+							id: existedRegistration.tournamentId,
+						},
+					});
+
+					const tournamentUmpires =
+						await this.prismaService.tournamentUmpires.findMany({
+							where: {
+								tournamentId: existedRegistration.tournamentId,
+							},
+						});
+
+					const isFull =
+						tournament.numberOfUmpireToRecruit - 1 === tournamentUmpires.length;
+
+					if (isFull) {
+						const registrationList =
+							await this.prismaService.tournamentRegistration.findMany({
+								where: {
+									tournamentId: existedRegistration.tournamentId,
+									registrationRole: TournamentRegistrationRole.UMPIRE,
+									status: TournamentRegistrationStatus.PENDING,
+								},
+							});
+
+						console.log(registrationList);
+
+						const filteredIds = registrationList
+							.filter((item) => {
+								return item.id !== existedRegistration.id;
+							})
+							.map((item) => item.id);
+
+						const filteredUserIds = registrationList
+							.filter((item) => {
+								return item.id !== existedRegistration.id;
+							})
+							.map((item) => item.userId);
+
+						console.log("filteredIds", filteredIds);
+
+						await this.tournamentRegistrationRepository.cancelManyTournamentRegistration(
+							filteredIds,
+						);
+
+						const notification: CreateNotificationDTO = {
+							message: `Your registration for tournament ${tournament.name} has been cancelled because the tournament is full umpires`,
+							title: "Your registration is cancelled",
+						};
+
+						await this.notificationRepository.createNotification(
+							notification,
+							filteredUserIds,
+						);
+					}
+
 					await this.tournamentUmpireRepository.createTournamentUmpire(
 						existedRegistration.tournamentId,
 						existedRegistration.userId,

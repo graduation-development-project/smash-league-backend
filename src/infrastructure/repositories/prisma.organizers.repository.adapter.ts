@@ -24,6 +24,8 @@ import { Queue } from "bullmq";
 import { formatDate, getCurrentTime } from "../util/format-date-time.util";
 import { RoleMap } from "../enums/role.enum";
 import { TransactionRepositoryPort } from "../../domain/repositories/transaction.repository.port";
+import { CreateNotificationDTO } from "../../domain/dtos/notifications/create-notification.dto";
+import { TournamentRegistrationRepositoryPort } from "../../domain/repositories/tournament-registration.repository.port";
 
 @Injectable()
 export class PrismaOrganizersRepositoryAdapter
@@ -36,6 +38,8 @@ export class PrismaOrganizersRepositoryAdapter
 		private notificationsRepository: NotificationsRepositoryPort,
 		@Inject("TransactionRepository")
 		private transactionRepository: TransactionRepositoryPort,
+		@Inject("TournamentRegistrationRepositoryPort")
+		private readonly tournamentRegistrationRepository: TournamentRegistrationRepositoryPort,
 	) {}
 
 	async responseTournamentRegistration(
@@ -89,6 +93,11 @@ export class PrismaOrganizersRepositoryAdapter
 			});
 
 			if (option) {
+				console.log(
+					existedRegistration.registrationRole ===
+						TournamentRegistrationRole.ATHLETE,
+				);
+
 				if (
 					existedRegistration.registrationRole ===
 					TournamentRegistrationRole.ATHLETE
@@ -501,7 +510,7 @@ export class PrismaOrganizersRepositoryAdapter
 						liveStreamRooms: [],
 						tournamentEvents: groupedEvents,
 						expiredTimeLeft: "",
-						isRecruit: tournament.isRecruit
+						isRecruit: tournament.isRecruit,
 					};
 				},
 			);
