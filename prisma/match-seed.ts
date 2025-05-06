@@ -1,60 +1,182 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { BadmintonParticipantType, Prisma, PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
-	const tournamentEvent = await prisma.tournamentEvent.findFirst({
+	await addParticipantForTournamentEvent1();
+	await addParticipantForTournamentEvent2();
+	await addParticipantForTournamentEvent3();
+}
+
+async function addParticipantForTournamentEvent1() {
+	const tournament = await prisma.tournament.findUnique({
 		where: {
-			typeOfFormat: "SINGLE_ELIMINATION",
+			id: "hcmc-open-2025"
 		}
 	});
-	console.log(tournamentEvent);
+	const tournamentEvent = await prisma.tournamentEvent.findFirst({
+		where: {
+			tournamentId: tournament.id,
+			tournamentEvent: BadmintonParticipantType.MENS_SINGLE
+		}
+	});
 	const participants = await prisma.user.findMany({
 		where: {
 			gender: "MALE",
 			email: {
 				not: "admin@smashleague.com"
 			}
-		}
+		},
+		skip: 0,
+		take: 3
 	});
-	console.log(participants.length);
 	let tournamentParticipants = [];
 	for (const participant of participants) {
 		const account = await prisma.tournamentParticipants.create({
 			data: {
 				userId: participant.id,
 				tournamentEventId: tournamentEvent.id,
-				tournamentId: tournamentEvent.tournamentId,
+				tournamentId: tournamentEvent.tournamentId
 			}
 		});
 		tournamentParticipants.push(account);
 	}
-	console.log(tournamentParticipants);
 
-	const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
+	const standing = await prisma.tournamentEvent.update({
 		where: {
-			tournamentEvent: "MENS_DOUBLE"
+			id: tournamentEvent.id
+		},
+		data: {
+			championshipId: tournamentParticipants[0].id,
+			runnerUpId: tournamentParticipants[1].id,
+			thirdPlaceId: tournamentParticipants[2].id
 		}
 	});
-	console.log(tournamentEvent2);
-	var participants2 = [];
+	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
+	// 	where: {
+	// 		tournamentEvent: "MENS_DOUBLE"
+	// 	}
+	// });
+	// console.log(tournamentEvent2);
+	// var participants2 = [];
+	// for (let i = 0; i < participants.length; i+=2) {
+	// 	const account = await prisma.tournamentParticipants.create({
+	// 		data: {
+	// 			userId: participants[i].id,
+	// 			partnerId: participants[i+1].id,
+	// 			tournamentEventId: tournamentEvent2.id,
+	// 			tournamentId: tournamentEvent2.tournamentId,
+	// 		}
+	// 	});
+	// 	participants2.push(account);
+	// }
+}
+
+async function addParticipantForTournamentEvent2() {
+	const tournament = await prisma.tournament.findUnique({
+		where: {
+			id: "hcmc-open-2025"
+		}
+	});
+	const tournamentEvent = await prisma.tournamentEvent.findFirst({
+		where: {
+			tournamentId: tournament.id,
+			tournamentEvent: BadmintonParticipantType.MENS_DOUBLE
+		}
+	});
+	const participants = await prisma.user.findMany({
+		where: {
+			gender: "MALE",
+			email: {
+				not: "admin@smashleague.com"
+			}
+		},
+		skip: 0,
+		take: 6
+	});
+	let tournamentParticipants = [];
 	for (let i = 0; i < participants.length; i+=2) {
 		const account = await prisma.tournamentParticipants.create({
 			data: {
 				userId: participants[i].id,
 				partnerId: participants[i+1].id,
-				tournamentEventId: tournamentEvent2.id,
-				tournamentId: tournamentEvent2.tournamentId,
+				tournamentEventId: tournamentEvent.id,
+				tournamentId: tournamentEvent.tournamentId,
 			}
 		});
-		participants2.push(account);
+		tournamentParticipants.push(account);
 	}
 
+	const standing = await prisma.tournamentEvent.update({
+		where: {
+			id: tournamentEvent.id
+		},
+		data: {
+			championshipId: tournamentParticipants[0].id,
+			runnerUpId: tournamentParticipants[1].id,
+			thirdPlaceId: tournamentParticipants[2].id
+		}
+	});
 }
 
+async function addParticipantForTournamentEvent3() {
+	const tournament = await prisma.tournament.findUnique({
+		where: {
+			id: "hcmc-open-2025"
+		}
+	});
+	const tournamentEvent = await prisma.tournamentEvent.findFirst({
+		where: {
+			tournamentId: tournament.id,
+			tournamentEvent: BadmintonParticipantType.MIXED_DOUBLE
+		}
+	});
+	const participants = await prisma.user.findMany({
+		where: {
+			gender: "MALE",
+			email: {
+				not: "admin@smashleague.com"
+			}
+		},
+		skip: 0,
+		take: 3
+	});
+	const femaleParticipants = await prisma.user.findMany({
+		where: {
+			gender: "FEMALE",
+			email: {
+				not: "admin@smashleague.com"
+			}
+		},
+		skip: 0,
+		take: 3
+	}); 
+	let tournamentParticipants = [];
+	for (let i = 0; i < participants.length; i++) {
+		const account = await prisma.tournamentParticipants.create({
+			data: {
+				userId: participants[i].id,
+				partnerId: femaleParticipants[i].id,
+				tournamentEventId: tournamentEvent.id,
+				tournamentId: tournamentEvent.tournamentId
+			}
+		});
+		tournamentParticipants.push(account);
+	}
 
+	const standing = await prisma.tournamentEvent.update({
+		where: {
+			id: tournamentEvent.id
+		},
+		data: {
+			championshipId: tournamentParticipants[0].id,
+			runnerUpId: tournamentParticipants[1].id,
+			thirdPlaceId: tournamentParticipants[2].id
+		}
+	});
+}
 
 main()
 	.then(async () => {
