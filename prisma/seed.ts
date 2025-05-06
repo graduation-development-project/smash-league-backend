@@ -1,4 +1,4 @@
-import { BadmintonParticipantType, Prisma, PrismaClient, TournamentEventStatus, TypeOfFormat } from "@prisma/client";
+import { BadmintonParticipantType, Prisma, PrismaClient, TournamentEventStatus, TournamentStatus, TypeOfFormat } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -611,7 +611,7 @@ async function main() {
 			registrationFeePerPerson: 300000,
 			registrationFeePerPair: 550000,
 			maxEventPerPerson: 3,
-			status: "CREATED", // Assigned Status
+			status: TournamentStatus.FINISHED, // Assigned Status
 			protestFeePerTime: 150000,
 			prizePool: 50000000,
 			hasMerchandise: true,
@@ -645,7 +645,7 @@ async function main() {
 			registrationFeePerPerson: 250000,
 			registrationFeePerPair: 450000,
 			maxEventPerPerson: 2,
-			status: "CREATED", // Assigned Status
+			status: TournamentStatus.FINISHED, // Assigned Status
 			protestFeePerTime: 100000,
 			prizePool: 35000000,
 			hasMerchandise: false,
@@ -781,7 +781,7 @@ async function main() {
 			registrationFeePerPerson: 280000,
 			registrationFeePerPair: 500000,
 			maxEventPerPerson: 2,
-			status: "CLOSING_FOR_REGISTRATION", // Assigned Status (Reg closed)
+			status: "CREATED", // Assigned Status (Reg closed)
 			protestFeePerTime: 120000,
 			prizePool: 45000000,
 			hasMerchandise: true,
@@ -815,7 +815,7 @@ async function main() {
 			registrationFeePerPerson: 150000,
 			registrationFeePerPair: 250000,
 			maxEventPerPerson: 4,
-			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Reg is open now)
+			status: "CREATED", // Assigned Status (Reg is open now)
 			protestFeePerTime: 50000,
 			prizePool: 20000000,
 			hasMerchandise: true,
@@ -849,7 +849,7 @@ async function main() {
 			registrationFeePerPerson: 100000,
 			registrationFeePerPair: 180000,
 			maxEventPerPerson: 2,
-			status: "FINISHED", // Assigned Status
+			status: "CREATED", // Assigned Status
 			protestFeePerTime: 50000,
 			prizePool: 5000000,
 			hasMerchandise: false,
@@ -883,7 +883,7 @@ async function main() {
 			registrationFeePerPerson: 250000,
 			registrationFeePerPair: 450000,
 			maxEventPerPerson: 3,
-			status: "ON_GOING", // Assigned Status (Current date fits)
+			status: "CREATED", // Assigned Status (Current date fits)
 			protestFeePerTime: 100000,
 			prizePool: 40000000,
 			hasMerchandise: true,
@@ -917,7 +917,7 @@ async function main() {
 			registrationFeePerPerson: 150000,
 			registrationFeePerPair: 280000,
 			maxEventPerPerson: 2,
-			status: "FINISHED", // Assigned Status
+			status: "CREATED", // Assigned Status
 			protestFeePerTime: 60000,
 			prizePool: 18000000,
 			hasMerchandise: true,
@@ -951,7 +951,7 @@ async function main() {
 			registrationFeePerPerson: 300000,
 			registrationFeePerPair: 550000,
 			maxEventPerPerson: 2,
-			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Reg open)
+			status: "CREATED", // Assigned Status (Reg open)
 			protestFeePerTime: 130000,
 			prizePool: 55000000,
 			hasMerchandise: true,
@@ -985,7 +985,7 @@ async function main() {
 			registrationFeePerPerson: 220000,
 			registrationFeePerPair: 400000,
 			maxEventPerPerson: 3,
-			status: "DRAWING", // Assigned Status (Between draw and start)
+			status: "CREATED", // Assigned Status (Between draw and start)
 			protestFeePerTime: 80000,
 			prizePool: 30000000,
 			hasMerchandise: false,
@@ -1019,7 +1019,7 @@ async function main() {
 			registrationFeePerPerson: 260000,
 			registrationFeePerPair: 480000,
 			maxEventPerPerson: 3,
-			status: "CLOSING_FOR_REGISTRATION", // Assigned Status (Use second closing status)
+			status: "CREATED", // Assigned Status (Use second closing status)
 			protestFeePerTime: 110000,
 			prizePool: 38000000,
 			hasMerchandise: true,
@@ -1053,7 +1053,7 @@ async function main() {
 			registrationFeePerPerson: 180000,
 			registrationFeePerPair: 320000,
 			maxEventPerPerson: 2,
-			status: "DRAWING", // Assigned Status (Use second drawing status)
+			status: "CREATED", // Assigned Status (Use second drawing status)
 			protestFeePerTime: 70000,
 			prizePool: 15000000,
 			hasMerchandise: true,
@@ -1087,7 +1087,7 @@ async function main() {
 			registrationFeePerPerson: 190000,
 			registrationFeePerPair: 340000,
 			maxEventPerPerson: 3,
-			status: "CANCELED", // Assigned Status
+			status: "CREATED", // Assigned Status
 			protestFeePerTime: 90000,
 			prizePool: 22000000,
 			hasMerchandise: false,
