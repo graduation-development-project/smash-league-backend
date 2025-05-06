@@ -596,7 +596,7 @@ async function main() {
 			contactPhone: "+84 901234567", // VN Format
 			contactEmail: "hcmcopen2025@gmail.com", // Gmail format
 			mainColor: "#FF6B6B",
-			backgroundTournament: "https://example.com/images/hcmc_open_bg.jpg",
+			backgroundTournament: "https://i.pinimg.com/736x/59/6a/d6/596ad678212cbb262949e57790931a59.jpg",
 			location: "Nhà thi đấu Phú Thọ, TP. Hồ Chí Minh, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-06-01T00:00:00Z",
 			registrationClosingDate: "2025-06-20T23:59:59Z",
