@@ -6,7 +6,7 @@ import {
 	NotFoundException,
 } from "@nestjs/common";
 import { ApiResponse } from "../../../domain/dtos/api-response";
-import { Match } from "@prisma/client";
+import { Match, TournamentRegistrationRole } from "@prisma/client";
 import { MatchRepositoryPort } from "../../../domain/repositories/match.repository.port";
 import { UpdateMatchDTO } from "../../../domain/dtos/match/update-match.dto";
 import { UmpireRepositoryPort } from "../../../domain/repositories/umpire.repository.port";
@@ -18,6 +18,8 @@ import {
 	getCurrentTime,
 } from "../../../infrastructure/util/format-date-time.util";
 import { TournamentParticipantsRepositoryPort } from "../../../domain/repositories/tournament-participant.repository.port";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @Injectable()
 export class UpdateMatchUseCase {
@@ -32,6 +34,7 @@ export class UpdateMatchUseCase {
 		private readonly notificationsRepository: NotificationsRepositoryPort,
 		@Inject("TournamentParticipantRepositoryPort")
 		private readonly tournamentParticipantsRepository: TournamentParticipantsRepositoryPort,
+		@InjectQueue("emailQueue") private emailQueue: Queue,
 	) {}
 
 	async execute(
@@ -52,9 +55,10 @@ export class UpdateMatchUseCase {
 
 		const oldCourt = matchDetail.courtId;
 		const oldUmpire = matchDetail.umpireId;
+		let courtInfo = null
 
 		if (dataToUpdate.umpireId) {
-			const umpireDetail = await this.umpireRepository.getUmpireDetail(
+			const umpireDetail: any = await this.umpireRepository.getUmpireDetail(
 				dataToUpdate.umpireId,
 				matchDetail.tournamentEvent.tournamentId,
 			);
@@ -69,6 +73,12 @@ export class UpdateMatchUseCase {
 					);
 
 				if (oldUmpire !== null) {
+					const oldUmpireDetail: any =
+						await this.umpireRepository.getUmpireDetail(
+							oldUmpire,
+							matchDetail.tournamentEvent.tournamentId,
+						);
+
 					const notification: CreateNotificationDTO = {
 						title: `Match Unassignment - ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}`,
 						message: `You have been unassigned from officiating the match in tournament ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent}. Please check your schedule for updates.`,
@@ -76,6 +86,21 @@ export class UpdateMatchUseCase {
 					await this.notificationsRepository.createNotification(notification, [
 						oldUmpire,
 					]);
+
+					await this.emailQueue.add("sendEmail", {
+						to: oldUmpireDetail.user.email,
+						subject: "Match Assignment Notification",
+						template: "assign-umpire.hbs",
+						context: {
+							umpireName: oldUmpireDetail.user.name,
+							isAssigned: false,
+							tournamentName: matchDetail.tournamentEvent.tournament.name,
+							tournamentEvent: matchDetail.tournamentEvent.tournamentEvent,
+							matchNumber: matchDetail.matchNumber,
+							// matchTime: matchDetail.startedWhen,
+							// matchVenue: matchDetail.court.courtCode,
+						},
+					});
 
 					await this.umpireRepository.updateUmpireAvailability(
 						oldUmpire,
@@ -92,6 +117,20 @@ export class UpdateMatchUseCase {
 				await this.notificationsRepository.createNotification(notification, [
 					dataToUpdate.umpireId,
 				]);
+
+				await this.emailQueue.add("sendEmail", {
+					to: umpireDetail.user.email,
+					subject: "Match Assignment Notification",
+					template: "assign-umpire.hbs",
+					context: {
+						umpireName: umpireDetail.user.name,
+						isAssigned: true,
+						tournamentName: matchDetail.tournamentEvent.tournament.name,
+						tournamentEvent: matchDetail.tournamentEvent.tournamentEvent,
+						matchNumber: matchDetail.matchNumber,
+
+					},
+				});
 			}
 
 			await this.umpireRepository.updateUmpireAvailability(
@@ -105,6 +144,8 @@ export class UpdateMatchUseCase {
 			const courtDetail = await this.courtRepository.getCourtDetail(
 				dataToUpdate.courtId,
 			);
+
+			courtInfo = courtDetail.courtCode
 
 			if (oldCourt !== dataToUpdate.courtId) {
 				if (!courtDetail) throw new NotFoundException("Court not found");
@@ -239,11 +280,11 @@ export class UpdateMatchUseCase {
 					: `The details of your match in tournament ${matchDetail.tournamentEvent.tournament.name} - ${matchDetail.tournamentEvent.tournamentEvent} have been updated. Please check for the latest time, court, or opponent information.`,
 			};
 
-			const leftCompetitor =
+			const leftCompetitor: any =
 				await this.tournamentParticipantsRepository.getTournamentParticipantDetail(
 					updatedLeftCompetitorId,
 				);
-			const rightCompetitor =
+			const rightCompetitor: any =
 				await this.tournamentParticipantsRepository.getTournamentParticipantDetail(
 					updatedRightCompetitorId,
 				);
@@ -252,6 +293,38 @@ export class UpdateMatchUseCase {
 				leftCompetitor.userId,
 				rightCompetitor.userId,
 			]);
+
+
+			await this.emailQueue.add("sendEmail", {
+				to: leftCompetitor.user.email,
+				subject: "Match Assignment Notification",
+				template: "assign-athlete.hbs",
+				context: {
+					athleteName: leftCompetitor.user.name,
+					isUpdate: shouldNotifyUpdated,
+					tournamentName: matchDetail.tournamentEvent.tournament.name,
+					tournamentEvent: matchDetail.tournamentEvent.tournamentEvent,
+					matchNumber: matchDetail.matchNumber,
+					matchTime: `${getCurrentTime(updatedStartTime)} on ${formatDate(updatedStartTime)}`,
+					matchVenue: courtInfo
+				},
+			});
+
+			await this.emailQueue.add("sendEmail", {
+				to: rightCompetitor.user.email,
+				subject: "Match Assignment Notification",
+				template: "assign-athlete.hbs",
+				context: {
+					athleteName: rightCompetitor.user.name,
+					isUpdate: shouldNotifyUpdated,
+					tournamentName: matchDetail.tournamentEvent.tournament.name,
+					tournamentEvent: matchDetail.tournamentEvent.tournamentEvent,
+					matchNumber: matchDetail.matchNumber,
+					matchTime: `${getCurrentTime(updatedStartTime)} on ${formatDate(updatedStartTime)}`,
+					matchVenue: courtInfo
+				},
+			});
+
 		}
 
 		if (

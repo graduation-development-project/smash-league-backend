@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Match Notification</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			padding: 20px;
+		}
+
+		.container {
+			background: #ffffff;
+			padding: 20px;
+			border-radius: 10px;
+			text-align: center;
+			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+			margin: 0 auto;
+		}
+
+		h2 {
+			color: #333;
+		}
+
+		p {
+			color: #555;
+		}
+
+		.notification {
+			font-size: 18px;
+			font-weight: bold;
+			margin: 20px 0;
+		}
+		.assigned {
+			color: #28a745; /* Màu xanh lá cây */
+		}
+		.updated {
+			color: #007bff; /* Màu xanh dương */
+		}
+
+		.match-details {
+			text-align: left;
+			margin-bottom: 20px;
+		}
+
+		.footer {
+			margin-top: 20px;
+			font-size: 12px;
+			color: #999;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<h2>Match Notification</h2>
+	<p>Dear {{athleteName}},</p>
+	<div class="notification {{#if isUpdate}}updated{{else}}assigned{{/if}}">
+		{{#if isUpdate}}
+			Match Update Notification
+		{{else}}
+			You have been assigned to the following match:
+		{{/if}}
+	</div>
+	<div class="match-details">
+		<p><strong>Tournament:</strong> {{tournamentName}}</p>
+		<p><strong>Event:</strong> {{tournamentEvent}}</p>
+		<p><strong>Match Number:</strong> {{matchNumber}}</p>
+		<p><strong>Time:</strong> {{matchTime}}</p>
+		<p><strong>Venue:</strong> {{matchVenue}}</p>
+
+	</div>
+	<p>
+		Please check for the latest time, court, or opponent information
+	</p>
+	<p>If you have any questions, please contact the tournament organizers.</p>
+	<div class="footer">
+		&copy; 2025 Smash League. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

@@ -133,6 +133,10 @@ export class PrismaUmpireRepositoryAdapter implements UmpireRepositoryPort {
 					tournamentId,
 					userId: umpireId,
 				},
+
+				include: {
+					user: true
+				}
 			});
 		} catch (e) {
 			console.error("Get Umpire Detail failed", e);

@@ -75,6 +75,9 @@ export class PrismaTournamentParticipantRepositoryAdapter
 		try {
 			return this.prismaService.tournamentParticipants.findUnique({
 				where: { id },
+				include: {
+					user: true,
+				},
 			});
 		} catch (e) {
 			console.error("Error getTournamentParticipantDetail", e);
@@ -114,8 +117,8 @@ export class PrismaTournamentParticipantRepositoryAdapter
 				},
 			});
 
-		const takeNumber = tournamentEventExists.maximumAthlete - participants.length
-
+		const takeNumber =
+			tournamentEventExists.maximumAthlete - participants.length;
 
 		// Check if all provided user IDs exist
 		const existingUsers = await this.prismaService.user.findMany({
@@ -129,7 +132,7 @@ export class PrismaTournamentParticipantRepositoryAdapter
 				},
 			},
 
-			take: takeNumber
+			take: takeNumber,
 		});
 
 		const registrationsToCreate = existingUsers.map((userId) => ({
