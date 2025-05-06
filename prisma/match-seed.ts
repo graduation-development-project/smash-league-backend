@@ -11,6 +11,7 @@ async function main() {
 	await addParticipantForTournamentEvent4();
 	await addParticipantForTournamentEvent5();
 	await addParticipantForTournamentEvent6();
+	await addParticipantIntoTournamentEventSingle();
 
 }
 
@@ -350,7 +351,7 @@ async function addParticipantForTournamentEvent6() {
 	});
 }
 
-async function addParticipantIntoTournamentEvent() {
+async function addParticipantIntoTournamentEventSingle() {
 	const participants = await prisma.user.findMany({
 		where: {
 			gender: "MALE",
@@ -361,15 +362,47 @@ async function addParticipantIntoTournamentEvent() {
 		skip: 3,
 		take: 17
 	});
+	console.log(participants.length);
 	const tournamentEvent = await prisma.tournamentEvent.findFirst({
 		where: {
-			tournamentEvent: "MENS_SINGLE"
+			tournamentEvent: "MENS_SINGLE",
+			tournamentId: "hcmc-open-2025"
 		}
 	});
 	for(const participant of participants) {
 		const participantAdded = await prisma.tournamentParticipants.create({
 			data: {
 				userId: participant.id,
+				tournamentEventId: tournamentEvent.id,
+				tournamentId: tournamentEvent.tournamentId
+			}
+		});
+	}
+}
+
+async function addParticipantIntoTournamentEventDouble() {
+	const participants = await prisma.user.findMany({
+		where: {
+			gender: "MALE",
+			email: {
+				not: "admin@smashleague.com"
+			}
+		},
+		skip: 6,
+		take: 34
+	});
+	console.log(participants.length);
+	const tournamentEvent = await prisma.tournamentEvent.findFirst({
+		where: {
+			tournamentEvent: "MENS_DOUBLE",
+			tournamentId: "hcmc-open-2025"
+		}
+	});
+	for(let i = 0; i < participants.length; i+=2) {
+		const participantAdded = await prisma.tournamentParticipants.create({
+			data: {
+				userId: participants[i].id,
+				partnerId: participants[i+1].id,
 				tournamentEventId: tournamentEvent.id,
 				tournamentId: tournamentEvent.tournamentId
 			}

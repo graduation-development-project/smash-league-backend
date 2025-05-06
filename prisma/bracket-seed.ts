@@ -8,7 +8,8 @@ const prisma = new PrismaClient();
 async function main() {
 	const tournamentEvent1 = await prisma.tournamentEvent.findFirst({
 		where: {
-			tournamentEvent: "MENS_SINGLE"
+			tournamentEvent: "MENS_SINGLE",
+			tournamentId: "hcmc-open-2025"
 		}
 	});
 	const tournamentParticipants1 = await prisma.tournamentParticipants.findMany({
@@ -16,10 +17,11 @@ async function main() {
 			tournamentEventId: tournamentEvent1.id
 		}
 	});
-
+	console.log(tournamentParticipants1);
 	const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
 		where: {
-			tournamentEvent: "MENS_DOUBLE"
+			tournamentEvent: "MENS_DOUBLE",
+			tournamentId: "hcmc-open-2025"
 		}
 	});
 
@@ -45,7 +47,6 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 		}
 	});
 	const numberOfMatch = getTheNearestNumberOfFullParticipants(tournamentParticipants.length, 1) / 2;
-	console.log(numberOfMatch);
 	const matches = await prisma.match.findMany({
 		where: {
 			tournamentEventId: tournamentEventId,
@@ -59,7 +60,6 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 	});
 	var currentMatch = 0;
 	var check = 0;
-	console.log(tournamentParticipants.length)
 	while (check < tournamentParticipants.length) {
 		if (matches[currentMatch].isByeMatch) {
 			console.log(check);
@@ -76,10 +76,8 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 			currentMatch++;
 			// console.log("current match: ", matches[currentMatch].id);
 		} else {
-			console.log(check);
 			matches[currentMatch].leftCompetitorId = tournamentParticipants[check].id;
 			check++;
-			console.log(check);
 			matches[currentMatch].rightCompetitorId = tournamentParticipants[check].id;
 			await prisma.match.update({
 				where: {
