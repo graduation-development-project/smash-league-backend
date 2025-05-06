@@ -11,7 +11,7 @@ async function main() {
 			email: "tranminhquyen@gmail.com",
 			password: await bcrypt.hash("12345678", 10),
 			phoneNumber: "0923747283",
-			isVerified: false,
+			isVerified: true,
 			gender: "MALE",
 		},				
 		{
@@ -19,7 +19,7 @@ async function main() {
 			email: "dodangthanhnhut@gmail.com",
 			password: await bcrypt.hash("12345678", 10),
 			phoneNumber: "0932745273",
-			isVerified: false,
+			isVerified: true,
 			gender: "MALE",
 		},
 	];
