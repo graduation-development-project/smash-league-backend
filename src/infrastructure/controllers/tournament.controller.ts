@@ -35,6 +35,7 @@ import {
 	TournamentPost,
 	TournamentSerie,
 	TournamentSponsor,
+	TournamentStatus,
 	TournamentUmpires,
 } from "@prisma/client";
 import { CreateNewTournamentUseCase } from "src/application/usecases/tournament/create-new-tournament.useacase";
@@ -126,6 +127,7 @@ import { UpdateTournamentRecruitmentUseCase } from "../../application/usecases/t
 import { UpdateTournamentRecruitmentDTO } from "../../domain/dtos/tournament/update-tournament-recruitment.dto";
 import { SeedParticipantsUseCase } from "../../application/usecases/tournament/seed-participants.usecase";
 import enableAutomock = jest.enableAutomock;
+import { UpdateTournamentStatusUseCase } from "../../application/usecases/tournament/update-tournament-status.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -177,6 +179,7 @@ export class TournamentController {
 		private readonly updateTournamentRecruitmentUseCase: UpdateTournamentRecruitmentUseCase,
 		private readonly staffCancelTournamentUseCase: StaffCancelTournamentUseCase,
 		private readonly seedParticipantsUseCase: SeedParticipantsUseCase,
+		private readonly updateTournamentStatusUseCase: UpdateTournamentStatusUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -606,6 +609,18 @@ export class TournamentController {
 		return await this.updateTournamentRecruitmentUseCase.execute(
 			tournamentId,
 			updateTournamentRecruitmentDTO,
+		);
+	}
+
+	@Put("/update-tournament-status/:tournamentId")
+	async updateTournamentStatus(
+		@Param("tournamentId") tournamentId: string,
+		@Body("tournamentStatus")
+		tournamentStatus: TournamentStatus,
+	): Promise<ApiResponse<Tournament>> {
+		return await this.updateTournamentStatusUseCase.execute(
+			tournamentId,
+			tournamentStatus,
 		);
 	}
 

@@ -194,6 +194,7 @@ import { GetAllUserUseCase } from "./usecases/users/get-all-user.usecase";
 import { SkipMatchesUseCase } from "./usecases/seed/skip-matches.usecase";
 import { SeedParticipantsUseCase } from "./usecases/tournament/seed-participants.usecase";
 import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-matches.usecase";
+import { UpdateTournamentStatusUseCase } from "./usecases/tournament/update-tournament-status.usecase";
 
 @Module({
 	imports: [
@@ -455,6 +456,7 @@ import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-m
 		UpdateTournamentMerchandiseUseCase,
 		StaffCancelTournamentUseCase,
 		UpdateTournamentRecruitmentUseCase,
+		UpdateTournamentStatusUseCase,
 		//Report use case
 		CreateReportUseCase,
 		GetAllReportUseCase,
@@ -657,6 +659,7 @@ import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-m
 		UpdateTournamentMerchandiseUseCase,
 		StaffCancelTournamentUseCase,
 		UpdateTournamentRecruitmentUseCase,
+		UpdateTournamentStatusUseCase,
 
 		//Report usecase
 		CreateReportUseCase,
@@ -736,7 +739,6 @@ import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-m
 		SkipMatchesUseCase,
 		SeedParticipantsUseCase,
 		AssignPlayerToMatchesUseCase,
-
 	],
 })
 export class ApplicationModule {}
