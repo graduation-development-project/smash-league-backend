@@ -277,7 +277,6 @@ export class CreateNewTournamentUseCase {
 			maxEventPerPerson: createTournament.maxEventPerPerson,
 			prizePool: createTournament.prizePool,
 			mainColor: createTournament.mainColor,
-			umpirePerMatch: createTournament.umpirePerMatch,
 			numberOfCourt: createTournament.createCourts.createCourts.length,
 			protestFeePerTime: createTournament.protestFeePerTime,
 			hasMerchandise: createTournament.hasMerchandise,
@@ -292,11 +291,7 @@ export class CreateNewTournamentUseCase {
 			description: createTournament.description,
 			introduction: createTournament.introduction,
 			isRecruit: createTournament.isRecruit,
-			isLiveDraw: createTournament.isLiveDraw,
-			isPrivate: createTournament.isPrivate,
-			isRegister: createTournament.isRegister,
-			hasLiveStream: createTournament.hasLiveStream,
-			numberOfUmpireToRecruit: createTournament.numberOfUmpires
+			numberOfUmpires: createTournament.numberOfUmpires
 		});
 		return tournament;
 	}

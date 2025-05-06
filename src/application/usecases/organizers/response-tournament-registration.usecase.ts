@@ -104,7 +104,7 @@ export class ResponseTournamentRegistrationUseCase {
 						});
 
 					const isFull =
-						tournament.numberOfUmpireToRecruit - 1 === tournamentUmpires.length;
+						tournament.numberOfUmpires - 1 === tournamentUmpires.length;
 
 					if (isFull) {
 						const registrationList =

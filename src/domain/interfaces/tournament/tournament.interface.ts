@@ -122,15 +122,10 @@ export interface ICreateTournament {
 	hasMerchandise: boolean;
 	numberOfMerchandise: number;
 	merchandiseImages: string[];
-	umpirePerMatch: number;
 	numberOfCourt: number;
 	requiredAttachment: RequiredAttachment[];
 	isRecruit: boolean;
-	isPrivate: boolean;
-	isRegister: boolean;
-	isLiveDraw: boolean;
-	hasLiveStream: boolean;
-	numberOfUmpireToRecruit: number;
+	numberOfUmpires: number;
 }
 
 export interface ICreateCourts {
@@ -180,7 +175,6 @@ export interface ITournamentResponse {
 	startDate: Date;
 	endDate: Date;
 	checkInBeforeStart: Date;
-	umpirePerMatch: number;
 	registrationFeePerPerson: number;
 	registrationFeePerPair: number;
 	maxEventPerPerson: number;
@@ -214,8 +208,8 @@ export interface ITournamentDetailResponse {
 	name: string;
 	shortName: string;
 	mainColor: string;
-	description: string,
-	introduction: string,
+	description: string;
+	introduction: string;
 	backgroundTournament: string;
 	checkInBeforeStart: Date;
 	registrationOpeningDate: Date;
@@ -234,7 +228,6 @@ export interface ITournamentDetailResponse {
 	contactPhone: string;
 	// numberOfMerchandise: true,
 	hasMerchandise: boolean;
-	hasLiveStream: boolean;
 	hasPost: boolean;
 	location: string;
 	registrationFeePerPerson: number;

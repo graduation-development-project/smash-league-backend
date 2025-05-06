@@ -253,7 +253,6 @@ model Tournament {
   endDateFirstTime         DateTime
   endDate                  DateTime
   checkInBeforeStart       DateTime
-  umpirePerMatch           Int
   numberOfCourt            Int
   registrationFeePerPerson Int
   registrationFeePerPair   Int?
@@ -266,11 +265,7 @@ model Tournament {
   merchandiseImages        String[]                 @default([])
   requiredAttachment       String[]
   isRecruit                Boolean
-  isPrivate                Boolean
-  isRegister               Boolean
-  isLiveDraw               Boolean
-  hasLiveStream            Boolean
-  numberOfUmpireToRecruit  Int?                     @default(0)
+  numberOfUmpires          Int?                     @default(0)
   tournamentSerieId        String?
   tournamentSerie          TournamentSerie?         @relation(name: "FK_Tournament_TournamentSerie", fields: [tournamentSerieId], references: [id], onDelete: Cascade)
   organizer                User                     @relation(name: "FK_Tournament_User", fields: [organizerId], references: [id], onDelete: Cascade)
@@ -320,7 +315,6 @@ model TournamentEvent {
   championshipPrize      String
   runnerUpPrize          String
   thirdPlacePrize        String?
-  jointThirdPlacePrize   String?
   championshipId         String?
   championship           TournamentParticipants?  @relation(name: "FK_Championship_TournamentParticipants", fields: [championshipId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   runnerUpId             String?
