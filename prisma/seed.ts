@@ -745,8 +745,7 @@ async function main() {
 			hasMerchandise: true,
 			numberOfMerchandise: 350,
 			merchandiseImages: [
-				"https://example.com/images/merch_jpo_1.jpg",
-				"https://example.com/images/merch_jpo_2.jpg",
+				"https://www.allenglandbadminton.com/wp-content/uploads/2024/01/YAE_V5_Social-Post-Rollout_Landscape_1080x566_NoText.jpg",
 			],
 			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
 			isRecruit: false,
