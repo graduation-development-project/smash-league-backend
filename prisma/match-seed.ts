@@ -1,4 +1,4 @@
-import { BadmintonParticipantType, Prisma, PrismaClient } from "@prisma/client";
+import { BadmintonParticipantType, Prisma, PrismaClient, TournamentEventStatus } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -62,7 +62,8 @@ async function addParticipantForTournamentEvent1() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
@@ -127,7 +128,8 @@ async function addParticipantForTournamentEvent2() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 }
@@ -184,7 +186,8 @@ async function addParticipantForTournamentEvent3() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 }
@@ -230,7 +233,8 @@ async function addParticipantForTournamentEvent4() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
@@ -295,7 +299,8 @@ async function addParticipantForTournamentEvent5() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 }
@@ -352,7 +357,8 @@ async function addParticipantForTournamentEvent6() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 }
@@ -457,7 +463,8 @@ async function addParticipantForTournamentEvent7() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
@@ -522,7 +529,8 @@ async function addParticipantForTournamentEvent8() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 }
@@ -579,7 +587,8 @@ async function addParticipantForTournamentEvent9() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 }
@@ -625,7 +634,8 @@ async function addParticipantForTournamentEvent10() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
@@ -690,7 +700,8 @@ async function addParticipantForTournamentEvent11() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 }
@@ -747,7 +758,8 @@ async function addParticipantForTournamentEvent12() {
 		data: {
 			championshipId: tournamentParticipants[0].id,
 			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id
+			thirdPlaceId: tournamentParticipants[2].id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		}
 	});
 }
