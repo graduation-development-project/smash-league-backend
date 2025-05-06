@@ -1,4 +1,4 @@
-import { BadmintonParticipantType, Prisma, PrismaClient, TournamentEventStatus, TypeOfFormat } from "@prisma/client";
+import { BadmintonParticipantType, Prisma, PrismaClient, TournamentEventStatus, TournamentStatus, TypeOfFormat } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -596,7 +596,7 @@ async function main() {
 			contactPhone: "+84 901234567", // VN Format
 			contactEmail: "hcmcopen2025@gmail.com", // Gmail format
 			mainColor: "#FF6B6B",
-			backgroundTournament: "https://example.com/images/hcmc_open_bg.jpg",
+			backgroundTournament: "https://i.pinimg.com/736x/59/6a/d6/596ad678212cbb262949e57790931a59.jpg",
 			location: "Nhà thi đấu Phú Thọ, TP. Hồ Chí Minh, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-06-01T00:00:00Z",
 			registrationClosingDate: "2025-06-20T23:59:59Z",
@@ -611,7 +611,7 @@ async function main() {
 			registrationFeePerPerson: 300000,
 			registrationFeePerPair: 550000,
 			maxEventPerPerson: 3,
-			status: "CREATED", // Assigned Status
+			status: TournamentStatus.FINISHED, // Assigned Status
 			protestFeePerTime: 150000,
 			prizePool: 50000000,
 			hasMerchandise: true,
@@ -630,7 +630,7 @@ async function main() {
 			contactPhone: "+84 988765432", // VN Format
 			contactEmail: "danangchallenge2025@gmail.com", // Gmail format
 			mainColor: "#4ECDC4",
-			backgroundTournament: "https://example.com/images/danang_bg.jpg",
+			backgroundTournament: "https://st2.depositphotos.com/4112313/9124/v/950/depositphotos_91244926-stock-illustration-polygonal-professional-badminton-player-on.jpg",
 			location: "Cung thể thao Tiên Sơn, Đà Nẵng, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-07-15T00:00:00Z",
 			registrationClosingDate: "2025-08-05T23:59:59Z",
@@ -645,7 +645,7 @@ async function main() {
 			registrationFeePerPerson: 250000,
 			registrationFeePerPair: 450000,
 			maxEventPerPerson: 2,
-			status: "CREATED", // Assigned Status
+			status: TournamentStatus.FINISHED, // Assigned Status
 			protestFeePerTime: 100000,
 			prizePool: 35000000,
 			hasMerchandise: false,
@@ -664,7 +664,7 @@ async function main() {
 			contactPhone: "+84 351122334", // VN Format
 			contactEmail: "hanoimasters.info@gmail.com", // Gmail format
 			mainColor: "#F9A825",
-			backgroundTournament: "https://example.com/images/hanoi_masters_bg.jpg",
+			backgroundTournament: "https://png.pngtree.com/thumb_back/fh260/back_our/20190619/ourmid/pngtree-promotional-red-badminton-background-material-image_140709.jpg",
 			location: "Nhà thi đấu Trịnh Hoài Đức, Hà Nội, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-08-20T00:00:00Z",
 			registrationClosingDate: "2025-09-10T23:59:59Z",
@@ -698,7 +698,7 @@ async function main() {
 			contactPhone: "+84 777888999", // VN Format
 			contactEmail: "canthobadmintoncup@gmail.com", // Gmail format
 			mainColor: "#16A085",
-			backgroundTournament: "https://example.com/images/cantho_cup_bg.jpg",
+			backgroundTournament: "https://i.pinimg.com/736x/66/d8/4b/66d84b382469b234a1c021d2b407adcf.jpg",
 			location: "Nhà thi đấu đa năng Cần Thơ, Cần Thơ, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-10-01T00:00:00Z",
 			registrationClosingDate: "2025-10-20T23:59:59Z",
@@ -732,7 +732,7 @@ async function main() {
 			contactPhone: "+84 936111222", // VN Format
 			contactEmail: "haiphong.open@gmail.com", // Gmail format
 			mainColor: "#E74C3C",
-			backgroundTournament: "https://example.com/images/haiphong_bg.jpg",
+			backgroundTournament: "https://png.pngtree.com/background/20210710/original/pngtree-badminton-competition-advertising-background-picture-image_1058140.jpg",
 			location: "Nhà thi đấu Lạch Tray, Hải Phòng, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-09-01T00:00:00Z",
 			registrationClosingDate: "2025-09-30T23:59:59Z",
@@ -766,7 +766,7 @@ async function main() {
 			contactPhone: "+84 945987654", // VN Format
 			contactEmail: "hueimperialcup@gmail.com", // Gmail format
 			mainColor: "#F1C40F",
-			backgroundTournament: "https://example.com/images/hue_bg.jpg",
+			backgroundTournament: "https://t3.ftcdn.net/jpg/03/10/62/12/360_F_310621281_foEqKBGtGlNWFQRePgdF5BpLOFyTsnzO.jpg",
 			location: "Trung tâm thể thao Thừa Thiên Huế, Huế, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-04-15T00:00:00Z", // Reg started
 			registrationClosingDate: "2025-05-05T23:59:59Z", // Reg closed yesterday (May 5th)
@@ -781,7 +781,7 @@ async function main() {
 			registrationFeePerPerson: 280000,
 			registrationFeePerPair: 500000,
 			maxEventPerPerson: 2,
-			status: "CLOSING_FOR_REGISTRATION", // Assigned Status (Reg closed)
+			status: "CREATED", // Assigned Status (Reg closed)
 			protestFeePerTime: 120000,
 			prizePool: 45000000,
 			hasMerchandise: true,
@@ -800,7 +800,7 @@ async function main() {
 			contactPhone: "+84 911223344", // VN Format
 			contactEmail: "vbf.youthnationals@gmail.com", // Gmail format
 			mainColor: "#3498DB",
-			backgroundTournament: "https://example.com/images/vyn_bg.jpg",
+			backgroundTournament: "https://t3.ftcdn.net/jpg/04/84/86/42/360_F_484864213_3Qve2ufnWY7Wkqk9r6RXXVUbraC6lfvQ.jpg",
 			location: "Nhà thi đấu Bắc Giang, Bắc Giang, Việt Nam", // VN Location specified
 			registrationOpeningDate: "2025-05-01T00:00:00Z", // Reg opened May 1st
 			registrationClosingDate: "2025-05-25T23:59:59Z", // Reg closes later this month
@@ -815,7 +815,7 @@ async function main() {
 			registrationFeePerPerson: 150000,
 			registrationFeePerPair: 250000,
 			maxEventPerPerson: 4,
-			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Reg is open now)
+			status: "CREATED", // Assigned Status (Reg is open now)
 			protestFeePerTime: 50000,
 			prizePool: 20000000,
 			hasMerchandise: true,
@@ -834,7 +834,7 @@ async function main() {
 			contactPhone: "+84 908765432", // VN Format
 			contactEmail: "hcmc.clubchallenge@gmail.com", // Gmail format
 			mainColor: "#E67E22",
-			backgroundTournament: "https://example.com/images/hcmc_club_bg.jpg",
+			backgroundTournament: "https://www.shutterstock.com/image-vector/abstract-silhouette-badminton-player-on-260nw-2224936785.jpg",
 			location: "Câu lạc bộ Tao Đàn, TP. Hồ Chí Minh, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-02-01T00:00:00Z", // Past date
 			registrationClosingDate: "2025-02-20T23:59:59Z", // Past date
@@ -849,7 +849,7 @@ async function main() {
 			registrationFeePerPerson: 100000,
 			registrationFeePerPair: 180000,
 			maxEventPerPerson: 2,
-			status: "FINISHED", // Assigned Status
+			status: "CREATED", // Assigned Status
 			protestFeePerTime: 50000,
 			prizePool: 5000000,
 			hasMerchandise: false,
@@ -868,7 +868,7 @@ async function main() {
 			contactPhone: "+84 967123789", // VN Format
 			contactEmail: "vungtaubeachcup@gmail.com", // Gmail format
 			mainColor: "#F54242",
-			backgroundTournament: "https://example.com/images/vt_bg.jpg",
+			backgroundTournament: "https://i.pinimg.com/736x/59/6a/d6/596ad678212cbb262949e57790931a59.jpg",
 			location: "Nhà thi đấu Vũng Tàu, Bà Rịa - Vũng Tàu, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-04-10T00:00:00Z", // Adjusted Date
 			registrationClosingDate: "2025-04-28T23:59:59Z", // Adjusted Date
@@ -883,7 +883,7 @@ async function main() {
 			registrationFeePerPerson: 250000,
 			registrationFeePerPair: 450000,
 			maxEventPerPerson: 3,
-			status: "ON_GOING", // Assigned Status (Current date fits)
+			status: "CREATED", // Assigned Status (Current date fits)
 			protestFeePerTime: 100000,
 			prizePool: 40000000,
 			hasMerchandise: true,
@@ -902,7 +902,7 @@ async function main() {
 			contactPhone: "+84 918273645", // VN Format
 			contactEmail: "dongnai.izcup@gmail.com", // Gmail format
 			mainColor: "#8E44AD",
-			backgroundTournament: "https://example.com/images/dn_bg.jpg",
+			backgroundTournament: "https://st2.depositphotos.com/4112313/9124/v/950/depositphotos_91244926-stock-illustration-polygonal-professional-badminton-player-on.jpg",
 			location: "Trung tâm TDTT Đồng Nai, Biên Hòa, Đồng Nai, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-03-01T00:00:00Z", // Past Date
 			registrationClosingDate: "2025-03-25T23:59:59Z", // Past Date
@@ -917,7 +917,7 @@ async function main() {
 			registrationFeePerPerson: 150000,
 			registrationFeePerPair: 280000,
 			maxEventPerPerson: 2,
-			status: "FINISHED", // Assigned Status
+			status: "CREATED", // Assigned Status
 			protestFeePerTime: 60000,
 			prizePool: 18000000,
 			hasMerchandise: true,
@@ -936,7 +936,7 @@ async function main() {
 			contactPhone: "+84 987654321", // VN Format
 			contactEmail: "nhatrang.beachgames@gmail.com", // Gmail format
 			mainColor: "#2ECC71",
-			backgroundTournament: "https://example.com/images/nt_bg.jpg",
+			backgroundTournament: "https://png.pngtree.com/thumb_back/fh260/back_our/20190619/ourmid/pngtree-promotional-red-badminton-background-material-image_140709.jpg",
 			location: "Trung tâm Dịch vụ TDTT Nha Trang, Khánh Hòa, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-04-20T00:00:00Z", // Adjusted date
 			registrationClosingDate: "2025-05-15T23:59:59Z", // Adjusted date (Reg open)
@@ -951,7 +951,7 @@ async function main() {
 			registrationFeePerPerson: 300000,
 			registrationFeePerPair: 550000,
 			maxEventPerPerson: 2,
-			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Reg open)
+			status: "CREATED", // Assigned Status (Reg open)
 			protestFeePerTime: 130000,
 			prizePool: 55000000,
 			hasMerchandise: true,
@@ -970,7 +970,7 @@ async function main() {
 			contactPhone: "+84 888111333", // VN Format
 			contactEmail: "binhduong.invitational@gmail.com", // Gmail format
 			mainColor: "#7F8C8D",
-			backgroundTournament: "https://example.com/images/bdi_bg.jpg",
+			backgroundTournament: "https://i.pinimg.com/736x/66/d8/4b/66d84b382469b234a1c021d2b407adcf.jpg",
 			location: "Nhà thi đấu tỉnh Bình Dương, Thủ Dầu Một, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-04-10T00:00:00Z", // Adjusted date
 			registrationClosingDate: "2025-04-30T23:59:59Z", // Adjusted date (Reg closed)
@@ -985,7 +985,7 @@ async function main() {
 			registrationFeePerPerson: 220000,
 			registrationFeePerPair: 400000,
 			maxEventPerPerson: 3,
-			status: "DRAWING", // Assigned Status (Between draw and start)
+			status: "CREATED", // Assigned Status (Between draw and start)
 			protestFeePerTime: 80000,
 			prizePool: 30000000,
 			hasMerchandise: false,
@@ -1004,7 +1004,7 @@ async function main() {
 			contactPhone: "+84 977888444", // VN Format
 			contactEmail: "lamdong.challenge@gmail.com", // Gmail format
 			mainColor: "#C0392B",
-			backgroundTournament: "https://example.com/images/ld_bg.jpg",
+			backgroundTournament: "https://png.pngtree.com/background/20210710/original/pngtree-badminton-competition-advertising-background-picture-image_1058140.jpg",
 			location: "Nhà thi đấu Đà Lạt, Lâm Đồng, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-04-18T00:00:00Z", // Adjusted date
 			registrationClosingDate: "2025-05-08T23:59:59Z", // Adjusted date (Reg closes soon)
@@ -1019,7 +1019,7 @@ async function main() {
 			registrationFeePerPerson: 260000,
 			registrationFeePerPair: 480000,
 			maxEventPerPerson: 3,
-			status: "CLOSING_FOR_REGISTRATION", // Assigned Status (Use second closing status)
+			status: "CREATED", // Assigned Status (Use second closing status)
 			protestFeePerTime: 110000,
 			prizePool: 38000000,
 			hasMerchandise: true,
@@ -1038,7 +1038,7 @@ async function main() {
 			contactPhone: "+84 981122555", // VN Format
 			contactEmail: "vbf.seniornationals@gmail.com", // Gmail format
 			mainColor: "#2C3E50",
-			backgroundTournament: "https://example.com/images/vsn_bg.jpg",
+			backgroundTournament: "https://t3.ftcdn.net/jpg/03/10/62/12/360_F_310621281_foEqKBGtGlNWFQRePgdF5BpLOFyTsnzO.jpg",
 			location: "Nhà thi đấu Phan Chu Trinh, Nha Trang, Khánh Hòa, Việt Nam", // VN Location specified
 			registrationOpeningDate: "2025-05-01T00:00:00Z", // Adjusted date
 			registrationClosingDate: "2025-05-20T23:59:59Z", // Adjusted date (Reg open)
@@ -1053,7 +1053,7 @@ async function main() {
 			registrationFeePerPerson: 180000,
 			registrationFeePerPair: 320000,
 			maxEventPerPerson: 2,
-			status: "DRAWING", // Assigned Status (Use second drawing status)
+			status: "CREATED", // Assigned Status (Use second drawing status)
 			protestFeePerTime: 70000,
 			prizePool: 15000000,
 			hasMerchandise: true,
@@ -1072,7 +1072,7 @@ async function main() {
 			contactPhone: "+84 789456123", // VN Format
 			contactEmail: "baclieu.windfarm.open@gmail.com", // Gmail format
 			mainColor: "#BDC3C7",
-			backgroundTournament: "https://example.com/images/bl_bg.jpg",
+			backgroundTournament: "https://t3.ftcdn.net/jpg/04/84/86/42/360_F_484864213_3Qve2ufnWY7Wkqk9r6RXXVUbraC6lfvQ.jpg",
 			location: "Nhà thi đấu đa năng Bạc Liêu, Bạc Liêu, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-06-10T00:00:00Z",
 			registrationClosingDate: "2025-06-30T23:59:59Z",
@@ -1087,7 +1087,7 @@ async function main() {
 			registrationFeePerPerson: 190000,
 			registrationFeePerPair: 340000,
 			maxEventPerPerson: 3,
-			status: "CANCELED", // Assigned Status
+			status: "CREATED", // Assigned Status
 			protestFeePerTime: 90000,
 			prizePool: 22000000,
 			hasMerchandise: false,

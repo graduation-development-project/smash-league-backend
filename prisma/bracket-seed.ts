@@ -8,7 +8,8 @@ const prisma = new PrismaClient();
 async function main() {
 	const tournamentEvent1 = await prisma.tournamentEvent.findFirst({
 		where: {
-			tournamentEvent: "MENS_SINGLE"
+			tournamentEvent: "MENS_SINGLE",
+			tournamentId: "hcmc-open-2025"
 		}
 	});
 	const tournamentParticipants1 = await prisma.tournamentParticipants.findMany({
@@ -16,10 +17,10 @@ async function main() {
 			tournamentEventId: tournamentEvent1.id
 		}
 	});
-
 	const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
 		where: {
-			tournamentEvent: "MENS_DOUBLE"
+			tournamentEvent: "MENS_DOUBLE",
+			tournamentId: "hcmc-open-2025"
 		}
 	});
 
@@ -28,14 +29,12 @@ async function main() {
 			tournamentEventId: tournamentEvent2.id
 		}
 	});
-
 	await createBracketFunction1(tournamentEvent1, tournamentParticipants1);
 	await createBracketFunction1(tournamentEvent2, tournamentParticipants2);
 
 	await addParticipantsToBracket(tournamentEvent1.id);
 	await addParticipantsToBracket(tournamentEvent2.id);
 	//console.log(tournamentParticipants1.length);
-	
 }
 
 async function addParticipantsToBracket(tournamentEventId: string) {
@@ -45,7 +44,6 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 		}
 	});
 	const numberOfMatch = getTheNearestNumberOfFullParticipants(tournamentParticipants.length, 1) / 2;
-	console.log(numberOfMatch);
 	const matches = await prisma.match.findMany({
 		where: {
 			tournamentEventId: tournamentEventId,
@@ -59,8 +57,8 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 	});
 	var currentMatch = 0;
 	var check = 0;
-	console.log(tournamentParticipants.length)
 	while (check < tournamentParticipants.length) {
+		console.log(matches);
 		if (matches[currentMatch].isByeMatch) {
 			console.log(check);
 			matches[currentMatch].leftCompetitorId = tournamentParticipants[check].id;
@@ -76,10 +74,8 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 			currentMatch++;
 			// console.log("current match: ", matches[currentMatch].id);
 		} else {
-			console.log(check);
 			matches[currentMatch].leftCompetitorId = tournamentParticipants[check].id;
 			check++;
-			console.log(check);
 			matches[currentMatch].rightCompetitorId = tournamentParticipants[check].id;
 			await prisma.match.update({
 				where: {
@@ -109,98 +105,178 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 			let check = 0;
 			let nextMatches: Match[] = [];
 			do {
+				console.log(nextMatches);
 				countableRound *= 2;
 				// console.log(this.getRoundOfBracket(countableRound));
 				check += 1;
 				const stageCreate = await createStage(
 					getRoundOfBracket(countableRound),
 					tournamentEvent1.id);
-				let matchesCreate: ICreateMatch[] = [];
+				let matchesCreate: Match[] = [];
 				if (check === 1) {
-					matchesCreate.push({
-						matchStatus: MatchStatus.NOT_STARTED,
-						nextMatchId: null,
-						stageId: stageCreate.id,
-						isByeMatch: false,
-						matchNumber: numberOfFullParticipants - 1,
-						tournamentEventId: tournamentEvent1.id
+					const matchCreate = await prisma.match.create({
+						data: {
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: null,
+							stageId: stageCreate.id,
+							isByeMatch: false,
+							matchNumber: numberOfBracket,
+							tournamentEventId: tournamentEvent1.id
+						}
 					});
+					matchesCreate.push(matchCreate);
+					// matchesCreate.push({
+					// 	matchStatus: MatchStatus.NOT_STARTED,
+					// 	nextMatchId: null,
+					// 	stageId: stageCreate.id,
+					// 	isByeMatch: false,
+					// 	matchNumber: numberOfFullParticipants - 1,
+					// 	tournamentEventId: tournamentEvent1.id
+					// });
 					numberOfBracket -= 1;
 				} else if (check === numberOfRounds) {
 					//console.log(((numberOfByeParticipants / 2) + 1), " ", Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
 					const range = createRangeNumberArray(((numberOfByeParticipants / 2) + 1), Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
 					// console.log(nextMatches.length);
 					// console.log(this.checkNumberIsInRange(7, range));
-					for (let i = nextMatches.length * 2; i >= 2; i-=2) {
+					for (let i = 2; i <= nextMatches.length * 2; i+=2) {
 						// console.log(numberOfBracket, " ", this.checkNumberIsInRange(i, range));
 						if (!checkNumberIsInRange(i, range)) {
-							matchesCreate.push({
-								isByeMatch: true,
-								matchStatus: MatchStatus.NOT_STARTED,
-								nextMatchId: nextMatches[i/2-1].id,
-								stageId: stageCreate.id,
-								matchNumber: i,
-								tournamentEventId: tournamentEvent1.id
+							const matchCreate = await prisma.match.create({
+								data: {
+									matchStatus: MatchStatus.NOT_STARTED,
+									nextMatchId: nextMatches[i/2-1].id,
+									stageId: stageCreate.id,
+									isByeMatch: true,
+									matchNumber: numberOfBracket,
+									tournamentEventId: tournamentEvent1.id
+								}
 							});
+							matchesCreate.push(matchCreate);
+							numberOfBracket -= 1;
+							// matchesCreate.push({
+							// 	isByeMatch: true,
+							// 	matchStatus: MatchStatus.NOT_STARTED,
+							// 	nextMatchId: nextMatches[i/2-1].id,
+							// 	stageId: stageCreate.id,
+							// 	matchNumber: i,
+							// 	tournamentEventId: tournamentEvent1.id
+							// });
 						} else {
-							matchesCreate.push({
-								isByeMatch: false,
-								matchStatus: MatchStatus.NOT_STARTED,
-								nextMatchId: nextMatches[i/2-1].id,
-								stageId: stageCreate.id,
-								matchNumber: i,
-								tournamentEventId: tournamentEvent1.id
+							const matchCreate = await prisma.match.create({
+								data: {
+									matchStatus: MatchStatus.NOT_STARTED,
+									nextMatchId: nextMatches[i/2-1].id,
+									stageId: stageCreate.id,
+									isByeMatch: false,
+									matchNumber: numberOfBracket,
+									tournamentEventId: tournamentEvent1.id
+								}
 							});
+							matchesCreate.push(matchCreate);
+							numberOfBracket -= 1;
+							// matchesCreate.push({
+							// 	isByeMatch: false,
+							// 	matchStatus: MatchStatus.NOT_STARTED,
+							// 	nextMatchId: nextMatches[i/2-1].id,
+							// 	stageId: stageCreate.id,
+							// 	matchNumber: i,
+							// 	tournamentEventId: tournamentEvent1.id
+							// });
 						}
-						numberOfBracket -= 1;
 						//console.log(this.checkNumberIsInRange(i - 1, range));
 	
 						if (!checkNumberIsInRange(i - 1, range)) {
-							matchesCreate.push({
-								isByeMatch: true,
-								matchStatus: MatchStatus.NOT_STARTED,
-								nextMatchId: nextMatches[i/2-1].id,
-								stageId: stageCreate.id,
-								matchNumber: i - 1,
-								tournamentEventId: tournamentEvent1.id
+							const matchCreate = await prisma.match.create({
+								data: {
+									matchStatus: MatchStatus.NOT_STARTED,
+									nextMatchId: nextMatches[i/2-1].id,
+									stageId: stageCreate.id,
+									isByeMatch: true,
+									matchNumber: numberOfBracket,
+									tournamentEventId: tournamentEvent1.id
+								}
 							});
+							matchesCreate.push(matchCreate);
+							numberOfBracket -= 1;
+							// matchesCreate.push({
+							// 	isByeMatch: true,
+							// 	matchStatus: MatchStatus.NOT_STARTED,
+							// 	nextMatchId: nextMatches[i/2-1].id,
+							// 	stageId: stageCreate.id,
+							// 	matchNumber: i - 1,
+							// 	tournamentEventId: tournamentEvent1.id
+							// });
 						} else {
-							matchesCreate.push({
-								isByeMatch: false,
-								matchStatus: MatchStatus.NOT_STARTED,
-								nextMatchId: nextMatches[i/2-1].id,
-								stageId: stageCreate.id,
-								matchNumber: i - 1,
-								tournamentEventId: tournamentEvent1.id
+							const matchCreate = await prisma.match.create({
+								data: {
+									matchStatus: MatchStatus.NOT_STARTED,
+									nextMatchId: nextMatches[i/2-1].id,
+									stageId: stageCreate.id,
+									isByeMatch: false,
+									matchNumber: numberOfBracket,
+									tournamentEventId: tournamentEvent1.id
+								}
 							});
+							matchesCreate.push(matchCreate);
+							numberOfBracket -= 1;
+							// matchesCreate.push({
+							// 	isByeMatch: false,
+							// 	matchStatus: MatchStatus.NOT_STARTED,
+							// 	nextMatchId: nextMatches[i/2-1].id,
+							// 	stageId: stageCreate.id,
+							// 	matchNumber: i - 1,
+							// 	tournamentEventId: tournamentEvent1.id
+							// });
 						}
-						numberOfBracket -= 1;
 					}
 				} else {
 					for (let i = 0; i < nextMatches.length; i++) {
-						matchesCreate.push({
-							isByeMatch: false,
-							matchNumber: numberOfBracket,
-							matchStatus: MatchStatus.NOT_STARTED,
-							nextMatchId: nextMatches[i].id,
-							stageId: stageCreate.id,
-							tournamentEventId: tournamentEvent1.id				
+						// matchesCreate.push({
+						// 	isByeMatch: false,
+						// 	matchNumber: numberOfBracket,
+						// 	matchStatus: MatchStatus.NOT_STARTED,
+						// 	nextMatchId: nextMatches[i].id,
+						// 	stageId: stageCreate.id,
+						// 	tournamentEventId: tournamentEvent1.id				
+						// });
+						const matchCreate = await prisma.match.create({
+							data: {
+								matchStatus: MatchStatus.NOT_STARTED,
+								nextMatchId: nextMatches[i].id,
+								stageId: stageCreate.id,
+								isByeMatch: false,
+								matchNumber: numberOfBracket,
+								tournamentEventId: tournamentEvent1.id
+							}
 						});
+						matchesCreate.push(matchCreate);
 						numberOfBracket -= 1;
-						matchesCreate.push({
-							isByeMatch: false,
-							matchNumber: numberOfBracket,
-							matchStatus: MatchStatus.NOT_STARTED,
-							nextMatchId: nextMatches[i].id,
-							stageId: stageCreate.id,
-							tournamentEventId: tournamentEvent1.id				
+						const matchCreate1 = await prisma.match.create({
+							data: {
+								matchStatus: MatchStatus.NOT_STARTED,
+								nextMatchId: nextMatches[i].id,
+								stageId: stageCreate.id,
+								isByeMatch: false,
+								matchNumber: numberOfBracket,
+								tournamentEventId: tournamentEvent1.id
+							}
 						});
+						matchesCreate.push(matchCreate1);
+						// matchesCreate.push({
+						// 	isByeMatch: false,
+						// 	matchNumber: numberOfBracket,
+						// 	matchStatus: MatchStatus.NOT_STARTED,
+						// 	nextMatchId: nextMatches[i].id,
+						// 	stageId: stageCreate.id,
+						// 	tournamentEventId: tournamentEvent1.id				
+						// });
 						numberOfBracket -= 1;
 					}
 				}
 				// console.log(matchesCreate);
-				const createMatches = await createMultipleMatch(matchesCreate);
-				nextMatches = createMatches;
+				// const createMatches = await createMultipleMatch(matchesCreate);
+				nextMatches = matchesCreate;
 				// if (check === numberOfRounds - 1) {
 				// 	// console.log(nextMatches);
 				// 	// console.log(nextMatches.length);
