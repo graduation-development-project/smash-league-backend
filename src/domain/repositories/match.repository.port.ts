@@ -1,4 +1,4 @@
-import { Game, Match, TournamentEvent } from "@prisma/client";
+import { Game, Match, Prisma, TournamentEvent } from "@prisma/client";
 import {
 	ICreateMatch,
 	IMatchDetailBracketResponse,
@@ -14,7 +14,7 @@ export interface MatchRepositoryPort {
 
 	getMatchDetailById(matchId: string): Promise<IMatchQueryResponse>;
 
-	createMatch(): Promise<any>;
+	createMatch(match: Prisma.MatchCreateManyInput): Promise<any>;
 
 	createMultipleMatch(createMatches: ICreateMatch[]): Promise<Match[]>;
 

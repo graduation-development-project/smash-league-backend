@@ -1133,6 +1133,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				},
 			},
 		});
+		console.log(nextMatch.matchesPrevious);
 		if (currentMatchId === nextMatch.matchesPrevious[0].id) {
 			const updatedNextMatch = await this.prisma.match.update({
 				where: {
@@ -1451,15 +1452,10 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		});
 	}
 
-	async createMatch(): Promise<any> {
-		// return await this.prisma.match.create({
-		// 	data: {
-		// 		matchNumber: 0,
-		// 		isByeMatch: false,
-		// 		tournamentEventId:
-		// 	}
-		// })
-		return;
+	async createMatch(match: Prisma.MatchCreateManyInput): Promise<any> {
+		return await this.prisma.match.create({
+			data: match
+		});
 	}
 
 	async getMatchesOfStage(stageId: string): Promise<Match[]> {
