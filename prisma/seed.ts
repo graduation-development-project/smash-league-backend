@@ -1,4 +1,4 @@
-import { BadmintonParticipantType, Prisma, PrismaClient, TypeOfFormat } from "@prisma/client";
+import { BadmintonParticipantType, Prisma, PrismaClient, TournamentEventStatus, TypeOfFormat } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -1199,15 +1199,18 @@ async function createTournamentEventForHochiminh() {
 	const tournamentEvents: Prisma.TournamentEventCreateManyInput[] = [
 		{
 			...eventMenSingle,
-			tournamentId: tournament.id
+			tournamentId: tournament.id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		},
 		{
 			...eventMenDouble,
-			tournamentId: tournament.id
+			tournamentId: tournament.id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		},
 		{
 			...eventMixedDouble,
 			tournamentId: tournament.id,
+			tournamentEventStatus: TournamentEventStatus.ENDED
 		},
 	];
 
