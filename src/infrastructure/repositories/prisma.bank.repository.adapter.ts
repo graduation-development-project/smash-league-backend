@@ -24,10 +24,10 @@ export class PrismaBankRepositoryAdapter implements BankRepositoryPort {
 		try {
 			return this.prismaService.userBankAccount.findUnique({
 				where: {
-					userId,
+					userId: userId,
 					accountNumber_bankId: {
-						accountNumber,
-						bankId,
+						accountNumber: accountNumber,
+						bankId: bankId,
 					},
 				},
 				include: {
