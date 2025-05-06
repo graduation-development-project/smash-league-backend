@@ -37,6 +37,8 @@ import { GetAllLogTypeUseCase } from "src/application/usecases/tournament/match/
 import { GetLatestMatchesUseCase } from "../../application/usecases/athletes/get-latest-matches.usecase";
 import { ContinueMatchUseCase } from "src/application/usecases/tournament/match/continue-match.usecase";
 import { GetAllMatchLogUseCase } from "src/application/usecases/tournament/match/get-all-match-log.usecase";
+import { SkipMatchesUseCase } from "../../application/usecases/seed/skip-matches.usecase";
+import { AssignPlayerToMatchesUseCase } from "../../application/usecases/seed/assign-player-to-matches.usecase";
 
 @Controller("match")
 export class MatchController {
@@ -57,6 +59,8 @@ export class MatchController {
 		private readonly continueMatchUseCase: ContinueMatchUseCase,
 		private readonly getLatestMatchesUseCase: GetLatestMatchesUseCase,
 		private readonly getAllMatchLogUseCase: GetAllMatchLogUseCase,
+		private readonly skipMatchesUseCase: SkipMatchesUseCase,
+		private readonly assignPlayerToMatchesUseCase: AssignPlayerToMatchesUseCase,
 	) {}
 
 	@Get("get-match/:matchId")
@@ -193,5 +197,20 @@ export class MatchController {
 		@Param("matchId") matchId: string,
 	): Promise<ApiResponse<MatchLog[]>> {
 		return await this.getAllMatchLogUseCase.execute(matchId);
+	}
+
+	@Get("assign-players-to-matches/:tournamentEventId")
+	async assignPlayersToMatches(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<void> {
+		return this.assignPlayerToMatchesUseCase.execute(tournamentEventId);
+	}
+
+
+	@Get("skip-matches/:tournamentEventId")
+	async skipMatches(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<void> {
+		return this.skipMatchesUseCase.execute(tournamentEventId);
 	}
 }

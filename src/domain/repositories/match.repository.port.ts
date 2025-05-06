@@ -9,6 +9,7 @@ import { UpdateMatchDTO } from "../dtos/match/update-match.dto";
 
 export interface MatchRepositoryPort {
 	undoUpdatePoint(gameId: string): Promise<Game>;
+
 	getMatchDetail(matchId: string): Promise<Match>;
 
 	getMatchDetailById(matchId: string): Promise<IMatchQueryResponse>;
@@ -59,4 +60,8 @@ export interface MatchRepositoryPort {
 	getLatestMatchesOfUser(userId: string): Promise<Match[]>;
 
 	continueMatch(matchId: string): Promise<Match>;
+
+	skipMatchesExceptFirstAndFinal(eventId: string): Promise<void>;
+
+	assignPlayersToFirstRoundMatches(tournamentEventId: string): Promise<void>
 }

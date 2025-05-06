@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import {
 	Game,
 	GameStatus,
 	Match,
 	MatchStatus,
+	Prisma,
 	PrismaClient,
 	TournamentEvent,
 	TournamentEventStatus,
@@ -1041,9 +1042,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				id: match.tournamentEventId,
 			},
 		});
-		if (
-			tournamentEvent.thirdPlacePrize !== null
-		) {
+		if (tournamentEvent.thirdPlacePrize !== null) {
 			const thirdPlaceMatch = await this.getThirdPlaceMatch(
 				match.tournamentEventId,
 			);
@@ -1608,5 +1607,170 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			console.error("Failed to get two most recent ended matches:", error);
 			throw error;
 		}
+	}
+
+	async skipMatchesExceptFirstAndFinal(eventId: string): Promise<void> {
+		const matches = await this.prisma.match.findMany({
+			where: { tournamentEventId: eventId },
+			include: {
+				matchesPrevious: true,
+				nextMatch: true,
+			},
+			orderBy: { matchNumber: "asc" },
+		});
+
+		const matchMap = new Map<string, Match>();
+		matches.forEach((m) => matchMap.set(m.id, m));
+
+		const visited = new Set<string>();
+		const updates: Prisma.PrismaPromise<any>[] = [];
+
+		// Xác định trận đầu tiên trong vòng đầu tiên (không có trận trước)
+		const firstRoundMatches = matches.filter(
+			(m) => m.matchesPrevious.length === 0,
+		);
+		if (firstRoundMatches.length === 0) {
+			throw new Error("Không tìm thấy trận nào ở vòng đầu tiên.");
+		}
+
+		const firstMatchId = firstRoundMatches[0].id;
+
+		// Xác định trận chung kết (không có trận sau)
+		const finalMatches = matches.filter((m) => m.nextMatchId === null);
+		if (finalMatches.length === 0) {
+			throw new Error("Không tìm thấy trận chung kết.");
+		}
+
+		const finalMatchId = finalMatches[0].id;
+
+		const skipRecursive = (match: Match) => {
+			if (visited.has(match.id)) return;
+			visited.add(match.id);
+
+			if (match.id === firstMatchId || match.id === finalMatchId) return;
+
+			if (match.matchStatus === MatchStatus.ENDED) return;
+
+			if (!match.leftCompetitorId && !match.rightCompetitorId) return;
+
+			const winnerId = match.leftCompetitorId ?? match.rightCompetitorId;
+
+			// Đánh dấu trận hiện tại là đã kết thúc
+			updates.push(
+				this.prisma.match.update({
+					where: { id: match.id },
+					data: {
+						matchStatus: MatchStatus.ENDED,
+						matchWonByCompetitorId: winnerId,
+						startedWhen: new Date(),
+						timeStart: new Date(),
+						timeEnd: new Date(),
+					},
+				}),
+			);
+
+			if (match.nextMatchId) {
+				const nextMatch = matchMap.get(match.nextMatchId);
+				if (nextMatch) {
+					let updatedNextMatch = { ...nextMatch };
+
+					const updateNextData: any = {};
+
+					// Chỉ update nếu slot còn trống
+					if (!nextMatch.leftCompetitorId) {
+						updateNextData.leftCompetitorId = winnerId;
+						updatedNextMatch.leftCompetitorId = winnerId;
+					} else if (!nextMatch.rightCompetitorId) {
+						updateNextData.rightCompetitorId = winnerId;
+						updatedNextMatch.rightCompetitorId = winnerId;
+					}
+
+					// Cập nhật database
+					if (Object.keys(updateNextData).length > 0) {
+						updates.push(
+							this.prisma.match.update({
+								where: { id: nextMatch.id },
+								data: updateNextData,
+							}),
+						);
+
+						// Update local matchMap để dùng trong lần đệ quy tiếp theo
+						matchMap.set(nextMatch.id, updatedNextMatch);
+					}
+
+					// Tiếp tục đệ quy với bản đã cập nhật
+					skipRecursive(updatedNextMatch);
+				}
+			}
+		};
+
+		// Bắt đầu từ các trận ở vòng đầu tiên (trừ trận đầu tiên)
+		for (const match of firstRoundMatches) {
+			if (match.id !== firstMatchId) {
+				skipRecursive(match);
+			}
+		}
+
+		await this.prisma.$transaction(updates);
+	}
+
+	async assignPlayersToFirstRoundMatches(tournamentEventId: string) {
+		const participants = await this.prisma.tournamentParticipants.findMany({
+			where: { tournamentEventId },
+			orderBy: { id: "asc" }, // Sắp xếp để đảm bảo thứ tự nhất quán
+		});
+
+		const firstRoundMatches = await this.prisma.match.findMany({
+			where: {
+				tournamentEventId,
+				matchesPrevious: {
+					none: {}, // Chỉ vòng đầu
+				},
+			},
+			orderBy: { matchNumber: "asc" },
+		});
+
+		const updates = [];
+
+		for (
+			let i = 0, matchIndex = 1;
+			i < participants.length && matchIndex < firstRoundMatches.length;
+			matchIndex++
+		) {
+			const match = firstRoundMatches[matchIndex];
+			const left = participants[i];
+			const right = participants[i + 1];
+
+			if (right) {
+				// Gán đủ 2 người
+				updates.push(
+					this.prisma.match.update({
+						where: { id: match.id },
+						data: {
+							leftCompetitorId: left.id,
+							rightCompetitorId: right.id,
+							isByeMatch: false,
+						},
+					}),
+				);
+				i += 2;
+			} else {
+				// Trận "bye"
+				updates.push(
+					this.prisma.match.update({
+						where: { id: match.id },
+						data: {
+							leftCompetitorId: left.id,
+							isByeMatch: true,
+						},
+					}),
+				);
+				i += 1;
+			}
+		}
+
+		await this.prisma.$transaction(updates);
+
+		return;
 	}
 }

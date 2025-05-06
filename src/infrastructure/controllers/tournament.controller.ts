@@ -124,6 +124,8 @@ import { UpdateTournamentMerchandiseDTO } from "../../domain/dtos/tournament/upd
 import { StaffCancelTournamentUseCase } from "../../application/usecases/tournament/staff-cancel-tournament.usecase";
 import { UpdateTournamentRecruitmentUseCase } from "../../application/usecases/tournament/update-tournament-recruitment.usecase";
 import { UpdateTournamentRecruitmentDTO } from "../../domain/dtos/tournament/update-tournament-recruitment.dto";
+import { SeedParticipantsUseCase } from "../../application/usecases/tournament/seed-participants.usecase";
+import enableAutomock = jest.enableAutomock;
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -174,6 +176,7 @@ export class TournamentController {
 		private readonly updateTournamentMerchandiseUseCase: UpdateTournamentMerchandiseUseCase,
 		private readonly updateTournamentRecruitmentUseCase: UpdateTournamentRecruitmentUseCase,
 		private readonly staffCancelTournamentUseCase: StaffCancelTournamentUseCase,
+		private readonly seedParticipantsUseCase: SeedParticipantsUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -639,5 +642,13 @@ export class TournamentController {
 			tournamentId,
 			sponsorId,
 		);
+	}
+
+	@Post("/seed-participant/:tournamentId/:eventId")
+	async seedParticipants(
+		@Param("tournamentId") tournamentId: string,
+		@Param("eventId") eventId: string,
+	): Promise<void> {
+		return await this.seedParticipantsUseCase.execute(tournamentId, eventId);
 	}
 }

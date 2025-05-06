@@ -191,6 +191,9 @@ import { ApproveReportUseCase } from "./usecases/tournament/report/approve-repor
 import { RejectReportUseCase } from "./usecases/tournament/report/reject-report.usecase";
 import { GetAllTransactionsUseCase } from "./usecases/payment/get-all-transactions.usecase";
 import { GetAllUserUseCase } from "./usecases/users/get-all-user.usecase";
+import { SkipMatchesUseCase } from "./usecases/seed/skip-matches.usecase";
+import { SeedParticipantsUseCase } from "./usecases/tournament/seed-participants.usecase";
+import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-matches.usecase";
 
 @Module({
 	imports: [
@@ -527,6 +530,11 @@ import { GetAllUserUseCase } from "./usecases/users/get-all-user.usecase";
 		//Bank Use Case
 		GetAllBanksUseCase,
 		CheckBankAccountExistUseCase,
+
+		// SEED
+		SkipMatchesUseCase,
+		SeedParticipantsUseCase,
+		AssignPlayerToMatchesUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -723,6 +731,12 @@ import { GetAllUserUseCase } from "./usecases/users/get-all-user.usecase";
 		//Bank Use Case
 		GetAllBanksUseCase,
 		CheckBankAccountExistUseCase,
+
+		// SEED
+		SkipMatchesUseCase,
+		SeedParticipantsUseCase,
+		AssignPlayerToMatchesUseCase,
+
 	],
 })
 export class ApplicationModule {}

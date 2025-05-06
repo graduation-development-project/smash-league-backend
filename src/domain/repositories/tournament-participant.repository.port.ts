@@ -17,4 +17,6 @@ export interface TournamentParticipantsRepositoryPort {
 	getEventParticipantList(tournamentId: string, tournamentEventId: string): Promise<TournamentParticipants[]>;
 
 	getTournamentParticipantDetail(id: string): Promise<TournamentParticipants>;
+
+	seedParticipants(tournamentId: string, tournamentEventId: string): Promise<void>;
 }
