@@ -29,6 +29,7 @@ import { CreatePaybackTransactionDTO } from "../../domain/dtos/transactions/crea
 import { PaybackRegistrationFeeUseCase } from "../../application/usecases/payment/payback-registration-fee.usecase";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { GetTransactionsByDayUseCase } from "../../application/usecases/payment/get-transactions-by-day.usecase";
+import { GetAllTransactionsUseCase } from "../../application/usecases/payment/get-all-transactions.usecase";
 
 @Controller("/payment")
 export class PaymentController {
@@ -41,7 +42,15 @@ export class PaymentController {
 		private readonly payRegistrationFeeUseCase: PayRegistrationFeeUseCase,
 		private readonly paybackRegistrationFeeUseCase: PaybackRegistrationFeeUseCase,
 		private readonly getTransactionsByDayUseCase: GetTransactionsByDayUseCase,
+		private readonly getAllTransactionsUseCase: GetAllTransactionsUseCase,
 	) {}
+
+	@Get("/get-all-transactions")
+	@UseGuards(JwtAccessTokenGuard)
+	@Roles(RoleMap.Admin.name, RoleMap.Staff.name)
+	async getAllTransactions(): Promise<ApiResponse<Transaction[]>> {
+		return await this.getAllTransactionsUseCase.execute();
+	}
 
 	@Get("/buy-package/:packageId")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)

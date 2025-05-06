@@ -189,6 +189,8 @@ import { UpdateTournamentRecruitmentUseCase } from "./usecases/tournament/update
 import { GetAllReportOfTournamentUseCase } from "./usecases/tournament/report/get-all-report-of-tournament.usecase";
 import { ApproveReportUseCase } from "./usecases/tournament/report/approve-report.usecase";
 import { RejectReportUseCase } from "./usecases/tournament/report/reject-report.usecase";
+import { GetAllTransactionsUseCase } from "./usecases/payment/get-all-transactions.usecase";
+import { GetAllUserUseCase } from "./usecases/users/get-all-user.usecase";
 
 @Module({
 	imports: [
@@ -364,6 +366,7 @@ import { RejectReportUseCase } from "./usecases/tournament/report/reject-report.
 		GetMatchesOfUserUseCase,
 		GetUserByRoleUseCase,
 		GetLatestMatchesUseCase,
+		GetAllUserUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -497,6 +500,7 @@ import { RejectReportUseCase } from "./usecases/tournament/report/reject-report.
 		PayRegistrationFeeUseCase,
 		PaybackRegistrationFeeUseCase,
 		GetTransactionsByDayUseCase,
+		GetAllTransactionsUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -550,6 +554,7 @@ import { RejectReportUseCase } from "./usecases/tournament/report/reject-report.
 		GetMatchesOfUserUseCase,
 		GetUserByRoleUseCase,
 		GetLatestMatchesUseCase,
+		GetAllUserUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -691,6 +696,7 @@ import { RejectReportUseCase } from "./usecases/tournament/report/reject-report.
 		PayRegistrationFeeUseCase,
 		PaybackRegistrationFeeUseCase,
 		GetTransactionsByDayUseCase,
+		GetAllTransactionsUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,

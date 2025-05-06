@@ -35,6 +35,7 @@ import { AddBankAccountDTO } from "../../domain/dtos/users/add-bank-account.dto"
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { UploadAvatarUseCase } from "../../application/usecases/users/upload-avatar.usecase";
 import { GetUserByRoleUseCase } from "../../application/usecases/users/get-user-by-role.usecase";
+import { GetAllUserUseCase } from "../../application/usecases/users/get-all-user.usecase";
 
 @Controller("/users")
 export class UsersController {
@@ -47,7 +48,16 @@ export class UsersController {
 		private getUserProfileUseCase: GetUserProfileUseCase,
 		private addBankAccountUseCase: AddBankAccountUseCase,
 		private uploadAvatarUseCase: UploadAvatarUseCase,
+		private getAllUsersUseCase: GetAllUserUseCase,
 	) {}
+
+	@Get("/")
+	@Roles(RoleMap.Admin.name, RoleMap.Staff.name)
+	@UseGuards(RolesGuard)
+	@UseGuards(JwtAccessTokenGuard)
+	getAllUsers(): Promise<ApiResponse<User[]>> {
+		return this.getAllUsersUseCase.execute();
+	}
 
 	@Get("/id/:id")
 	// @Roles(RoleMap.Admin.id, RoleMap.Athlete.id)

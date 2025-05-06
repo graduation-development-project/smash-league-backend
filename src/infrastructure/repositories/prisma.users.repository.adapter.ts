@@ -27,6 +27,18 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 		});
 	}
 
+	async getAllUsers(): Promise<User[]> {
+		return this.prisma.user.findMany({
+			include: {
+				userRoles: {
+					select: {
+						role: true,
+					},
+				},
+			},
+		});
+	}
+
 	async minusCredit(userId: string): Promise<User> {
 		const credit = await this.prisma.user.findUnique({
 			where: {
@@ -300,7 +312,15 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 			const user = await this.prisma.user.findUnique({
 				where: { id: userId },
 				omit: { password: true },
-				include: { userRoles: { include: { role: true } }, teamLeaderOf: true },
+				include: {
+					userRoles: { include: { role: true } },
+					teamLeaderOf: true,
+					UserBankAccount: {
+						include: {
+							bank: true,
+						},
+					},
+				},
 			});
 
 			const roles = user.userRoles.map((item) => item.role.roleName);

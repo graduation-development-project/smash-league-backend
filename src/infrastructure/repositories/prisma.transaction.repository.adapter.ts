@@ -164,6 +164,26 @@ export class PrismaTransactionRepositoryAdapter
 				},
 			});
 		} catch (e) {
+			console.error("getAllTransactions by day failed", e);
+			throw e;
+		}
+	}
+
+	async getAllTransactions(): Promise<Transaction[]> {
+		try {
+			return this.prisma.transaction.findMany({
+				include: {
+					order: {
+						include: {
+							package: true,
+						},
+					},
+					tournamentRegistration: true,
+					paybackFee: true,
+					paybackToUser: true,
+				},
+			});
+		} catch (e) {
 			console.error("getAllTransactions failed", e);
 			throw e;
 		}

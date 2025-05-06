@@ -9,6 +9,8 @@ import { AddBankAccountDTO } from "../dtos/users/add-bank-account.dto";
 export interface UsersRepositoryPort {
 	getUser(userId: string): Promise<User>;
 
+	getAllUsers(): Promise<User[]>
+
 	findUserById(userID: string): Promise<TUserWithRole>;
 
 	getAuthenticatedUser(email: string, password: string): Promise<User>;

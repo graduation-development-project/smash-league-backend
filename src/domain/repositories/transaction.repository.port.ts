@@ -5,6 +5,9 @@ import {
 } from "../interfaces/payment/transaction.interface";
 
 export interface TransactionRepositoryPort {
+
+	getAllTransactions(): Promise<Transaction[]>
+
 	getTransaction(id: number): Promise<Transaction>;
 
 	getTransactionOfOrder(orderId: string): Promise<Transaction[]>;
