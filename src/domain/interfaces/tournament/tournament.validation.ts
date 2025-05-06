@@ -340,11 +340,6 @@ export class CreateTournament {
 	})
 	numberOfMerchandise?: number;
 	merchandiseImages?: string[];
-	@IsNumber()
-	@Min(1, {
-		message: "Umpire per match must be more than 1.",
-	})
-	umpirePerMatch: number;
 	createCourts: CreateCourtsDTO;
 
 	@IsArray()
@@ -360,10 +355,6 @@ export class CreateTournament {
 	@IsOptional()
 	numberOfUmpires?: number;
 	isRecruit: boolean;
-	isPrivate: boolean;
-	isRegister: boolean;
-	isLiveDraw: boolean;
-	hasLiveStream: boolean;
 }
 
 export class UpdateTournament {

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { BadmintonParticipantType, Prisma, PrismaClient, TypeOfFormat } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -585,361 +585,626 @@ async function main() {
 		},
 	});
 
-	const tournaments: Prisma.TournamentCreateManyInput[] = [
+	const tournaments: Prisma.TournamentCreateManyInput[] = 
+	[
 		{
-			id: "vietnam-open-2025",
-			name: "Vietnam Open 2025",
-			shortName: "VNO 2025",
-			description: "Giải cầu lông quốc tế tổ chức tại Việt Nam",
+			id: "hcmc-open-2025",
+			name: "Ho Chi Minh City Open 2025",
+			shortName: "HCMCO 2025",
+			description: "Giải cầu lông mở rộng thường niên tại TP. Hồ Chí Minh",
 			organizerId: user.id,
-			contactPhone: "+84 912345678",
-			contactEmail: "contact@vietnamopen.com",
-			mainColor: "#FF5733",
-			backgroundTournament: "https://example.com/images/vno_2025.jpg",
-			location: "Hà Nội, Việt Nam",
+			contactPhone: "+84 901234567", // VN Format
+			contactEmail: "hcmcopen2025@gmail.com", // Gmail format
+			mainColor: "#FF6B6B",
+			backgroundTournament: "https://example.com/images/hcmc_open_bg.jpg",
+			location: "Nhà thi đấu Phú Thọ, TP. Hồ Chí Minh, Việt Nam", // VN Location
 			registrationOpeningDate: "2025-06-01T00:00:00Z",
-			registrationClosingDate: "2025-06-30T23:59:59Z",
-			drawDate: "2025-07-05T12:00:00Z",
-			startDateFirstTime: "2025-07-10T08:00:00Z",
-			endDateFirstTime: "2025-07-15T20:00:00Z",
+			registrationClosingDate: "2025-06-20T23:59:59Z",
+			drawDate: "2025-06-25T10:00:00Z",
+			startDateFirstTime: "2025-07-01T09:00:00Z",
+			endDateFirstTime: "2025-07-07T21:00:00Z",
 			countUpdateOccurTime: 0,
-			startDate: "2025-07-10T08:00:00Z",
-			endDate: "2025-07-15T20:00:00Z",
-			checkInBeforeStart: "2025-07-10T07:00:00Z",
-			umpirePerMatch: 1,
-			numberOfCourt: 3,
-			registrationFeePerPerson: 500000,
-			registrationFeePerPair: 900000,
+			startDate: "2025-07-01T09:00:00Z",
+			endDate: "2025-07-07T21:00:00Z",
+			checkInBeforeStart: "2025-07-01T08:00:00Z",
+			numberOfCourt: 4, // Included field, value varied
+			registrationFeePerPerson: 300000,
+			registrationFeePerPair: 550000,
 			maxEventPerPerson: 3,
-			status: "OPENING_FOR_REGISTRATION",
-			protestFeePerTime: 200000,
+			status: "CREATED", // Assigned Status
+			protestFeePerTime: 150000,
 			prizePool: 50000000,
 			hasMerchandise: true,
-			numberOfMerchandise: 500,
-			merchandiseImages: [
-				"https://example.com/images/merch_vno_1.jpg",
-				"https://example.com/images/merch_vno_2.jpg",
-			],
-			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
-			isRecruit: false,
-			isPrivate: false,
-			isRegister: true,
-			isLiveDraw: true,
-			hasLiveStream: true,
-			tournamentSerieId: tournamentSerie.id,
+			numberOfMerchandise: 200,
+			merchandiseImages: ["https://example.com/images/merch_hcmc_1.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
 		},
 		{
-			id: "asia-badminton-championship-2025",
-			name: "Asia Badminton Championship 2025",
-			shortName: "ABC 2025",
-			description: "Giải vô địch cầu lông châu Á",
+			id: "da-nang-challenge-2025",
+			name: "Da Nang Badminton Challenge 2025",
+			shortName: "DNC 2025",
+			description: "Thử thách kỹ năng cầu lông tại thành phố biển Đà Nẵng",
 			organizerId: user.id,
-			contactPhone: "+65 98765432",
-			contactEmail: "info@asiabadminton.com",
-			mainColor: "#4287F5",
-			backgroundTournament: "https://example.com/images/abc_2025.jpg",
-			location: "Singapore Indoor Stadium",
-			registrationOpeningDate: "2025-08-01T00:00:00Z",
-			registrationClosingDate: "2025-08-20T23:59:59Z",
-			drawDate: "2025-08-25T12:00:00Z",
-			startDateFirstTime: "2025-09-01T08:00:00Z",
-			endDateFirstTime: "2025-09-07T20:00:00Z",
+			contactPhone: "+84 988765432", // VN Format
+			contactEmail: "danangchallenge2025@gmail.com", // Gmail format
+			mainColor: "#4ECDC4",
+			backgroundTournament: "https://example.com/images/danang_bg.jpg",
+			location: "Cung thể thao Tiên Sơn, Đà Nẵng, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-07-15T00:00:00Z",
+			registrationClosingDate: "2025-08-05T23:59:59Z",
+			drawDate: "2025-08-10T14:00:00Z",
+			startDateFirstTime: "2025-08-15T08:30:00Z",
+			endDateFirstTime: "2025-08-20T19:30:00Z",
 			countUpdateOccurTime: 0,
-			startDate: "2025-09-01T08:00:00Z",
-			endDate: "2025-09-07T20:00:00Z",
-			checkInBeforeStart: "2025-09-01T07:00:00Z",
-			umpirePerMatch: 1,
-			numberOfCourt: 3,
-			registrationFeePerPerson: 800000,
-			registrationFeePerPair: 1500000,
+			startDate: "2025-08-15T08:30:00Z",
+			endDate: "2025-08-20T19:30:00Z",
+			checkInBeforeStart: "2025-08-15T07:30:00Z",
+			numberOfCourt: 3, // Included field, value varied
+			registrationFeePerPerson: 250000,
+			registrationFeePerPair: 450000,
 			maxEventPerPerson: 2,
-			status: "ON_GOING",
-			protestFeePerTime: 300000,
-			prizePool: 100000000,
+			status: "CREATED", // Assigned Status
+			protestFeePerTime: 100000,
+			prizePool: 35000000,
+			hasMerchandise: false,
+			numberOfMerchandise: 0,
+			merchandiseImages: [],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "hanoi-masters-2025",
+			name: "Hanoi Masters 2025",
+			shortName: "HNM 2025",
+			description: "Giải đấu quy tụ các tay vợt hàng đầu tại thủ đô Hà Nội",
+			organizerId: user.id,
+			contactPhone: "+84 351122334", // VN Format
+			contactEmail: "hanoimasters.info@gmail.com", // Gmail format
+			mainColor: "#F9A825",
+			backgroundTournament: "https://example.com/images/hanoi_masters_bg.jpg",
+			location: "Nhà thi đấu Trịnh Hoài Đức, Hà Nội, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-08-20T00:00:00Z",
+			registrationClosingDate: "2025-09-10T23:59:59Z",
+			drawDate: "2025-09-15T11:00:00Z",
+			startDateFirstTime: "2025-09-22T09:00:00Z",
+			endDateFirstTime: "2025-09-28T22:00:00Z",
+			countUpdateOccurTime: 0,
+			startDate: "2025-09-22T09:00:00Z",
+			endDate: "2025-09-28T22:00:00Z",
+			checkInBeforeStart: "2025-09-22T08:00:00Z",
+			numberOfCourt: 5, // Included field, value varied
+			registrationFeePerPerson: 400000,
+			registrationFeePerPair: 700000,
+			maxEventPerPerson: 3,
+			status: "CREATED", // Assigned Status
+			protestFeePerTime: 200000,
+			prizePool: 70000000,
 			hasMerchandise: true,
 			numberOfMerchandise: 300,
-			merchandiseImages: [
-				"https://example.com/images/merch_abc_1.jpg",
-				"https://example.com/images/merch_abc_2.jpg",
-			],
-			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
-			isRecruit: true,
-			isPrivate: true,
-			isRegister: true,
-			isLiveDraw: false,
-			hasLiveStream: true,
-			tournamentSerieId: tournamentSerie.id,
+			merchandiseImages: ["https://example.com/images/merch_hanoi_1.jpg", "https://example.com/images/merch_hanoi_2.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
 		},
 		{
-			id: "european-badminton-masters-2025",
-			name: "European Badminton Masters 2025",
-			shortName: "EBM 2025",
-			description:
-				"Giải cầu lông đẳng cấp dành cho các tay vợt chuyên nghiệp châu Âu",
+			id: "can-tho-cup-2025",
+			name: "Can Tho Badminton Cup 2025",
+			shortName: "CTC 2025",
+			description: "Giải cầu lông tranh cúp tại Cần Thơ, miền Tây sông nước",
 			organizerId: user.id,
-			contactPhone: "+44 123456789",
-			contactEmail: "support@europeanmasters.com",
-			mainColor: "#12A345",
-			backgroundTournament: "https://example.com/images/ebm_2025.jpg",
-			location: "London, UK",
-			registrationOpeningDate: "2025-09-10T00:00:00Z",
+			contactPhone: "+84 777888999", // VN Format
+			contactEmail: "canthobadmintoncup@gmail.com", // Gmail format
+			mainColor: "#16A085",
+			backgroundTournament: "https://example.com/images/cantho_cup_bg.jpg",
+			location: "Nhà thi đấu đa năng Cần Thơ, Cần Thơ, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-10-01T00:00:00Z",
+			registrationClosingDate: "2025-10-20T23:59:59Z",
+			drawDate: "2025-10-25T09:00:00Z",
+			startDateFirstTime: "2025-11-01T08:00:00Z",
+			endDateFirstTime: "2025-11-05T20:00:00Z",
+			countUpdateOccurTime: 0,
+			startDate: "2025-11-01T08:00:00Z",
+			endDate: "2025-11-05T20:00:00Z",
+			checkInBeforeStart: "2025-11-01T07:00:00Z",
+			numberOfCourt: 4, // Included field, value varied
+			registrationFeePerPerson: 200000,
+			registrationFeePerPair: 350000,
+			maxEventPerPerson: 3,
+			status: "CREATED", // Assigned Status
+			protestFeePerTime: 100000,
+			prizePool: 25000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 150,
+			merchandiseImages: ["https://example.com/images/merch_cantho_1.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "hai-phong-port-city-open-2025",
+			name: "Hai Phong Port City Open 2025",
+			shortName: "HPCO 2025",
+			description: "Giải cầu lông thành phố Cảng Hải Phòng mở rộng",
+			organizerId: user.id,
+			contactPhone: "+84 936111222", // VN Format
+			contactEmail: "haiphong.open@gmail.com", // Gmail format
+			mainColor: "#E74C3C",
+			backgroundTournament: "https://example.com/images/haiphong_bg.jpg",
+			location: "Nhà thi đấu Lạch Tray, Hải Phòng, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-09-01T00:00:00Z",
 			registrationClosingDate: "2025-09-30T23:59:59Z",
-			drawDate: "2025-10-05T12:00:00Z",
-			startDateFirstTime: "2025-10-10T08:00:00Z",
-			endDateFirstTime: "2025-10-15T20:00:00Z",
+			drawDate: "2025-10-05T15:00:00Z",
+			startDateFirstTime: "2025-10-12T10:00:00Z",
+			endDateFirstTime: "2025-10-19T22:00:00Z",
 			countUpdateOccurTime: 0,
-			startDate: "2025-10-10T08:00:00Z",
-			endDate: "2025-10-15T20:00:00Z",
-			checkInBeforeStart: "2025-10-10T07:00:00Z",
-			umpirePerMatch: 1,
-			numberOfCourt: 3,
-			registrationFeePerPerson: 700000,
-			registrationFeePerPair: 1300000,
-			maxEventPerPerson: 3,
-			status: "OPENING_FOR_REGISTRATION",
-			protestFeePerTime: 250000,
-			prizePool: 75000000,
+			startDate: "2025-10-12T10:00:00Z",
+			endDate: "2025-10-19T22:00:00Z",
+			checkInBeforeStart: "2025-10-12T09:00:00Z",
+			numberOfCourt: 3, // Included field, value varied
+			registrationFeePerPerson: 350000,
+			registrationFeePerPair: 650000,
+			maxEventPerPerson: 2,
+			status: "CREATED", // Assigned Status
+			protestFeePerTime: 180000,
+			prizePool: 60000000,
 			hasMerchandise: true,
-			numberOfMerchandise: 400,
-			merchandiseImages: [
-				"https://example.com/images/merch_ebm_1.jpg",
-				"https://example.com/images/merch_ebm_2.jpg",
-			],
-			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
-			isRecruit: false,
-			isPrivate: false,
-			isRegister: false,
-			isLiveDraw: false,
-			hasLiveStream: true,
-			tournamentSerieId: tournamentSerie.id,
+			numberOfMerchandise: 280,
+			merchandiseImages: ["https://example.com/images/merch_hp_1.jpg", "https://example.com/images/merch_hp_2.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
 		},
 		{
-			id: "japan-open-2025",
-			name: "Japan Open 2025",
-			shortName: "JPO 2025",
-			description: "Giải cầu lông quốc tế diễn ra tại Nhật Bản",
+			id: "hue-imperial-cup-2025",
+			name: "Hue Imperial Cup 2025",
+			shortName: "HIC 2025",
+			description: "Giải cầu lông Cố đô Huế tranh cúp Hoàng Gia",
 			organizerId: user.id,
-			contactPhone: "+81 987654321",
-			contactEmail: "support@japanopen.com",
-			mainColor: "#F54242",
-			backgroundTournament: "https://example.com/images/jpo_2025.jpg",
-			location: "Tokyo, Nhật Bản",
-			registrationOpeningDate: "2025-04-01T00:00:00Z",
-			registrationClosingDate: "2025-04-20T23:59:59Z",
-			drawDate: "2025-04-25T12:00:00Z",
-			startDateFirstTime: "2025-05-01T08:00:00Z",
-			endDateFirstTime: "2025-05-07T20:00:00Z",
+			contactPhone: "+84 945987654", // VN Format
+			contactEmail: "hueimperialcup@gmail.com", // Gmail format
+			mainColor: "#F1C40F",
+			backgroundTournament: "https://example.com/images/hue_bg.jpg",
+			location: "Trung tâm thể thao Thừa Thiên Huế, Huế, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-04-15T00:00:00Z", // Reg started
+			registrationClosingDate: "2025-05-05T23:59:59Z", // Reg closed yesterday (May 5th)
+			drawDate: "2025-05-10T12:00:00Z", // Draw upcoming
+			startDateFirstTime: "2025-05-15T09:00:00Z",
+			endDateFirstTime: "2025-05-20T21:00:00Z",
 			countUpdateOccurTime: 0,
-			startDate: "2025-05-01T08:00:00Z",
-			endDate: "2025-05-07T20:00:00Z",
-			checkInBeforeStart: "2025-05-01T07:00:00Z",
-			umpirePerMatch: 1,
-			numberOfCourt: 3,
-
-			registrationFeePerPerson: 600000,
-			registrationFeePerPair: 1100000,
-			maxEventPerPerson: 3,
-			status: "DRAWING",
-			protestFeePerTime: 250000,
-			prizePool: 85000000,
+			startDate: "2025-05-15T09:00:00Z",
+			endDate: "2025-05-20T21:00:00Z",
+			checkInBeforeStart: "2025-05-15T08:00:00Z",
+			numberOfCourt: 4, // Included field, value varied
+			registrationFeePerPerson: 280000,
+			registrationFeePerPair: 500000,
+			maxEventPerPerson: 2,
+			status: "CLOSING_FOR_REGISTRATION", // Assigned Status (Reg closed)
+			protestFeePerTime: 120000,
+			prizePool: 45000000,
 			hasMerchandise: true,
-			numberOfMerchandise: 350,
-			merchandiseImages: [
-				"https://www.allenglandbadminton.com/wp-content/uploads/2024/01/YAE_V5_Social-Post-Rollout_Landscape_1080x566_NoText.jpg",
-			],
-			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
-			isRecruit: false,
-			isPrivate: false,
-			isRegister: true,
-			isLiveDraw: true,
-			hasLiveStream: true,
-			tournamentSerieId: tournamentSerie.id,
+			numberOfMerchandise: 180,
+			merchandiseImages: ["https://example.com/images/merch_hue_1.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
 		},
+		{
+			id: "vietnam-youth-nationals-2025",
+			name: "Vietnam Youth Nationals 2025",
+			shortName: "VYN 2025",
+			description: "Giải vô địch cầu lông trẻ quốc gia Việt Nam",
+			organizerId: user.id,
+			contactPhone: "+84 911223344", // VN Format
+			contactEmail: "vbf.youthnationals@gmail.com", // Gmail format
+			mainColor: "#3498DB",
+			backgroundTournament: "https://example.com/images/vyn_bg.jpg",
+			location: "Nhà thi đấu Bắc Giang, Bắc Giang, Việt Nam", // VN Location specified
+			registrationOpeningDate: "2025-05-01T00:00:00Z", // Reg opened May 1st
+			registrationClosingDate: "2025-05-25T23:59:59Z", // Reg closes later this month
+			drawDate: "2025-05-28T10:00:00Z",
+			startDateFirstTime: "2025-06-02T08:00:00Z",
+			endDateFirstTime: "2025-06-10T18:00:00Z",
+			countUpdateOccurTime: 0,
+			startDate: "2025-06-02T08:00:00Z",
+			endDate: "2025-06-10T18:00:00Z",
+			checkInBeforeStart: "2025-06-02T07:00:00Z",
+			numberOfCourt: 5, // Included field, value varied
+			registrationFeePerPerson: 150000,
+			registrationFeePerPair: 250000,
+			maxEventPerPerson: 4,
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Reg is open now)
+			protestFeePerTime: 50000,
+			prizePool: 20000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 100,
+			merchandiseImages: ["https://example.com/images/merch_vyn.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "hcmc-club-challenge-spring-2025",
+			name: "HCMC Club Challenge - Spring 2025",
+			shortName: "HCCC Spr25",
+			description: "Giải đấu giao hữu giữa các câu lạc bộ cầu lông tại TP.HCM - Mùa Xuân",
+			organizerId: user.id,
+			contactPhone: "+84 908765432", // VN Format
+			contactEmail: "hcmc.clubchallenge@gmail.com", // Gmail format
+			mainColor: "#E67E22",
+			backgroundTournament: "https://example.com/images/hcmc_club_bg.jpg",
+			location: "Câu lạc bộ Tao Đàn, TP. Hồ Chí Minh, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-02-01T00:00:00Z", // Past date
+			registrationClosingDate: "2025-02-20T23:59:59Z", // Past date
+			drawDate: "2025-02-22T18:00:00Z", // Past date
+			startDateFirstTime: "2025-03-01T09:00:00Z", // Past date
+			endDateFirstTime: "2025-03-02T17:00:00Z", // Past date
+			countUpdateOccurTime: 0,
+			startDate: "2025-03-01T09:00:00Z",
+			endDate: "2025-03-02T17:00:00Z",
+			checkInBeforeStart: "2025-03-01T08:30:00Z",
+			numberOfCourt: 3, // Included field, value varied
+			registrationFeePerPerson: 100000,
+			registrationFeePerPair: 180000,
+			maxEventPerPerson: 2,
+			status: "FINISHED", // Assigned Status
+			protestFeePerTime: 50000,
+			prizePool: 5000000,
+			hasMerchandise: false,
+			numberOfMerchandise: 0,
+			merchandiseImages: [],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "vung-tau-beach-cup-2025",
+			name: "Vung Tau Beach Cup 2025",
+			shortName: "VTBC 2025",
+			description: "Giải cầu lông thành phố biển Vũng Tàu",
+			organizerId: user.id,
+			contactPhone: "+84 967123789", // VN Format
+			contactEmail: "vungtaubeachcup@gmail.com", // Gmail format
+			mainColor: "#F54242",
+			backgroundTournament: "https://example.com/images/vt_bg.jpg",
+			location: "Nhà thi đấu Vũng Tàu, Bà Rịa - Vũng Tàu, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-04-10T00:00:00Z", // Adjusted Date
+			registrationClosingDate: "2025-04-28T23:59:59Z", // Adjusted Date
+			drawDate: "2025-04-30T12:00:00Z", // Adjusted Date
+			startDateFirstTime: "2025-05-04T08:00:00Z", // Starts May 4th
+			endDateFirstTime: "2025-05-10T20:00:00Z", // Ends May 10th (Current date May 6 is within)
+			countUpdateOccurTime: 0,
+			startDate: "2025-05-04T08:00:00Z",
+			endDate: "2025-05-10T20:00:00Z",
+			checkInBeforeStart: "2025-05-04T07:00:00Z",
+			numberOfCourt: 4, // Included field, value varied
+			registrationFeePerPerson: 250000,
+			registrationFeePerPair: 450000,
+			maxEventPerPerson: 3,
+			status: "ON_GOING", // Assigned Status (Current date fits)
+			protestFeePerTime: 100000,
+			prizePool: 40000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 150,
+			merchandiseImages: ["https://example.com/images/merch_vt_1.jpg", "https://example.com/images/merch_vt_2.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "dong-nai-industrial-zone-cup-2025",
+			name: "Dong Nai Industrial Zone Cup 2025",
+			shortName: "DNIZC 2025",
+			description: "Giải cầu lông các Khu Công nghiệp Đồng Nai",
+			organizerId: user.id,
+			contactPhone: "+84 918273645", // VN Format
+			contactEmail: "dongnai.izcup@gmail.com", // Gmail format
+			mainColor: "#8E44AD",
+			backgroundTournament: "https://example.com/images/dn_bg.jpg",
+			location: "Trung tâm TDTT Đồng Nai, Biên Hòa, Đồng Nai, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-03-01T00:00:00Z", // Past Date
+			registrationClosingDate: "2025-03-25T23:59:59Z", // Past Date
+			drawDate: "2025-03-30T11:00:00Z", // Past Date
+			startDateFirstTime: "2025-04-08T09:00:00Z", // Past Date
+			endDateFirstTime: "2025-04-13T20:00:00Z", // Past Date
+			countUpdateOccurTime: 0,
+			startDate: "2025-04-08T09:00:00Z",
+			endDate: "2025-04-13T20:00:00Z",
+			checkInBeforeStart: "2025-04-08T08:00:00Z",
+			numberOfCourt: 4, // Included field, value varied
+			registrationFeePerPerson: 150000,
+			registrationFeePerPair: 280000,
+			maxEventPerPerson: 2,
+			status: "FINISHED", // Assigned Status
+			protestFeePerTime: 60000,
+			prizePool: 18000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 90,
+			merchandiseImages: ["https://example.com/images/merch_dn_1.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "nha-trang-beach-games-2025",
+			name: "Nha Trang Beach Games Badminton 2025",
+			shortName: "NTBG 2025",
+			description: "Môn Cầu Lông trong Đại hội Thể thao Biển Nha Trang",
+			organizerId: user.id,
+			contactPhone: "+84 987654321", // VN Format
+			contactEmail: "nhatrang.beachgames@gmail.com", // Gmail format
+			mainColor: "#2ECC71",
+			backgroundTournament: "https://example.com/images/nt_bg.jpg",
+			location: "Trung tâm Dịch vụ TDTT Nha Trang, Khánh Hòa, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-04-20T00:00:00Z", // Adjusted date
+			registrationClosingDate: "2025-05-15T23:59:59Z", // Adjusted date (Reg open)
+			drawDate: "2025-05-18T14:00:00Z", // Adjusted date
+			startDateFirstTime: "2025-05-22T10:00:00Z", // Adjusted date
+			endDateFirstTime: "2025-05-28T21:00:00Z", // Adjusted date
+			countUpdateOccurTime: 0,
+			startDate: "2025-05-22T10:00:00Z",
+			endDate: "2025-05-28T21:00:00Z",
+			checkInBeforeStart: "2025-05-22T09:00:00Z",
+			numberOfCourt: 5, // Included field, value varied
+			registrationFeePerPerson: 300000,
+			registrationFeePerPair: 550000,
+			maxEventPerPerson: 2,
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Reg open)
+			protestFeePerTime: 130000,
+			prizePool: 55000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 190,
+			merchandiseImages: ["https://example.com/images/merch_nt_1.jpg", "https://example.com/images/merch_nt_2.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "binh-duong-invitational-2025",
+			name: "Binh Duong Invitational 2025",
+			shortName: "BDI 2025",
+			description: "Giải cầu lông mời tỉnh Bình Dương mở rộng",
+			organizerId: user.id,
+			contactPhone: "+84 888111333", // VN Format
+			contactEmail: "binhduong.invitational@gmail.com", // Gmail format
+			mainColor: "#7F8C8D",
+			backgroundTournament: "https://example.com/images/bdi_bg.jpg",
+			location: "Nhà thi đấu tỉnh Bình Dương, Thủ Dầu Một, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-04-10T00:00:00Z", // Adjusted date
+			registrationClosingDate: "2025-04-30T23:59:59Z", // Adjusted date (Reg closed)
+			drawDate: "2025-05-03T09:00:00Z", // Adjusted date (Draw was a few days ago)
+			startDateFirstTime: "2025-05-08T08:30:00Z", // Adjusted date (Starts soon)
+			endDateFirstTime: "2025-05-12T19:00:00Z", // Adjusted date
+			countUpdateOccurTime: 0,
+			startDate: "2025-05-08T08:30:00Z",
+			endDate: "2025-05-12T19:00:00Z",
+			checkInBeforeStart: "2025-05-08T07:30:00Z",
+			numberOfCourt: 3, // Included field, value varied
+			registrationFeePerPerson: 220000,
+			registrationFeePerPair: 400000,
+			maxEventPerPerson: 3,
+			status: "DRAWING", // Assigned Status (Between draw and start)
+			protestFeePerTime: 80000,
+			prizePool: 30000000,
+			hasMerchandise: false,
+			numberOfMerchandise: 0,
+			merchandiseImages: [],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "lam-dong-highland-challenge-2025",
+			name: "Lam Dong Highland Challenge 2025",
+			shortName: "LDHC 2025",
+			description: "Thách thức cầu lông cao nguyên Lâm Đồng",
+			organizerId: user.id,
+			contactPhone: "+84 977888444", // VN Format
+			contactEmail: "lamdong.challenge@gmail.com", // Gmail format
+			mainColor: "#C0392B",
+			backgroundTournament: "https://example.com/images/ld_bg.jpg",
+			location: "Nhà thi đấu Đà Lạt, Lâm Đồng, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-04-18T00:00:00Z", // Adjusted date
+			registrationClosingDate: "2025-05-08T23:59:59Z", // Adjusted date (Reg closes soon)
+			drawDate: "2025-05-11T10:00:00Z", // Adjusted date
+			startDateFirstTime: "2025-05-16T09:00:00Z", // Adjusted date
+			endDateFirstTime: "2025-05-21T20:00:00Z", // Adjusted date
+			countUpdateOccurTime: 0,
+			startDate: "2025-05-16T09:00:00Z",
+			endDate: "2025-05-21T20:00:00Z",
+			checkInBeforeStart: "2025-05-16T08:00:00Z",
+			numberOfCourt: 4, // Included field, value varied
+			registrationFeePerPerson: 260000,
+			registrationFeePerPair: 480000,
+			maxEventPerPerson: 3,
+			status: "CLOSING_FOR_REGISTRATION", // Assigned Status (Use second closing status)
+			protestFeePerTime: 110000,
+			prizePool: 38000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 170,
+			merchandiseImages: ["https://example.com/images/merch_ld_1.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "senior-nationals-vietnam-2025",
+			name: "Vietnam Senior Nationals 2025",
+			shortName: "VSN 2025",
+			description: "Giải vô địch cầu lông người cao tuổi toàn quốc",
+			organizerId: user.id,
+			contactPhone: "+84 981122555", // VN Format
+			contactEmail: "vbf.seniornationals@gmail.com", // Gmail format
+			mainColor: "#2C3E50",
+			backgroundTournament: "https://example.com/images/vsn_bg.jpg",
+			location: "Nhà thi đấu Phan Chu Trinh, Nha Trang, Khánh Hòa, Việt Nam", // VN Location specified
+			registrationOpeningDate: "2025-05-01T00:00:00Z", // Adjusted date
+			registrationClosingDate: "2025-05-20T23:59:59Z", // Adjusted date (Reg open)
+			drawDate: "2025-05-23T09:00:00Z", // Adjusted date
+			startDateFirstTime: "2025-05-28T08:00:00Z", // Adjusted date
+			endDateFirstTime: "2025-06-01T17:00:00Z", // Adjusted date
+			countUpdateOccurTime: 0,
+			startDate: "2025-05-28T08:00:00Z",
+			endDate: "2025-06-01T17:00:00Z",
+			checkInBeforeStart: "2025-05-28T07:00:00Z",
+			numberOfCourt: 5, // Included field, value varied
+			registrationFeePerPerson: 180000,
+			registrationFeePerPair: 320000,
+			maxEventPerPerson: 2,
+			status: "DRAWING", // Assigned Status (Use second drawing status)
+			protestFeePerTime: 70000,
+			prizePool: 15000000,
+			hasMerchandise: true,
+			numberOfMerchandise: 80,
+			merchandiseImages: ["https://example.com/images/merch_vsn.jpg"],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		},
+		{
+			id: "bac-lieu-wind-farm-open-2025",
+			name: "Bac Lieu Wind Farm Open 2025",
+			shortName: "BLWFO 2025",
+			description: "Giải cầu lông mở rộng Điện gió Bạc Liêu",
+			organizerId: user.id,
+			contactPhone: "+84 789456123", // VN Format
+			contactEmail: "baclieu.windfarm.open@gmail.com", // Gmail format
+			mainColor: "#BDC3C7",
+			backgroundTournament: "https://example.com/images/bl_bg.jpg",
+			location: "Nhà thi đấu đa năng Bạc Liêu, Bạc Liêu, Việt Nam", // VN Location
+			registrationOpeningDate: "2025-06-10T00:00:00Z",
+			registrationClosingDate: "2025-06-30T23:59:59Z",
+			drawDate: "2025-07-02T10:00:00Z",
+			startDateFirstTime: "2025-07-08T09:00:00Z",
+			endDateFirstTime: "2025-07-12T18:00:00Z",
+			countUpdateOccurTime: 0,
+			startDate: "2025-07-08T09:00:00Z",
+			endDate: "2025-07-12T18:00:00Z",
+			checkInBeforeStart: "2025-07-08T08:00:00Z",
+			numberOfCourt: 4, // Included field, value varied
+			registrationFeePerPerson: 190000,
+			registrationFeePerPair: 340000,
+			maxEventPerPerson: 3,
+			status: "CANCELED", // Assigned Status
+			protestFeePerTime: 90000,
+			prizePool: 22000000,
+			hasMerchandise: false,
+			numberOfMerchandise: 0,
+			merchandiseImages: [],
+			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"], // Set attachments
+			isRecruit: true, // Set to true
+			tournamentSerieId: tournamentSerie.id
+		}
 	];
 
 	const tournamentCreates = await prisma.tournament.createManyAndReturn({
 		data: tournaments,
 	});
+	await createTournamentEventForHochiminh();
+	await createTournamentEventForDaNang();
+	await createTournamentEventForVietnam();
+}
 
+async function createTournamentEventForHochiminh() {
 	const tournament = await prisma.tournament.findFirst({
 		where: {
-			name: "European Badminton Masters 2025",
+			name: "Ho Chi Minh City Open 2025",
 		},
 	});
 
+	const eventMenSingle = {
+		tournamentEvent: BadmintonParticipantType.MENS_SINGLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
+    minimumAthlete: 4,
+    maximumAthlete: 32,
+    championshipPrize: "Gold Medal, 10,000,000 VND",
+    runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+	};
+
+	const eventMenDouble = {
+		tournamentEvent: BadmintonParticipantType.MENS_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+    runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+	};
+
+	const eventWomanSingle = {
+		tournamentEvent: BadmintonParticipantType.WOMENS_SINGLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
+    minimumAthlete: 4,
+    maximumAthlete: 32,
+    championshipPrize: "Gold Medal, 10,000,000 VND",
+    runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+	};
+
+	const eventWomanDouble = {
+		tournamentEvent: BadmintonParticipantType.WOMENS_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+    runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+	};
+
+	const eventMixedDouble = {
+		tournamentEvent: BadmintonParticipantType.MIXED_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+    runnerUpPrize: "Silver Medal, 6,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+	};
+
 	const tournamentEvents: Prisma.TournamentEventCreateManyInput[] = [
 		{
-			tournamentEvent: "MENS_SINGLE",
-			fromAge: 16,
-			toAge: 35,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension: "Players must reach 2 winning sets to advance.",
-			minimumAthlete: 8,
-			maximumAthlete: 64,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
+			...eventMenSingle,
+			tournamentId: tournament.id
 		},
 		{
-			tournamentEvent: "WOMENS_SINGLE",
-			fromAge: 14,
-			toAge: 30,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension:
-				"Top 2 players from each group advance to knockout stage.",
-			minimumAthlete: 6,
-			maximumAthlete: 32,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
+			...eventMenDouble,
+			tournamentId: tournament.id
 		},
 		{
-			tournamentEvent: "MENS_DOUBLE",
-			fromAge: 18,
-			toAge: 40,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension: "Matches are best of 3 sets.",
-			minimumAthlete: 4,
-			maximumAthlete: 32,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
-		},
-		{
-			tournamentEvent: "WOMENS_DOUBLE",
-			fromAge: 16,
-			toAge: 35,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension:
-				"Each team must play all group matches before knockout stage.",
-			minimumAthlete: 4,
-			maximumAthlete: 16,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
-		},
-		{
-			tournamentEvent: "MIXED_DOUBLE",
-			fromAge: 16,
-			toAge: 40,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension:
-				"Mixed teams must consist of 1 male and 1 female player.",
-			minimumAthlete: 8,
-			maximumAthlete: 32,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
-		},
-		{
-			tournamentEvent: "MENS_SINGLE",
-			fromAge: 12,
-			toAge: 18,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension:
-				"Youth players are allowed to compete in 2 events max.",
-			minimumAthlete: 6,
-			maximumAthlete: 20,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
-		},
-		{
-			tournamentEvent: "WOMENS_SINGLE",
-			fromAge: 10,
-			toAge: 16,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension: "Junior category follows simplified rules.",
-			minimumAthlete: 8,
-			maximumAthlete: 24,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
-		},
-		{
-			tournamentEvent: "MENS_DOUBLE",
-			fromAge: 20,
-			toAge: 45,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension: "Top 2 pairs in each group qualify for playoffs.",
-			minimumAthlete: 4,
-			maximumAthlete: 16,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
-		},
-		{
-			tournamentEvent: "WOMENS_DOUBLE",
-			fromAge: 22,
-			toAge: 40,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension: "Only national-ranked players are eligible.",
-			minimumAthlete: 6,
-			maximumAthlete: 16,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
-			tournamentId: tournament.id,
-		},
-		{
-			tournamentEvent: "MIXED_DOUBLE",
-			fromAge: 18,
-			toAge: 35,
-			winningPoint: 21,
-			lastPoint: 31,
-			numberOfGames: 3,
-			typeOfFormat: "SINGLE_ELIMINATION",
-			ruleOfEventExtension: "Mixed doubles require pre-registered pairs.",
-			minimumAthlete: 8,
-			maximumAthlete: 24,
-			championshipPrize: "Gold Medal, 8,000 USD",
-			runnerUpPrize: "Silver Medal 4,000 USD",
-			thirdPlacePrize: "Bronze Medal, 2,000 USD",
-			jointThirdPlacePrize: "Consolation Prize, 1,000 USD",
+			...eventMixedDouble,
 			tournamentId: tournament.id,
 		},
 	];
@@ -948,7 +1213,242 @@ async function main() {
 		await prisma.tournamentEvent.createManyAndReturn({
 			data: tournamentEvents,
 		});
-	console.log(tournamentEventCreates);
+
+	for(let i = 1; i <= tournament.numberOfCourt; i++) {
+		const createCourt = await prisma.court.create({
+			data: {
+				courtCode: "Court " + i.toString(),
+				courtAvailable: true,
+				tournamentId: tournament.id
+			}
+		});
+	}
+}
+
+async function createTournamentEventForDaNang() {
+	const tournament = await prisma.tournament.findFirst({
+		where: {
+			name: "Da Nang Badminton Challenge 2025",
+		},
+	});
+
+	const eventMenSingle = {
+		tournamentEvent: BadmintonParticipantType.MENS_SINGLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
+    minimumAthlete: 4,
+    maximumAthlete: 32,
+    championshipPrize: "Gold Medal, 10,000,000 VND",
+    runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+	};
+
+	const eventMenDouble = {
+		tournamentEvent: BadmintonParticipantType.MENS_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+    runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+	};
+
+	const eventWomanSingle = {
+		tournamentEvent: BadmintonParticipantType.WOMENS_SINGLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
+    minimumAthlete: 4,
+    maximumAthlete: 32,
+    championshipPrize: "Gold Medal, 10,000,000 VND",
+    runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+	};
+
+	const eventWomanDouble = {
+		tournamentEvent: BadmintonParticipantType.WOMENS_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+    runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+	};
+
+	const eventMixedDouble = {
+		tournamentEvent: BadmintonParticipantType.MIXED_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+    runnerUpPrize: "Silver Medal, 6,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+	};
+
+	const danangEvents: Prisma.TournamentEventCreateManyInput[] = [
+		{
+			...eventMenSingle,
+			tournamentId: tournament.id,
+		},
+		{
+			...eventMenDouble,
+			tournamentId: tournament.id,
+		},
+		{
+			...eventMixedDouble,
+			tournamentId: tournament.id,
+		},
+	];
+
+	const tournamentEventCreates =
+		await prisma.tournamentEvent.createManyAndReturn({
+			data: danangEvents,
+		});
+
+	for(let i = 1; i <= tournament.numberOfCourt; i++) {
+		const createCourt = await prisma.court.create({
+			data: {
+				courtCode: "Court " + i.toString(),
+				courtAvailable: true,
+				tournamentId: tournament.id
+			}
+		});
+	}
+}
+
+async function createTournamentEventForVietnam() {
+	const tournament = await prisma.tournament.findFirst({
+		where: {
+			name: "Vietnam Youth Nationals 2025",
+		},
+	});
+
+	const eventMenSingle = {
+		tournamentEvent: BadmintonParticipantType.MENS_SINGLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
+    minimumAthlete: 4,
+    maximumAthlete: 32,
+    championshipPrize: "Gold Medal, 10,000,000 VND",
+    runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+	};
+
+	const eventMenDouble = {
+		tournamentEvent: BadmintonParticipantType.MENS_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+    runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+	};
+
+	const eventWomanSingle = {
+		tournamentEvent: BadmintonParticipantType.WOMENS_SINGLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
+    minimumAthlete: 4,
+    maximumAthlete: 32,
+    championshipPrize: "Gold Medal, 10,000,000 VND",
+    runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+	};
+
+	const eventWomanDouble = {
+		tournamentEvent: BadmintonParticipantType.WOMENS_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+    runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+	};
+
+	const eventMixedDouble = {
+		tournamentEvent: BadmintonParticipantType.MIXED_DOUBLE,
+    fromAge: 18,
+    toAge: 30,
+    winningPoint: 21,
+    lastPoint: 30,
+    numberOfGames: 3,
+    typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+    ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+    minimumAthlete: 4, // Minimum 4 pairs
+    maximumAthlete: 32, // Maximum 32 pairs
+    championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+    runnerUpPrize: "Silver Medal, 6,000,000 VND",
+    thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+	};
+
+	const tournamentEvents: Prisma.TournamentEventCreateManyInput[] = [
+		{
+			...eventMenSingle,
+			tournamentId: tournament.id
+		},
+		{
+			...eventMenDouble,
+			tournamentId: tournament.id
+		},
+		{
+			...eventMixedDouble,
+			tournamentId: tournament.id,
+		},
+	];
+
+	const tournamentEventCreates =
+		await prisma.tournamentEvent.createManyAndReturn({
+			data: tournamentEvents,
+		});
 
 	for(let i = 1; i <= tournament.numberOfCourt; i++) {
 		const createCourt = await prisma.court.create({

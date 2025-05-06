@@ -310,7 +310,6 @@ export class PrismaTournamentRepositoryAdapter
 						maxEventPerPerson: true,
 						prizePool: true,
 						requiredAttachment: true,
-						umpirePerMatch: true,
 						protestFeePerTime: true,
 						isRecruit: true,
 						tournamentSerie: {
@@ -409,7 +408,6 @@ export class PrismaTournamentRepositoryAdapter
 				contactPhone: true,
 				// numberOfMerchandise: true,
 				hasMerchandise: true,
-				hasLiveStream: true,
 				location: true,
 				isRecruit: true,
 				registrationFeePerPerson: true,
@@ -566,7 +564,6 @@ export class PrismaTournamentRepositoryAdapter
 						maxEventPerPerson: true,
 						prizePool: true,
 						requiredAttachment: true,
-						umpirePerMatch: true,
 						protestFeePerTime: true,
 						isRecruit: true,
 						tournamentSerie: {
@@ -673,7 +670,6 @@ export class PrismaTournamentRepositoryAdapter
 						maxEventPerPerson: true,
 						prizePool: true,
 						requiredAttachment: true,
-						umpirePerMatch: true,
 						protestFeePerTime: true,
 						isRecruit: true,
 						tournamentSerie: {
@@ -925,7 +921,7 @@ export class PrismaTournamentRepositoryAdapter
 
 				data: {
 					isRecruit: updateTournamentRecruitmentDTO.isRecruit,
-					numberOfUmpireToRecruit:
+					numberOfUmpires:
 						updateTournamentRecruitmentDTO.numberOfUmpires,
 				},
 			});

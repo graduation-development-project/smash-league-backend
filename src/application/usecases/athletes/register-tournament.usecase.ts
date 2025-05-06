@@ -92,7 +92,7 @@ export class RegisterTournamentUseCase {
 			const umpiresList =
 				await this.tournamentRepository.getTournamentUmpire(tournamentId);
 
-			if (tournament.numberOfUmpireToRecruit === umpiresList.length) {
+			if (tournament.numberOfUmpires === umpiresList.length) {
 				throw new BadRequestException("This is tournament is full of umpires");
 			}
 		}

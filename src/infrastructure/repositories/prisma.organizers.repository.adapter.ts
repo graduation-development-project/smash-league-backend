@@ -460,7 +460,6 @@ export class PrismaOrganizersRepositoryAdapter
 					contactEmail: true,
 					contactPhone: true,
 					hasMerchandise: true,
-					hasLiveStream: true,
 					location: true,
 					registrationFeePerPerson: true,
 					registrationFeePerPair: true,

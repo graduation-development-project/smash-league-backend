@@ -1042,8 +1042,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			},
 		});
 		if (
-			tournamentEvent.thirdPlacePrize !== null ||
-			tournamentEvent.jointThirdPlacePrize !== null
+			tournamentEvent.thirdPlacePrize !== null
 		) {
 			const thirdPlaceMatch = await this.getThirdPlaceMatch(
 				match.tournamentEventId,
