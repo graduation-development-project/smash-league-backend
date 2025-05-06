@@ -743,7 +743,7 @@ model UserBankAccount {
   bankId        String
   bank          Bank   @relation(name: "FK_Bank_UserBankAccount", fields: [bankId], references: [id])
 
-  @@unique([accountNumber, bankId], name: "accountNumber_bankId")
+  @@unique([accountNumber, bankId, userId])
 }
 
 model UserReport {
