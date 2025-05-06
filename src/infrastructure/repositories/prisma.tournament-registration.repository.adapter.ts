@@ -25,6 +25,7 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 				},
 
 				include: {
+					user: true,
 					tournament: true,
 					tournamentEvent: true,
 				},

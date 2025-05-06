@@ -18,6 +18,8 @@ import { NotificationsRepositoryPort } from "../../../domain/repositories/notifi
 import { PrismaService } from "../../../infrastructure/services/prisma.service";
 import { TournamentRegistrationRepositoryPort } from "../../../domain/repositories/tournament-registration.repository.port";
 import { TournamentUmpireRepositoryPort } from "../../../domain/repositories/tournament-umpire.repository.port";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @Injectable()
 export class ResponseTournamentRegistrationUseCase {
@@ -29,6 +31,7 @@ export class ResponseTournamentRegistrationUseCase {
 		@Inject("TournamentUmpireRepositoryPort")
 		private tournamentUmpireRepository: TournamentUmpireRepositoryPort,
 		private prismaService: PrismaService,
+		@InjectQueue("emailQueue") private emailQueue: Queue,
 	) {}
 
 	async execute(
@@ -37,7 +40,7 @@ export class ResponseTournamentRegistrationUseCase {
 		const { tournamentRegistrationId, rejectReason, option, userId } =
 			responseTournamentRegistrationDTO;
 
-		const existedRegistration =
+		const existedRegistration: any =
 			await this.tournamentRegistrationRepository.getTournamentRegistrationById(
 				tournamentRegistrationId,
 			);
@@ -89,7 +92,6 @@ export class ResponseTournamentRegistrationUseCase {
 						[existedRegistration.userId],
 					);
 				} else {
-
 					const tournament = await this.prismaService.tournament.findUnique({
 						where: {
 							id: existedRegistration.tournamentId,
@@ -162,6 +164,21 @@ export class ResponseTournamentRegistrationUseCase {
 						[existedRegistration.userId],
 					);
 				}
+
+				await this.emailQueue.add("sendEmail", {
+					to: existedRegistration.user.email,
+					subject: "Tournament Registration Response",
+					template: "tournament-registration-response.hbs",
+					context: {
+						username: existedRegistration.user.name,
+						isAccepted: true,
+						isUmpire:
+							existedRegistration.registrationRole ===
+							TournamentRegistrationRole.UMPIRE,
+						tournamentName: isTournamentOrganizer.name,
+						tournamentEvent: existedRegistration.tournamentEvent.tournamentEvent,
+					},
+				});
 			}
 
 			if (!option) {
@@ -182,6 +199,21 @@ export class ResponseTournamentRegistrationUseCase {
 					},
 					[existedRegistration.userId],
 				);
+
+				await this.emailQueue.add("sendEmail", {
+					to: existedRegistration.user.email,
+					subject: "Tournament Registration Response",
+					template: "tournament-registration-response.hbs",
+					context: {
+						username: existedRegistration.user.name,
+						isAccepted: false,
+						isUmpire:
+							existedRegistration.registrationRole ===
+							TournamentRegistrationRole.UMPIRE,
+						tournamentName: isTournamentOrganizer.name,
+						tournamentEvent: existedRegistration.tournamentEvent.tournamentEvent,
+					},
+				});
 			}
 
 			return new ApiResponse<null>(

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tournament Registration Response</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			padding: 20px;
+		}
+
+		.container {
+			background: #ffffff;
+			padding: 20px;
+			border-radius: 10px;
+			text-align: center;
+			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+			margin: 0 auto;
+		}
+
+		h2 {
+			color: #333;
+		}
+
+		p {
+			color: #555;
+		}
+
+		.response {
+			font-size: 18px;
+			font-weight: bold;
+			margin: 20px 0;
+		}
+
+		.accepted {
+			color: #28a745; /* Màu xanh lá cây */
+		}
+
+		.rejected {
+			color: #dc3545; /* Màu đỏ */
+		}
+
+		.footer {
+			margin-top: 20px;
+			font-size: 12px;
+			color: #999;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<h2>Tournament Registration Response</h2>
+	<p>Dear {{username}},</p>
+	<p>Thank you for your participation in the {{tournamentName}} tournament.</p>
+	<div class="response {{#if isAccepted}}accepted{{else}}rejected{{/if}}">
+		{{#if isUmpire}}
+			Your umpire registration is {{#if isAccepted}}ACCEPTED{{else}}REJECTED{{/if}}.
+		{{else}}
+			Your registration for {{tournamentEvent}} event is {{#if isAccepted}}ACCEPTED{{else}}REJECTED{{/if}}.
+		{{/if}}
+	</div>
+	<p>
+		{{#if isAccepted}}
+			{{#if isUmpire}}
+				You are now confirmed as an umpire for this tournament. Further details regarding the schedule and your specific
+				assignments will be sent to you shortly.
+			{{else}}
+				You are now confirmed to participate in the {{tournamentEvent}} event. Further details regarding the schedule
+				and venue will be sent to you shortly.
+			{{/if}}
+		{{else}}
+			Unfortunately, we are unable to accept your registration at this time. For more information, please
+			contact us.
+		{{/if}}
+	</p>
+	<p>If you have any questions, please contact us.</p>
+	<div class="footer">
+		&copy; 2025 Smash League. All rights reserved.
+	</div>
+</div>
+</body>
+</html>
