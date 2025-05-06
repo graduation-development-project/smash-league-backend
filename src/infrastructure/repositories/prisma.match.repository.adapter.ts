@@ -712,7 +712,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				game.leftCompetitorPoint === tournamentEvent.lastPoint ||
 				game.rightCompetitorPoint === tournamentEvent.lastPoint
 			) {
-				console.log("Ket thuc 2");
 				const gameEnded = await this.prisma.game.update({
 					where: {
 						id: game.id,
@@ -889,6 +888,14 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				data: {
 					isAvailable: true,
 				},
+			});
+			const updateCourtAvailable = await this.prisma.court.update({
+				where: {
+					id: match.courtId
+				},
+				data: {
+					courtAvailable: true
+				}
 			});
 			const matchStage = await this.prisma.stage.findUnique({
 				where: {

@@ -10,6 +10,8 @@ async function main() {
 	await addParticipantForTournamentEvent3();
 	await addParticipantForTournamentEvent4();
 	await addParticipantForTournamentEvent5();
+	await addParticipantForTournamentEvent6();
+
 }
 
 async function addParticipantForTournamentEvent1() {
@@ -289,6 +291,90 @@ async function addParticipantForTournamentEvent5() {
 			thirdPlaceId: tournamentParticipants[2].id
 		}
 	});
+}
+
+async function addParticipantForTournamentEvent6() {
+	const tournament = await prisma.tournament.findUnique({
+		where: {
+			id: "da-nang-challenge-2025"
+		}
+	});
+	const tournamentEvent = await prisma.tournamentEvent.findFirst({
+		where: {
+			tournamentId: tournament.id,
+			tournamentEvent: BadmintonParticipantType.MIXED_DOUBLE
+		}
+	});
+	const participants = await prisma.user.findMany({
+		where: {
+			gender: "MALE",
+			email: {
+				not: "admin@smashleague.com"
+			}
+		},
+		skip: 0,
+		take: 3
+	});
+	const femaleParticipants = await prisma.user.findMany({
+		where: {
+			gender: "FEMALE",
+			email: {
+				not: "admin@smashleague.com"
+			}
+		},
+		skip: 0,
+		take: 3
+	}); 
+	let tournamentParticipants = [];
+	for (let i = 0; i < participants.length; i++) {
+		const account = await prisma.tournamentParticipants.create({
+			data: {
+				userId: participants[i].id,
+				partnerId: femaleParticipants[i].id,
+				tournamentEventId: tournamentEvent.id,
+				tournamentId: tournamentEvent.tournamentId
+			}
+		});
+		tournamentParticipants.push(account);
+	}
+
+	const standing = await prisma.tournamentEvent.update({
+		where: {
+			id: tournamentEvent.id
+		},
+		data: {
+			championshipId: tournamentParticipants[0].id,
+			runnerUpId: tournamentParticipants[1].id,
+			thirdPlaceId: tournamentParticipants[2].id
+		}
+	});
+}
+
+async function addParticipantIntoTournamentEvent() {
+	const participants = await prisma.user.findMany({
+		where: {
+			gender: "MALE",
+			email: {
+				not: "admin@smashleague.com"
+			}
+		},
+		skip: 3,
+		take: 17
+	});
+	const tournamentEvent = await prisma.tournamentEvent.findFirst({
+		where: {
+			tournamentEvent: "MENS_SINGLE"
+		}
+	});
+	for(const participant of participants) {
+		const participantAdded = await prisma.tournamentParticipants.create({
+			data: {
+				userId: participant.id,
+				tournamentEventId: tournamentEvent.id,
+				tournamentId: tournamentEvent.tournamentId
+			}
+		});
+	}
 }
 
 main()
