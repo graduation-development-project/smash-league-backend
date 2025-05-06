@@ -679,7 +679,7 @@ async function main() {
 			registrationFeePerPerson: 400000,
 			registrationFeePerPair: 700000,
 			maxEventPerPerson: 3,
-			status: "CREATED", // Assigned Status
+			status: TournamentStatus.FINISHED, // Assigned Status
 			protestFeePerTime: 200000,
 			prizePool: 70000000,
 			hasMerchandise: true,
