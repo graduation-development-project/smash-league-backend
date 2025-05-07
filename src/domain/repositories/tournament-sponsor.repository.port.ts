@@ -6,7 +6,7 @@ export interface TournamentSponsorRepositoryPort {
 		createTournamentSponsorDTO: CreateTournamentSponsorDTO[],
 	): Promise<TournamentSponsor[]>;
 
-	findSponsorInTournament(tournamentId: string): Promise<Sponsor[]>;
+	findSponsorInTournament(tournamentId: string): Promise<any>;
 
 	findTournamentSponsor(
 		tournamentId: string,

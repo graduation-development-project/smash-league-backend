@@ -10,8 +10,8 @@ export class FindTournamentSponsorUseCase {
 		private tournamentSponsorRepository: TournamentSponsorRepositoryPort,
 	) {}
 
-	async execute(tournamentId: string): Promise<ApiResponse<Sponsor[]>> {
-		return new ApiResponse<Sponsor[]>(
+	async execute(tournamentId: string): Promise<ApiResponse<any>> {
+		return new ApiResponse<any>(
 			HttpStatus.OK,
 			"Get Tournament Sponsors successfully",
 			await this.tournamentSponsorRepository.findSponsorInTournament(

@@ -520,7 +520,7 @@ export class TournamentController {
 	@Get("/get-tournament-sponsor/:tournamentId")
 	async findTournamentSponsors(
 		@Param("tournamentId") tournamentId: string,
-	): Promise<ApiResponse<Sponsor[]>> {
+	): Promise<ApiResponse<any>> {
 		return this.findTournamentSponsorUseCase.execute(tournamentId);
 	}
 
