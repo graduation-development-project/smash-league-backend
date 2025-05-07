@@ -713,7 +713,7 @@ async function main() {
 			registrationFeePerPerson: 200000,
 			registrationFeePerPair: 350000,
 			maxEventPerPerson: 3,
-			status: "CREATED", // Assigned Status
+			status: "ON_GOING", // Assigned Status
 			protestFeePerTime: 100000,
 			prizePool: 25000000,
 			hasMerchandise: true,
@@ -747,7 +747,7 @@ async function main() {
 			registrationFeePerPerson: 350000,
 			registrationFeePerPair: 650000,
 			maxEventPerPerson: 2,
-			status: "CREATED", // Assigned Status
+			status: "ON_GOING", // Assigned Status
 			protestFeePerTime: 180000,
 			prizePool: 60000000,
 			hasMerchandise: true,
@@ -781,7 +781,7 @@ async function main() {
 			registrationFeePerPerson: 280000,
 			registrationFeePerPair: 500000,
 			maxEventPerPerson: 2,
-			status: "CREATED", // Assigned Status (Reg closed)
+			status: "ON_GOING", // Assigned Status (Reg closed)
 			protestFeePerTime: 120000,
 			prizePool: 45000000,
 			hasMerchandise: true,
@@ -815,7 +815,7 @@ async function main() {
 			registrationFeePerPerson: 150000,
 			registrationFeePerPair: 250000,
 			maxEventPerPerson: 4,
-			status: "CREATED", // Assigned Status (Reg is open now)
+			status: "ON_GOING", // Assigned Status (Reg is open now)
 			protestFeePerTime: 50000,
 			prizePool: 20000000,
 			hasMerchandise: true,
