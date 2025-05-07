@@ -894,11 +894,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			});
 			const updateCourtAvailable = await this.prisma.court.update({
 				where: {
-					id: match.courtId
+					id: match.courtId,
 				},
 				data: {
-					courtAvailable: true
-				}
+					courtAvailable: true,
+				},
 			});
 			const matchStage = await this.prisma.stage.findUnique({
 				where: {
@@ -922,7 +922,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 								tournamentEventStatus: TournamentEventStatus.ENDED,
 							},
 						});
-						await this.processTournamentFinished(tournamentEvent.tournamentId);
+					await this.processTournamentFinished(tournamentEvent.tournamentId);
 					return {
 						currentGameNumber: 0,
 						currentPoint: await this.getAllGamesOfMatch(match.id),
@@ -950,7 +950,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 								tournamentEventStatus: TournamentEventStatus.ENDED,
 							},
 						});
-						await this.processTournamentFinished(tournamentEvent.tournamentId);
+					await this.processTournamentFinished(tournamentEvent.tournamentId);
 					return {
 						currentGameNumber: 0,
 						currentPoint: await this.getAllGamesOfMatch(match.id),
@@ -1016,8 +1016,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	async processTournamentFinished(tournamentId: string): Promise<any> {
 		const tournamentEvents = await this.prisma.tournamentEvent.findMany({
 			where: {
-				tournamentId: tournamentId
-			}
+				tournamentId: tournamentId,
+			},
 		});
 		var check = true;
 		for (const event of tournamentEvents) {
@@ -1029,24 +1029,25 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		if (check === true) {
 			const tournamentUpdated = await this.prisma.tournament.update({
 				where: {
-					id: tournamentId
+					id: tournamentId,
 				},
 				data: {
-					status: TournamentStatus.FINISHED
-				}
+					status: TournamentStatus.FINISHED,
+				},
 			});
-			const tournamentParticipants = await this.prisma.tournamentParticipants.findMany({
-				where: {
-					tournamentId: tournamentId
-				}
-			});
+			const tournamentParticipants =
+				await this.prisma.tournamentParticipants.findMany({
+					where: {
+						tournamentId: tournamentId,
+					},
+				});
 			const createPaybackFee = await this.prisma.paybackFee.create({
 				data: {
 					value: await this.createPaybackFeeForTournament(tournamentUpdated),
 					isPaid: false,
 					userId: tournamentUpdated.organizerId,
-					tournamentId: tournamentUpdated.id
-				}
+					tournamentId: tournamentUpdated.id,
+				},
 			});
 		}
 	}
@@ -1054,54 +1055,79 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	async createPaybackFeeForTournament(tournament: Tournament): Promise<number> {
 		const tournamentEvents = await this.prisma.tournamentEvent.findMany({
 			where: {
-				tournamentId: tournament.id
-			}
+				tournamentId: tournament.id,
+			},
 		});
 		var paybackFee = 0;
 		for (const event of tournamentEvents) {
-			const paybackFeePerEvent = await this.createPaybackFeeForTournamentEvent(event, tournament);
+			const paybackFeePerEvent = await this.createPaybackFeeForTournamentEvent(
+				event,
+				tournament,
+			);
 			paybackFee += paybackFeePerEvent;
 		}
 		return paybackFee;
 	}
 
-	async createPaybackFeeForTournamentEvent(tournamentEvent: TournamentEvent, tournament: Tournament): Promise<number> {
-		const tournamentParticipants = await this.prisma.tournamentParticipants.findMany({
-			where: {
-				tournamentEventId: tournamentEvent.id
-			}
-		});
-		return await this.createPaybackFee(tournamentParticipants.length, tournamentEvent.tournamentEvent, tournament.registrationFeePerPerson);
+	async createPaybackFeeForTournamentEvent(
+		tournamentEvent: TournamentEvent,
+		tournament: Tournament,
+	): Promise<number> {
+		const tournamentParticipants =
+			await this.prisma.tournamentParticipants.findMany({
+				where: {
+					tournamentEventId: tournamentEvent.id,
+				},
+			});
+		return await this.createPaybackFee(
+			tournamentParticipants.length,
+			tournamentEvent.tournamentEvent,
+			tournament.registrationFeePerPerson,
+		);
 	}
 
-	async createPaybackFee(numberOfParticipant: number, eventType: BadmintonParticipantType, eventFee: number): Promise<number> {
+	async createPaybackFee(
+		numberOfParticipant: number,
+		eventType: BadmintonParticipantType,
+		eventFee: number,
+	): Promise<number> {
 		var paybackFee = 0;
-		switch(eventType){
+		switch (eventType) {
 			case "MENS_SINGLE":
-				console.log("number: " + numberOfParticipant + ", eventFee: " + eventFee);
+				console.log(
+					"number: " + numberOfParticipant + ", eventFee: " + eventFee,
+				);
 				paybackFee = numberOfParticipant * eventFee;
 				console.log("fee: " + paybackFee);
 				break;
 			case "WOMENS_SINGLE":
-				console.log("number: " + numberOfParticipant + ", eventFee: " + eventFee); 
+				console.log(
+					"number: " + numberOfParticipant + ", eventFee: " + eventFee,
+				);
 				paybackFee = numberOfParticipant * eventFee;
 				console.log("fee: " + paybackFee);
 				break;
-			case "MENS_DOUBLE": 
-				console.log("number: " + numberOfParticipant + ", eventFee: " + eventFee);
-				paybackFee = numberOfParticipant * eventFee * 2;
-				console.log("fee: " + paybackFee);
-				break;
-			case "MENS_DOUBLE": 
-				console.log("number: " + numberOfParticipant + ", eventFee: " + eventFee);
+			case "MENS_DOUBLE":
+				console.log(
+					"number: " + numberOfParticipant + ", eventFee: " + eventFee,
+				);
 				paybackFee = numberOfParticipant * eventFee * 2;
 				console.log("fee: " + paybackFee);
 				break;
 			case "MENS_DOUBLE":
-				console.log("number: " + numberOfParticipant + ", eventFee: " + eventFee);
+				console.log(
+					"number: " + numberOfParticipant + ", eventFee: " + eventFee,
+				);
 				paybackFee = numberOfParticipant * eventFee * 2;
 				console.log("fee: " + paybackFee);
-				break;	
+				break;
+			case "MENS_DOUBLE":
+				console.log(
+					"number: " + numberOfParticipant + ", eventFee: " + eventFee,
+				);
+				paybackFee = numberOfParticipant * eventFee * 2;
+				console.log("fee: " + paybackFee);
+				break;
 		}
 		return paybackFee;
 	}
@@ -1116,12 +1142,15 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						equals: StageOfMatch.ThirdPlaceMatch,
 					},
 				},
-				tournamentEventId: tournamentEvent.id
+				tournamentEventId: tournamentEvent.id,
 			},
 		});
 		console.log(thirdPlaceMatch);
 		if (thirdPlaceMatch === null) return false;
-		return thirdPlaceMatch.matchWonByCompetitorId !== null || thirdPlaceMatch.matchStatus === MatchStatus.ENDED;
+		return (
+			thirdPlaceMatch.matchWonByCompetitorId !== null ||
+			thirdPlaceMatch.matchStatus === MatchStatus.ENDED
+		);
 	}
 
 	async checkFinalMatchExistOrEnded(
@@ -1134,11 +1163,14 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						equals: StageOfMatch.Final,
 					},
 				},
-				tournamentEventId: tournamentEvent.id
+				tournamentEventId: tournamentEvent.id,
 			},
 		});
 		// if (finalMatch === null) return false;
-		return finalMatch.matchWonByCompetitorId !== null || finalMatch.matchStatus === MatchStatus.ENDED;
+		return (
+			finalMatch.matchWonByCompetitorId !== null ||
+			finalMatch.matchStatus === MatchStatus.ENDED
+		);
 	}
 
 	async processSemiFinalMatch(
@@ -1501,7 +1533,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						tournament: true,
 					},
 				},
-				court: true
+				court: true,
 			},
 		});
 	}
@@ -1556,7 +1588,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 	async createMatch(match: Prisma.MatchCreateManyInput): Promise<any> {
 		return await this.prisma.match.create({
-			data: match
+			data: match,
 		});
 	}
 
@@ -1739,12 +1771,27 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 		const firstMatchId = firstRoundMatches[0].id;
 
-		const finalMatches = matches.filter((m) => m.nextMatchId === null);
-		if (finalMatches.length === 0) {
+		const noNextMatches = matches.filter((m) => m.nextMatchId === null);
+
+		const finalCandidates = noNextMatches.filter((candidate) => {
+			const countRef = matches.filter(
+				(m) => m.nextMatchId === candidate.id,
+			).length;
+			return countRef === 2;
+		});
+
+		if (finalCandidates.length === 0) {
 			throw new Error("Không tìm thấy trận chung kết.");
 		}
+		if (finalCandidates.length > 1) {
+			throw new Error("Tìm thấy nhiều hơn 1 trận có vẻ là chung kết.");
+		}
 
-		const finalMatchId = finalMatches[0].id;
+		const finalMatchId = finalCandidates[0].id;
+
+		const thirdPlaceMatch = noNextMatches.find((m) => m.id !== finalMatchId);
+
+		console.log(thirdPlaceMatch);
 
 		const generateScore = (): [number, number] => {
 			const loserScore = Math.floor(Math.random() * 10) + 10; // 10–19
@@ -1762,8 +1809,10 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			while (winnerGames < 2) {
 				const [winScore, loseScore] = generateScore();
 
-				const leftScore = match.leftCompetitorId === winnerId ? winScore : loseScore;
-				const rightScore = match.leftCompetitorId === winnerId ? loseScore : winScore;
+				const leftScore =
+					match.leftCompetitorId === winnerId ? winScore : loseScore;
+				const rightScore =
+					match.leftCompetitorId === winnerId ? loseScore : winScore;
 
 				gameUpdates.push(
 					this.prisma.game.create({
@@ -1800,7 +1849,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			const winnerId = match.leftCompetitorId ?? match.rightCompetitorId;
 
 			updates.push(...createBestOfThreeGames(match, winnerId));
-
 
 			// Đánh dấu trận hiện tại là đã kết thúc
 			updates.push(
@@ -1859,6 +1907,67 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		}
 
 		await this.prisma.$transaction(updates);
+
+		if (thirdPlaceMatch) {
+			const semifinalMatches = await this.prisma.match.findMany({
+				where: { nextMatchId: finalMatchId },
+				include: {
+					leftCompetitor: true,
+					rightCompetitor: true,
+					matchWonByCompetitor: true,
+				},
+			});
+
+			if (semifinalMatches.length !== 2) {
+				throw new Error("Không xác định được 2 trận bán kết.");
+			}
+
+			const loserIds: string[] = [];
+
+			for (const semi of semifinalMatches) {
+				const { leftCompetitorId, rightCompetitorId, matchWonByCompetitorId } =
+					semi;
+
+				const loserId =
+					matchWonByCompetitorId === leftCompetitorId
+						? rightCompetitorId
+						: leftCompetitorId;
+
+				if (loserId) loserIds.push(loserId);
+			}
+
+			if (loserIds.length === 2) {
+				await this.prisma.match.update({
+					where: { id: thirdPlaceMatch.id },
+					data: {
+						leftCompetitorId: loserIds[0],
+						rightCompetitorId: loserIds[1],
+					},
+				});
+
+				const [winnerId, loserId] = [loserIds[0], loserIds[1]];
+
+				const gamePromises = createBestOfThreeGames(
+					thirdPlaceMatch,
+					winnerId,
+					loserId,
+				);
+
+				await this.prisma.$transaction([
+					...gamePromises,
+					this.prisma.match.update({
+						where: { id: thirdPlaceMatch.id },
+						data: {
+							matchStatus: MatchStatus.ENDED,
+							matchWonByCompetitorId: winnerId,
+							startedWhen: new Date(),
+							timeStart: new Date(),
+							timeEnd: new Date(),
+						},
+					}),
+				]);
+			}
+		}
 	}
 
 	async assignPlayersToFirstRoundMatches(tournamentEventId: string) {
@@ -1867,12 +1976,20 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			orderBy: { id: "asc" }, // Sắp xếp để đảm bảo thứ tự nhất quán
 		});
 
+		const countMatches = await this.prisma.match.count({
+			where: {
+				tournamentEventId,
+			},
+		});
+
 		const firstRoundMatches = await this.prisma.match.findMany({
 			where: {
 				tournamentEventId,
 				matchesPrevious: {
 					none: {}, // Chỉ vòng đầu
 				},
+
+				matchNumber: { not: countMatches },
 			},
 			orderBy: { matchNumber: "asc" },
 		});
