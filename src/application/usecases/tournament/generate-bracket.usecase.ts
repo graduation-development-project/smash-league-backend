@@ -34,6 +34,22 @@ export class GenerateBracketUseCase {
 		const numberOfByeParticipants = this.getTheNearestNumberOfFullParticipants(listParticipants.listParticipants.length, 1) - listParticipants.listParticipants.length;
 		const numberOfRounds = this.calculateTheNumberOfRound(listParticipants.listParticipants.length);
 		const numberOfFullParticipants = this.getTheNearestNumberOfFullParticipants(listParticipants.listParticipants.length, 1);
+		const stageOfMatchThirdPlace = await this.stageRepository.createStage(
+			{
+				stageName: "Third place match",
+				tournamentEventId: tournamentEvent.id
+			}
+		);		
+			const thirdPlaceMatch = await this.matchRepository.createMatch(
+				{
+					isByeMatch: false,
+					matchNumber: numberOfBracket + 1,
+					stageId: stageOfMatchThirdPlace.id,
+					matchStatus: MatchStatus.NOT_STARTED,
+					nextMatchId: null,
+					tournamentEventId: tournamentEvent.id
+				}
+			);
 		let countableRound = 1;
 			let numberOfMatchPerRound = 1;
 			let check = 0;

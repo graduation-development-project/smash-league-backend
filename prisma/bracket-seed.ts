@@ -103,6 +103,22 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 	const numberOfFullParticipants = getTheNearestNumberOfFullParticipants(tournamentParticipants1.length, 1);
 
 	let countableRound = 1;
+	const stageOfMatch = await prisma.stage.create({
+		data: {
+			stageName: "Third place match",
+			tournamentEventId: tournamentEvent1.id
+		}
+	});		
+	const thirdPlaceMatch = await prisma.match.create({
+		data: {
+			isByeMatch: false,
+			matchNumber: numberOfBracket + 1,
+			stageId: stageOfMatch.id,
+			matchStatus: MatchStatus.NOT_STARTED,
+			nextMatchId: null,
+			tournamentEventId: tournamentEvent1.id
+		}
+	});
 			let numberOfMatchPerRound = 1;
 			let check = 0;
 			let nextMatches: Match[] = [];
@@ -241,22 +257,6 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 				// 	// console.log(nextMatches.length);
 				// }
 			} while (check < numberOfRounds);
-	const stageOfMatch = await prisma.stage.create({
-		data: {
-			stageName: "Third place match",
-			tournamentEventId: tournamentEvent1.id
-		}
-	});		
-	const thirdPlaceMatch = await prisma.match.create({
-		data: {
-			isByeMatch: false,
-			matchNumber: 0,
-			stageId: stageOfMatch.id,
-			matchStatus: MatchStatus.NOT_STARTED,
-			nextMatchId: null,
-			tournamentEventId: tournamentEvent1.id
-		}
-	});
 }
 
 function getTheNearestNumberOfFullParticipants(numeberOfParticipants: number, lastNumber: number): number {
