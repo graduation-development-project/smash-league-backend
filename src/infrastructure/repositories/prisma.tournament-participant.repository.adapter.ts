@@ -124,14 +124,13 @@ export class PrismaTournamentParticipantRepositoryAdapter
 		const existingUsers = await this.prismaService.user.findMany({
 			where: {
 				userRoles: {
-					every: {
+					none: {
 						role: {
-							roleName: { notIn: ["Staff", "Admin"] },
+							roleName: { in: ["Staff", "Admin"] },
 						},
 					},
 				},
 			},
-
 			take: takeNumber,
 		});
 
