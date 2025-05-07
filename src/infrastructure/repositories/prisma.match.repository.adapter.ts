@@ -1947,11 +1947,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 				const [winnerId, loserId] = [loserIds[0], loserIds[1]];
 
-				const gamePromises = createBestOfThreeGames(
-					thirdPlaceMatch,
-					winnerId,
-					loserId,
-				);
+				const gamePromises = createBestOfThreeGames(thirdPlaceMatch, winnerId);
 
 				await this.prisma.$transaction([
 					...gamePromises,
