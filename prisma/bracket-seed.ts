@@ -1,6 +1,7 @@
 import { Match, MatchStatus, Prisma, PrismaClient, TournamentParticipants } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 import { ICreateMatch } from "src/domain/interfaces/tournament/match/match.interface";
+import { StageOfMatch } from "src/infrastructure/enums/tournament/tournament-match.enum";
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
@@ -48,7 +49,8 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 		where: {
 			tournamentEventId: tournamentEventId,
 			matchNumber: {
-				lte: numberOfMatch
+				lte: numberOfMatch,
+				gte: 1
 			}
 		},
 		orderBy: {
@@ -137,8 +139,6 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 				} else if (check === numberOfRounds) {
 					//console.log(((numberOfByeParticipants / 2) + 1), " ", Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
 					const range = createRangeNumberArray(((numberOfByeParticipants / 2) + 1), Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
-					// console.log(nextMatches.length);
-					// console.log(this.checkNumberIsInRange(7, range));
 					for (let i = 2; i <= nextMatches.length * 2; i+=2) {
 						// console.log(numberOfBracket, " ", this.checkNumberIsInRange(i, range));
 						if (!checkNumberIsInRange(i, range)) {
@@ -175,16 +175,7 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 							});
 							matchesCreate.push(matchCreate);
 							numberOfBracket -= 1;
-							// matchesCreate.push({
-							// 	isByeMatch: false,
-							// 	matchStatus: MatchStatus.NOT_STARTED,
-							// 	nextMatchId: nextMatches[i/2-1].id,
-							// 	stageId: stageCreate.id,
-							// 	matchNumber: i,
-							// 	tournamentEventId: tournamentEvent1.id
-							// });
 						}
-						//console.log(this.checkNumberIsInRange(i - 1, range));
 	
 						if (!checkNumberIsInRange(i - 1, range)) {
 							const matchCreate = await prisma.match.create({
@@ -199,14 +190,6 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 							});
 							matchesCreate.push(matchCreate);
 							numberOfBracket -= 1;
-							// matchesCreate.push({
-							// 	isByeMatch: true,
-							// 	matchStatus: MatchStatus.NOT_STARTED,
-							// 	nextMatchId: nextMatches[i/2-1].id,
-							// 	stageId: stageCreate.id,
-							// 	matchNumber: i - 1,
-							// 	tournamentEventId: tournamentEvent1.id
-							// });
 						} else {
 							const matchCreate = await prisma.match.create({
 								data: {
@@ -220,26 +203,10 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 							});
 							matchesCreate.push(matchCreate);
 							numberOfBracket -= 1;
-							// matchesCreate.push({
-							// 	isByeMatch: false,
-							// 	matchStatus: MatchStatus.NOT_STARTED,
-							// 	nextMatchId: nextMatches[i/2-1].id,
-							// 	stageId: stageCreate.id,
-							// 	matchNumber: i - 1,
-							// 	tournamentEventId: tournamentEvent1.id
-							// });
 						}
 					}
 				} else {
 					for (let i = 0; i < nextMatches.length; i++) {
-						// matchesCreate.push({
-						// 	isByeMatch: false,
-						// 	matchNumber: numberOfBracket,
-						// 	matchStatus: MatchStatus.NOT_STARTED,
-						// 	nextMatchId: nextMatches[i].id,
-						// 	stageId: stageCreate.id,
-						// 	tournamentEventId: tournamentEvent1.id				
-						// });
 						const matchCreate = await prisma.match.create({
 							data: {
 								matchStatus: MatchStatus.NOT_STARTED,
@@ -263,14 +230,6 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 							}
 						});
 						matchesCreate.push(matchCreate1);
-						// matchesCreate.push({
-						// 	isByeMatch: false,
-						// 	matchNumber: numberOfBracket,
-						// 	matchStatus: MatchStatus.NOT_STARTED,
-						// 	nextMatchId: nextMatches[i].id,
-						// 	stageId: stageCreate.id,
-						// 	tournamentEventId: tournamentEvent1.id				
-						// });
 						numberOfBracket -= 1;
 					}
 				}
@@ -282,11 +241,21 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 				// 	// console.log(nextMatches.length);
 				// }
 			} while (check < numberOfRounds);
-}
-
-async function createMultipleMatch(matches: ICreateMatch[]) {
-	return await prisma.match.createManyAndReturn({
-		data: matches
+	const stageOfMatch = await prisma.stage.create({
+		data: {
+			stageName: "Third place match",
+			tournamentEventId: tournamentEvent1.id
+		}
+	});		
+	const thirdPlaceMatch = await prisma.match.create({
+		data: {
+			isByeMatch: false,
+			matchNumber: 0,
+			stageId: stageOfMatch.id,
+			matchStatus: MatchStatus.NOT_STARTED,
+			nextMatchId: null,
+			tournamentEventId: tournamentEvent1.id
+		}
 	});
 }
 
@@ -296,7 +265,7 @@ function getTheNearestNumberOfFullParticipants(numeberOfParticipants: number, la
 
 function calculateTheNumberOfRound(numberOfParticipants: number): number {
 	return Math.ceil(Math.log2(numberOfParticipants));
-}
+}    
 
 function getRoundOfBracket(numberOfPlayerPerRound: number): string {
 	switch(numberOfPlayerPerRound) {

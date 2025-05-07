@@ -760,7 +760,7 @@ async function addParticipantForTournamentEvent12() {
 			runnerUpId: tournamentParticipants[1].id,
 			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
-		}
+		}		
 	});
 }
 
