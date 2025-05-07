@@ -7,7 +7,7 @@ import { Package } from "@prisma/client";
 import { GetPackageDetailUseCase } from "src/application/usecases/packages/get-package-detail.usecase";
 import { ICreatePackage } from "src/domain/interfaces/package/package.interface";
 import { CreatePackageUseCase } from "src/application/usecases/packages/create-package.usecase";
-import { CreatePackageDto } from "src/domain/dtos/packages/package.dto";
+import { CreatePackageDto } from "src/domain/dtos/packages/package.dto"
 import { create } from "domain";
 import { InactivatePackageUseCase } from "src/application/usecases/packages/inactivate-package.usecase";
 import { UpdatePackageUseCase } from "src/application/usecases/packages/update-package.usecase";
