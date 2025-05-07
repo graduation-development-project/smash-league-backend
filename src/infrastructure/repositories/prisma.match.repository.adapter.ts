@@ -1990,11 +1990,20 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			orderBy: { matchNumber: "asc" },
 		});
 
-		const updates = [];
+		const firstMatch = firstRoundMatches[0];
 
+		const participantsToAssign = participants.filter(
+			(p) =>
+				p.id !== firstMatch.leftCompetitorId &&
+				p.id !== firstMatch.rightCompetitorId,
+		);
+
+		const matchesToAssign = firstRoundMatches.slice(1);
+
+		const updates = [];
 		for (
-			let i = 0, matchIndex = 1;
-			i < participants.length && matchIndex < firstRoundMatches.length;
+			let i = 0, matchIndex = 0;
+			i < participantsToAssign.length && matchIndex < matchesToAssign.length;
 			matchIndex++
 		) {
 			const match = firstRoundMatches[matchIndex];

@@ -117,12 +117,17 @@ export class PrismaTournamentParticipantRepositoryAdapter
 				},
 			});
 
+		const existingParticipantIds = participants.map((p) => p.userId);
+
 		const takeNumber =
 			tournamentEventExists.maximumAthlete - participants.length;
 
 		// Check if all provided user IDs exist
 		const existingUsers = await this.prismaService.user.findMany({
 			where: {
+				id: {
+					notIn: existingParticipantIds,
+				},
 				userRoles: {
 					none: {
 						role: {
