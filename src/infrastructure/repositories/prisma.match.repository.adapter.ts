@@ -1629,7 +1629,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		const visited = new Set<string>();
 		const updates: Prisma.PrismaPromise<any>[] = [];
 
-		// Xác định trận đầu tiên trong vòng đầu tiên (không có trận trước)
 		const firstRoundMatches = matches.filter(
 			(m) => m.matchesPrevious.length === 0,
 		);
@@ -1639,13 +1638,53 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 		const firstMatchId = firstRoundMatches[0].id;
 
-		// Xác định trận chung kết (không có trận sau)
 		const finalMatches = matches.filter((m) => m.nextMatchId === null);
 		if (finalMatches.length === 0) {
 			throw new Error("Không tìm thấy trận chung kết.");
 		}
 
 		const finalMatchId = finalMatches[0].id;
+
+		const generateScore = (): [number, number] => {
+			const loserScore = Math.floor(Math.random() * 10) + 10; // 10–19
+			return [21, loserScore];
+		};
+
+		const createBestOfThreeGames = (
+			match: Match,
+			winnerId: string,
+		): Prisma.PrismaPromise<any>[] => {
+			const gameUpdates: Prisma.PrismaPromise<any>[] = [];
+			let winnerGames = 0;
+			let gameNumber = 1;
+
+			while (winnerGames < 2) {
+				const [winScore, loseScore] = generateScore();
+
+				const leftScore = match.leftCompetitorId === winnerId ? winScore : loseScore;
+				const rightScore = match.leftCompetitorId === winnerId ? loseScore : winScore;
+
+				gameUpdates.push(
+					this.prisma.game.create({
+						data: {
+							matchId: match.id,
+							gameNumber,
+							leftCompetitorPoint: leftScore,
+							rightCompetitorPoint: rightScore,
+							status: "ENDED",
+							timeStart: new Date(),
+							timeEnd: new Date(),
+							gameWonByCompetitorId: winnerId,
+						},
+					}),
+				);
+
+				winnerGames++;
+				gameNumber++;
+			}
+
+			return gameUpdates;
+		};
 
 		const skipRecursive = (match: Match) => {
 			if (visited.has(match.id)) return;
@@ -1658,6 +1697,9 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			if (!match.leftCompetitorId && !match.rightCompetitorId) return;
 
 			const winnerId = match.leftCompetitorId ?? match.rightCompetitorId;
+
+			updates.push(...createBestOfThreeGames(match, winnerId));
+
 
 			// Đánh dấu trận hiện tại là đã kết thúc
 			updates.push(
