@@ -237,20 +237,6 @@ export class GenerateBracketUseCase {
 				// }
 			} while (check < numberOfRounds);		
 		// console.log(numberOfRounds);
-			const stageOfMatch = await this.stageRepository.createStage({
-				stageName: StageOfMatch.ThirdPlaceMatch,
-				tournamentEventId: tournamentEvent.id
-			});		
-			const matchCreate = await this.matchRepository.createMatch(
-				{
-					matchStatus: MatchStatus.NOT_STARTED,
-					nextMatchId: null,
-					stageId: stageOfMatch.id,
-					isByeMatch: false,
-					matchNumber: 0,
-					tournamentEventId: tournamentEvent.id
-				}
-			);
 			// const thirdPlaceMatch = await prisma.match.create({
 			// 	data: {
 			// 		isByeMatch: false,

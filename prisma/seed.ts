@@ -61,11 +61,11 @@ async function main() {
 			packageName: "Starter",
 			packageDetail:
 				"Package for starter with limited number of tournament to host!!",
-			credits: 3,
+			credits: 5,
 			isAvailable: true,
 			isRecommended: false,
-			currentDiscountByAmount: 100,
-			price: 2000,
+			currentDiscountByAmount: 0,
+			price: 50000,
 			advantages: [
 				"Have 3 times to host a tournament with full options.",
 				"Not availability to live stream.",
@@ -78,8 +78,8 @@ async function main() {
 			credits: 10,
 			isAvailable: true,
 			isRecommended: true,
-			currentDiscountByAmount: 200,
-			price: 4000,
+			currentDiscountByAmount: 5000,
+			price: 100000,
 			advantages: [
 				"Have 10 times to host a tournament with full options.",
 				"Availability to live stream.",
@@ -89,11 +89,11 @@ async function main() {
 			packageName: "Advanced",
 			packageDetail:
 				"Package for advanced organizers with amount number of tournaments to host!!",
-			credits: 50,
+			credits: 20,
 			isAvailable: true,
 			isRecommended: false,
-			currentDiscountByAmount: 300,
-			price: 5000,
+			currentDiscountByAmount: 5000,
+			price: 200000,
 			advantages: [
 				"Have 50 times to host a tournament with full options.",
 				"Availability to live stream.",
