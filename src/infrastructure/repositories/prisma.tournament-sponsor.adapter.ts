@@ -37,7 +37,7 @@ export class PrismaTournamentSponsorAdapter
 
 			const groupedSponsorsMap: Record<
 				SponsorTier,
-				{ name: string; logo?: string | null }[]
+				{ id: string; name: string; logo?: string | null }[]
 			> = {
 				DIAMOND: [],
 				PLATINUM: [],
@@ -49,6 +49,7 @@ export class PrismaTournamentSponsorAdapter
 
 			tournamentSponsors.forEach((ts) => {
 				groupedSponsorsMap[ts.tier].push({
+					id: ts.sponsor.id,
 					name: ts.sponsor.name,
 					logo: ts.sponsor.logo,
 				});
