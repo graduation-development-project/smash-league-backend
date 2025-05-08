@@ -598,15 +598,15 @@ async function main() {
 			mainColor: "#FF6B6B",
 			backgroundTournament: "https://i.pinimg.com/736x/59/6a/d6/596ad678212cbb262949e57790931a59.jpg",
 			location: "Nhà thi đấu Phú Thọ, TP. Hồ Chí Minh, Việt Nam", // VN Location
-			registrationOpeningDate: "2025-06-01T00:00:00Z",
-			registrationClosingDate: "2025-06-20T23:59:59Z",
-			drawDate: "2025-06-25T10:00:00Z",
-			startDateFirstTime: "2025-07-01T09:00:00Z",
-			endDateFirstTime: "2025-07-07T21:00:00Z",
+			registrationOpeningDate: "2025-04-01T00:00:00Z",
+			registrationClosingDate: "2025-04-20T23:59:59Z",
+			drawDate: "2025-04-25T10:00:00Z",
+			startDateFirstTime: "2025-05-01T09:00:00Z",
+			endDateFirstTime: "2025-05-07T21:00:00Z",
 			countUpdateOccurTime: 0,
-			startDate: "2025-07-01T09:00:00Z",
-			endDate: "2025-07-07T21:00:00Z",
-			checkInBeforeStart: "2025-07-01T08:00:00Z",
+			startDate: "2025-05-01T09:00:00Z",
+			endDate: "2025-05-07T21:00:00Z",
+			checkInBeforeStart: "2025-05-01T08:00:00Z",
 			numberOfCourt: 4, // Included field, value varied
 			registrationFeePerPerson: 300000,
 			registrationFeePerPair: 550000,
@@ -632,15 +632,15 @@ async function main() {
 			mainColor: "#4ECDC4",
 			backgroundTournament: "https://st2.depositphotos.com/4112313/9124/v/950/depositphotos_91244926-stock-illustration-polygonal-professional-badminton-player-on.jpg",
 			location: "Cung thể thao Tiên Sơn, Đà Nẵng, Việt Nam", // VN Location
-			registrationOpeningDate: "2025-07-15T00:00:00Z",
-			registrationClosingDate: "2025-08-05T23:59:59Z",
+			registrationOpeningDate: "2025-03-15T00:00:00Z",
+			registrationClosingDate: "2025-03-05T23:59:59Z",
 			drawDate: "2025-08-10T14:00:00Z",
-			startDateFirstTime: "2025-08-15T08:30:00Z",
-			endDateFirstTime: "2025-08-20T19:30:00Z",
+			startDateFirstTime: "2025-04-15T08:30:00Z",
+			endDateFirstTime: "2025-04-20T19:30:00Z",
 			countUpdateOccurTime: 0,
-			startDate: "2025-08-15T08:30:00Z",
-			endDate: "2025-08-20T19:30:00Z",
-			checkInBeforeStart: "2025-08-15T07:30:00Z",
+			startDate: "2025-04-15T08:30:00Z",
+			endDate: "2025-04-20T19:30:00Z",
+			checkInBeforeStart: "2025-04-15T07:30:00Z",
 			numberOfCourt: 3, // Included field, value varied
 			registrationFeePerPerson: 250000,
 			registrationFeePerPair: 450000,
@@ -666,15 +666,15 @@ async function main() {
 			mainColor: "#F9A825",
 			backgroundTournament: "https://png.pngtree.com/thumb_back/fh260/back_our/20190619/ourmid/pngtree-promotional-red-badminton-background-material-image_140709.jpg",
 			location: "Nhà thi đấu Trịnh Hoài Đức, Hà Nội, Việt Nam", // VN Location
-			registrationOpeningDate: "2025-08-20T00:00:00Z",
-			registrationClosingDate: "2025-09-10T23:59:59Z",
+			registrationOpeningDate: "2025-03-20T00:00:00Z",
+			registrationClosingDate: "2025-03-30T23:59:59Z",
 			drawDate: "2025-09-15T11:00:00Z",
-			startDateFirstTime: "2025-09-22T09:00:00Z",
-			endDateFirstTime: "2025-09-28T22:00:00Z",
+			startDateFirstTime: "2025-04-22T09:00:00Z",
+			endDateFirstTime: "2025-04-28T22:00:00Z",
 			countUpdateOccurTime: 0,
-			startDate: "2025-09-22T09:00:00Z",
-			endDate: "2025-09-28T22:00:00Z",
-			checkInBeforeStart: "2025-09-22T08:00:00Z",
+			startDate: "2025-04-22T09:00:00Z",
+			endDate: "2025-04-28T22:00:00Z",
+			checkInBeforeStart: "2025-04-22T08:00:00Z",
 			numberOfCourt: 5, // Included field, value varied
 			registrationFeePerPerson: 400000,
 			registrationFeePerPair: 700000,
@@ -713,7 +713,7 @@ async function main() {
 			registrationFeePerPerson: 200000,
 			registrationFeePerPair: 350000,
 			maxEventPerPerson: 3,
-			status: "ON_GOING", // Assigned Status
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status
 			protestFeePerTime: 100000,
 			prizePool: 25000000,
 			hasMerchandise: true,
@@ -747,7 +747,7 @@ async function main() {
 			registrationFeePerPerson: 350000,
 			registrationFeePerPair: 650000,
 			maxEventPerPerson: 2,
-			status: "ON_GOING", // Assigned Status
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status
 			protestFeePerTime: 180000,
 			prizePool: 60000000,
 			hasMerchandise: true,
@@ -815,7 +815,7 @@ async function main() {
 			registrationFeePerPerson: 150000,
 			registrationFeePerPair: 250000,
 			maxEventPerPerson: 4,
-			status: "ON_GOING", // Assigned Status (Reg is open now)
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Reg is open now)
 			protestFeePerTime: 50000,
 			prizePool: 20000000,
 			hasMerchandise: true,
@@ -842,14 +842,14 @@ async function main() {
 			startDateFirstTime: "2025-03-01T09:00:00Z", // Past date
 			endDateFirstTime: "2025-03-02T17:00:00Z", // Past date
 			countUpdateOccurTime: 0,
-			startDate: "2025-03-01T09:00:00Z",
-			endDate: "2025-03-02T17:00:00Z",
+			startDate: "2025-08-01T09:00:00Z",
+			endDate: "2025-08-02T17:00:00Z",
 			checkInBeforeStart: "2025-03-01T08:30:00Z",
 			numberOfCourt: 3, // Included field, value varied
 			registrationFeePerPerson: 100000,
 			registrationFeePerPair: 180000,
 			maxEventPerPerson: 2,
-			status: "CREATED", // Assigned Status
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status
 			protestFeePerTime: 50000,
 			prizePool: 5000000,
 			hasMerchandise: false,
@@ -883,7 +883,7 @@ async function main() {
 			registrationFeePerPerson: 250000,
 			registrationFeePerPair: 450000,
 			maxEventPerPerson: 3,
-			status: "CREATED", // Assigned Status (Current date fits)
+			status: "ON_GOING", // Assigned Status (Current date fits)
 			protestFeePerTime: 100000,
 			prizePool: 40000000,
 			hasMerchandise: true,
@@ -907,17 +907,17 @@ async function main() {
 			registrationOpeningDate: "2025-03-01T00:00:00Z", // Past Date
 			registrationClosingDate: "2025-03-25T23:59:59Z", // Past Date
 			drawDate: "2025-03-30T11:00:00Z", // Past Date
-			startDateFirstTime: "2025-04-08T09:00:00Z", // Past Date
-			endDateFirstTime: "2025-04-13T20:00:00Z", // Past Date
+			startDateFirstTime: "2025-05-08T09:00:00Z", // Past Date
+			endDateFirstTime: "2025-05-13T20:00:00Z", // Past Date
 			countUpdateOccurTime: 0,
-			startDate: "2025-04-08T09:00:00Z",
-			endDate: "2025-04-13T20:00:00Z",
+			startDate: "2025-05-08T09:00:00Z",
+			endDate: "2025-05-13T20:00:00Z",
 			checkInBeforeStart: "2025-04-08T08:00:00Z",
 			numberOfCourt: 4, // Included field, value varied
 			registrationFeePerPerson: 150000,
 			registrationFeePerPair: 280000,
 			maxEventPerPerson: 2,
-			status: "CREATED", // Assigned Status
+			status: "ON_GOING", // Assigned Status
 			protestFeePerTime: 60000,
 			prizePool: 18000000,
 			hasMerchandise: true,
@@ -951,7 +951,7 @@ async function main() {
 			registrationFeePerPerson: 300000,
 			registrationFeePerPair: 550000,
 			maxEventPerPerson: 2,
-			status: "CREATED", // Assigned Status (Reg open)
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Reg open)
 			protestFeePerTime: 130000,
 			prizePool: 55000000,
 			hasMerchandise: true,
@@ -985,7 +985,7 @@ async function main() {
 			registrationFeePerPerson: 220000,
 			registrationFeePerPair: 400000,
 			maxEventPerPerson: 3,
-			status: "CREATED", // Assigned Status (Between draw and start)
+			status: "ON_GOING", // Assigned Status (Between draw and start)
 			protestFeePerTime: 80000,
 			prizePool: 30000000,
 			hasMerchandise: false,
@@ -1019,7 +1019,7 @@ async function main() {
 			registrationFeePerPerson: 260000,
 			registrationFeePerPair: 480000,
 			maxEventPerPerson: 3,
-			status: "CREATED", // Assigned Status (Use second closing status)
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Use second closing status)
 			protestFeePerTime: 110000,
 			prizePool: 38000000,
 			hasMerchandise: true,
@@ -1053,7 +1053,7 @@ async function main() {
 			registrationFeePerPerson: 180000,
 			registrationFeePerPair: 320000,
 			maxEventPerPerson: 2,
-			status: "CREATED", // Assigned Status (Use second drawing status)
+			status: "OPENING_FOR_REGISTRATION", // Assigned Status (Use second drawing status)
 			protestFeePerTime: 70000,
 			prizePool: 15000000,
 			hasMerchandise: true,
