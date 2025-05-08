@@ -176,7 +176,8 @@ export class ResponseTournamentRegistrationUseCase {
 							existedRegistration.registrationRole ===
 							TournamentRegistrationRole.UMPIRE,
 						tournamentName: isTournamentOrganizer.name,
-						tournamentEvent: existedRegistration.tournamentEvent.tournamentEvent,
+						tournamentEvent:
+							existedRegistration?.tournamentEvent?.tournamentEvent ?? null,
 					},
 				});
 			}
@@ -211,7 +212,8 @@ export class ResponseTournamentRegistrationUseCase {
 							existedRegistration.registrationRole ===
 							TournamentRegistrationRole.UMPIRE,
 						tournamentName: isTournamentOrganizer.name,
-						tournamentEvent: existedRegistration.tournamentEvent.tournamentEvent,
+						tournamentEvent:
+							existedRegistration.tournamentEvent.tournamentEvent,
 					},
 				});
 			}
