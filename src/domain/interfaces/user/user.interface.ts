@@ -1,3 +1,5 @@
+import { Gender } from "@prisma/client";
+
 export interface IUserResponse {
 	id: string;
 	email: string;
@@ -5,6 +7,8 @@ export interface IUserResponse {
 	phoneNumber: string;
 	avatarURL: string;
 	isVerified: boolean;
+	gender: Gender;
+	dateOfBirth: Date;
 }
 
 export interface IUserDefaultResponse {

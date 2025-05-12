@@ -5,6 +5,8 @@ import * as bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
+	const tournamentParticipants = await prisma.tournamentParticipants.findMany();
+	if (tournamentParticipants.length !== 0) return;
 	await addParticipantForTournamentEvent1();
 	await addParticipantForTournamentEvent2();
 	await addParticipantForTournamentEvent3();
