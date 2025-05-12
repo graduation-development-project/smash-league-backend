@@ -59,11 +59,25 @@ model User {
   feedback                      Feedback[]               @relation(name: "FK_Feedback_User")
   paybackFees                   PaybackFee[]             @relation(name: "FK_PaybackFee_User")
   userReport                    UserReport[]             @relation(name: "FK_UserReport_User")
+  umpireDegrees                 UmpireDegree[]           @relation(name: "FK_UmpireDegree_User")
 }
 
 enum Gender {
   MALE
   FEMALE
+}
+
+enum TypeOfUmpireDegree {
+  UmpireDegree
+}
+
+model UmpireDegree {
+  id           String   @id @default(uuid())
+  typeOfDegree TypeOfUmpireDegree
+  degree       String[]
+  description  String
+  userId       String
+  user         User     @relation(name: "FK_UmpireDegree_User", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model UserVerification {
