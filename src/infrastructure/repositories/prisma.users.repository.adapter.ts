@@ -101,6 +101,8 @@ export class PrismaUsersRepositoryAdapter implements UsersRepositoryPort {
 				email: true,
 				phoneNumber: true,
 				isVerified: true,
+				gender: true,
+				dateOfBirth: true
 			},
 		});
 	}

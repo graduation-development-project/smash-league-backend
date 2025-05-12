@@ -93,7 +93,6 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 		}
 	}
 	console.log(matches);
-
 }
 
 async function createBracketFunction1(tournamentEvent1: any, tournamentParticipants1: any) {

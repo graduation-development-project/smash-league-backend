@@ -21,6 +21,8 @@ async function main() {
 	// const banksAdded = await prisma.bank.createManyAndReturn({
 	// 	data: banks
 	// });
+	const banksGet = await prisma.bank.findMany();
+	if (banksGet.length !== 0) return;
 	const response = await fetch("https://api.banklookup.net/api/bank/list");
 	const data = await response.json();
 	console.log(data.data);	

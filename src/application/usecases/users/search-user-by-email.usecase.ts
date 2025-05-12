@@ -7,7 +7,8 @@ import { UsersRepositoryPort } from "src/domain/repositories/users.repository.po
 export class SearchUserByEmailUseCase {
 	constructor(
 		@Inject("UserRepository") private readonly userRepository: UsersRepositoryPort
-	) {}
+	) {
+	}
 
 	async execute(email: string) : Promise<ApiResponse<IUserResponse[] | null>> {
 		const users = await this.userRepository.searchUserByEmail(email);
