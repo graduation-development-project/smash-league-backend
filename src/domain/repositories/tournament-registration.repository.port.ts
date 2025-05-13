@@ -40,4 +40,11 @@ export interface TournamentRegistrationRepositoryPort {
 		fromDate,
 		toDate,
 	}: GetRegistrationStatsInput): Promise<Record<string, number>>;
+
+	getRevenueByPeriod({
+		organizerId,
+		period,
+		fromDate,
+		toDate,
+	}: GetRegistrationStatsInput): Promise<Record<string, number>>;
 }

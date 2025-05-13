@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
 	TournamentRegistration,
 	TournamentRegistrationStatus,
+	TransactionStatus,
 } from "@prisma/client";
 import { TournamentRegistrationRepositoryPort } from "../../domain/repositories/tournament-registration.repository.port";
 import { PrismaService } from "../services/prisma.service";
@@ -9,6 +10,7 @@ import { RegisterTournamentDTO } from "../../domain/dtos/athletes/register-tourn
 import { CreateTournamentRegistrationDTO } from "../../domain/dtos/tournament-registration/create-tournament-registration.dto";
 import { GetRegistrationStatsInput } from "../../domain/interfaces/interfaces";
 import {
+	endOfWeek,
 	format,
 	startOfDay,
 	startOfMonth,
@@ -160,13 +162,17 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 		toDate,
 	}: GetRegistrationStatsInput): Promise<Record<string, number>> {
 		try {
-			const effectiveFromDate = fromDate
-				? startOfDay(fromDate)
-				: startOfDay(new Date());
+			const baseDate = fromDate ? fromDate : new Date();
 
-			let filterFromDate = effectiveFromDate;
+			let filterFromDate: Date;
+			let filterToDate: Date;
+
 			if (period === "daily") {
-				filterFromDate = subDays(effectiveFromDate, 6);
+				filterFromDate = startOfWeek(baseDate, { weekStartsOn: 1 }); // Monday
+				filterToDate = endOfWeek(baseDate, { weekStartsOn: 1 }); // Sunday
+			} else {
+				filterFromDate = fromDate ? fromDate : undefined;
+				filterToDate = toDate;
 			}
 
 			const registrations =
@@ -176,16 +182,10 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 							organizerId,
 						},
 						isDeleted: false,
-						createdAt:
-							period === "daily"
-								? {
-										gte: filterFromDate,
-										lte: effectiveFromDate,
-									}
-								: {
-										...(fromDate && { gte: fromDate }),
-										...(toDate && { lte: toDate }),
-									},
+						createdAt: {
+							...(filterFromDate && { gte: filterFromDate }),
+							...(filterToDate && { lte: filterToDate }),
+						},
 					},
 					select: {
 						createdAt: true,
@@ -198,9 +198,9 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 			const grouped: Record<string, number> = {};
 
 			if (period === "daily") {
-				// Khởi tạo đủ 7 ngày
-				for (let i = 6; i >= 0; i--) {
-					const date = subDays(effectiveFromDate, i);
+				for (let i = 0; i < 7; i++) {
+					const date = new Date(filterFromDate);
+					date.setDate(date.getDate() + i);
 					const key = format(startOfDay(date), "yyyy-MM-dd");
 					grouped[key] = 0;
 				}
@@ -242,6 +242,98 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 			return grouped;
 		} catch (e) {
 			console.error("cancelManyTournamentRegistration failed", e);
+			throw e;
+		}
+	}
+
+	async getRevenueByPeriod({
+		organizerId,
+		period,
+		fromDate,
+		toDate,
+	}: GetRegistrationStatsInput): Promise<Record<string, number>> {
+		try {
+			const baseDate = fromDate ? fromDate : new Date();
+
+			let filterFromDate: Date;
+			let filterToDate: Date;
+
+			if (period === "daily") {
+				filterFromDate = startOfWeek(baseDate, { weekStartsOn: 1 }); // Monday
+				filterToDate = endOfWeek(baseDate, { weekStartsOn: 1 }); // Sunday
+			} else {
+				filterFromDate = fromDate ? fromDate : undefined;
+				filterToDate = toDate;
+			}
+
+			console.log(organizerId);
+
+			const transactions = await this.prismaService.transaction.findMany({
+				where: {
+					tournamentRegistration: {
+						isDeleted: false,
+						tournament: {
+							organizerId,
+						},
+					},
+					status: TransactionStatus.SUCCESSFUL,
+					createdAt: {
+						...(filterFromDate && { gte: filterFromDate }),
+						...(filterToDate && { lte: filterToDate }),
+					},
+				},
+				select: {
+					createdAt: true,
+					value: true,
+				},
+
+				orderBy: {
+					createdAt: "asc",
+				},
+			});
+
+			const grouped: Record<string, number> = {};
+
+			if (period === "daily") {
+				for (let i = 0; i < 7; i++) {
+					const date = new Date(filterFromDate);
+					date.setDate(date.getDate() + i);
+					const key = format(startOfDay(date), "yyyy-MM-dd");
+					grouped[key] = 0;
+				}
+			}
+
+			if (period === "monthly") {
+				const year = fromDate
+					? fromDate.getFullYear()
+					: new Date().getFullYear();
+				for (let month = 0; month < 12; month++) {
+					const key = format(new Date(year, month, 1), "yyyy-MM");
+					grouped[key] = 0;
+				}
+			}
+
+			for (const trx of transactions) {
+				let key: string;
+
+				switch (period) {
+					case "daily":
+						key = format(startOfDay(trx.createdAt), "yyyy-MM-dd");
+						break;
+					case "monthly":
+						key = format(startOfMonth(trx.createdAt), "yyyy-MM");
+						break;
+					default:
+						throw new Error("Invalid period type for revenue");
+				}
+
+				if (!grouped[key]) grouped[key] = 0;
+				grouped[key] += trx.value;
+			}
+
+			return grouped;
+		} catch (e) {
+			console.error("getRevenueByPeriod failed", e);
 			throw e;
 		}
 	}

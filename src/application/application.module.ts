@@ -196,6 +196,7 @@ import { SeedParticipantsUseCase } from "./usecases/tournament/seed-participants
 import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-matches.usecase";
 import { UpdateTournamentStatusUseCase } from "./usecases/tournament/update-tournament-status.usecase";
 import { GetRegistrationCountByPeriodUseCase } from "./usecases/organizers/get-registration-by-period.usecase";
+import { GetRevenueByPeriodUseCase } from "./usecases/organizers/get-revenue-by-period.usecase";
 
 @Module({
 	imports: [
@@ -541,6 +542,7 @@ import { GetRegistrationCountByPeriodUseCase } from "./usecases/organizers/get-r
 
 		// DASHBOARD
 		GetRegistrationCountByPeriodUseCase,
+		GetRevenueByPeriodUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -745,7 +747,8 @@ import { GetRegistrationCountByPeriodUseCase } from "./usecases/organizers/get-r
 		AssignPlayerToMatchesUseCase,
 
 		//DASHBOARD
-		GetRegistrationCountByPeriodUseCase
+		GetRegistrationCountByPeriodUseCase,
+		GetRevenueByPeriodUseCase,
 	],
 })
 export class ApplicationModule {}

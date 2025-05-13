@@ -34,6 +34,7 @@ import { AssignUmpireDTO } from "../../domain/dtos/organizers/assign-umpire.dto"
 import { GetOwnedTournamentUseCase } from "../../application/usecases/organizers/get-owned-tournament.usecase";
 import { GetUmpireRegistrationUseCase } from "../../application/usecases/organizers/get-umpire-registration.usecase";
 import { GetRegistrationCountByPeriodUseCase } from "../../application/usecases/organizers/get-registration-by-period.usecase";
+import { GetRevenueByPeriodUseCase } from "../../application/usecases/organizers/get-revenue-by-period.usecase";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -47,6 +48,7 @@ export class OrganizerController {
 		private getOwnedTournamentUseCase: GetOwnedTournamentUseCase,
 		private getUmpireRegistrationUseCase: GetUmpireRegistrationUseCase,
 		private getRegistrationCountByPeriodUseCase: GetRegistrationCountByPeriodUseCase,
+		private getRevenueByPeriodUseCase: GetRevenueByPeriodUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentEventId")
@@ -116,6 +118,24 @@ export class OrganizerController {
 		const parsedToDate = toDate ? new Date(toDate) : undefined;
 
 		return this.getRegistrationCountByPeriodUseCase.execute({
+			organizerId: user.id,
+			period,
+			fromDate: parsedFromDate,
+			toDate: parsedToDate,
+		});
+	}
+
+	@Get("revenue-counts")
+	async getRevenueCounts(
+		@Req() { user }: IRequestUser,
+		@Query("period") period: "daily" | "weekly" | "monthly" | "yearly",
+		@Query("fromDate") fromDate?: string,
+		@Query("toDate") toDate?: string,
+	) {
+		const parsedFromDate = fromDate ? new Date(fromDate) : undefined;
+		const parsedToDate = toDate ? new Date(toDate) : undefined;
+
+		return this.getRevenueByPeriodUseCase.execute({
 			organizerId: user.id,
 			period,
 			fromDate: parsedFromDate,
