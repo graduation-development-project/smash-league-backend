@@ -197,6 +197,10 @@ import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-m
 import { UpdateTournamentStatusUseCase } from "./usecases/tournament/update-tournament-status.usecase";
 import { GetRegistrationCountByPeriodUseCase } from "./usecases/organizers/get-registration-by-period.usecase";
 import { GetRevenueByPeriodUseCase } from "./usecases/organizers/get-revenue-by-period.usecase";
+import { PrismaUmpireDegreeRepositoryAdapter } from "src/infrastructure/repositories/umpire-degree.repository.adapter";
+import { CreateUmpireDegreeDto } from "src/domain/dtos/umpire/umpire-degree.validation";
+import { CreateUmpireDegreeUseCase } from "./usecases/umpires/create-umpire-degree.usecase";
+import { GetAllUmpireDegreesUseCase } from "./usecases/umpires/get-all-umpire-degress.usecase";
 
 @Module({
 	imports: [
@@ -340,6 +344,10 @@ import { GetRevenueByPeriodUseCase } from "./usecases/organizers/get-revenue-by-
 			provide: "ReportRepository",
 			useClass: PrismaReportRepositoryAdapter,
 		},
+		{
+			provide: "UmpireDegreeRepository",
+			useClass: PrismaUmpireDegreeRepositoryAdapter
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -373,6 +381,9 @@ import { GetRevenueByPeriodUseCase } from "./usecases/organizers/get-revenue-by-
 		GetUserByRoleUseCase,
 		GetLatestMatchesUseCase,
 		GetAllUserUseCase,
+		//Umpire degree use case
+		CreateUmpireDegreeUseCase,
+		GetAllUmpireDegreesUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -571,6 +582,8 @@ import { GetRevenueByPeriodUseCase } from "./usecases/organizers/get-revenue-by-
 		GetUserByRoleUseCase,
 		GetLatestMatchesUseCase,
 		GetAllUserUseCase,
+		CreateUmpireDegreeUseCase,
+		GetAllUmpireDegreesUseCase,
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,

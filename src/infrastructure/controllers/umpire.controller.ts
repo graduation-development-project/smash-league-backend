@@ -1,3 +1,4 @@
+import { CreateUmpireDegreeDto } from './../../domain/dtos/umpire/umpire-degree.validation';
 import {
 	Body,
 	Controller,
@@ -6,6 +7,9 @@ import {
 	Req,
 	Param,
 	UseGuards,
+	Post,
+	UseInterceptors,
+	UploadedFiles,
 } from "@nestjs/common";
 import { UmpireUpdateMatchDTO } from "../../domain/dtos/umpire/umpire-update-match.dto";
 import { UmpireUpdateMatchUseCase } from "../../application/usecases/umpires/umpire-update-match.usecase";
@@ -19,19 +23,26 @@ import { Match, Tournament } from "@prisma/client";
 import { GetAssignedMatchUseCase } from "../../application/usecases/umpires/get-assigned-match.usecase";
 import { GetUmpireParticipatedTournamentsUseCase } from "../../application/usecases/umpires/get-participated-tournaments.usecase";
 import { GetAllAssignedMatchesUsecase } from "../../application/usecases/umpires/get-all-assigned-matches.usecase";
+import { CreateUmpireDegreeUseCase } from "src/application/usecases/umpires/create-umpire-degree.usecase";
+import { UmpireDegreeResponse } from 'src/domain/dtos/umpire/umpire-degree.interface';
+import { GetAllUmpireDegreesUseCase } from 'src/application/usecases/umpires/get-all-umpire-degress.usecase';
+import { AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller("/umpires")
-@UseGuards(JwtAccessTokenGuard, RolesGuard)
-@Roles(RoleMap.Umpire.name)
+
 export class UmpireController {
 	constructor(
 		private umpireUpdateMatchUseCase: UmpireUpdateMatchUseCase,
 		private getAssignedMatchUseCase: GetAssignedMatchUseCase,
 		private getAllAssignedMatchesUsecase: GetAllAssignedMatchesUsecase,
 		private getUmpireParticipatedTournamentsUseCase: GetUmpireParticipatedTournamentsUseCase,
+		private readonly createUmpireDegreeUseCase: CreateUmpireDegreeUseCase,
+		private readonly getAllUmpireDegreeUseCase: GetAllUmpireDegreesUseCase
 	) {}
 
 	@Put("/update-match")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Umpire.name)
 	async updateMatch(
 		@Body() umpireUpdateMatchDTO: UmpireUpdateMatchDTO,
 		@Req() { user }: IRequestUser,
@@ -43,6 +54,8 @@ export class UmpireController {
 	}
 
 	@Get("/assigned-matches/:tournamentId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Umpire.name)
 	async getAssignedMatches(
 		@Req() { user }: IRequestUser,
 		@Param("tournamentId") tournamentId: string,
@@ -51,6 +64,8 @@ export class UmpireController {
 	}
 
 	@Get("/all-assigned-matches")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Umpire.name)
 	async getAllAssignedMatches(
 		@Req() { user }: IRequestUser,
 	): Promise<ApiResponse<Match[]>> {
@@ -58,9 +73,28 @@ export class UmpireController {
 	}
 
 	@Get("/participate-tournaments")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Umpire.name)
 	async getParticipateTournaments(
 		@Req() { user }: IRequestUser,
 	): Promise<ApiResponse<Tournament[]>> {
 		return this.getUmpireParticipatedTournamentsUseCase.execute(user.id);
+	}
+
+	@UseInterceptors(AnyFilesInterceptor())
+	@Post("/create-umpire-degree")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Umpire.name)
+	async createUmpireDegree(@Req() request: IRequestUser,
+		@Body() createUmpireDegree: CreateUmpireDegreeDto,
+		@UploadedFiles() files: Express.Multer.File[]): Promise<ApiResponse<any>> {
+			// console.log(createUmpireDegree);
+			// return;
+			return await this.createUmpireDegreeUseCase.execute(request, createUmpireDegree, files);
+		}
+	
+	@Get("/get-umpire-degrees/:umpireId")
+	async getAllUmpireDegress(@Param("umpireId") umpireId: string): Promise<ApiResponse<UmpireDegreeResponse[]>> {
+		return await this.getAllUmpireDegreeUseCase.execute(umpireId);
 	}
 }

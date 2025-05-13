@@ -75,7 +75,7 @@ model UmpireDegree {
   id           String   @id @default(uuid())
   typeOfDegree TypeOfUmpireDegree
   degree       String[]
-  description  String
+  description  String?
   userId       String
   user         User     @relation(name: "FK_UmpireDegree_User", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
