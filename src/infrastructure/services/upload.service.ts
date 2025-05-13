@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { MailerService } from "@nestjs-modules/mailer";
 import { v2 as cloudinary } from "cloudinary";
+import { IFileHandler } from "src/domain/interfaces/file/file.interface";
 
 const streamifier = require("streamifier");
 
@@ -12,7 +13,7 @@ export class UploadService {
 		files: Express.Multer.File[],
 		folderName: string,
 		prefix: string,
-	): Promise<any[]> {
+	): Promise<IFileHandler[]> {
 		try {
 			const now = new Date();
 
