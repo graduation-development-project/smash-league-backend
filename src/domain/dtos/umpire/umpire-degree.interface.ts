@@ -1,0 +1,17 @@
+import { TypeOfUmpireDegree } from "@prisma/client";
+import { IUserResponse } from "src/domain/interfaces/user/user.interface";
+
+export interface UmpireDegreeResponse {
+	id: string;
+	typeOfDegree: TypeOfUmpireDegree;
+	degree: string[];
+	description?: string;
+	user: IUserResponse;
+}
+
+export class ICreateUmpireDegree {
+	typeOfDegree: TypeOfUmpireDegree;
+	degree: string[];
+	description?: string;
+	userId: string;
+}
