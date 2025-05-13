@@ -40,3 +40,11 @@ export interface IPaginateOptions {
 	page?: number;
 	perPage?: number;
 }
+
+export interface GetRegistrationStatsInput {
+	organizerId: string;
+	period: 'daily' | 'weekly' | 'monthly' | 'yearly';
+	fromDate?: Date;
+	toDate?: Date;
+}
+
