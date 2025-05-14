@@ -35,6 +35,7 @@ import { GetOwnedTournamentUseCase } from "../../application/usecases/organizers
 import { GetUmpireRegistrationUseCase } from "../../application/usecases/organizers/get-umpire-registration.usecase";
 import { GetRegistrationCountByPeriodUseCase } from "../../application/usecases/organizers/get-registration-by-period.usecase";
 import { GetRevenueByPeriodUseCase } from "../../application/usecases/organizers/get-revenue-by-period.usecase";
+import { GetUmpireInOwnedTourUseCase } from "../../application/usecases/organizers/get-umpire-in-owned-tour.usecase";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -49,6 +50,7 @@ export class OrganizerController {
 		private getUmpireRegistrationUseCase: GetUmpireRegistrationUseCase,
 		private getRegistrationCountByPeriodUseCase: GetRegistrationCountByPeriodUseCase,
 		private getRevenueByPeriodUseCase: GetRevenueByPeriodUseCase,
+		private getUmpireInOwnedTourUseCase: GetUmpireInOwnedTourUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentEventId")
@@ -141,5 +143,10 @@ export class OrganizerController {
 			fromDate: parsedFromDate,
 			toDate: parsedToDate,
 		});
+	}
+
+	@Get("umpire-in-owned-tournaments")
+	async getUmpireInOwnedTournaments(@Req() { user }: IRequestUser) {
+		return this.getUmpireInOwnedTourUseCase.execute(user.id);
 	}
 }

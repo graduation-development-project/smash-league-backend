@@ -26,11 +26,40 @@ export class PrismaTournamentUmpireRepositoryAdapter
 		}
 	}
 
-	async getTournamentUmpiresList(tournamentId: string): Promise<TournamentUmpires[]> {
+	async getTournamentUmpiresList(
+		tournamentId: string,
+	): Promise<TournamentUmpires[]> {
 		try {
 			return this.prismaService.tournamentUmpires.findMany({
 				where: {
 					tournamentId,
+				},
+			});
+		} catch (e) {
+			console.error("createTournamentUmpire failed", e);
+			throw e;
+		}
+	}
+
+	async getUmpireListByOrganizerId(
+		organizerId: string,
+	): Promise<TournamentUmpires[]> {
+		try {
+			return this.prismaService.tournamentUmpires.findMany({
+				where: {
+					tournament: {
+						organizerId,
+					},
+				},
+
+				include: {
+					user: {
+						select: {
+							id: true,
+							name: true,
+							umpireDegrees: true,
+						},
+					},
 				},
 			});
 		} catch (e) {

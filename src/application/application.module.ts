@@ -201,6 +201,7 @@ import { PrismaUmpireDegreeRepositoryAdapter } from "src/infrastructure/reposito
 import { CreateUmpireDegreeDto } from "src/domain/dtos/umpire/umpire-degree.validation";
 import { CreateUmpireDegreeUseCase } from "./usecases/umpires/create-umpire-degree.usecase";
 import { GetAllUmpireDegreesUseCase } from "./usecases/umpires/get-all-umpire-degress.usecase";
+import { GetUmpireInOwnedTourUseCase } from "./usecases/organizers/get-umpire-in-owned-tour.usecase";
 
 @Module({
 	imports: [
@@ -346,7 +347,7 @@ import { GetAllUmpireDegreesUseCase } from "./usecases/umpires/get-all-umpire-de
 		},
 		{
 			provide: "UmpireDegreeRepository",
-			useClass: PrismaUmpireDegreeRepositoryAdapter
+			useClass: PrismaUmpireDegreeRepositoryAdapter,
 		},
 		//Third Party Service
 		MailService,
@@ -554,6 +555,7 @@ import { GetAllUmpireDegreesUseCase } from "./usecases/umpires/get-all-umpire-de
 		// DASHBOARD
 		GetRegistrationCountByPeriodUseCase,
 		GetRevenueByPeriodUseCase,
+		GetUmpireInOwnedTourUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -762,6 +764,7 @@ import { GetAllUmpireDegreesUseCase } from "./usecases/umpires/get-all-umpire-de
 		//DASHBOARD
 		GetRegistrationCountByPeriodUseCase,
 		GetRevenueByPeriodUseCase,
+		GetUmpireInOwnedTourUseCase,
 	],
 })
 export class ApplicationModule {}
