@@ -27,6 +27,7 @@ import {
 	UseInterceptors,
 } from "@nestjs/common";
 import {
+	EventPrize,
 	Feedback,
 	Sponsor,
 	SponsorTier,
@@ -128,6 +129,13 @@ import { UpdateTournamentRecruitmentDTO } from "../../domain/dtos/tournament/upd
 import { SeedParticipantsUseCase } from "../../application/usecases/tournament/seed-participants.usecase";
 import enableAutomock = jest.enableAutomock;
 import { UpdateTournamentStatusUseCase } from "../../application/usecases/tournament/update-tournament-status.usecase";
+import { GetAllPrizeOfEventUseCase } from "src/application/usecases/tournament/tournament-event/get-all-prize-of-event.usecase";
+import { GetChampionshipPrizeOfEventUseCase } from "src/application/usecases/tournament/tournament-event/get-championship-prize-of-event.usecase";
+import { GetRunnerUpPrizeOfEventUseCase } from "src/application/usecases/tournament/tournament-event/get-runner-up-prize-of-event.usecase";
+import { GetThirdPlacePrizesOfEventUseCase } from "src/application/usecases/tournament/tournament-event/get-third-place-prizes-of-event.usecase";
+import { CreateEventPrizeUseCase } from "src/application/usecases/tournament/tournament-event/create-event-prize.usecase";
+import { IEventPrizeResponse } from "src/domain/dtos/event-prize/event-prize.interface";
+import { CreateEventPrizeRequest } from "src/domain/dtos/event-prize/event-prize.validation";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -180,6 +188,11 @@ export class TournamentController {
 		private readonly staffCancelTournamentUseCase: StaffCancelTournamentUseCase,
 		private readonly seedParticipantsUseCase: SeedParticipantsUseCase,
 		private readonly updateTournamentStatusUseCase: UpdateTournamentStatusUseCase,
+		private readonly getAllPrizeofEventUseCase: GetAllPrizeOfEventUseCase,
+		private readonly getChampionshipPrizeOfEventUseCase: GetChampionshipPrizeOfEventUseCase,
+		private readonly getRunnerUpPrizeOfEventUseCase: GetRunnerUpPrizeOfEventUseCase,
+		private readonly getThirdPlacePrizesOfEventUseCase: GetThirdPlacePrizesOfEventUseCase,
+		private readonly createNewEventPrizeUseCase: CreateEventPrizeUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -665,5 +678,32 @@ export class TournamentController {
 		@Param("eventId") eventId: string,
 	): Promise<void> {
 		return await this.seedParticipantsUseCase.execute(tournamentId, eventId);
+	}
+
+	@Get("/get-all-prize-of-event/:tournamentEventId")
+	async getAllPrizeOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse[]>> {
+		return await this.getAllPrizeofEventUseCase.execute(tournamentEventId);
+	}
+
+	@Get("/get-championship-prize-of-event/:tournamentEventId")
+	async getChampionshipPrizeOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse>> {
+		return await this.getChampionshipPrizeOfEventUseCase.execute(tournamentEventId);
+	}
+
+	@Get("/get-runner-up-prize-of-event/:tournamentEventId")
+	async getRunnerUpPrizeOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse>> {
+		return await this.getRunnerUpPrizeOfEventUseCase.execute(tournamentEventId);
+	}
+
+	@Get("/get-third-place-prizes-of-event/:tournamentEventId")
+	async getThirdPlacePrizesOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse[]>> {
+		return await this.getThirdPlacePrizesOfEventUseCase.execute(tournamentEventId);
+	}
+
+	@Post("/create-event-prize")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async createEventPrize(@Body() createEventPrize: CreateEventPrizeRequest): Promise<ApiResponse<EventPrize>> {
+		return await this.createNewEventPrizeUseCase.execute(createEventPrize);
 	}
 }
