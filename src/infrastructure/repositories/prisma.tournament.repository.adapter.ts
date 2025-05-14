@@ -922,13 +922,44 @@ export class PrismaTournamentRepositoryAdapter
 
 				data: {
 					isRecruit: updateTournamentRecruitmentDTO.isRecruit,
-					numberOfUmpires:
-						updateTournamentRecruitmentDTO.numberOfUmpires,
+					numberOfUmpires: updateTournamentRecruitmentDTO.numberOfUmpires,
 				},
 			});
 		} catch (e) {
 			console.error("updateTournamentRecruitment failed: ", e);
 			throw e;
+		}
+	}
+
+	async countTournamentStatusByOrganizerId(
+		organizerId: string,
+	): Promise<Record<string, number>> {
+		try {
+			const result = await this.prisma.tournament.groupBy({
+				by: ["status"],
+				where: {
+					...(organizerId && { organizerId }),
+				},
+				_count: {
+					_all: true,
+				},
+			});
+
+			// Initialize with 0 for all possible statuses (optional)
+			const statusMap: Record<string, number> = {};
+
+			for (const status of Object.keys(TournamentStatus)) {
+				statusMap[status] = 0;
+			}
+
+			for (const group of result) {
+				statusMap[group.status] = group._count._all;
+			}
+
+			return statusMap;
+		} catch (error) {
+			console.error("countTournamentsByStatus failed", error);
+			throw error;
 		}
 	}
 }

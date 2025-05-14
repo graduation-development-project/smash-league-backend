@@ -103,4 +103,6 @@ export interface TournamentRepositoryPort {
 		tournamentId: string,
 		updateTournamentRecruitmentDTO: UpdateTournamentRecruitmentDTO,
 	): Promise<Tournament>;
+
+	countTournamentStatusByOrganizerId(organizerId: string): Promise<Record<string, number>>;
 }

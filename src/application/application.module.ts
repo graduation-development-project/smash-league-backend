@@ -202,6 +202,7 @@ import { CreateUmpireDegreeDto } from "src/domain/dtos/umpire/umpire-degree.vali
 import { CreateUmpireDegreeUseCase } from "./usecases/umpires/create-umpire-degree.usecase";
 import { GetAllUmpireDegreesUseCase } from "./usecases/umpires/get-all-umpire-degress.usecase";
 import { GetUmpireInOwnedTourUseCase } from "./usecases/organizers/get-umpire-in-owned-tour.usecase";
+import { CountTournamentStatusUseCase } from "./usecases/organizers/count-tournament-status.usecase";
 
 @Module({
 	imports: [
@@ -556,6 +557,7 @@ import { GetUmpireInOwnedTourUseCase } from "./usecases/organizers/get-umpire-in
 		GetRegistrationCountByPeriodUseCase,
 		GetRevenueByPeriodUseCase,
 		GetUmpireInOwnedTourUseCase,
+		CountTournamentStatusUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -765,6 +767,7 @@ import { GetUmpireInOwnedTourUseCase } from "./usecases/organizers/get-umpire-in
 		GetRegistrationCountByPeriodUseCase,
 		GetRevenueByPeriodUseCase,
 		GetUmpireInOwnedTourUseCase,
+		CountTournamentStatusUseCase,
 	],
 })
 export class ApplicationModule {}
