@@ -63,5 +63,9 @@ export interface MatchRepositoryPort {
 
 	skipMatchesExceptFirstAndFinal(eventId: string): Promise<void>;
 
-	assignPlayersToFirstRoundMatches(tournamentEventId: string): Promise<void>
+	assignPlayersToFirstRoundMatches(tournamentEventId: string): Promise<void>;
+
+	countMatchesStatusByOrganizerId(
+		organizerId: string,
+	): Promise<Record<string, number>>;
 }

@@ -2042,4 +2042,40 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 		return;
 	}
+
+	async countMatchesStatusByOrganizerId(
+		organizerId: string,
+	): Promise<Record<string, number>> {
+		try {
+			const result = await this.prisma.match.groupBy({
+				by: ["matchStatus"],
+				where: {
+					tournamentEvent: {
+						tournament: {
+							organizerId,
+						},
+					},
+				},
+				_count: {
+					_all: true,
+				},
+			});
+
+			// Initialize with 0 for all possible statuses (optional)
+			const statusMap: Record<string, number> = {};
+
+			for (const status of Object.keys(MatchStatus)) {
+				statusMap[status] = 0;
+			}
+
+			for (const group of result) {
+				statusMap[group.matchStatus] = group._count._all;
+			}
+
+			return statusMap;
+		} catch (error) {
+			console.error("countTournamentsByStatus failed", error);
+			throw error;
+		}
+	}
 }

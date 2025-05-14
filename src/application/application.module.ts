@@ -203,6 +203,7 @@ import { CreateUmpireDegreeUseCase } from "./usecases/umpires/create-umpire-degr
 import { GetAllUmpireDegreesUseCase } from "./usecases/umpires/get-all-umpire-degress.usecase";
 import { GetUmpireInOwnedTourUseCase } from "./usecases/organizers/get-umpire-in-owned-tour.usecase";
 import { CountTournamentStatusUseCase } from "./usecases/organizers/count-tournament-status.usecase";
+import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-status.usecase";
 
 @Module({
 	imports: [
@@ -558,6 +559,7 @@ import { CountTournamentStatusUseCase } from "./usecases/organizers/count-tourna
 		GetRevenueByPeriodUseCase,
 		GetUmpireInOwnedTourUseCase,
 		CountTournamentStatusUseCase,
+		CountMatchesStatusUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -768,6 +770,7 @@ import { CountTournamentStatusUseCase } from "./usecases/organizers/count-tourna
 		GetRevenueByPeriodUseCase,
 		GetUmpireInOwnedTourUseCase,
 		CountTournamentStatusUseCase,
+		CountMatchesStatusUseCase,
 	],
 })
 export class ApplicationModule {}
