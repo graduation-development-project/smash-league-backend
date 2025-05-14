@@ -188,4 +188,45 @@ export class PrismaTransactionRepositoryAdapter
 			throw e;
 		}
 	}
+
+	async getRevenueInCurrentMonth(organizerId: string): Promise<number> {
+		try {
+			const now = new Date();
+			const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+			const endOfMonth = new Date(
+				now.getFullYear(),
+				now.getMonth() + 1,
+				0,
+				23,
+				59,
+				59,
+				999,
+			);
+
+			const result = await this.prisma.transaction.aggregate({
+				_sum: {
+					value: true,
+				},
+				where: {
+					tournamentRegistration: {
+						tournament: {
+							organizerId,
+						},
+					},
+					status: TransactionStatus.SUCCESSFUL,
+					createdAt: {
+						gte: startOfMonth,
+						lte: endOfMonth,
+					},
+				},
+			});
+
+			console.log(organizerId, result);
+
+			return result._sum.value || 0;
+		} catch (e) {
+			console.error("getRevenueInCurrentMonth failed", e);
+			throw e;
+		}
+	}
 }

@@ -38,6 +38,7 @@ import { GetRevenueByPeriodUseCase } from "../../application/usecases/organizers
 import { GetUmpireInOwnedTourUseCase } from "../../application/usecases/organizers/get-umpire-in-owned-tour.usecase";
 import { CountTournamentStatusUseCase } from "../../application/usecases/organizers/count-tournament-status.usecase";
 import { CountMatchesStatusUseCase } from "../../application/usecases/organizers/count-matches-status.usecase";
+import { GetRevenueInCurrentMonthUseCase } from "../../application/usecases/organizers/get-revenue-in-current-month.usecase";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -55,6 +56,7 @@ export class OrganizerController {
 		private getUmpireInOwnedTourUseCase: GetUmpireInOwnedTourUseCase,
 		private countTournamentStatusUseCase: CountTournamentStatusUseCase,
 		private countMatchesStatusUseCase: CountMatchesStatusUseCase,
+		private getRevenueInCurrentMonthUseCase: GetRevenueInCurrentMonthUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentEventId")
@@ -162,5 +164,10 @@ export class OrganizerController {
 	@Get("count-matches-status")
 	async countMatchesStatus(@Req() { user }: IRequestUser) {
 		return this.countMatchesStatusUseCase.execute(user.id);
+	}
+
+	@Get("current-month-revenue")
+	async currentMonthRevenue(@Req() { user }: IRequestUser) {
+		return this.getRevenueInCurrentMonthUseCase.execute(user.id);
 	}
 }

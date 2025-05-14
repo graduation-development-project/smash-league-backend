@@ -37,4 +37,6 @@ export interface TransactionRepositoryPort {
 	): Promise<Transaction>;
 
 	getAllTransactionsByDay(): Promise<Transaction[]>;
+
+	getRevenueInCurrentMonth(organizerId: string): Promise<number>;
 }

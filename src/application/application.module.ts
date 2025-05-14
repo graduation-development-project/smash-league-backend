@@ -210,6 +210,7 @@ import { CreateEventPrizeUseCase } from "./usecases/tournament/tournament-event/
 import { GetUmpireInOwnedTourUseCase } from "./usecases/organizers/get-umpire-in-owned-tour.usecase";
 import { CountTournamentStatusUseCase } from "./usecases/organizers/count-tournament-status.usecase";
 import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-status.usecase";
+import { GetRevenueInCurrentMonthUseCase } from "./usecases/organizers/get-revenue-in-current-month.usecase";
 
 @Module({
 	imports: [
@@ -576,6 +577,7 @@ import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-s
 		GetUmpireInOwnedTourUseCase,
 		CountTournamentStatusUseCase,
 		CountMatchesStatusUseCase,
+		GetRevenueInCurrentMonthUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -794,6 +796,7 @@ import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-s
 		GetUmpireInOwnedTourUseCase,
 		CountTournamentStatusUseCase,
 		CountMatchesStatusUseCase,
+		GetRevenueInCurrentMonthUseCase,
 	],
 })
 export class ApplicationModule {}
