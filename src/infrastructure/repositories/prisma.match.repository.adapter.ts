@@ -2068,10 +2068,12 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				statusMap[status] = 0;
 			}
 
+			let total = 0;
 			for (const group of result) {
 				statusMap[group.matchStatus] = group._count._all;
+				total += group._count._all;
 			}
-
+			statusMap["TOTAL"] = total;
 			return statusMap;
 		} catch (error) {
 			console.error("countTournamentsByStatus failed", error);

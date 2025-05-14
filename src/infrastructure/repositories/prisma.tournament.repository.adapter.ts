@@ -952,9 +952,12 @@ export class PrismaTournamentRepositoryAdapter
 				statusMap[status] = 0;
 			}
 
+			let total = 0;
 			for (const group of result) {
 				statusMap[group.status] = group._count._all;
+				total += group._count._all;
 			}
+			statusMap["TOTAL"] = total;
 
 			return statusMap;
 		} catch (error) {
