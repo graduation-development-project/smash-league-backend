@@ -195,6 +195,8 @@ import { SkipMatchesUseCase } from "./usecases/seed/skip-matches.usecase";
 import { SeedParticipantsUseCase } from "./usecases/tournament/seed-participants.usecase";
 import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-matches.usecase";
 import { UpdateTournamentStatusUseCase } from "./usecases/tournament/update-tournament-status.usecase";
+import { GetRegistrationCountByPeriodUseCase } from "./usecases/organizers/get-registration-by-period.usecase";
+import { GetRevenueByPeriodUseCase } from "./usecases/organizers/get-revenue-by-period.usecase";
 import { PrismaUmpireDegreeRepositoryAdapter } from "src/infrastructure/repositories/prisma.umpire-degree.repository.adapter";
 import { CreateUmpireDegreeDto } from "src/domain/dtos/umpire/umpire-degree.validation";
 import { CreateUmpireDegreeUseCase } from "./usecases/umpires/create-umpire-degree.usecase";
@@ -564,6 +566,10 @@ import { CreateEventPrizeUseCase } from "./usecases/tournament/tournament-event/
 		SkipMatchesUseCase,
 		SeedParticipantsUseCase,
 		AssignPlayerToMatchesUseCase,
+
+		// DASHBOARD
+		GetRegistrationCountByPeriodUseCase,
+		GetRevenueByPeriodUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -775,6 +781,10 @@ import { CreateEventPrizeUseCase } from "./usecases/tournament/tournament-event/
 		SkipMatchesUseCase,
 		SeedParticipantsUseCase,
 		AssignPlayerToMatchesUseCase,
+
+		//DASHBOARD
+		GetRegistrationCountByPeriodUseCase,
+		GetRevenueByPeriodUseCase,
 	],
 })
 export class ApplicationModule {}
