@@ -169,7 +169,7 @@ import { PrismaTournamentUmpireRepositoryAdapter } from "../infrastructure/repos
 import { GetAllRequiredAttachmentUseCase } from "./usecases/tournament/get-all-required-attachment.usecase";
 import { UpdatePackageUseCase } from "./usecases/packages/update-package.usecase";
 import { TournamentQueueModule } from "../infrastructure/background-jobs/tournament/tournament.queue.module";
-import { PrismaMatchLogRepositoryAdapter } from "src/infrastructure/repositories/match-log.repository.adapter";
+import { PrismaMatchLogRepositoryAdapter } from "src/infrastructure/repositories/prisma.match-log.repository.adapter";
 import { CreateEventLogUseCase } from "./usecases/tournament/match/create-event-log.usecase";
 import { GetAllLogMessageUseCase } from "./usecases/tournament/match/get-all-log-message.usecase";
 import { GetAllLogTypeUseCase } from "./usecases/tournament/match/get-all-logtype.usecase";
@@ -197,10 +197,16 @@ import { AssignPlayerToMatchesUseCase } from "./usecases/seed/assign-player-to-m
 import { UpdateTournamentStatusUseCase } from "./usecases/tournament/update-tournament-status.usecase";
 import { GetRegistrationCountByPeriodUseCase } from "./usecases/organizers/get-registration-by-period.usecase";
 import { GetRevenueByPeriodUseCase } from "./usecases/organizers/get-revenue-by-period.usecase";
-import { PrismaUmpireDegreeRepositoryAdapter } from "src/infrastructure/repositories/umpire-degree.repository.adapter";
+import { PrismaUmpireDegreeRepositoryAdapter } from "src/infrastructure/repositories/prisma.umpire-degree.repository.adapter";
 import { CreateUmpireDegreeDto } from "src/domain/dtos/umpire/umpire-degree.validation";
 import { CreateUmpireDegreeUseCase } from "./usecases/umpires/create-umpire-degree.usecase";
 import { GetAllUmpireDegreesUseCase } from "./usecases/umpires/get-all-umpire-degress.usecase";
+import { PrismaEventPrizeRepositoryAdapter } from "src/infrastructure/repositories/prisma.event-prize.repository.adapter";
+import { GetAllPrizeOfEventUseCase } from "./usecases/tournament/tournament-event/get-all-prize-of-event.usecase";
+import { GetChampionshipPrizeOfEventUseCase } from "./usecases/tournament/tournament-event/get-championship-prize-of-event.usecase";
+import { GetRunnerUpPrizeOfEventUseCase } from "./usecases/tournament/tournament-event/get-runner-up-prize-of-event.usecase";
+import { GetThirdPlacePrizesOfEventUseCase } from "./usecases/tournament/tournament-event/get-third-place-prizes-of-event.usecase";
+import { CreateEventPrizeUseCase } from "./usecases/tournament/tournament-event/create-event-prize.usecase";
 import { GetUmpireInOwnedTourUseCase } from "./usecases/organizers/get-umpire-in-owned-tour.usecase";
 import { CountTournamentStatusUseCase } from "./usecases/organizers/count-tournament-status.usecase";
 import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-status.usecase";
@@ -351,6 +357,10 @@ import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-s
 			provide: "UmpireDegreeRepository",
 			useClass: PrismaUmpireDegreeRepositoryAdapter,
 		},
+		{
+			provide: "EventPrizeRepository",
+			useClass: PrismaEventPrizeRepositoryAdapter
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -473,6 +483,12 @@ import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-s
 		StaffCancelTournamentUseCase,
 		UpdateTournamentRecruitmentUseCase,
 		UpdateTournamentStatusUseCase,
+		//prize use case
+		GetAllPrizeOfEventUseCase,
+		GetChampionshipPrizeOfEventUseCase,
+		GetRunnerUpPrizeOfEventUseCase,
+		GetThirdPlacePrizesOfEventUseCase,
+		CreateEventPrizeUseCase,
 		//Report use case
 		CreateReportUseCase,
 		GetAllReportUseCase,
@@ -685,6 +701,13 @@ import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-s
 		StaffCancelTournamentUseCase,
 		UpdateTournamentRecruitmentUseCase,
 		UpdateTournamentStatusUseCase,
+
+		//prize use case
+		GetAllPrizeOfEventUseCase,
+		GetChampionshipPrizeOfEventUseCase,
+		GetRunnerUpPrizeOfEventUseCase,
+		GetThirdPlacePrizesOfEventUseCase,
+		CreateEventPrizeUseCase,
 
 		//Report usecase
 		CreateReportUseCase,
