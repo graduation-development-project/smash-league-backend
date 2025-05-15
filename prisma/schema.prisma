@@ -69,11 +69,14 @@ enum Gender {
 
 enum TypeOfUmpireDegree {
   UmpireDegree
+  HealthCertificate
+  ForeignLanguageCertificate
 }
 
 model UmpireDegree {
   id           String             @id @default(uuid())
   typeOfDegree TypeOfUmpireDegree
+  degreeTitle  String
   degree       String[]
   description  String?
   userId       String
