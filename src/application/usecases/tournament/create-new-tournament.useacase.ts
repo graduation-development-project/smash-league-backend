@@ -222,7 +222,7 @@ export class CreateNewTournamentUseCase {
 									championshipPrize: item.championshipPrize,
 									runnerUpPrize: item.runnerUpPrize,
 									thirdPlacePrize: item.thirdPlacePrize,
-									jointThirdPlacePrize: item.jointThirdPlacePrize,
+									createPrizes: item.createPrizes
 								});
 							}
 						});

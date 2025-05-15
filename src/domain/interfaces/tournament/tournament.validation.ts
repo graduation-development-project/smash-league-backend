@@ -100,8 +100,8 @@ export class CreateTournamentEvent {
 		message: "Runner-up prize must exist!",
 	})
 	runnerUpPrize: string;
-	thirdPlacePrize?: string;
-	jointThirdPlacePrize?: string;
+	thirdPlacePrize?: string;	
+	createPrizes: CreatePrizes;
 }
 
 export class CreateCourtsDTO {
@@ -209,7 +209,23 @@ export class UpdateTournamentEventDTO {
 	})
 	runnerUpPrize: string;
 	thirdPlacePrize?: string;
-	jointThirdPlacePrize?: string;
+	createPrizes: CreatePrizes;
+}
+
+export class CreatePrize {
+	@IsString()
+	@IsNotEmpty()
+	prizeName: string;
+	@IsString()
+	@IsNotEmpty()
+	prize: string;
+}
+
+export class CreatePrizes {
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => Object)
+	createPrizes: CreatePrize[];
 }
 
 export class CreateTournament {

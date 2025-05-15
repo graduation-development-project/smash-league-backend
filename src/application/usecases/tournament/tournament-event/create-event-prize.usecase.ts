@@ -24,7 +24,7 @@ export class CreateEventPrizeUseCase {
 		);
 		try {
 			const eventPrize = await this.eventPrizeRepository.createEventPrizeOfTournamentEvent({
-				...createEventPrize
+				...createEventPrize,
 			});
 			return new ApiResponse<EventPrize>(
 				HttpStatus.CREATED,
@@ -34,10 +34,9 @@ export class CreateEventPrizeUseCase {
 		} catch (e) {
 			return new ApiResponse<null | undefined>(
 				HttpStatus.INTERNAL_SERVER_ERROR,
-				e,
+				e.message,
 				null
 			);
 		}
-		return;
 	}
 }

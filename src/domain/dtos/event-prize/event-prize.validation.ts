@@ -1,7 +1,7 @@
 import { PrizeType } from "@prisma/client";
 
 export class CreateEventPrizeRequest {
-	prizeType: PrizeType;
+	prizeType: string;
 	prizeName: string;
 	prize: string;
 	tournamentEventId: string;

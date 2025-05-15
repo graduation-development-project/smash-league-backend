@@ -303,6 +303,7 @@ export class TournamentController {
 	): Promise<ApiResponse<Tournament>> {
 		// console.log(createTournament);
 		// return;
+		console.log("Event: ", createTournament.createTournamentEvent[0].MENS_SINGLE[0].createPrizes);
 		return await this.createNewTournamentUseCase.execute(
 			request,
 			createTournament,
