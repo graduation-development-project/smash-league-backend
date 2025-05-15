@@ -27,6 +27,8 @@ import { CreateUmpireDegreeUseCase } from "src/application/usecases/umpires/crea
 import { UmpireDegreeResponse } from 'src/domain/dtos/umpire/umpire-degree.interface';
 import { GetAllUmpireDegreesUseCase } from 'src/application/usecases/umpires/get-all-umpire-degress.usecase';
 import { AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
+import { GetAllDegreeTypeUseCase } from 'src/application/usecases/umpires/get-all-degrees-type.usecase';
 
 @Controller("/umpires")
 
@@ -37,7 +39,8 @@ export class UmpireController {
 		private getAllAssignedMatchesUsecase: GetAllAssignedMatchesUsecase,
 		private getUmpireParticipatedTournamentsUseCase: GetUmpireParticipatedTournamentsUseCase,
 		private readonly createUmpireDegreeUseCase: CreateUmpireDegreeUseCase,
-		private readonly getAllUmpireDegreeUseCase: GetAllUmpireDegreesUseCase
+		private readonly getAllUmpireDegreeUseCase: GetAllUmpireDegreesUseCase,
+		private readonly getAllDegreeTypeUseCase: GetAllDegreeTypeUseCase
 	) {}
 
 	@Put("/update-match")
@@ -96,5 +99,10 @@ export class UmpireController {
 	@Get("/get-umpire-degrees/:umpireId")
 	async getAllUmpireDegress(@Param("umpireId") umpireId: string): Promise<ApiResponse<UmpireDegreeResponse[]>> {
 		return await this.getAllUmpireDegreeUseCase.execute(umpireId);
+	}
+
+	@Get("/get-all-umpire-degrees-type")
+	async getAllUmpireDegreesType(): Promise<ApiResponse<KeyValueType<string>[]>> {
+		return await this.getAllDegreeTypeUseCase.execute();
 	}
 }
