@@ -11,6 +11,7 @@ export interface UmpireDegreeResponse {
 
 export class ICreateUmpireDegree {
 	typeOfDegree: TypeOfUmpireDegree;
+	degreeTitle: string;
 	degree: string[];
 	description?: string;
 	userId: string;
