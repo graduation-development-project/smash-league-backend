@@ -211,6 +211,7 @@ import { GetUmpireInOwnedTourUseCase } from "./usecases/organizers/get-umpire-in
 import { CountTournamentStatusUseCase } from "./usecases/organizers/count-tournament-status.usecase";
 import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-status.usecase";
 import { GetRevenueInCurrentMonthUseCase } from "./usecases/organizers/get-revenue-in-current-month.usecase";
+import { GetAllDegreeTypeUseCase } from "./usecases/umpires/get-all-degrees-type.usecase";
 
 @Module({
 	imports: [
@@ -484,6 +485,7 @@ import { GetRevenueInCurrentMonthUseCase } from "./usecases/organizers/get-reven
 		StaffCancelTournamentUseCase,
 		UpdateTournamentRecruitmentUseCase,
 		UpdateTournamentStatusUseCase,
+		GetAllDegreeTypeUseCase,
 		//prize use case
 		GetAllPrizeOfEventUseCase,
 		GetChampionshipPrizeOfEventUseCase,
@@ -703,7 +705,7 @@ import { GetRevenueInCurrentMonthUseCase } from "./usecases/organizers/get-reven
 		StaffCancelTournamentUseCase,
 		UpdateTournamentRecruitmentUseCase,
 		UpdateTournamentStatusUseCase,
-
+		GetAllDegreeTypeUseCase,
 		//prize use case
 		GetAllPrizeOfEventUseCase,
 		GetChampionshipPrizeOfEventUseCase,
