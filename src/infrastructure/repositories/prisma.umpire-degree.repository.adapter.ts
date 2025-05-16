@@ -27,6 +27,7 @@ export class PrismaUmpireDegreeRepositoryAdapter implements UmpireDegreeReposito
 				userId: umpireId
 			},
 			select: {
+				degreeTitle: true,
 				typeOfDegree: true,
 				id: true,
 				degree: true,
