@@ -15,7 +15,7 @@ export class CountTournamentStatusUseCase {
 			"Count tournaments status successfully",
 			await this.tournamentRepository.countTournamentStatusByOrganizerId(
 				organizerId,
-			),
+			)
 		);
 	}
 }

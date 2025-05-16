@@ -1,5 +1,6 @@
+import { create } from 'domain';
 import { Injectable } from "@nestjs/common";
-import { PrismaClient, Tournament, TournamentEvent } from "@prisma/client";
+import { PrismaClient, PrizeType, Tournament, TournamentEvent } from "@prisma/client";
 import {
 	IParticipantsOfTournamentEvent,
 	ITournamentEventParticipants,
@@ -7,6 +8,7 @@ import {
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
+import { convertStringToEnum } from '../util/enum-convert.util';
 
 @Injectable()
 export class PrismaTournamentEventRepositoryAdapter
@@ -172,11 +174,31 @@ export class PrismaTournamentEventRepositoryAdapter
 			tournamentId: tournamentId,
 		}));
 		console.log(events);
-		const tournaments: TournamentEvent[] =
-			await this.prisma.tournamentEvent.createManyAndReturn({
-				data: events,
-				skipDuplicates: true,
+		for (let i = 0; i < events.length; i++) {
+			const prizesToCreate = events[i].createPrizes.createPrizes;
+			delete events[i].createPrizes;
+			const eventCreated = await this.prisma.tournamentEvent.create({
+				data: events[i]
 			});
+			const prizes = Object.values(prizesToCreate).map((prize) => ({
+				...prize,
+				prizeType: convertStringToEnum(PrizeType, prize.prizeName) !== null? 
+						convertStringToEnum(PrizeType, prize.prizeName) : PrizeType.Others,
+				tournamentEventId: eventCreated.id
+			}));
+			console.log(prizes);
+			const prizesCreated = await this.prisma.eventPrize.createManyAndReturn({
+				data: prizes
+			});
+		}
+		// const tournaments: TournamentEvent[] =
+		// 	await this.prisma.tournamentEvent.createManyAndReturn({
+		// 		data: events,
+		// 		skipDuplicates: true,
+		// 	});
+		// for (let i = 0; i < tournaments.length; i++) {
+
+		// }	
 		return [];
 	}
 

@@ -25,6 +25,7 @@ import {
 } from "class-validator";
 import { IOrganizerResponse } from "../user/organizer.interface";
 import { ITournamentSerieResponse } from "../tournament-serie/tournament-serie.interface";
+import { CreatePrizes } from "./tournament.validation";
 
 export enum FormatType {
 	SINGLE_ELIMINATION = "SINGLE_ELIMINATION",
@@ -78,7 +79,7 @@ export interface ICreateTournamentEvent {
 	championshipPrize: string;
 	runnerUpPrize: string;
 	thirdPlacePrize?: string;
-	jointThirdPlacePrize?: string;
+	createPrizes: CreatePrizes;
 }
 
 export interface ICreateTournament {
