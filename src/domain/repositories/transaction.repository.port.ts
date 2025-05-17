@@ -20,6 +20,10 @@ export interface TransactionRepositoryPort {
 		createTransaction: ICreateTransactionRequest,
 	): Promise<Transaction>;
 
+	createTransactionForReportFee(
+		createTransaction: ICreateTransactionRequest,
+	): Promise<Transaction>;
+
 	acceptTransaction(transactionId: number): Promise<Transaction>;
 
 	rejectTransaction(transactionId: number): Promise<Transaction>;

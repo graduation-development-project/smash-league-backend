@@ -98,6 +98,18 @@ export class PrismaTransactionRepositoryAdapter
 		});
 	}
 
+	async createTransactionForReportFee(
+		createTransaction: ICreateTransactionRequest,
+	): Promise<Transaction> {
+		return this.prisma.transaction.create({
+			data: {
+				...createTransaction,
+				transactionType: TransactionType.PAY_REPORT_FEE,
+				status: TransactionStatus.PENDING,
+			},
+		});
+	}
+
 	async getTransactionByUserId(userId: string): Promise<Transaction[]> {
 		try {
 			return await this.prisma.transaction.findMany({

@@ -212,6 +212,7 @@ import { CountTournamentStatusUseCase } from "./usecases/organizers/count-tourna
 import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-status.usecase";
 import { GetRevenueInCurrentMonthUseCase } from "./usecases/organizers/get-revenue-in-current-month.usecase";
 import { GetAllDegreeTypeUseCase } from "./usecases/umpires/get-all-degrees-type.usecase";
+import { ReportPlayerUseCase } from "./usecases/athletes/report-player.usecase";
 
 @Module({
 	imports: [
@@ -361,7 +362,7 @@ import { GetAllDegreeTypeUseCase } from "./usecases/umpires/get-all-degrees-type
 		},
 		{
 			provide: "EventPrizeRepository",
-			useClass: PrismaEventPrizeRepositoryAdapter
+			useClass: PrismaEventPrizeRepositoryAdapter,
 		},
 		//Third Party Service
 		MailService,
@@ -499,6 +500,7 @@ import { GetAllDegreeTypeUseCase } from "./usecases/umpires/get-all-degrees-type
 		GetAllReportOfTournamentUseCase,
 		ApproveReportUseCase,
 		RejectReportUseCase,
+		ReportPlayerUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -720,6 +722,7 @@ import { GetAllDegreeTypeUseCase } from "./usecases/umpires/get-all-degrees-type
 		GetAllReportOfTournamentUseCase,
 		ApproveReportUseCase,
 		RejectReportUseCase,
+		ReportPlayerUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
