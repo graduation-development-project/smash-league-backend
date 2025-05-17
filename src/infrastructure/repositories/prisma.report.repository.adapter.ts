@@ -93,4 +93,15 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 			},
 		});
 	}
+
+	async updateReportStatus(reportId: string): Promise<UserReport> {
+		return  this.prisma.userReport.update({
+			where: {
+				id: reportId,
+			},
+			data: {
+				status: ReportStatus.PENDING,
+			},
+		});
+	}
 }

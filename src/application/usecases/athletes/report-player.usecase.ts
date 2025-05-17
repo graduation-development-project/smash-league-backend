@@ -9,7 +9,7 @@ import { ICreateTransactionRequest } from "../../../domain/interfaces/payment/tr
 import { ICreateReport } from "../../../domain/dtos/report/report.interface";
 import { TournamentRepositoryPort } from "../../../domain/repositories/tournament.repository.port";
 import { ReportRepositoryPort } from "../../../domain/repositories/report.repository.port";
-import { ReportType } from "@prisma/client";
+import { ReportStatus, ReportType } from "@prisma/client";
 
 @Injectable()
 export class ReportPlayerUseCase {
@@ -24,9 +24,10 @@ export class ReportPlayerUseCase {
 	) {}
 
 	async execute(createReport: ICreateReport): Promise<ApiResponse<any>> {
-		await this.reportRepository.createReport({
+		const report = await this.reportRepository.createReport({
 			...createReport,
 			type: ReportType.ATHLETE,
+			status: ReportStatus.WAITING_PAYING_FEE,
 		});
 
 		const tournament = await this.tournamentRepository.getTournament(
@@ -38,6 +39,7 @@ export class ReportPlayerUseCase {
 				userId: createReport.userId,
 				transactionDetail: "Payment for report fee",
 				value: tournament.protestFeePerTime,
+				reportId: report.id,
 			});
 
 		const payment =

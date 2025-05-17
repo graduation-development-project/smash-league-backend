@@ -3,6 +3,7 @@ export interface ICreateTransactionRequest {
 	transactionDetail: string;
 	orderId?: string;
 	tournamentRegistrationId?: string;
+	reportId?: string;
 	value: number;
 }
 

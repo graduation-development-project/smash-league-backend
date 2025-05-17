@@ -728,6 +728,8 @@ model Transaction {
   paybackFee               PaybackFee?             @relation(name: "FK_TournamentRegistration_PaybackFee", fields: [paybackFeeId], references: [id], onDelete: Cascade)
   tournamentRegistrationId String?
   tournamentRegistration   TournamentRegistration? @relation(name: "FK_TournamentRegistration_Transaction", fields: [tournamentRegistrationId], references: [id], onDelete: Cascade)
+  reportId                 String?
+  report                   UserReport?             @relation(name: "FK_UserReport_Transaction", fields: [reportId], references: [id], onDelete: Cascade)
   value                    Int
   status                   TransactionStatus
   createdAt                DateTime                @default(now())
@@ -793,9 +795,11 @@ model UserReport {
   reportUser      User?            @relation(name: "FK_UserReport_ReportUser", fields: [reportToUserId], references: [id], onDelete: Cascade)
   tournament      Tournament?      @relation(name: "FK_UserReport_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
   tournamentEvent TournamentEvent? @relation(name: "FK_UserReport_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
+  transaction     Transaction[]    @relation(name: "FK_UserReport_Transaction")
 }
 
 enum ReportStatus {
+  WAITING_PAYING_FEE
   PENDING
   HANDLED
   REJECTED

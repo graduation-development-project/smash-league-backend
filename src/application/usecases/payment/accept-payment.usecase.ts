@@ -5,6 +5,7 @@ import {
 	Transaction,
 	TransactionStatus,
 	TransactionType,
+	UserReport,
 } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { OrderRepositoryPort } from "src/domain/repositories/order.repository.port";
@@ -17,6 +18,7 @@ import { TournamentRepositoryPort } from "../../../domain/repositories/tournamen
 import { TournamentEventRepositoryPort } from "../../../domain/repositories/tournament-event.repository.port";
 import { NotificationsRepositoryPort } from "../../../domain/repositories/notifications.repository.port";
 import { CreateNotificationDTO } from "../../../domain/dtos/notifications/create-notification.dto";
+import { ReportRepositoryPort } from "../../../domain/repositories/report.repository.port";
 
 @Injectable()
 export class AcceptPaymentUseCase {
@@ -37,6 +39,8 @@ export class AcceptPaymentUseCase {
 		private readonly tournamentParticipantsRepository: TournamentParticipantsRepositoryPort,
 		@Inject("NotificationRepository")
 		private readonly notificationsRepository: NotificationsRepositoryPort,
+		@Inject("ReportRepository")
+		private readonly reportRepository: ReportRepositoryPort,
 	) {}
 
 	async execute(
@@ -142,6 +146,18 @@ export class AcceptPaymentUseCase {
 				tournamentRegistration.tournamentEventId,
 				tournamentRegistration.userId,
 				tournamentRegistration.partnerId,
+			);
+
+			return new ApiResponse<null>(
+				HttpStatus.OK,
+				"Accept payment successful!",
+				null,
+			);
+		}
+
+		if (transaction.transactionType === TransactionType.PAY_REPORT_FEE) {
+			const updatedReport = await this.reportRepository.updateReportStatus(
+				transaction.reportId,
 			);
 
 			return new ApiResponse<null>(

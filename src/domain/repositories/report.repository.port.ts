@@ -9,4 +9,5 @@ export interface ReportRepositoryPort {
 	createReport(createReport: ICreateReport): Promise<UserReport>;
 	approveReport(reportId: string): Promise<UserReport>;
 	rejectReport(reportId: string): Promise<UserReport>;
+	updateReportStatus(reportId: string): Promise<UserReport>;
 }
