@@ -9,56 +9,26 @@ import { ICreateTransactionRequest } from "../../../domain/interfaces/payment/tr
 import { ICreateReport } from "../../../domain/dtos/report/report.interface";
 import { TournamentRepositoryPort } from "../../../domain/repositories/tournament.repository.port";
 import { ReportRepositoryPort } from "../../../domain/repositories/report.repository.port";
-import { ReportStatus, ReportType } from "@prisma/client";
+import { ReportStatus, ReportType, UserReport } from "@prisma/client";
 
 @Injectable()
 export class ReportPlayerUseCase {
 	constructor(
-		@Inject("TournamentRepository")
-		private readonly tournamentRepository: TournamentRepositoryPort,
-		@Inject("TransactionRepository")
-		private readonly transactionRepository: TransactionRepositoryPort,
 		@Inject("ReportRepository")
 		private readonly reportRepository: ReportRepositoryPort,
-		private readonly payosPaymentService: PaymentPayOSService,
 	) {}
 
-	async execute(createReport: ICreateReport): Promise<ApiResponse<any>> {
+	async execute(createReport: ICreateReport): Promise<ApiResponse<UserReport>> {
 		const report = await this.reportRepository.createReport({
 			...createReport,
 			type: ReportType.ATHLETE,
 			status: ReportStatus.WAITING_PAYING_FEE,
 		});
 
-		const tournament = await this.tournamentRepository.getTournament(
-			createReport.tournamentId,
-		);
-
-		const transaction =
-			await this.transactionRepository.createTransactionForReportFee({
-				userId: createReport.userId,
-				transactionDetail: "Payment for report fee",
-				value: tournament.protestFeePerTime,
-				reportId: report.id,
-			});
-
-		const payment =
-			await this.payosPaymentService.createPaymentLinkForReportFee(
-				transaction.id,
-				tournament.protestFeePerTime,
-			);
-		console.log(payment);
-
-		const updateTransaction =
-			await this.transactionRepository.updatePaymentForTransaction(
-				transaction.id,
-				payment.paymentImagePaymentLinkResponse,
-				payment.checkoutDataResponse.checkoutUrl,
-			);
-		return new ApiResponse<any>(
+		return new ApiResponse<UserReport>(
 			HttpStatus.OK,
 			"Report player successful!",
-			payment,
+			report,
 		);
 	}
 }

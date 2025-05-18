@@ -136,4 +136,19 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 			},
 		});
 	}
+
+	async getReportDetails(reportId: string): Promise<UserReport> {
+		return this.prisma.userReport.findUnique({
+			where: {
+				id: reportId,
+			},
+
+			include: {
+				reportUser: true,
+				user: true,
+				tournament: true,
+				tournamentEvent: true,
+			},
+		});
+	}
 }

@@ -30,6 +30,7 @@ import { PaybackRegistrationFeeUseCase } from "../../application/usecases/paymen
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { GetTransactionsByDayUseCase } from "../../application/usecases/payment/get-transactions-by-day.usecase";
 import { GetAllTransactionsUseCase } from "../../application/usecases/payment/get-all-transactions.usecase";
+import { PayReportFeeUseCase } from "../../application/usecases/payment/pay-report-fee.usecase";
 
 @Controller("/payment")
 export class PaymentController {
@@ -43,6 +44,7 @@ export class PaymentController {
 		private readonly paybackRegistrationFeeUseCase: PaybackRegistrationFeeUseCase,
 		private readonly getTransactionsByDayUseCase: GetTransactionsByDayUseCase,
 		private readonly getAllTransactionsUseCase: GetAllTransactionsUseCase,
+		private readonly payReportFeeUseCase: PayReportFeeUseCase,
 	) {}
 
 	@Get("/get-all-transactions")
@@ -73,6 +75,15 @@ export class PaymentController {
 			user.id,
 			tournamentRegistrationId,
 		);
+	}
+
+	@Get("/pay-report-fee/:reportId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Athlete.name, RoleMap.Organizer.name)
+	async payReportFee(
+		@Param("reportId") reportId: string,
+	): Promise<ApiResponse<IPayOSPaymentResponse>> {
+		return await this.payReportFeeUseCase.execute(reportId);
 	}
 
 	// @Get("/create-payment-link")

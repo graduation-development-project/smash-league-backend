@@ -214,6 +214,7 @@ import { GetRevenueInCurrentMonthUseCase } from "./usecases/organizers/get-reven
 import { GetAllDegreeTypeUseCase } from "./usecases/umpires/get-all-degrees-type.usecase";
 import { ReportPlayerUseCase } from "./usecases/athletes/report-player.usecase";
 import { GetReportByUserUseCase } from "./usecases/tournament/report/get-report-by-user.usecase";
+import { PayReportFeeUseCase } from "./usecases/payment/pay-report-fee.usecase";
 
 @Module({
 	imports: [
@@ -545,6 +546,7 @@ import { GetReportByUserUseCase } from "./usecases/tournament/report/get-report-
 		PaybackRegistrationFeeUseCase,
 		GetTransactionsByDayUseCase,
 		GetAllTransactionsUseCase,
+		PayReportFeeUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -766,6 +768,7 @@ import { GetReportByUserUseCase } from "./usecases/tournament/report/get-report-
 		PaybackRegistrationFeeUseCase,
 		GetTransactionsByDayUseCase,
 		GetAllTransactionsUseCase,
+		PayReportFeeUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
