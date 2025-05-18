@@ -10,4 +10,5 @@ export interface ReportRepositoryPort {
 	approveReport(reportId: string): Promise<UserReport>;
 	rejectReport(reportId: string): Promise<UserReport>;
 	updateReportStatus(reportId: string): Promise<UserReport>;
+	getReportByUserId(userId: string): Promise<UserReport[]>;
 }

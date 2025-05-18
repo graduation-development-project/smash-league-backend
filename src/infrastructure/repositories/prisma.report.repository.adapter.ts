@@ -31,6 +31,7 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 	}
 
 	async getAllReportFromUser(userId: string): Promise<IReportResponse[]> {
+		console.log(userId);
 		return await this.prisma.userReport.findMany({
 			where: {
 				userId: userId,
@@ -95,12 +96,43 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 	}
 
 	async updateReportStatus(reportId: string): Promise<UserReport> {
-		return  this.prisma.userReport.update({
+		return this.prisma.userReport.update({
 			where: {
 				id: reportId,
 			},
 			data: {
 				status: ReportStatus.PENDING,
+			},
+		});
+	}
+
+	async getReportByUserId(userId: string): Promise<UserReport[]> {
+		return this.prisma.userReport.findMany({
+			where: {
+				userId,
+			},
+
+			include: {
+				reportUser: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+
+				tournament: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+
+				tournamentEvent: {
+					select: {
+						id: true,
+						tournamentEvent: true,
+					},
+				},
 			},
 		});
 	}

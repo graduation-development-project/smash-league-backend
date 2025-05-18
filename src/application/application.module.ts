@@ -213,6 +213,7 @@ import { CountMatchesStatusUseCase } from "./usecases/organizers/count-matches-s
 import { GetRevenueInCurrentMonthUseCase } from "./usecases/organizers/get-revenue-in-current-month.usecase";
 import { GetAllDegreeTypeUseCase } from "./usecases/umpires/get-all-degrees-type.usecase";
 import { ReportPlayerUseCase } from "./usecases/athletes/report-player.usecase";
+import { GetReportByUserUseCase } from "./usecases/tournament/report/get-report-by-user.usecase";
 
 @Module({
 	imports: [
@@ -501,6 +502,7 @@ import { ReportPlayerUseCase } from "./usecases/athletes/report-player.usecase";
 		ApproveReportUseCase,
 		RejectReportUseCase,
 		ReportPlayerUseCase,
+		GetReportByUserUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -723,6 +725,7 @@ import { ReportPlayerUseCase } from "./usecases/athletes/report-player.usecase";
 		ApproveReportUseCase,
 		RejectReportUseCase,
 		ReportPlayerUseCase,
+		GetReportByUserUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
