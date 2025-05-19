@@ -215,6 +215,7 @@ import { GetAllDegreeTypeUseCase } from "./usecases/umpires/get-all-degrees-type
 import { ReportPlayerUseCase } from "./usecases/athletes/report-player.usecase";
 import { GetReportByUserUseCase } from "./usecases/tournament/report/get-report-by-user.usecase";
 import { PayReportFeeUseCase } from "./usecases/payment/pay-report-fee.usecase";
+import { GetReportForOrganizerUseCase } from "./usecases/tournament/report/get-report-for-organizer.usecase";
 
 @Module({
 	imports: [
@@ -547,6 +548,7 @@ import { PayReportFeeUseCase } from "./usecases/payment/pay-report-fee.usecase";
 		GetTransactionsByDayUseCase,
 		GetAllTransactionsUseCase,
 		PayReportFeeUseCase,
+		GetReportForOrganizerUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,
@@ -769,6 +771,7 @@ import { PayReportFeeUseCase } from "./usecases/payment/pay-report-fee.usecase";
 		GetTransactionsByDayUseCase,
 		GetAllTransactionsUseCase,
 		PayReportFeeUseCase,
+		GetReportForOrganizerUseCase,
 		//Notification Use Case
 		GetNotificationByUserUseCase,
 		CreateNotificationUseCase,

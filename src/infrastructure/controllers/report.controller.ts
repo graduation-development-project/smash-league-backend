@@ -29,6 +29,7 @@ import { ApproveReportUseCase } from "src/application/usecases/tournament/report
 import { RejectReportUseCase } from "src/application/usecases/tournament/report/reject-report.usecase";
 import { ReportPlayerUseCase } from "../../application/usecases/athletes/report-player.usecase";
 import { GetReportByUserUseCase } from "../../application/usecases/tournament/report/get-report-by-user.usecase";
+import { GetReportForOrganizerUseCase } from "../../application/usecases/tournament/report/get-report-for-organizer.usecase";
 
 @Controller("/report")
 export class ReportController {
@@ -41,6 +42,7 @@ export class ReportController {
 		private readonly rejectReportUseCase: RejectReportUseCase,
 		private readonly reportPlayerUseCase: ReportPlayerUseCase,
 		private readonly getReportByUserUseCase: GetReportByUserUseCase,
+		private readonly getReportForOrganizerUseCase: GetReportForOrganizerUseCase,
 	) {}
 
 	@Post("/create-new-report")
@@ -71,6 +73,15 @@ export class ReportController {
 	@Roles(RoleMap.Staff.name)
 	async getAllReports(): Promise<ApiResponse<IReportResponse[]>> {
 		return await this.getAllReportUseCase.execute();
+	}
+
+	@Get("/get-all-reports-for-organizer")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async getReportForOrganizer(
+		@Req() request: IRequestUser,
+	): Promise<ApiResponse<UserReport[]>> {
+		return this.getReportForOrganizerUseCase.execute(request.user.id);
 	}
 
 	@Get("/get-all-reports-of-user/:userId")

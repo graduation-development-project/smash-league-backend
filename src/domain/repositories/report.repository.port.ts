@@ -12,4 +12,5 @@ export interface ReportRepositoryPort {
 	updateReportStatus(reportId: string): Promise<UserReport>;
 	getReportByUserId(userId: string): Promise<UserReport[]>;
 	getReportDetails(reportId: string): Promise<UserReport>;
+	getReportByOrganizerId(organizerId: string): Promise<UserReport[]>;
 }

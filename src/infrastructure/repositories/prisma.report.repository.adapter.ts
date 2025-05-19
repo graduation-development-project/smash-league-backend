@@ -19,6 +19,9 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 
 	async getAllReport(): Promise<IReportResponse[]> {
 		return await this.prisma.userReport.findMany({
+			where: {
+				type: ReportType.TOURNAMENT,
+			},
 			select: {
 				id: true,
 				reason: true,
@@ -148,6 +151,46 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 				user: true,
 				tournament: true,
 				tournamentEvent: true,
+			},
+		});
+	}
+
+	async getReportByOrganizerId(organizerId: string): Promise<UserReport[]> {
+		return this.prisma.userReport.findMany({
+			where: {
+				tournament: {
+					organizerId,
+				},
+				type: ReportType.ATHLETE,
+			},
+			include: {
+				user: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+
+				reportUser: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+
+				tournament: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+
+				tournamentEvent: {
+					select: {
+						id: true,
+						tournamentEvent: true,
+					},
+				},
 			},
 		});
 	}
