@@ -29,6 +29,7 @@ import {
 import {
 	EventPrize,
 	Feedback,
+	Requirement,
 	Sponsor,
 	SponsorTier,
 	Tournament,
@@ -136,6 +137,10 @@ import { GetThirdPlacePrizesOfEventUseCase } from "src/application/usecases/tour
 import { CreateEventPrizeUseCase } from "src/application/usecases/tournament/tournament-event/create-event-prize.usecase";
 import { IEventPrizeResponse } from "src/domain/dtos/event-prize/event-prize.interface";
 import { CreateEventPrizeRequest } from "src/domain/dtos/event-prize/event-prize.validation";
+import { IRequirementResponse } from "src/domain/interfaces/tournament/tournament-requirement.interface";
+import { GetRequirementsOfTournamentUseCase } from "src/application/usecases/tournament/requirements/get-requirements-of-tournament.usecase";
+import { CreateRequirementUseCase } from "src/application/usecases/tournament/requirements/create-requirements.usecase";
+import { CreateRequirement } from "src/domain/interfaces/tournament/tournament-requirement.validation";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -192,7 +197,9 @@ export class TournamentController {
 		private readonly getChampionshipPrizeOfEventUseCase: GetChampionshipPrizeOfEventUseCase,
 		private readonly getRunnerUpPrizeOfEventUseCase: GetRunnerUpPrizeOfEventUseCase,
 		private readonly getThirdPlacePrizesOfEventUseCase: GetThirdPlacePrizesOfEventUseCase,
-		private readonly createNewEventPrizeUseCase: CreateEventPrizeUseCase
+		private readonly createNewEventPrizeUseCase: CreateEventPrizeUseCase,
+		private readonly getRequirementsOfTournamentUseCase: GetRequirementsOfTournamentUseCase,
+		private readonly createRequirementUseCase: CreateRequirementUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -706,5 +713,17 @@ export class TournamentController {
 	@Roles(RoleMap.Organizer.name)
 	async createEventPrize(@Body() createEventPrize: CreateEventPrizeRequest): Promise<ApiResponse<EventPrize>> {
 		return await this.createNewEventPrizeUseCase.execute(createEventPrize);
+	}
+
+	@Get("/get-requirements-of-tournament/:tournamentId")
+	async getRequirementsOfTournament(@Param("tournamentId") tournamentId: string): Promise<ApiResponse<IRequirementResponse[]>> {
+		return await this.getRequirementsOfTournamentUseCase.execute(tournamentId); 
+	}
+
+	@Post("/create-requirement/:tournamentId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async createRequirement(@Param("tournamentId") tournamentId: string, @Body() createRequirement: CreateRequirement): Promise<ApiResponse<Requirement>> {
+		return await this.createRequirementUseCase.execute(tournamentId, createRequirement);
 	}
 }

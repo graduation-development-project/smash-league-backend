@@ -244,6 +244,14 @@ model Ward {
   tournaments Tournament[] @relation(name: "FK_Tournament_Ward")
 }
 
+model Requirement {
+  id String @id @default(uuid())
+  requirementName   String
+  requirementDescription String
+  tournamentId String
+  tournament Tournament   @relation(name: "FK_Requirement_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
 model Tournament {
   id                       String                   @id
   name                     String
@@ -297,6 +305,7 @@ model Tournament {
   TournamentSponsor        TournamentSponsor[]
   paybackFees              PaybackFee[]             @relation(name: "FK_PaybackFee_Tournament")
   userReport               UserReport[]             @relation(name: "FK_UserReport_Tournament")
+  tournamentRequirements   Requirement[]            @relation(name: "FK_Requirement_Tournament")
 }
 
 enum TournamentStatus {
