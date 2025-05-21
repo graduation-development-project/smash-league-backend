@@ -141,6 +141,7 @@ import { IRequirementResponse } from "src/domain/interfaces/tournament/tournamen
 import { GetRequirementsOfTournamentUseCase } from "src/application/usecases/tournament/requirements/get-requirements-of-tournament.usecase";
 import { CreateRequirementUseCase } from "src/application/usecases/tournament/requirements/create-requirements.usecase";
 import { CreateRequirement } from "src/domain/interfaces/tournament/tournament-requirement.validation";
+import { GetRequirementsOfTournamentEventUseCase } from "src/application/usecases/tournament/requirements/get-requirements-of-tournament-event.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -199,7 +200,8 @@ export class TournamentController {
 		private readonly getThirdPlacePrizesOfEventUseCase: GetThirdPlacePrizesOfEventUseCase,
 		private readonly createNewEventPrizeUseCase: CreateEventPrizeUseCase,
 		private readonly getRequirementsOfTournamentUseCase: GetRequirementsOfTournamentUseCase,
-		private readonly createRequirementUseCase: CreateRequirementUseCase
+		private readonly createRequirementUseCase: CreateRequirementUseCase,
+		private readonly getRequirementsOfTournamentEventUseCase: GetRequirementsOfTournamentEventUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -718,6 +720,11 @@ export class TournamentController {
 	@Get("/get-requirements-of-tournament/:tournamentId")
 	async getRequirementsOfTournament(@Param("tournamentId") tournamentId: string): Promise<ApiResponse<IRequirementResponse[]>> {
 		return await this.getRequirementsOfTournamentUseCase.execute(tournamentId); 
+	}
+
+	@Get("/get-requirements-of-tournament-event/:tournamentEventId")
+	async getRequirementOfTournamentEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IRequirementResponse[]>> {
+		return await this.getRequirementsOfTournamentEventUseCase.execute(tournamentEventId);
 	}
 
 	@Post("/create-requirement/:tournamentId")

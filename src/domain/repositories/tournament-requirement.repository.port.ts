@@ -6,4 +6,5 @@ export interface TournamentRequirementRepositoryPort {
 	createRequirementForTournament(createTournamentRequirement: ICreateRequirement): Promise<Requirement>;
 	createMultipleRequirementsForTournament(createTournamentRequirements: ICreateRequirements): Promise<Requirement[]>;
 	updateRequirementForTournament(updateTournamentRequirements: any): Promise<Requirement[]>;
+	getAllRequirementOfTournamentEvent(tournamentEventId: string): Promise<IRequirementResponse[]>;
 }

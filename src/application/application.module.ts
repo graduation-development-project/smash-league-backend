@@ -219,6 +219,7 @@ import { GetReportForOrganizerUseCase } from "./usecases/tournament/report/get-r
 import { PrismaTournamentRequirementRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament-requirement.repository.adapter";
 import { GetRequirementsOfTournamentUseCase } from "./usecases/tournament/requirements/get-requirements-of-tournament.usecase";
 import { CreateRequirementUseCase } from "./usecases/tournament/requirements/create-requirements.usecase";
+import { GetRequirementsOfTournamentEventUseCase } from "./usecases/tournament/requirements/get-requirements-of-tournament-event.usecase";
 
 @Module({
 	imports: [
@@ -500,6 +501,7 @@ import { CreateRequirementUseCase } from "./usecases/tournament/requirements/cre
 		//Requirement use case
 		GetRequirementsOfTournamentUseCase,
 		CreateRequirementUseCase,
+		GetRequirementsOfTournamentEventUseCase,
 		//prize use case
 		GetAllPrizeOfEventUseCase,
 		GetChampionshipPrizeOfEventUseCase,
@@ -727,6 +729,7 @@ import { CreateRequirementUseCase } from "./usecases/tournament/requirements/cre
 		//Requirement use case
 		GetRequirementsOfTournamentUseCase,
 		CreateRequirementUseCase,
+		GetRequirementsOfTournamentEventUseCase,
 		//prize use case
 		GetAllPrizeOfEventUseCase,
 		GetChampionshipPrizeOfEventUseCase,
