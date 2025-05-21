@@ -369,7 +369,6 @@ model TournamentEvent {
   tournamentParticipants TournamentParticipants[] @relation(name: "FK_TournamentParticipants_TournamentEvent")
   paybackFees            PaybackFee[]             @relation(name: "FK_PaybackFee_TournamentEvent")
   prizes                 EventPrize[]             @relation(name: "FK_TournamentEvent_EventPrize")
-  userReport             UserReport[]             @relation(name: "FK_UserReport_TournamentEvent")
   requirements           Requirement[]            @relation(name: "FK_Requirement_TournamentEvent")
 }
 
@@ -804,22 +803,20 @@ model UserBankAccount {
 }
 
 model UserReport {
-  id                String       @id @default(uuid())
-  userId            String
-  tournamentId      String
-  tournamentEventId String?
-  reportToUserId    String?
-  reason            String
-  status            ReportStatus @default(PENDING)
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  type              ReportType
+  id             String       @id @default(uuid())
+  userId         String
+  tournamentId   String
+  reportToUserId String?
+  reason         String
+  status         ReportStatus @default(PENDING)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  type           ReportType
 
-  user            User             @relation(name: "FK_UserReport_User", fields: [userId], references: [id], onDelete: Cascade)
-  reportUser      User?            @relation(name: "FK_UserReport_ReportUser", fields: [reportToUserId], references: [id], onDelete: Cascade)
-  tournament      Tournament?      @relation(name: "FK_UserReport_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
-  tournamentEvent TournamentEvent? @relation(name: "FK_UserReport_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
-  transaction     Transaction[]    @relation(name: "FK_UserReport_Transaction")
+  user        User          @relation(name: "FK_UserReport_User", fields: [userId], references: [id], onDelete: Cascade)
+  reportUser  User?         @relation(name: "FK_UserReport_ReportUser", fields: [reportToUserId], references: [id], onDelete: Cascade)
+  tournament  Tournament?   @relation(name: "FK_UserReport_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  transaction Transaction[] @relation(name: "FK_UserReport_Transaction")
 }
 
 enum ReportStatus {

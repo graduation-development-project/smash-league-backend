@@ -129,13 +129,6 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 						name: true,
 					},
 				},
-
-				tournamentEvent: {
-					select: {
-						id: true,
-						tournamentEvent: true,
-					},
-				},
 			},
 		});
 	}
@@ -150,7 +143,6 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 				reportUser: true,
 				user: true,
 				tournament: true,
-				tournamentEvent: true,
 			},
 		});
 	}
@@ -182,13 +174,6 @@ export class PrismaReportRepositoryAdapter implements ReportRepositoryPort {
 					select: {
 						id: true,
 						name: true,
-					},
-				},
-
-				tournamentEvent: {
-					select: {
-						id: true,
-						tournamentEvent: true,
 					},
 				},
 			},

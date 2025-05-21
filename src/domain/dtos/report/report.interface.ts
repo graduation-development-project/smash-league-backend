@@ -7,7 +7,6 @@ export class ICreateReport {
 	status: ReportStatus;
 	createdAt: Date;
 	updatedAt: Date;
-	tournamentEventId?: string;
 	reportToUserId?: string;
 	type: ReportType;
 }
