@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { Requirement } from "@prisma/client";
+import { Requirement, RequirementType } from "@prisma/client";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { CreateRequirement } from "src/domain/interfaces/tournament/tournament-requirement.validation";
 import { TournamentRequirementRepositoryPort } from "src/domain/repositories/tournament-requirement.repository.port";
@@ -24,7 +24,8 @@ export class CreateRequirementUseCase {
 		);
 		const tournamentRequirement = await this.tournamentRequirementRepository.createRequirementForTournament({
 			...createRequirement, 
-			tournamentId: tournamentId
+			tournamentId: tournamentId,
+			requirementType: RequirementType.FillIn
 		});
 		return new ApiResponse<Requirement>(
 			HttpStatus.CREATED,

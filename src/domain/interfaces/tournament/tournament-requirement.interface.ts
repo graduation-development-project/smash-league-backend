@@ -1,6 +1,9 @@
+import { RequirementType } from "@prisma/client";
+
 export interface ICreateRequirement {
 	requirementName: string;
 	requirementDescription: string;
+	requirementType: RequirementType;
 	tournamentId: string;
 }
 

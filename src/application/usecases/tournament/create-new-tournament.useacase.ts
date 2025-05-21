@@ -2,6 +2,7 @@ import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import {
 	BadmintonParticipantType,
 	Court,
+	PrizeType,
 	Tournament,
 	TournamentEvent,
 	User,
@@ -10,6 +11,8 @@ import { ApiResponse } from "src/domain/dtos/api-response";
 import { IRequestUser } from "src/domain/interfaces/interfaces";
 import { ICreateCourts } from "src/domain/interfaces/tournament/tournament.interface";
 import {
+	CreatePrize,
+	CreatePrizes,
 	CreateTournament,
 	CreateTournamentEventsDTO,
 } from "src/domain/interfaces/tournament/tournament.validation";
@@ -23,6 +26,8 @@ import { CourtRepositoryPort } from "src/domain/repositories/court.repository.po
 import { UsersRepositoryPort } from "src/domain/repositories/users.repository.port";
 import { TournamentTimeJobType } from "../../../infrastructure/enums/tournament-time-job.enum";
 import { scheduleOrUpdateTournamentJob } from "../../../infrastructure/util/job/tournament-scheduler";
+import { create } from "domain";
+import { convertStringToEnum } from "src/infrastructure/util/enum-convert.util";
 
 @Injectable()
 export class CreateNewTournamentUseCase {
@@ -61,8 +66,23 @@ export class CreateNewTournamentUseCase {
 			return new ApiResponse<null | undefined>(
 				HttpStatus.BAD_REQUEST,
 				"Tournament ID exists!",
-				null,
+				null
 			);
+		const transformedData = this.transformTournamentEvents(
+			createTournament.createTournamentEvent,
+			"",
+		);
+		for (let i = 0; i < transformedData.length; i++) {
+			// console.log("check log ne: ",);
+			// console.log( transformedData[i].createPrizes.createPrizes);
+			const checkValidPrize = await this.checkValidPrize(transformedData[i].createPrizes.createPrizes);
+			if (!checkValidPrize.isValid) return new ApiResponse<null | undefined>(
+				HttpStatus.BAD_REQUEST,
+				checkValidPrize.message,
+				null
+			);
+		} 		
+		//Check credit remain
 		const user = await this.userRepository.getUser(request.user.id);
 		if (user.creditsRemain === null || user.creditsRemain === 0)
 			return new ApiResponse<null | undefined>(
@@ -70,6 +90,7 @@ export class CreateNewTournamentUseCase {
 				"Credit remain is 0.",
 				null,
 			);
+		
 		tournament = await this.createTournamentWithNoTournamentSerie(
 			createTournament,
 			request.user,
@@ -150,10 +171,46 @@ export class CreateNewTournamentUseCase {
 		return tournament !== null;
 	}
 
+	async checkValidPrize(prizes: CreatePrize[]): Promise<{
+		message: string, 
+		isValid: boolean
+	}> {
+		if (prizes.length <= 0) return {
+			isValid: false,
+			message: "Number of prizes must be positive number and exist!"
+		};
+		const championshipPrizes = prizes.filter((item) => "championshipprize" === this.normalizePrizeName(item.prizeName));
+		const runnerUpPrizes = prizes.filter((item) => "runnerupprize" === this.normalizePrizeName(item.prizeName));
+		const thirdPlacePrizes = prizes.filter((item) => "thirdplaceprize" === this.normalizePrizeName(item.prizeName));
+		if (championshipPrizes.length > 1) return {
+			isValid: false,
+			message: "Championship prize must be one!",
+		};
+		if (runnerUpPrizes.length > 1) return {
+			isValid: false,
+			message: "Runner Up prize must be one!"
+		};
+		if (thirdPlacePrizes.length > 2) return {
+			isValid: false,
+			message: "Third place prize must not be larger than 2!"
+		}
+		return {
+			isValid: true,
+			message: ""
+		};
+	}
+
+	normalizePrizeName(prizeName: string): string {
+		return (prizeName ?? "").replace(/\s+/g, "").toLowerCase();
+	}
+
 	async createTournamentWithNoTournamentSerie(
 		createTournament: CreateTournament,
 		user: User,
 	): Promise<Tournament> {
+		// for (let i = 0; i < createTournament.createTournamentEvent.createTournamentEvent.length; i++) {
+		// 	console.log(createTournament.createTournamentEvent.createTournamentEvent[i].MENS_DOUBLE)
+		// } 	
 		const tournament = await this.createTournament(createTournament, user);
 		console.log(tournament);
 		const tournamentEvents = await this.createTournamentEvents(
