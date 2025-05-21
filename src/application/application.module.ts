@@ -216,6 +216,9 @@ import { ReportPlayerUseCase } from "./usecases/athletes/report-player.usecase";
 import { GetReportByUserUseCase } from "./usecases/tournament/report/get-report-by-user.usecase";
 import { PayReportFeeUseCase } from "./usecases/payment/pay-report-fee.usecase";
 import { GetReportForOrganizerUseCase } from "./usecases/tournament/report/get-report-for-organizer.usecase";
+import { PrismaTournamentRequirementRepositoryAdapter } from "src/infrastructure/repositories/prisma.tournament-requirement.repository.adapter";
+import { GetRequirementsOfTournamentUseCase } from "./usecases/tournament/requirements/get-requirements-of-tournament.usecase";
+import { CreateRequirementUseCase } from "./usecases/tournament/requirements/create-requirements.usecase";
 
 @Module({
 	imports: [
@@ -367,6 +370,10 @@ import { GetReportForOrganizerUseCase } from "./usecases/tournament/report/get-r
 			provide: "EventPrizeRepository",
 			useClass: PrismaEventPrizeRepositoryAdapter,
 		},
+		{
+			provide: "TournamentRequirementRepository",
+			useClass: PrismaTournamentRequirementRepositoryAdapter
+		},
 		//Third Party Service
 		MailService,
 		UploadService,
@@ -490,6 +497,9 @@ import { GetReportForOrganizerUseCase } from "./usecases/tournament/report/get-r
 		UpdateTournamentRecruitmentUseCase,
 		UpdateTournamentStatusUseCase,
 		GetAllDegreeTypeUseCase,
+		//Requirement use case
+		GetRequirementsOfTournamentUseCase,
+		CreateRequirementUseCase,
 		//prize use case
 		GetAllPrizeOfEventUseCase,
 		GetChampionshipPrizeOfEventUseCase,
@@ -714,6 +724,9 @@ import { GetReportForOrganizerUseCase } from "./usecases/tournament/report/get-r
 		UpdateTournamentRecruitmentUseCase,
 		UpdateTournamentStatusUseCase,
 		GetAllDegreeTypeUseCase,
+		//Requirement use case
+		GetRequirementsOfTournamentUseCase,
+		CreateRequirementUseCase,
 		//prize use case
 		GetAllPrizeOfEventUseCase,
 		GetChampionshipPrizeOfEventUseCase,
