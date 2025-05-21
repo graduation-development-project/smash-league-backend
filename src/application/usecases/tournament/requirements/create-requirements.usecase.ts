@@ -25,7 +25,6 @@ export class CreateRequirementUseCase {
 		const tournamentRequirement = await this.tournamentRequirementRepository.createRequirementForTournament({
 			...createRequirement, 
 			tournamentId: tournamentId,
-			requirementType: RequirementType.FillIn
 		});
 		return new ApiResponse<Requirement>(
 			HttpStatus.CREATED,

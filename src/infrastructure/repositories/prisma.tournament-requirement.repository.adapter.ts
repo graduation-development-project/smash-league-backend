@@ -24,8 +24,7 @@ export class PrismaTournamentRequirementRepositoryAdapter implements TournamentR
 	async createRequirementForTournament(createTournamentRequirement: ICreateRequirement): Promise<Requirement> {
 		return await this.prisma.requirement.create({
 			data: {
-				...createTournamentRequirement,
-				requirementType: RequirementType.FillIn
+				...createTournamentRequirement
 			}
 		})
 	}
