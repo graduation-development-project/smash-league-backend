@@ -20,12 +20,32 @@ import {
 } from "class-validator";
 import { FormatType, RequiredAttachment } from "./tournament.interface";
 import { Type } from "class-transformer";
-import { BadmintonParticipantType } from "@prisma/client";
+import { BadmintonParticipantType, RequirementType } from "@prisma/client";
 
 export class CreateTournamentSerie {
 	@IsString()
 	@IsNotEmpty()
 	tournamentSerieName: string;
+}
+
+export class CreateTournamentRequirement {
+	@IsString()
+	@IsNotEmpty()
+	requirementName: string;
+	@IsString()
+	@IsNotEmpty()
+	requirementDescription: string;
+	@IsNotEmpty()
+	@IsEnum(RequirementType, {
+		message: "Requirement type must be one of the following: Selection, FillIn"})
+	requirementType: RequirementType;
+}
+
+export class CreateTournamentRequirements {
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => Object)
+	createTournamentRequirements: CreateTournamentRequirement[];
 }
 
 export class CreateTournamentEvent {
@@ -102,6 +122,7 @@ export class CreateTournamentEvent {
 	runnerUpPrize: string;
 	thirdPlacePrize?: string;	
 	createPrizes: CreatePrizes;
+
 }
 
 export class CreateCourtsDTO {
@@ -371,6 +392,7 @@ export class CreateTournament {
 	@IsOptional()
 	numberOfUmpires?: number;
 	isRecruit: boolean;
+	createTournamentRequirements: CreateTournamentRequirements;
 }
 
 export class UpdateTournament {

@@ -28,8 +28,8 @@ export class RegisterTournamentForTeamDTO {
 	fromTeamId: string;
 
 	@IsOptional()
-	registrationDocumentCreator: string[]
+	registrationDocumentCreator: string[];
 
 	@IsOptional()
-	registrationDocumentPartner: string[]
+	registrationDocumentPartner: string[];
 }

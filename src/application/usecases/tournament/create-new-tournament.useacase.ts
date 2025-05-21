@@ -3,6 +3,7 @@ import {
 	BadmintonParticipantType,
 	Court,
 	PrizeType,
+	RequirementType,
 	Tournament,
 	TournamentEvent,
 	User,
@@ -15,6 +16,8 @@ import {
 	CreatePrizes,
 	CreateTournament,
 	CreateTournamentEventsDTO,
+	CreateTournamentRequirement,
+	CreateTournamentRequirements,
 } from "src/domain/interfaces/tournament/tournament.validation";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
 import { TournamentSerieRepositoryPort } from "src/domain/repositories/tournament-serie.repository.port";
@@ -28,6 +31,7 @@ import { TournamentTimeJobType } from "../../../infrastructure/enums/tournament-
 import { scheduleOrUpdateTournamentJob } from "../../../infrastructure/util/job/tournament-scheduler";
 import { create } from "domain";
 import { convertStringToEnum } from "src/infrastructure/util/enum-convert.util";
+import { TournamentRequirementRepositoryPort } from "src/domain/repositories/tournament-requirement.repository.port";
 
 @Injectable()
 export class CreateNewTournamentUseCase {
@@ -42,6 +46,8 @@ export class CreateNewTournamentUseCase {
 		private readonly courtRepository: CourtRepositoryPort,
 		@Inject("UserRepository")
 		private readonly userRepository: UsersRepositoryPort,
+		@Inject("TournamentRequirementRepository")
+		private readonly tournamentRequirementRepository: TournamentRequirementRepositoryPort,
 		private readonly uploadService: UploadService,
 		@InjectQueue("tournamentQueue")
 		private tournamentQueue: Queue,
@@ -81,7 +87,13 @@ export class CreateNewTournamentUseCase {
 				checkValidPrize.message,
 				null
 			);
-		} 		
+		}
+		const checkValidRequirements = await this.checkValidRequirements(createTournament.createTournamentRequirements);
+		if (!checkValidRequirements.isValid) return new ApiResponse<null | undefined>(
+			HttpStatus.BAD_REQUEST,
+			checkValidRequirements.message,
+			null
+		);
 		//Check credit remain
 		const user = await this.userRepository.getUser(request.user.id);
 		if (user.creditsRemain === null || user.creditsRemain === 0)
@@ -91,6 +103,8 @@ export class CreateNewTournamentUseCase {
 				null,
 			);
 		
+		console.log(createTournament.createTournamentRequirements);
+
 		tournament = await this.createTournamentWithNoTournamentSerie(
 			createTournament,
 			request.user,
@@ -171,6 +185,36 @@ export class CreateNewTournamentUseCase {
 		return tournament !== null;
 	}
 
+	async checkValidRequirements(createTournamentRequirements: CreateTournamentRequirements): Promise<{
+		isValid: boolean,
+		message: string
+	}> {
+		for (let i = 0; i < createTournamentRequirements.createTournamentRequirements.length; i++) {
+			if (createTournamentRequirements.createTournamentRequirements[i].requirementName === null || 
+				createTournamentRequirements.createTournamentRequirements[i].requirementName === ""
+			) return {
+				isValid: false,
+				message: "Requirement name is null at index " + i
+			};
+			if (createTournamentRequirements.createTournamentRequirements[i].requirementDescription === null || 
+				createTournamentRequirements.createTournamentRequirements[i].requirementDescription === ""
+			) return {
+				isValid: false,
+				message: "Requirement description is null at index " + i
+			};
+			if (!Object.values(RequirementType).includes(createTournamentRequirements.createTournamentRequirements[i].requirementType as RequirementType)) {
+				return {
+					isValid: false,
+					message: "Requirement type must be one of the following: FillIn, Selection."
+				};
+			}
+		}
+		return {
+			isValid: true,
+			message: ""
+		}
+	}
+
 	async checkValidPrize(prizes: CreatePrize[]): Promise<{
 		message: string, 
 		isValid: boolean
@@ -208,11 +252,16 @@ export class CreateNewTournamentUseCase {
 		createTournament: CreateTournament,
 		user: User,
 	): Promise<Tournament> {
-		// for (let i = 0; i < createTournament.createTournamentEvent.createTournamentEvent.length; i++) {
-		// 	console.log(createTournament.createTournamentEvent.createTournamentEvent[i].MENS_DOUBLE)
-		// } 	
+		const tournamentRequirementToAdd = createTournament.createTournamentRequirements;
+		delete createTournament.createTournamentRequirements;
 		const tournament = await this.createTournament(createTournament, user);
 		console.log(tournament);
+		tournamentRequirementToAdd.createTournamentRequirements.forEach(async (item) => {
+			await this.tournamentRequirementRepository.createRequirementForTournament({
+				...item,
+				tournamentId: tournament.id
+			});
+		});
 		const tournamentEvents = await this.createTournamentEvents(
 			createTournament.createTournamentEvent,
 			tournament.id,
