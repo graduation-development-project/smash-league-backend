@@ -249,6 +249,11 @@ enum RequirementType {
   FillIn
 }
 
+// model DemoJsonType {
+//   id   String @id @default(uuid())
+//   name Json
+// }
+
 model Requirement {
   id                     String           @id @default(uuid())
   requirementName        String
