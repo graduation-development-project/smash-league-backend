@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { PrismaClient, Requirement } from "@prisma/client";
+import { PrismaClient, Requirement, RequirementType } from "@prisma/client";
 import { ICreateRequirement, ICreateRequirements, IRequirementResponse } from "src/domain/interfaces/tournament/tournament-requirement.interface";
 import { TournamentRequirementRepositoryPort } from "src/domain/repositories/tournament-requirement.repository.port";
 
@@ -24,7 +24,8 @@ export class PrismaTournamentRequirementRepositoryAdapter implements TournamentR
 	async createRequirementForTournament(createTournamentRequirement: ICreateRequirement): Promise<Requirement> {
 		return await this.prisma.requirement.create({
 			data: {
-				...createTournamentRequirement
+				...createTournamentRequirement,
+				requirementType: RequirementType.FillIn
 			}
 		})
 	}
