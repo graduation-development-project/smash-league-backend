@@ -9,6 +9,13 @@ export class PrismaTournamentRequirementRepositoryAdapter implements TournamentR
 		private readonly prisma: PrismaClient
 	) {
 	}
+	async getAllRequirementOfTournamentEvent(tournamentEventId: string): Promise<IRequirementResponse[]> {
+		return await this.prisma.requirement.findMany({
+			where: {
+				tournamentEventId: tournamentEventId
+			}
+		});
+	}
 	async createMultipleRequirementsForTournament(createTournamentRequirements: ICreateRequirements): Promise<Requirement[]> {
 		return await this.prisma.requirement.createManyAndReturn({
 			data: createTournamentRequirements.createRequirements

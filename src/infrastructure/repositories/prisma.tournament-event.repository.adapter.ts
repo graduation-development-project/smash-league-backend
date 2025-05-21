@@ -177,6 +177,8 @@ export class PrismaTournamentEventRepositoryAdapter
 		for (let i = 0; i < events.length; i++) {
 			const prizesToCreate = events[i].createPrizes.createPrizes;
 			const requirementsToAdd = events[i].createTournamentRequirements;
+			console.log("requirement to add: ");
+			console.log(requirementsToAdd);
 			delete events[i].createPrizes;
 			delete events[i]?.createTournamentRequirements;
 			const eventCreated = await this.prisma.tournamentEvent.create({
@@ -188,15 +190,15 @@ export class PrismaTournamentEventRepositoryAdapter
 						convertStringToEnum(PrizeType, prize.prizeName) : PrizeType.Others,
 				tournamentEventId: eventCreated.id
 			}));
-			const requirements = requirementsToAdd?.createTournamentRequirements !== undefined? Object.values(requirementsToAdd).map((item) => ({
+			const requirements = requirementsToAdd.createTournamentRequirements !== undefined? Object.values(requirementsToAdd.createTournamentRequirements).map((item) => ({
 				...item,
 				tournamentEventId: eventCreated.id
 			})) : null;
-			console.log(prizes);
+			console.log(requirements);
 			const prizesCreated = await this.prisma.eventPrize.createManyAndReturn({
 				data: prizes
 			});
-			const requirementsCreated = requirements === null? await this.prisma.requirement.createManyAndReturn({
+			const requirementsCreated = requirements !== null? await this.prisma.requirement.createManyAndReturn({
 				data: requirements
 			}) : null;
 		}
