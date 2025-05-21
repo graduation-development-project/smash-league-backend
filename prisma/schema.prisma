@@ -536,6 +536,7 @@ model TournamentRegistration {
   partnerId                   String? // Nullable: Used only for doubles
   registrationDocumentCreator String[]                     @default([])
   registrationDocumentPartner String[]                     @default([])
+  submittedAnswers            Json?
   registrationRole            TournamentRegistrationRole
   status                      TournamentRegistrationStatus @default(PENDING) // "PENDING", "APPROVED", "REJECTED"
   createdAt                   DateTime                     @default(now())
