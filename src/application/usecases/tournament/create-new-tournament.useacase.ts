@@ -84,16 +84,23 @@ export class CreateNewTournamentUseCase {
 			const checkValidPrize = await this.checkValidPrize(transformedData[i].createPrizes.createPrizes);
 			if (!checkValidPrize.isValid) return new ApiResponse<null | undefined>(
 				HttpStatus.BAD_REQUEST,
-				checkValidPrize.message,
+				"Error in creating prizes for events: " + checkValidPrize.message,
+				null
+			);
+			const checkValidRequirements = await this.checkValidRequirements(transformedData[i].createTournamentRequirements ?? null);
+			if (!checkValidRequirements.isValid) return new ApiResponse<null | undefined>(
+				HttpStatus.BAD_REQUEST,
+				"Error in creating tournament event requirements: " + checkValidRequirements.message,
 				null
 			);
 		}
 		const checkValidRequirements = await this.checkValidRequirements(createTournament.createTournamentRequirements);
 		if (!checkValidRequirements.isValid) return new ApiResponse<null | undefined>(
 			HttpStatus.BAD_REQUEST,
-			checkValidRequirements.message,
+			"Error in creating tournament requirements: " + checkValidRequirements.message,
 			null
 		);
+		
 		//Check credit remain
 		const user = await this.userRepository.getUser(request.user.id);
 		if (user.creditsRemain === null || user.creditsRemain === 0)
@@ -189,6 +196,10 @@ export class CreateNewTournamentUseCase {
 		isValid: boolean,
 		message: string
 	}> {
+		if (createTournamentRequirements === null) return {
+			isValid: true,
+			message: ""
+		}
 		for (let i = 0; i < createTournamentRequirements.createTournamentRequirements.length; i++) {
 			if (createTournamentRequirements.createTournamentRequirements[i].requirementName === null || 
 				createTournamentRequirements.createTournamentRequirements[i].requirementName === ""
@@ -256,12 +267,14 @@ export class CreateNewTournamentUseCase {
 		delete createTournament.createTournamentRequirements;
 		const tournament = await this.createTournament(createTournament, user);
 		console.log(tournament);
-		tournamentRequirementToAdd.createTournamentRequirements.forEach(async (item) => {
-			await this.tournamentRequirementRepository.createRequirementForTournament({
-				...item,
-				tournamentId: tournament.id
+		if (tournamentRequirementToAdd !== null) {
+			tournamentRequirementToAdd.createTournamentRequirements.forEach(async (item) => {
+				await this.tournamentRequirementRepository.createRequirementForTournament({
+					...item,
+					tournamentId: tournament.id
+				});
 			});
-		});
+		}
 		const tournamentEvents = await this.createTournamentEvents(
 			createTournament.createTournamentEvent,
 			tournament.id,
@@ -328,7 +341,8 @@ export class CreateNewTournamentUseCase {
 									championshipPrize: item.championshipPrize,
 									runnerUpPrize: item.runnerUpPrize,
 									thirdPlacePrize: item.thirdPlacePrize,
-									createPrizes: item.createPrizes
+									createPrizes: item.createPrizes,
+									createTournamentRequirements: item.createTournamentRequirements
 								});
 							}
 						});

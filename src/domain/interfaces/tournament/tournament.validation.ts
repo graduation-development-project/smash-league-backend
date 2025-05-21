@@ -122,7 +122,7 @@ export class CreateTournamentEvent {
 	runnerUpPrize: string;
 	thirdPlacePrize?: string;	
 	createPrizes: CreatePrizes;
-
+	createTournamentRequirements: CreateTournamentRequirements;
 }
 
 export class CreateCourtsDTO {
