@@ -52,6 +52,8 @@ export class RegisterTournamentUseCase {
 			registrationRole,
 			fromTeamId,
 			files,
+			submittedAnswerForTournament,
+			submittedAnswerForEvent
 		} = registerTournamentDTO;
 
 		const isUmpire = registrationRole === TournamentRegistrationRole.UMPIRE;
@@ -208,6 +210,8 @@ export class RegisterTournamentUseCase {
 						registrationRole:
 							registrationRole.toUpperCase() as TournamentRegistrationRole,
 						fromTeamId: fromTeamId || null,
+						submittedAnswersForTournament: submittedAnswerForTournament || null,
+						submittedAnswersForEvent: submittedAnswerForEvent || null
 					},
 				);
 
