@@ -540,7 +540,7 @@ model TournamentRegistration {
   registrationRole              TournamentRegistrationRole
   status                        TournamentRegistrationStatus @default(PENDING) // "PENDING", "APPROVED", "REJECTED"
   createdAt                     DateTime                     @default(now())
-  tournament                    Tournament?                  @relation(name: "FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournament                    Tournament                  @relation(name: "FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
   user                          User?                        @relation(name: "FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
   partner                       User?                        @relation(name: "FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
   rejectReason                  Reason?                      @relation(name: "FK_TournamentRegistration_Reason")

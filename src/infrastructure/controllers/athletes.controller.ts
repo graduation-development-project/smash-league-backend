@@ -82,6 +82,8 @@ export class AthletesController {
 		@Req() { user }: IRequestUser,
 		@UploadedFiles() files: Express.Multer.File[],
 	): Promise<ApiResponse<TournamentRegistration>> {
+		registerTournamentDTO.submittedAnswerForEvent = JSON.parse(registerTournamentDTO.submittedAnswerForEvent);
+		registerTournamentDTO.submittedAnswerForTournament = JSON.parse(registerTournamentDTO.submittedAnswerForTournament);
 		return this.registerTournamentUseCase.execute({
 			...registerTournamentDTO,
 			user,

@@ -12,16 +12,22 @@ export class GetTournamentRegistrationByTournamentIdUseCase {
 	) {}
 
 	async execute(
-		tournamentEventId: string,
+		tournamentId: string,
 		organizerId: string,
 	): Promise<ApiResponse<TournamentRegistration[]>> {
+		const tournamentRegistrations = await this.organizerRepository.getTournamentRegistrationByTournamentId(
+			tournamentId,
+			organizerId
+		);
+		console.log(tournamentRegistrations[0].submittedAnswersForEvent);
+		tournamentRegistrations.map((item) => ({
+			...item,
+			submittedAnswersForEvent: item.submittedAnswersForEvent[0]
+		}));
 		return new ApiResponse<TournamentRegistration[]>(
 			HttpStatus.OK,
 			"Get Tournament Registration List by TournamentId successfully!",
-			await this.organizerRepository.getTournamentRegistrationByTournamentId(
-				tournamentEventId,
-				organizerId,
-			),
+			tournamentRegistrations
 		);
 	}
 }

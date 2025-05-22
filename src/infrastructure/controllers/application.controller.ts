@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post, UseInterceptors } from "@nestjs/common";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { PrismaClient } from "@prisma/client";
 import { ApplicationFunction } from "src/application/usecases/application.function";
 
@@ -12,12 +13,9 @@ export class ApplicationController {
 		return this.applicationFunction.getApiVersion();
 	}
 
-	// @Post("/create-json-data")
-	// async createJsonData(@Body() data: {
-	// 	name: string,
-	// 	lastName: string,
-	// 	age: number
-	// }): Promise<any> {
-	// 	return await this.applicationFunction.createDemoDataType(data);
-	// }
+	@Post("/create-json-data")
+	@UseInterceptors(AnyFilesInterceptor())
+	async createJsonData(@Body() data: any): Promise<any> {
+		console.log(JSON.parse(data.data));
+	}
 }
