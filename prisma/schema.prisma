@@ -527,28 +527,29 @@ enum MatchStatus {
 }
 
 model TournamentRegistration {
-  id                          String                       @id @default(uuid())
-  tournamentId                String
-  userId                      String?
-  tournamentEventId           String?
-  tournamentEvent             TournamentEvent?             @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
-  partnerId                   String? // Nullable: Used only for doubles
-  registrationDocumentCreator String[]                     @default([])
-  registrationDocumentPartner String[]                     @default([])
-  submittedAnswers            Json?
-  registrationRole            TournamentRegistrationRole
-  status                      TournamentRegistrationStatus @default(PENDING) // "PENDING", "APPROVED", "REJECTED"
-  createdAt                   DateTime                     @default(now())
-  tournament                  Tournament?                  @relation(name: "FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
-  user                        User?                        @relation(name: "FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
-  partner                     User?                        @relation(name: "FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
-  rejectReason                Reason?                      @relation(name: "FK_TournamentRegistration_Reason")
-  fromTeamId                  String?
-  fromTeam                    Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
-  reasonId                    String?                      @unique
-  Notification                Notification[]               @relation(name: "FK_TournamentRegistration_Notification")
-  isDeleted                   Boolean                      @default(false)
-  transaction                 Transaction[]                @relation(name: "FK_TournamentRegistration_Transaction")
+  id                            String                       @id @default(uuid())
+  tournamentId                  String
+  userId                        String?
+  tournamentEventId             String?
+  tournamentEvent               TournamentEvent?             @relation(name: "FK_TournamentRegistration_TournamentEvent", fields: [tournamentEventId], references: [id], onDelete: Cascade)
+  partnerId                     String? // Nullable: Used only for doubles
+  registrationDocumentCreator   String[]                     @default([])
+  registrationDocumentPartner   String[]                     @default([])
+  submittedAnswersForTournament Json?
+  submittedAnswersForEvent      Json?
+  registrationRole              TournamentRegistrationRole
+  status                        TournamentRegistrationStatus @default(PENDING) // "PENDING", "APPROVED", "REJECTED"
+  createdAt                     DateTime                     @default(now())
+  tournament                    Tournament?                  @relation(name: "FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  user                          User?                        @relation(name: "FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
+  partner                       User?                        @relation(name: "FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
+  rejectReason                  Reason?                      @relation(name: "FK_TournamentRegistration_Reason")
+  fromTeamId                    String?
+  fromTeam                      Team?                        @relation(name: "FK_TournamentPRegistration_TournamentRegistrationTeam", fields: [fromTeamId], references: [id], onDelete: Cascade)
+  reasonId                      String?                      @unique
+  Notification                  Notification[]               @relation(name: "FK_TournamentRegistration_Notification")
+  isDeleted                     Boolean                      @default(false)
+  transaction                   Transaction[]                @relation(name: "FK_TournamentRegistration_Transaction")
 
   @@unique([tournamentId, userId, tournamentEventId]) // Ensure a user can register only once per event type
   @@unique([tournamentId, tournamentEventId, userId, partnerId]) // Ensure a unique pair for doubles
