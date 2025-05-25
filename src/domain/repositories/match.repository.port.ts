@@ -74,4 +74,9 @@ export interface MatchRepositoryPort {
 		previousCount: number;
 		changeRate: number;
 	}>;
+
+	updateByeMatch(matchId: string, isByeMatch: boolean): Promise<Match>;
+	updateMatchWinner(matchId: string, winningCompetitorId: string): Promise<Match>;
+
+	getMatchesPrevious(matchId: string): Promise<Match[]>;
 }

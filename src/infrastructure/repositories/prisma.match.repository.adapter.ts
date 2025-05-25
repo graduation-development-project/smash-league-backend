@@ -28,6 +28,51 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
+	async getMatchesPrevious(matchId: string): Promise<Match[]> {
+		const match = await this.prisma.match.findUnique({
+			where: {
+				id: matchId
+			},
+			select: {
+				matchesPrevious: {
+					orderBy: {
+						matchNumber: "asc"
+					}
+				}
+			}
+		});
+		return match.matchesPrevious;
+	}
+	async updateMatchWinner(matchId: string, winningCompetitorId: string): Promise<Match> {
+		const match = await this.prisma.match.findUnique({
+			where: {
+				id: matchId
+			}
+		});
+		var forfeitCompetitor;
+		if (winningCompetitorId === match.leftCompetitorId) forfeitCompetitor = match.rightCompetitorId;
+		else forfeitCompetitor = match.leftCompetitorId;
+		return await this.prisma.match.update({
+			where: {
+				id: matchId
+			},
+			data: {
+				matchWonByCompetitorId: winningCompetitorId,
+				matchStatus: MatchStatus.ENDED,
+				forfeitCompetitorId: forfeitCompetitor
+			}
+		});
+	}
+	async updateByeMatch(matchId: string, isByeMatch: boolean): Promise<Match> {
+		return await this.prisma.match.update({
+			where: {
+				id: matchId
+			},
+			data: {
+				isByeMatch: isByeMatch
+			}
+		})
+	}
 
 	async undoUpdatePoint(gameId: string): Promise<Game> {
 		return;
