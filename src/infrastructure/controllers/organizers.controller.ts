@@ -39,6 +39,7 @@ import { GetUmpireInOwnedTourUseCase } from "../../application/usecases/organize
 import { CountTournamentStatusUseCase } from "../../application/usecases/organizers/count-tournament-status.usecase";
 import { CountMatchesStatusUseCase } from "../../application/usecases/organizers/count-matches-status.usecase";
 import { GetRevenueInCurrentMonthUseCase } from "../../application/usecases/organizers/get-revenue-in-current-month.usecase";
+import { CountRegistrationInCurrentMonthUseCase } from "../../application/usecases/organizers/count-registration-in-current-month.usecase";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -57,6 +58,7 @@ export class OrganizerController {
 		private countTournamentStatusUseCase: CountTournamentStatusUseCase,
 		private countMatchesStatusUseCase: CountMatchesStatusUseCase,
 		private getRevenueInCurrentMonthUseCase: GetRevenueInCurrentMonthUseCase,
+		private countRegistrationInCurrentMonthUseCase: CountRegistrationInCurrentMonthUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentId")
@@ -169,5 +171,20 @@ export class OrganizerController {
 	@Get("current-month-revenue")
 	async currentMonthRevenue(@Req() { user }: IRequestUser) {
 		return this.getRevenueInCurrentMonthUseCase.execute(user.id);
+	}
+
+	@Get("/count-registrations-in-current-month")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async countRegistrationsInCurrentMonth(
+		@Req() { user }: IRequestUser,
+	): Promise<
+		ApiResponse<{
+			currentCount: number;
+			previousCount: number;
+			changeRate: number;
+		}>
+	> {
+		return await this.countRegistrationInCurrentMonthUseCase.execute(user.id);
 	}
 }

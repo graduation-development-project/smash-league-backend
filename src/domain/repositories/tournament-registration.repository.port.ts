@@ -47,4 +47,10 @@ export interface TournamentRegistrationRepositoryPort {
 		fromDate,
 		toDate,
 	}: GetRegistrationStatsInput): Promise<Record<string, number>>;
+
+	countNumberOfRegistrationsInCurrentMonth(organizerId: string): Promise<{
+		currentCount: number;
+		previousCount: number;
+		changeRate: number;
+	}>;
 }

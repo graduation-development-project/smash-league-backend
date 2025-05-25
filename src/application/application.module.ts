@@ -223,6 +223,7 @@ import { GetRequirementsOfTournamentEventUseCase } from "./usecases/tournament/r
 import { CountNumberTourInCurrentMonthUseCase } from "./usecases/tournament/count-number-tour-in-current-month.usecase";
 import { CountMatchesInCurrentWeekUseCase } from "./usecases/tournament/match/count-matches-in-current-week.usecase";
 import { UpdateEventPrizeWinnerUseCase } from "./usecases/tournament/tournament-event/update-event-prize-winner.usecase";
+import { CountRegistrationInCurrentMonthUseCase } from "./usecases/organizers/count-registration-in-current-month.usecase";
 
 @Module({
 	imports: [
@@ -376,7 +377,7 @@ import { UpdateEventPrizeWinnerUseCase } from "./usecases/tournament/tournament-
 		},
 		{
 			provide: "TournamentRequirementRepository",
-			useClass: PrismaTournamentRequirementRepositoryAdapter
+			useClass: PrismaTournamentRequirementRepositoryAdapter,
 		},
 		//Third Party Service
 		MailService,
@@ -606,7 +607,7 @@ import { UpdateEventPrizeWinnerUseCase } from "./usecases/tournament/tournament-
 		GetRevenueInCurrentMonthUseCase,
 		CountNumberTourInCurrentMonthUseCase,
 		CountMatchesInCurrentWeekUseCase,
-
+		CountRegistrationInCurrentMonthUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -836,6 +837,7 @@ import { UpdateEventPrizeWinnerUseCase } from "./usecases/tournament/tournament-
 		GetRevenueInCurrentMonthUseCase,
 		CountNumberTourInCurrentMonthUseCase,
 		CountMatchesInCurrentWeekUseCase,
+		CountRegistrationInCurrentMonthUseCase,
 	],
 })
 export class ApplicationModule {}

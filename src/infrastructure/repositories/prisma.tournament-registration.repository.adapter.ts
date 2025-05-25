@@ -337,4 +337,89 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 			throw e;
 		}
 	}
+
+	async countNumberOfRegistrationsInCurrentMonth(organizerId: string): Promise<{
+		currentCount: number;
+		previousCount: number;
+		changeRate: number;
+	}> {
+		try {
+			const now = new Date();
+
+			const startOfCurrentMonth = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				1,
+			);
+			const endOfCurrentMonth = new Date(
+				now.getFullYear(),
+				now.getMonth() + 1,
+				0,
+				23,
+				59,
+				59,
+				999,
+			);
+
+			const startOfPreviousMonth = new Date(
+				now.getFullYear(),
+				now.getMonth() - 1,
+				1,
+			);
+			const endOfPreviousMonth = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				0,
+				23,
+				59,
+				59,
+				999,
+			);
+
+			const [currentCount, previousCount] = await Promise.all([
+				this.prismaService.tournamentRegistration.count({
+					where: {
+						createdAt: {
+							gte: startOfCurrentMonth,
+							lte: endOfCurrentMonth,
+						},
+						tournament: {
+							organizerId,
+						},
+
+						status: TournamentRegistrationStatus.APPROVED,
+					},
+				}),
+				this.prismaService.tournamentRegistration.count({
+					where: {
+						createdAt: {
+							gte: startOfPreviousMonth,
+							lte: endOfPreviousMonth,
+						},
+						status: TournamentRegistrationStatus.APPROVED,
+
+						tournament: {
+							organizerId,
+						},
+					},
+				}),
+			]);
+
+			let changeRate = 0;
+			if (previousCount === 0) {
+				changeRate = currentCount > 0 ? 100 : 0;
+			} else {
+				changeRate = ((currentCount - previousCount) / previousCount) * 100;
+			}
+
+			return {
+				currentCount,
+				previousCount,
+				changeRate: parseFloat(changeRate.toFixed(2)),
+			};
+		} catch (error) {
+			console.error("countNumberOfRegistrationsInCurrentMonth failed", error);
+			throw error;
+		}
+	}
 }
