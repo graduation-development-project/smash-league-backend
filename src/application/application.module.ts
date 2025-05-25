@@ -222,6 +222,7 @@ import { CreateRequirementUseCase } from "./usecases/tournament/requirements/cre
 import { GetRequirementsOfTournamentEventUseCase } from "./usecases/tournament/requirements/get-requirements-of-tournament-event.usecase";
 import { CountNumberTourInCurrentMonthUseCase } from "./usecases/tournament/count-number-tour-in-current-month.usecase";
 import { CountMatchesInCurrentWeekUseCase } from "./usecases/tournament/match/count-matches-in-current-week.usecase";
+import { UpdateEventPrizeWinnerUseCase } from "./usecases/tournament/tournament-event/update-event-prize-winner.usecase";
 
 @Module({
 	imports: [
@@ -510,6 +511,7 @@ import { CountMatchesInCurrentWeekUseCase } from "./usecases/tournament/match/co
 		GetRunnerUpPrizeOfEventUseCase,
 		GetThirdPlacePrizesOfEventUseCase,
 		CreateEventPrizeUseCase,
+		UpdateEventPrizeWinnerUseCase,
 		//Report use case
 		CreateReportUseCase,
 		GetAllReportUseCase,
@@ -741,7 +743,7 @@ import { CountMatchesInCurrentWeekUseCase } from "./usecases/tournament/match/co
 		GetRunnerUpPrizeOfEventUseCase,
 		GetThirdPlacePrizesOfEventUseCase,
 		CreateEventPrizeUseCase,
-
+		UpdateEventPrizeWinnerUseCase,
 		//Report usecase
 		CreateReportUseCase,
 		GetAllReportUseCase,

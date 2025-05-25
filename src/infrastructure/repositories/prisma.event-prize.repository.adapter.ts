@@ -10,6 +10,23 @@ export class PrismaEventPrizeRepositoryAdapter implements EventPrizeRepositoryPo
 		private readonly prisma: PrismaClient
 	) {
 	}
+	async getPrize(prizeId: string): Promise<EventPrize> {
+		return await this.prisma.eventPrize.findUnique({
+			where: {
+				id: prizeId
+			}
+		});
+	}
+	async updateWinnerForEventPrize(participantId: string, prizeId: string): Promise<EventPrize> {
+		return await this.prisma.eventPrize.update({
+			where: {
+				id: prizeId
+			}, 
+			data: {
+				winningParticipantId: participantId
+			}
+		});
+	}
 	async getAllPrizeOfEvent(tournamentEventId: string): Promise<EventPrize[]> {
 		return await this.prisma.eventPrize.findMany({
 			where: {
