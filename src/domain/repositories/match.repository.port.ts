@@ -68,4 +68,10 @@ export interface MatchRepositoryPort {
 	countMatchesStatusByOrganizerId(
 		organizerId: string,
 	): Promise<Record<string, number>>;
+
+	countNumberOfMatchesInCurrentWeek(organizerId: string): Promise<{
+		currentCount: number;
+		previousCount: number;
+		changeRate: number;
+	}>;
 }

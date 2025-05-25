@@ -2080,4 +2080,74 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			throw error;
 		}
 	}
+
+	async countNumberOfMatchesInCurrentWeek(organizerId: string): Promise<{
+		currentCount: number;
+		previousCount: number;
+		changeRate: number;
+	}> {
+		try {
+			const now = new Date();
+
+			const currentDay = now.getDay() === 0 ? 7 : now.getDay();
+			const startOfCurrentWeek = new Date(now);
+
+			startOfCurrentWeek.setDate(now.getDate() - currentDay + 1);
+			startOfCurrentWeek.setHours(0, 0, 0, 0);
+
+			console.log(startOfCurrentWeek);
+
+			const endOfCurrentWeek = new Date(startOfCurrentWeek);
+			endOfCurrentWeek.setDate(startOfCurrentWeek.getDate() + 6);
+			endOfCurrentWeek.setHours(23, 59, 59, 999);
+
+			console.log(endOfCurrentWeek);
+
+			const startOfPreviousWeek = new Date(startOfCurrentWeek);
+			startOfPreviousWeek.setDate(startOfCurrentWeek.getDate() - 7);
+
+			const endOfPreviousWeek = new Date(endOfCurrentWeek);
+			endOfPreviousWeek.setDate(endOfCurrentWeek.getDate() - 7);
+
+			const [currentCount, previousCount] = await Promise.all([
+				this.prisma.match.count({
+					where: {
+						timeStart: {
+							gte: startOfCurrentWeek,
+							lte: endOfCurrentWeek,
+						},
+						tournamentEvent: {
+							tournament: {
+								organizerId,
+							},
+						},
+					},
+				}),
+				this.prisma.match.count({
+					where: {
+						timeStart: {
+							gte: startOfPreviousWeek,
+							lte: endOfPreviousWeek,
+						},
+						tournamentEvent: {
+							tournament: {
+								organizerId,
+							},
+						},
+					},
+				}),
+			]);
+
+			let changeRate = currentCount - previousCount;
+
+			return {
+				currentCount,
+				previousCount,
+				changeRate,
+			};
+		} catch (error) {
+			console.error("countNumberOfMatchesInCurrentWeek failed", error);
+			throw error;
+		}
+	}
 }

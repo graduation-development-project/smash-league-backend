@@ -768,9 +768,13 @@ export class TournamentController {
 	@Get("/count-tour-in-current-month")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Organizer.name)
-	async countTourInCurrentMonth(
-		@Req() { user }: IRequestUser,
-	): Promise<ApiResponse<number>> {
+	async countTourInCurrentMonth(@Req() { user }: IRequestUser): Promise<
+		ApiResponse<{
+			currentCount: number;
+			previousCount: number;
+			changeRate: number;
+		}>
+	> {
 		return await this.countNumberTourInCurrentMonthUseCase.execute(user.id);
 	}
 }

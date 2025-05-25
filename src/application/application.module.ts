@@ -221,6 +221,7 @@ import { GetRequirementsOfTournamentUseCase } from "./usecases/tournament/requir
 import { CreateRequirementUseCase } from "./usecases/tournament/requirements/create-requirements.usecase";
 import { GetRequirementsOfTournamentEventUseCase } from "./usecases/tournament/requirements/get-requirements-of-tournament-event.usecase";
 import { CountNumberTourInCurrentMonthUseCase } from "./usecases/tournament/count-number-tour-in-current-month.usecase";
+import { CountMatchesInCurrentWeekUseCase } from "./usecases/tournament/match/count-matches-in-current-week.usecase";
 
 @Module({
 	imports: [
@@ -602,6 +603,8 @@ import { CountNumberTourInCurrentMonthUseCase } from "./usecases/tournament/coun
 		CountMatchesStatusUseCase,
 		GetRevenueInCurrentMonthUseCase,
 		CountNumberTourInCurrentMonthUseCase,
+		CountMatchesInCurrentWeekUseCase,
+
 	],
 	exports: [
 		//Auth Service
@@ -830,6 +833,7 @@ import { CountNumberTourInCurrentMonthUseCase } from "./usecases/tournament/coun
 		CountMatchesStatusUseCase,
 		GetRevenueInCurrentMonthUseCase,
 		CountNumberTourInCurrentMonthUseCase,
+		CountMatchesInCurrentWeekUseCase,
 	],
 })
 export class ApplicationModule {}

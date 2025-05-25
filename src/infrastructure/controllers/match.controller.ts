@@ -39,6 +39,7 @@ import { ContinueMatchUseCase } from "src/application/usecases/tournament/match/
 import { GetAllMatchLogUseCase } from "src/application/usecases/tournament/match/get-all-match-log.usecase";
 import { SkipMatchesUseCase } from "../../application/usecases/seed/skip-matches.usecase";
 import { AssignPlayerToMatchesUseCase } from "../../application/usecases/seed/assign-player-to-matches.usecase";
+import { CountMatchesInCurrentWeekUseCase } from "../../application/usecases/tournament/match/count-matches-in-current-week.usecase";
 
 @Controller("match")
 export class MatchController {
@@ -61,6 +62,7 @@ export class MatchController {
 		private readonly getAllMatchLogUseCase: GetAllMatchLogUseCase,
 		private readonly skipMatchesUseCase: SkipMatchesUseCase,
 		private readonly assignPlayerToMatchesUseCase: AssignPlayerToMatchesUseCase,
+		private readonly countMatchesInCurrentWeekUseCase: CountMatchesInCurrentWeekUseCase,
 	) {}
 
 	@Get("get-match/:matchId")
@@ -206,11 +208,23 @@ export class MatchController {
 		return this.assignPlayerToMatchesUseCase.execute(tournamentEventId);
 	}
 
-
 	@Get("skip-matches/:tournamentEventId")
 	async skipMatches(
 		@Param("tournamentEventId") tournamentEventId: string,
 	): Promise<void> {
 		return this.skipMatchesUseCase.execute(tournamentEventId);
+	}
+
+	@Get("/count-matches-in-current-week")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async countMatchesInCurrentWeek(@Req() { user }: IRequestUser): Promise<
+		ApiResponse<{
+			currentCount: number;
+			previousCount: number;
+			changeRate: number;
+		}>
+	> {
+		return await this.countMatchesInCurrentWeekUseCase.execute(user.id);
 	}
 }
