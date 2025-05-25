@@ -373,14 +373,14 @@ model TournamentEvent {
 }
 
 model EventPrize {
-  id                String          @id @default(uuid())
-  prizeName         String
-  prize             String
-  prizeType         PrizeType
-  winningParticipantId  String
-  winningParticipant TournamentParticipants @relation(name: "FK_EventPrize_TournamentEvent", fields: [winningParticipantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  tournamentEventId String
-  tournamentEvent   TournamentEvent @relation(name: "FK_TournamentEvent_EventPrize", fields: [tournamentEventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   String                  @id @default(uuid())
+  prizeName            String
+  prize                String
+  prizeType            PrizeType
+  winningParticipantId String?
+  winningParticipant   TournamentParticipants? @relation(name: "FK_EventPrize_TournamentEvent", fields: [winningParticipantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tournamentEventId    String
+  tournamentEvent      TournamentEvent         @relation(name: "FK_TournamentEvent_EventPrize", fields: [tournamentEventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum PrizeType {
@@ -542,7 +542,7 @@ model TournamentRegistration {
   registrationRole              TournamentRegistrationRole
   status                        TournamentRegistrationStatus @default(PENDING) // "PENDING", "APPROVED", "REJECTED"
   createdAt                     DateTime                     @default(now())
-  tournament                    Tournament                  @relation(name: "FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
+  tournament                    Tournament                   @relation(name: "FK_TournamentRegistration_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
   user                          User?                        @relation(name: "FK_TournamentRegistration_User", fields: [userId], references: [id], onDelete: Cascade)
   partner                       User?                        @relation(name: "FK_TournamentRegistration_Partner", fields: [partnerId], references: [id], onDelete: SetNull)
   rejectReason                  Reason?                      @relation(name: "FK_TournamentRegistration_Reason")
