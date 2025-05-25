@@ -16,12 +16,12 @@ export class UpdateTournamentEventInformationUseCase {
 	} 
 
 	async execute(tournamentId: string, updateTournamentEvent: UpdateTournamentEventsDTO): Promise<ApiResponse<TournamentEvent[]>> {
-		// const tournament = await this.tournamentRepository.getTournament(tournamentId);
-		// if (tournament.status !== TournamentStatus.CREATED) return new ApiResponse<null | undefined>(
-		// 	HttpStatus.BAD_REQUEST,
-		// 	"Tournament needs to be in CREATED status to update event information",
-		// 	null
-		// );
+		const tournament = await this.tournamentRepository.getTournament(tournamentId);
+		if (tournament.status !== TournamentStatus.CREATED) return new ApiResponse<null | undefined>(
+			HttpStatus.BAD_REQUEST,
+			"Tournament needs to be in CREATED status to update event information",
+			null
+		);
 		console.log(tournamentId);
 		const transformedData = this.transformTournamentEvents(updateTournamentEvent, tournamentId);
 		const tournamentEventsToAdd = this.filterTournamentEventsToAdd(transformedData);
