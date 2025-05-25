@@ -11,8 +11,6 @@ import {
 	IUpdateTournamentScheduleInformation,
 } from "./../../domain/interfaces/tournament/tournament.interface";
 import {
-	BadmintonParticipantType,
-	PrismaClient,
 	Tournament,
 	TournamentEventStatus,
 	TournamentPost,
@@ -962,6 +960,81 @@ export class PrismaTournamentRepositoryAdapter
 			return statusMap;
 		} catch (error) {
 			console.error("countTournamentsByStatus failed", error);
+			throw error;
+		}
+	}
+
+	async countNumberOfTourInCurrentMonth(organizerId: string): Promise<{
+		currentCount: number;
+		previousCount: number;
+		changeRate: number;
+	}> {
+		try {
+			const now = new Date();
+
+			const startOfCurrentMonth = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				1,
+			);
+			const endOfCurrentMonth = new Date(
+				now.getFullYear(),
+				now.getMonth() + 1,
+				0,
+				23,
+				59,
+				59,
+				999,
+			);
+
+			const startOfPreviousMonth = new Date(
+				now.getFullYear(),
+				now.getMonth() - 1,
+				1,
+			);
+			const endOfPreviousMonth = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				0,
+				23,
+				59,
+				59,
+				999,
+			);
+
+			const [currentCount, previousCount] = await Promise.all([
+				this.prisma.tournament.count({
+					where: {
+						organizerId,
+						startDate: {
+							gte: startOfCurrentMonth,
+							lte: endOfCurrentMonth,
+						},
+					},
+				}),
+				this.prisma.tournament.count({
+					where: {
+						organizerId,
+						startDate: {
+							gte: startOfPreviousMonth,
+							lte: endOfPreviousMonth,
+						},
+					},
+				}),
+			]);
+
+			const changeRate = currentCount - previousCount;
+
+			return {
+				currentCount,
+				previousCount,
+				changeRate,
+			};
+		} catch (error) {
+			console.error(
+				"countNumberOfTourInCurrentMonthWithChangeRate failed",
+				error,
+			);
 			throw error;
 		}
 	}

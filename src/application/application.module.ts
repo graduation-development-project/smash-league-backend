@@ -220,6 +220,7 @@ import { PrismaTournamentRequirementRepositoryAdapter } from "src/infrastructure
 import { GetRequirementsOfTournamentUseCase } from "./usecases/tournament/requirements/get-requirements-of-tournament.usecase";
 import { CreateRequirementUseCase } from "./usecases/tournament/requirements/create-requirements.usecase";
 import { GetRequirementsOfTournamentEventUseCase } from "./usecases/tournament/requirements/get-requirements-of-tournament-event.usecase";
+import { CountNumberTourInCurrentMonthUseCase } from "./usecases/tournament/count-number-tour-in-current-month.usecase";
 
 @Module({
 	imports: [
@@ -600,6 +601,7 @@ import { GetRequirementsOfTournamentEventUseCase } from "./usecases/tournament/r
 		CountTournamentStatusUseCase,
 		CountMatchesStatusUseCase,
 		GetRevenueInCurrentMonthUseCase,
+		CountNumberTourInCurrentMonthUseCase,
 	],
 	exports: [
 		//Auth Service
@@ -827,6 +829,7 @@ import { GetRequirementsOfTournamentEventUseCase } from "./usecases/tournament/r
 		CountTournamentStatusUseCase,
 		CountMatchesStatusUseCase,
 		GetRevenueInCurrentMonthUseCase,
+		CountNumberTourInCurrentMonthUseCase,
 	],
 })
 export class ApplicationModule {}

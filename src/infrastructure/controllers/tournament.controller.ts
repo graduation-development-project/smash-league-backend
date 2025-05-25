@@ -142,6 +142,7 @@ import { GetRequirementsOfTournamentUseCase } from "src/application/usecases/tou
 import { CreateRequirementUseCase } from "src/application/usecases/tournament/requirements/create-requirements.usecase";
 import { CreateRequirement } from "src/domain/interfaces/tournament/tournament-requirement.validation";
 import { GetRequirementsOfTournamentEventUseCase } from "src/application/usecases/tournament/requirements/get-requirements-of-tournament-event.usecase";
+import { CountNumberTourInCurrentMonthUseCase } from "../../application/usecases/tournament/count-number-tour-in-current-month.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -201,7 +202,8 @@ export class TournamentController {
 		private readonly createNewEventPrizeUseCase: CreateEventPrizeUseCase,
 		private readonly getRequirementsOfTournamentUseCase: GetRequirementsOfTournamentUseCase,
 		private readonly createRequirementUseCase: CreateRequirementUseCase,
-		private readonly getRequirementsOfTournamentEventUseCase: GetRequirementsOfTournamentEventUseCase
+		private readonly getRequirementsOfTournamentEventUseCase: GetRequirementsOfTournamentEventUseCase,
+		private readonly countNumberTourInCurrentMonthUseCase: CountNumberTourInCurrentMonthUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -312,7 +314,10 @@ export class TournamentController {
 	): Promise<ApiResponse<Tournament>> {
 		// console.log(createTournament);
 		// return;
-		console.log("Event: ", createTournament.createTournamentEvent[0].MENS_SINGLE[0].createPrizes);
+		console.log(
+			"Event: ",
+			createTournament.createTournamentEvent[0].MENS_SINGLE[0].createPrizes,
+		);
 		return await this.createNewTournamentUseCase.execute(
 			request,
 			createTournament,
@@ -691,46 +696,81 @@ export class TournamentController {
 	}
 
 	@Get("/get-all-prize-of-event/:tournamentEventId")
-	async getAllPrizeOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse[]>> {
+	async getAllPrizeOfEvent(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<IEventPrizeResponse[]>> {
 		return await this.getAllPrizeofEventUseCase.execute(tournamentEventId);
 	}
 
 	@Get("/get-championship-prize-of-event/:tournamentEventId")
-	async getChampionshipPrizeOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse>> {
-		return await this.getChampionshipPrizeOfEventUseCase.execute(tournamentEventId);
+	async getChampionshipPrizeOfEvent(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<IEventPrizeResponse>> {
+		return await this.getChampionshipPrizeOfEventUseCase.execute(
+			tournamentEventId,
+		);
 	}
 
 	@Get("/get-runner-up-prize-of-event/:tournamentEventId")
-	async getRunnerUpPrizeOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse>> {
+	async getRunnerUpPrizeOfEvent(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<IEventPrizeResponse>> {
 		return await this.getRunnerUpPrizeOfEventUseCase.execute(tournamentEventId);
 	}
 
 	@Get("/get-third-place-prizes-of-event/:tournamentEventId")
-	async getThirdPlacePrizesOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse[]>> {
-		return await this.getThirdPlacePrizesOfEventUseCase.execute(tournamentEventId);
+	async getThirdPlacePrizesOfEvent(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<IEventPrizeResponse[]>> {
+		return await this.getThirdPlacePrizesOfEventUseCase.execute(
+			tournamentEventId,
+		);
 	}
 
 	@Post("/create-event-prize")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Organizer.name)
-	async createEventPrize(@Body() createEventPrize: CreateEventPrizeRequest): Promise<ApiResponse<EventPrize>> {
+	async createEventPrize(
+		@Body() createEventPrize: CreateEventPrizeRequest,
+	): Promise<ApiResponse<EventPrize>> {
 		return await this.createNewEventPrizeUseCase.execute(createEventPrize);
 	}
 
 	@Get("/get-requirements-of-tournament/:tournamentId")
-	async getRequirementsOfTournament(@Param("tournamentId") tournamentId: string): Promise<ApiResponse<IRequirementResponse[]>> {
-		return await this.getRequirementsOfTournamentUseCase.execute(tournamentId); 
+	async getRequirementsOfTournament(
+		@Param("tournamentId") tournamentId: string,
+	): Promise<ApiResponse<IRequirementResponse[]>> {
+		return await this.getRequirementsOfTournamentUseCase.execute(tournamentId);
 	}
 
 	@Get("/get-requirements-of-tournament-event/:tournamentEventId")
-	async getRequirementOfTournamentEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IRequirementResponse[]>> {
-		return await this.getRequirementsOfTournamentEventUseCase.execute(tournamentEventId);
+	async getRequirementOfTournamentEvent(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<IRequirementResponse[]>> {
+		return await this.getRequirementsOfTournamentEventUseCase.execute(
+			tournamentEventId,
+		);
 	}
 
 	@Post("/create-requirement/:tournamentId")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Organizer.name)
-	async createRequirement(@Param("tournamentId") tournamentId: string, @Body() createRequirement: CreateRequirement): Promise<ApiResponse<Requirement>> {
-		return await this.createRequirementUseCase.execute(tournamentId, createRequirement);
+	async createRequirement(
+		@Param("tournamentId") tournamentId: string,
+		@Body() createRequirement: CreateRequirement,
+	): Promise<ApiResponse<Requirement>> {
+		return await this.createRequirementUseCase.execute(
+			tournamentId,
+			createRequirement,
+		);
+	}
+
+	@Get("/count-tour-in-current-month")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async countTourInCurrentMonth(
+		@Req() { user }: IRequestUser,
+	): Promise<ApiResponse<number>> {
+		return await this.countNumberTourInCurrentMonthUseCase.execute(user.id);
 	}
 }

@@ -104,5 +104,13 @@ export interface TournamentRepositoryPort {
 		updateTournamentRecruitmentDTO: UpdateTournamentRecruitmentDTO,
 	): Promise<Tournament>;
 
-	countTournamentStatusByOrganizerId(organizerId: string): Promise<Record<string, number>>;
+	countTournamentStatusByOrganizerId(
+		organizerId: string,
+	): Promise<Record<string, number>>;
+
+	countNumberOfTourInCurrentMonth(organizerId: string): Promise<{
+		currentCount: number;
+		previousCount: number;
+		changeRate: number;
+	}>;
 }
