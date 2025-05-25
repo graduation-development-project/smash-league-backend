@@ -12,11 +12,20 @@ export class UpdateAttendanceUseCase {
 	}
 
 	async execute(matchId: string, leftCompetitorAttendance: boolean, rightCompetitorAttendance: boolean): Promise<ApiResponse<any>> {
-		if (matchId === "" || matchId === null) return new ApiResponse<null | undefined>(
+		const match = await this.matchRepository.getMatchDetail(matchId);
+		if (match === null) return new ApiResponse<null | undefined>(
 			HttpStatus.BAD_REQUEST,
-			"No match id found!",
+			"No match found!",
 			null
 		);
+		const nextMatch = await this.matchRepository.getMatchDetail(match.nextMatchId);
+		if (leftCompetitorAttendance === true && rightCompetitorAttendance === false) {
+			const matchWinnerUpdated = await this.matchRepository.updateMatchWinner(match.id, match.leftCompetitorId);
+			const updatedMatch = await this.updateCompetitorForNextMatch(match, nextMatch, match.leftCompetitorId);
+		} else {
+			const matchWinnerUpdated = await this.matchRepository.updateMatchWinner(matchId, match.rightCompetitorId);
+			const updatedMatch = await this.updateCompetitorForNextMatch(match, nextMatch, match.rightCompetitorId);
+		}
 		// console.log(Boolean(leftCompetitorAttendance), ' ', Boolean(rightCompetitorAttendance));
 		const matchUpdated = await this.matchRepository.updateAttendance(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
 		return new ApiResponse<Match>(
@@ -24,5 +33,17 @@ export class UpdateAttendanceUseCase {
 			"Update attendance successful!",
 			matchUpdated
 		);
+	}
+
+	async updateCompetitorForNextMatch(currentMatch: Match, nextMatch: Match, winningCompetitorId: string): Promise<Match> {
+		const matchesPrevious = await this.matchRepository.getMatchesPrevious(nextMatch.id);
+		if (currentMatch.id === matchesPrevious[0].id) {
+			const updatedNextMatch = await this.matchRepository.assignAthleteIntoMatch(nextMatch.id, winningCompetitorId, null);
+			return updatedNextMatch;
+		} else if (currentMatch.id === matchesPrevious[1].id) {
+			const updatedNextMatch = await this.matchRepository.assignAthleteIntoMatch(nextMatch.id, null, winningCompetitorId);
+			return updatedNextMatch;
+		}
+		return;
 	}
 }
