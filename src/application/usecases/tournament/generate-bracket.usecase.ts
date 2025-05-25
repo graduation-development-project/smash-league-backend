@@ -1,10 +1,11 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { Match, MatchStatus } from "@prisma/client";
+import { Match, MatchStatus, PrizeType, TournamentStatus } from "@prisma/client";
 import { loadESLint } from "eslint";
 import { count } from "node:console";
 import { create } from "node:domain";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { ICreateMatch } from "src/domain/interfaces/tournament/match/match.interface";
+import { EventPrizeRepositoryPort } from "src/domain/repositories/event-prize.repository.port";
 import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
 import { StageRepositoryPort } from "src/domain/repositories/stage.repository.port";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
@@ -21,11 +22,16 @@ export class GenerateBracketUseCase {
 		@Inject("StageRepository")
 		private readonly stageRepository: StageRepositoryPort,
 		@Inject("MatchRepository")
-		private readonly matchRepository: MatchRepositoryPort
+		private readonly matchRepository: MatchRepositoryPort,
+		@Inject("EventPrizeRepository")
+		private readonly prizeRepository: EventPrizeRepositoryPort
 	) {
 	}
 
 	async execute(tournamentEventId: string): Promise<ApiResponse<number>> {
+		
+
+
 		const tournamentEvent = await this.tournamentEventRepository.getTournamentEventById(tournamentEventId);
 		const tournament = await this.tournamentRepository.getTournament(tournamentEvent.tournamentId);
 		if (tournament.status === "OPENING_FOR_REGISTRATION") await this.tournamentRepository.updateTournamentStatusToDrawing(tournament.id);
@@ -34,12 +40,20 @@ export class GenerateBracketUseCase {
 		const numberOfByeParticipants = this.getTheNearestNumberOfFullParticipants(listParticipants.listParticipants.length, 1) - listParticipants.listParticipants.length;
 		const numberOfRounds = this.calculateTheNumberOfRound(listParticipants.listParticipants.length);
 		const numberOfFullParticipants = this.getTheNearestNumberOfFullParticipants(listParticipants.listParticipants.length, 1);
-		const stageOfMatchThirdPlace = await this.stageRepository.createStage(
-			{
-				stageName: "Third place match",
-				tournamentEventId: tournamentEvent.id
-			}
-		);		
+		//Update tournament to drawing
+		if (tournament.status !== TournamentStatus.DRAWING) {
+			const tournamentUpdated = await this.tournamentRepository.updateTournamentStatus(tournament.id, TournamentStatus.DRAWING);
+		}
+		//Generate brackets
+		const prizes = await this.prizeRepository.getAllPrizeOfEvent(tournamentEvent.id);
+		const thirdPlacePrizes = await prizes.filter((item) => item.prizeType === PrizeType.ThirdPlacePrize);
+		if (thirdPlacePrizes.length === 1) {
+			const stageOfMatchThirdPlace = await this.stageRepository.createStage(
+				{
+					stageName: "Third place match",
+					tournamentEventId: tournamentEvent.id
+				}
+			);
 			const thirdPlaceMatch = await this.matchRepository.createMatch(
 				{
 					isByeMatch: false,
@@ -50,6 +64,7 @@ export class GenerateBracketUseCase {
 					tournamentEventId: tournamentEvent.id
 				}
 			);
+		}
 		let countableRound = 1;
 			let numberOfMatchPerRound = 1;
 			let check = 0;
