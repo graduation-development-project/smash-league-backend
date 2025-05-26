@@ -10,6 +10,20 @@ export class PrismaUmpireDegreeRepositoryAdapter implements UmpireDegreeReposito
 		private readonly prisma: PrismaClient
 	) {
 	}
+	async getUmpireDegreeById(degreeId: string): Promise<UmpireDegree> {
+		return await this.prisma.umpireDegree.findUnique({
+			where: {
+				id: degreeId
+			}
+		});
+	}
+	async deleteUmpireDegree(degreeId: string): Promise<any> {
+		return await this.prisma.umpireDegree.delete({
+			where: {
+				id: degreeId
+			}
+		});
+	}
 	
 	async updateImageForDegree(degreeId: string, degreeImages: string[]): Promise<UmpireDegree> {
 		return await this.prisma.umpireDegree.update({
@@ -60,6 +74,8 @@ export class PrismaUmpireDegreeRepositoryAdapter implements UmpireDegreeReposito
 	updateUmpireDegree(): Promise<any> {
 		throw new Error("Method not implemented.");
 	}
+
+	
 
 	
 }

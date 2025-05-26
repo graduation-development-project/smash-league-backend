@@ -10,6 +10,7 @@ import {
 	Post,
 	UseInterceptors,
 	UploadedFiles,
+	Delete,
 } from "@nestjs/common";
 import { UmpireUpdateMatchDTO } from "../../domain/dtos/umpire/umpire-update-match.dto";
 import { UmpireUpdateMatchUseCase } from "../../application/usecases/umpires/umpire-update-match.usecase";
@@ -29,6 +30,7 @@ import { GetAllUmpireDegreesUseCase } from 'src/application/usecases/umpires/get
 import { AnyFilesInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
 import { GetAllDegreeTypeUseCase } from 'src/application/usecases/umpires/get-all-degrees-type.usecase';
+import { DeleteUmpireDegreeUseCase } from 'src/application/usecases/umpires/delete-umpire-degree.usecase';
 
 @Controller("/umpires")
 
@@ -40,7 +42,8 @@ export class UmpireController {
 		private getUmpireParticipatedTournamentsUseCase: GetUmpireParticipatedTournamentsUseCase,
 		private readonly createUmpireDegreeUseCase: CreateUmpireDegreeUseCase,
 		private readonly getAllUmpireDegreeUseCase: GetAllUmpireDegreesUseCase,
-		private readonly getAllDegreeTypeUseCase: GetAllDegreeTypeUseCase
+		private readonly getAllDegreeTypeUseCase: GetAllDegreeTypeUseCase,
+		private readonly deleteUmpireDegreeUseCase: DeleteUmpireDegreeUseCase,
 	) {}
 
 	@Put("/update-match")
@@ -77,7 +80,7 @@ export class UmpireController {
 
 	@Get("/participate-tournaments")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
-	@Roles(RoleMap.Umpire.name)
+	@Roles(RoleMap.Umpire.name, RoleMap.Athlete.name)
 	async getParticipateTournaments(
 		@Req() { user }: IRequestUser,
 	): Promise<ApiResponse<Tournament[]>> {
@@ -87,7 +90,7 @@ export class UmpireController {
 	@UseInterceptors(AnyFilesInterceptor())
 	@Post("/create-umpire-degree")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
-	@Roles(RoleMap.Umpire.name)
+	@Roles(RoleMap.Umpire.name, RoleMap.Athlete.name)
 	async createUmpireDegree(@Req() request: IRequestUser,
 		@Body() createUmpireDegree: CreateUmpireDegreeDto,
 		@UploadedFiles() files: Express.Multer.File[]): Promise<ApiResponse<any>> {
@@ -104,5 +107,12 @@ export class UmpireController {
 	@Get("/get-all-umpire-degrees-type")
 	async getAllUmpireDegreesType(): Promise<ApiResponse<KeyValueType<string>[]>> {
 		return await this.getAllDegreeTypeUseCase.execute();
+	}
+
+	@Delete("/delete-umpire-degree/:degreeId")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Umpire.name, RoleMap.Athlete.name)
+	async deleteUmpireDegree(@Param("degreeId") degreeId: string): Promise<ApiResponse<any>> {
+		return await this.deleteUmpireDegreeUseCase.execute(degreeId);
 	}
 }

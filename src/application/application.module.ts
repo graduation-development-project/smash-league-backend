@@ -224,6 +224,7 @@ import { CountNumberTourInCurrentMonthUseCase } from "./usecases/tournament/coun
 import { CountMatchesInCurrentWeekUseCase } from "./usecases/tournament/match/count-matches-in-current-week.usecase";
 import { UpdateEventPrizeWinnerUseCase } from "./usecases/tournament/tournament-event/update-event-prize-winner.usecase";
 import { CountRegistrationInCurrentMonthUseCase } from "./usecases/organizers/count-registration-in-current-month.usecase";
+import { DeleteUmpireDegreeUseCase } from "./usecases/umpires/delete-umpire-degree.usecase";
 
 @Module({
 	imports: [
@@ -588,7 +589,7 @@ import { CountRegistrationInCurrentMonthUseCase } from "./usecases/organizers/co
 		GetAssignedMatchUseCase,
 		GetAllAssignedMatchesUsecase,
 		GetUmpireParticipatedTournamentsUseCase,
-
+		DeleteUmpireDegreeUseCase,
 		//Bank Use Case
 		GetAllBanksUseCase,
 		CheckBankAccountExistUseCase,
@@ -818,7 +819,7 @@ import { CountRegistrationInCurrentMonthUseCase } from "./usecases/organizers/co
 		GetAssignedMatchUseCase,
 		GetAllAssignedMatchesUsecase,
 		GetUmpireParticipatedTournamentsUseCase,
-
+		DeleteUmpireDegreeUseCase,
 		//Bank Use Case
 		GetAllBanksUseCase,
 		CheckBankAccountExistUseCase,
