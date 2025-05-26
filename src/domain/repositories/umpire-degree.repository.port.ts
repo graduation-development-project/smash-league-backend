@@ -7,4 +7,6 @@ export interface UmpireDegreeRepositoryPort {
 	createMultipleUmpireDegree(): Promise<UmpireDegree[]>;
 	updateUmpireDegree(): Promise<any>;
 	updateImageForDegree(degreeId: string, degreeImages: string[]): Promise<UmpireDegree>;
+	deleteUmpireDegree(degreeId: string): Promise<any>;
+	getUmpireDegreeById(degreeId: string): Promise<UmpireDegree>;
 }
