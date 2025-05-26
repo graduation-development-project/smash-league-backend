@@ -22,9 +22,11 @@ export class UpdateAttendanceUseCase {
 		if (leftCompetitorAttendance === true && rightCompetitorAttendance === false) {
 			const matchWinnerUpdated = await this.matchRepository.updateMatchWinner(match.id, match.leftCompetitorId);
 			const updatedMatch = await this.updateCompetitorForNextMatch(match, nextMatch, match.leftCompetitorId);
-		} else {
+		} else if (leftCompetitorAttendance === false && rightCompetitorAttendance === true) {
 			const matchWinnerUpdated = await this.matchRepository.updateMatchWinner(matchId, match.rightCompetitorId);
 			const updatedMatch = await this.updateCompetitorForNextMatch(match, nextMatch, match.rightCompetitorId);
+		} else if (leftCompetitorAttendance === false && rightCompetitorAttendance === false) {
+			const updatedByeMatch = await this.matchRepository.updateByeMatch(match.nextMatchId, true);
 		}
 		// console.log(Boolean(leftCompetitorAttendance), ' ', Boolean(rightCompetitorAttendance));
 		const matchUpdated = await this.matchRepository.updateAttendance(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
