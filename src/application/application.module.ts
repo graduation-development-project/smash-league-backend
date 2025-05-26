@@ -226,6 +226,7 @@ import { UpdateEventPrizeWinnerUseCase } from "./usecases/tournament/tournament-
 import { CountRegistrationInCurrentMonthUseCase } from "./usecases/organizers/count-registration-in-current-month.usecase";
 import { DeleteUmpireDegreeUseCase } from "./usecases/umpires/delete-umpire-degree.usecase";
 import { GetPersonalUmpireDegreesUseCase } from "./usecases/umpires/get-personal-umpire-degrees.usecase";
+import { UpdateUmpireDegreeUseCase } from "./usecases/umpires/update-umpire-degree.usecase";
 
 @Module({
 	imports: [
@@ -592,6 +593,7 @@ import { GetPersonalUmpireDegreesUseCase } from "./usecases/umpires/get-personal
 		GetUmpireParticipatedTournamentsUseCase,
 		DeleteUmpireDegreeUseCase,
 		GetPersonalUmpireDegreesUseCase,
+		UpdateUmpireDegreeUseCase,
 		//Bank Use Case
 		GetAllBanksUseCase,
 		CheckBankAccountExistUseCase,
@@ -639,8 +641,7 @@ import { GetPersonalUmpireDegreesUseCase } from "./usecases/umpires/get-personal
 		GetUserByRoleUseCase,
 		GetLatestMatchesUseCase,
 		GetAllUserUseCase,
-		CreateUmpireDegreeUseCase,
-		GetAllUmpireDegreesUseCase,
+
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,
 		SignUpUseCase,
@@ -823,6 +824,9 @@ import { GetPersonalUmpireDegreesUseCase } from "./usecases/umpires/get-personal
 		GetUmpireParticipatedTournamentsUseCase,
 		DeleteUmpireDegreeUseCase,
 		GetPersonalUmpireDegreesUseCase,
+		CreateUmpireDegreeUseCase,
+		GetAllUmpireDegreesUseCase,
+		UpdateUmpireDegreeUseCase,
 		//Bank Use Case
 		GetAllBanksUseCase,
 		CheckBankAccountExistUseCase,
