@@ -5,3 +5,10 @@ export class CreateUmpireDegreeDto {
 	typeOfDegree: TypeOfUmpireDegree;
 	description?: string;
 }
+
+export class UpdateUmpireDegreeDto {
+	id: string;
+	degreeTitle: string;
+	typeOfDegree: TypeOfUmpireDegree;
+	description?: string;
+}

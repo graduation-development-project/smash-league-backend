@@ -17,3 +17,11 @@ export class ICreateUmpireDegree {
 	description?: string;
 	userId: string;
 }
+
+export interface IUpdateUmpireDegree {
+	id: string; 
+	degreeTitle: string;
+	degree: string[];
+	description?: string;
+	userId: string;
+}

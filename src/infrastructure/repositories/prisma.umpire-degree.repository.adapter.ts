@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UmpireDegreeResponse } from './../../domain/dtos/umpire/umpire-degree.interface';
+import { IUpdateUmpireDegree, UmpireDegreeResponse } from './../../domain/dtos/umpire/umpire-degree.interface';
 import { PrismaClient, UmpireDegree } from "@prisma/client";
 import { ICreateUmpireDegree } from "src/domain/dtos/umpire/umpire-degree.interface";
 import { UmpireDegreeRepositoryPort } from "src/domain/repositories/umpire-degree.repository.port";
@@ -71,8 +71,15 @@ export class PrismaUmpireDegreeRepositoryAdapter implements UmpireDegreeReposito
 	createMultipleUmpireDegree(): Promise<UmpireDegree[]> {
 		throw new Error("Method not implemented.");
 	}
-	updateUmpireDegree(): Promise<any> {
-		throw new Error("Method not implemented.");
+	async updateUmpireDegree(updateUmpireDegree: IUpdateUmpireDegree): Promise<UmpireDegree> {
+		return await this.prisma.umpireDegree.update({
+			where: {
+				id: updateUmpireDegree.id
+			},
+			data: {
+				...updateUmpireDegree
+			}
+		});
 	}
 
 	

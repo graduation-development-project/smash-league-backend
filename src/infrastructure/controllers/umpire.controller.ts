@@ -1,4 +1,4 @@
-import { CreateUmpireDegreeDto } from './../../domain/dtos/umpire/umpire-degree.validation';
+import { CreateUmpireDegreeDto, UpdateUmpireDegreeDto } from './../../domain/dtos/umpire/umpire-degree.validation';
 import {
 	Body,
 	Controller,
@@ -32,6 +32,7 @@ import { KeyValueType } from 'src/domain/dtos/key-value-type.type';
 import { GetAllDegreeTypeUseCase } from 'src/application/usecases/umpires/get-all-degrees-type.usecase';
 import { DeleteUmpireDegreeUseCase } from 'src/application/usecases/umpires/delete-umpire-degree.usecase';
 import { GetPersonalUmpireDegreesUseCase } from 'src/application/usecases/umpires/get-personal-umpire-degrees.usecase';
+import { UpdateUmpireDegreeUseCase } from 'src/application/usecases/umpires/update-umpire-degree.usecase';
 
 @Controller("/umpires")
 
@@ -45,7 +46,8 @@ export class UmpireController {
 		private readonly getAllUmpireDegreeUseCase: GetAllUmpireDegreesUseCase,
 		private readonly getAllDegreeTypeUseCase: GetAllDegreeTypeUseCase,
 		private readonly deleteUmpireDegreeUseCase: DeleteUmpireDegreeUseCase,
-		private readonly getPersonalUmpireDegressUseCase: GetPersonalUmpireDegreesUseCase
+		private readonly getPersonalUmpireDegressUseCase: GetPersonalUmpireDegreesUseCase,
+		private readonly updateUmpireDegreeUseCase: UpdateUmpireDegreeUseCase
 	) {}
 
 	@Put("/update-match")
@@ -124,4 +126,13 @@ export class UmpireController {
 	async getPersonalUmpireDegree(@Req() request: IRequestUser): Promise<ApiResponse<UmpireDegreeResponse[]>> {
 		return await this.getPersonalUmpireDegressUseCase.execute(request);
 	}
+
+	@UseInterceptors(AnyFilesInterceptor())
+	@Put("/update-umpire-degree")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Umpire.name, RoleMap.Athlete.name)
+	async updateUmpireDegree(@Req() request: IRequestUser, @Body() updateUmpireDegree: UpdateUmpireDegreeDto,
+			@UploadedFiles() files: Express.Multer.File[]): Promise<ApiResponse<UmpireDegree>> {
+				return await this.updateUmpireDegreeUseCase.execute(request, updateUmpireDegree, files);
+			}
 }
