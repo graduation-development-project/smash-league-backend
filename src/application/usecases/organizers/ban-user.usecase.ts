@@ -3,6 +3,7 @@ import { TournamentParticipantsRepositoryPort } from "../../../domain/repositori
 import { ApiResponse } from "../../../domain/dtos/api-response";
 import { NotificationsRepositoryPort } from "../../../domain/repositories/notifications.repository.port";
 import { CreateNotificationDTO } from "../../../domain/dtos/notifications/create-notification.dto";
+import { TournamentParticipants } from "@prisma/client";
 
 @Injectable()
 export class BanUserUseCase {
@@ -22,8 +23,13 @@ export class BanUserUseCase {
 			title: "You was banned from this tournament",
 			message: reason,
 		};
+
+		const participant: TournamentParticipants =
+			await this.tournamentParticipantsRepository.getTournamentParticipantDetail(
+				participantId,
+			);
 		await this.notificationRepository.createNotification(notificationData, [
-			participantId,
+			participant.userId,
 		]);
 
 		return new ApiResponse<void>(
