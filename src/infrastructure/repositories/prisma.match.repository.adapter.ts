@@ -30,6 +30,45 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
 	async updateMatchEnd(matchId: string): Promise<Match> {
+		const match = await this.prisma.match.findUnique({
+			where: {
+				id: matchId
+			},
+			select: {
+				umpire: {
+					select: {
+						id: true
+					}
+				},
+				courtId: true,
+				tournamentEvent: {
+					select: {
+						tournament: {
+							select: {
+								id: true
+							}
+						}
+					}
+				}
+			}
+		});
+		const updateUmpireAvailable = await this.prisma.tournamentUmpires.updateMany({
+			where: {
+				userId: match.umpire.id,
+				tournamentId: match.tournamentEvent.tournament.id
+			},
+			data: {
+				isAvailable: true
+			}
+		});
+		const updateCourtAvailable = await this.prisma.court.update({
+			where: {
+				id: match.courtId
+			},
+			data: {
+				courtAvailable: true
+			}
+		});
 		return await this.prisma.match.update({
 			where: {
 				id: matchId
