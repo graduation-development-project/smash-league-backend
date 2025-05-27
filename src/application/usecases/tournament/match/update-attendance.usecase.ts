@@ -27,6 +27,7 @@ export class UpdateAttendanceUseCase {
 			const updatedMatch = await this.updateCompetitorForNextMatch(match, nextMatch, match.rightCompetitorId);
 		} else if (leftCompetitorAttendance === false && rightCompetitorAttendance === false) {
 			const updatedByeMatch = await this.matchRepository.updateByeMatch(match.nextMatchId, true);
+			const updatedMatchEnded = await this.matchRepository.updateMatchEnd(match.id);
 		}
 		// console.log(Boolean(leftCompetitorAttendance), ' ', Boolean(rightCompetitorAttendance));
 		const matchUpdated = await this.matchRepository.updateAttendance(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
