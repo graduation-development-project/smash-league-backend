@@ -42,47 +42,52 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	async getMatchesPrevious(matchId: string): Promise<Match[]> {
 		const match = await this.prisma.match.findUnique({
 			where: {
-				id: matchId
+				id: matchId,
 			},
 			select: {
 				matchesPrevious: {
 					orderBy: {
-						matchNumber: "asc"
-					}
-				}
-			}
+						matchNumber: "asc",
+					},
+				},
+			},
 		});
 		return match.matchesPrevious;
 	}
-	async updateMatchWinner(matchId: string, winningCompetitorId: string): Promise<Match> {
+
+	async updateMatchWinner(
+		matchId: string,
+		winningCompetitorId: string,
+	): Promise<Match> {
 		const match = await this.prisma.match.findUnique({
 			where: {
-				id: matchId
-			}
+				id: matchId,
+			},
 		});
 		var forfeitCompetitor;
-		if (winningCompetitorId === match.leftCompetitorId) forfeitCompetitor = match.rightCompetitorId;
+		if (winningCompetitorId === match.leftCompetitorId)
+			forfeitCompetitor = match.rightCompetitorId;
 		else forfeitCompetitor = match.leftCompetitorId;
 		return await this.prisma.match.update({
 			where: {
-				id: matchId
+				id: matchId,
 			},
 			data: {
 				matchWonByCompetitorId: winningCompetitorId,
 				matchStatus: MatchStatus.ENDED,
-				forfeitCompetitorId: forfeitCompetitor
-			}
+				forfeitCompetitorId: forfeitCompetitor,
+			},
 		});
 	}
 	async updateByeMatch(matchId: string, isByeMatch: boolean): Promise<Match> {
 		return await this.prisma.match.update({
 			where: {
-				id: matchId
+				id: matchId,
 			},
 			data: {
-				isByeMatch: isByeMatch
-			}
-		})
+				isByeMatch: isByeMatch,
+			},
+		});
 	}
 
 	async undoUpdatePoint(gameId: string): Promise<Game> {
@@ -1327,31 +1332,31 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		const finalPrize = await this.prisma.eventPrize.findFirst({
 			where: {
 				tournamentEventId: match.tournamentEventId,
-				prizeType: PrizeType.ChampionshipPrize
-			}
+				prizeType: PrizeType.ChampionshipPrize,
+			},
 		});
 		const runnerUpPrize = await this.prisma.eventPrize.findFirst({
 			where: {
 				tournamentEventId: match.tournamentEventId,
-				prizeType: PrizeType.RunnerUpPrize
-			}
+				prizeType: PrizeType.RunnerUpPrize,
+			},
 		});
 		if (match.matchWonByCompetitorId === match.leftCompetitorId) {
 			const finalPrizeUpdated = await this.prisma.eventPrize.update({
 				where: {
-					id: finalPrize.id
+					id: finalPrize.id,
 				},
 				data: {
-					winningParticipantId: match.leftCompetitorId
-				}
+					winningParticipantId: match.leftCompetitorId,
+				},
 			});
 			const runnerUpPrizeUpdated = await this.prisma.eventPrize.update({
 				where: {
-					id: runnerUpPrize.id
+					id: runnerUpPrize.id,
 				},
 				data: {
-					winningParticipantId: match.rightCompetitorId
-				}
+					winningParticipantId: match.rightCompetitorId,
+				},
 			});
 			const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
 				where: {
@@ -1365,11 +1370,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		} else {
 			const finalPrizeUpdated = await this.prisma.eventPrize.update({
 				where: {
-					id: finalPrize.id
+					id: finalPrize.id,
 				},
 				data: {
-					winningParticipantId: match.rightCompetitorId
-				}
+					winningParticipantId: match.rightCompetitorId,
+				},
 			});
 			if (runnerUpPrize !== null) {
 				const runnerUpPrizeUpdated = await this.prisma.eventPrize.update({
@@ -2284,8 +2289,18 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 			let changeRate = currentCount - previousCount;
 
+			const allMatches = await this.prisma.match.count({
+				where: {
+					tournamentEvent: {
+						tournament: {
+							organizerId,
+						},
+					},
+				},
+			});
+
 			return {
-				currentCount,
+				currentCount: allMatches,
 				previousCount,
 				changeRate,
 			};

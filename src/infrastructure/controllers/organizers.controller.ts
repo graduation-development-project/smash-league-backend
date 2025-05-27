@@ -40,6 +40,7 @@ import { CountTournamentStatusUseCase } from "../../application/usecases/organiz
 import { CountMatchesStatusUseCase } from "../../application/usecases/organizers/count-matches-status.usecase";
 import { GetRevenueInCurrentMonthUseCase } from "../../application/usecases/organizers/get-revenue-in-current-month.usecase";
 import { CountRegistrationInCurrentMonthUseCase } from "../../application/usecases/organizers/count-registration-in-current-month.usecase";
+import { BanUserUseCase } from "../../application/usecases/organizers/ban-user.usecase";
 
 @Controller("/organizers")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -59,6 +60,7 @@ export class OrganizerController {
 		private countMatchesStatusUseCase: CountMatchesStatusUseCase,
 		private getRevenueInCurrentMonthUseCase: GetRevenueInCurrentMonthUseCase,
 		private countRegistrationInCurrentMonthUseCase: CountRegistrationInCurrentMonthUseCase,
+		private banUserUseCase: BanUserUseCase,
 	) {}
 
 	@Get("/tournament-registration/:tournamentId")
@@ -186,5 +188,23 @@ export class OrganizerController {
 		}>
 	> {
 		return await this.countRegistrationInCurrentMonthUseCase.execute(user.id);
+	}
+
+	@Put("/ban-user")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Organizer.name)
+	async banUser(
+		@Body()
+		banUserDTO: {
+			tournamentId: string;
+			participantId: string;
+			reason: string;
+		},
+	): Promise<ApiResponse<void>> {
+		return await this.banUserUseCase.execute(
+			banUserDTO.participantId,
+			banUserDTO.tournamentId,
+			banUserDTO.reason,
+		);
 	}
 }

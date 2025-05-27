@@ -5,8 +5,7 @@ import {
 } from "../interfaces/payment/transaction.interface";
 
 export interface TransactionRepositoryPort {
-
-	getAllTransactions(): Promise<Transaction[]>
+	getAllTransactions(): Promise<Transaction[]>;
 
 	getTransaction(id: number): Promise<Transaction>;
 
@@ -42,5 +41,9 @@ export interface TransactionRepositoryPort {
 
 	getAllTransactionsByDay(): Promise<Transaction[]>;
 
-	getRevenueInCurrentMonth(organizerId: string): Promise<number>;
+	getRevenueInCurrentMonth(organizerId: string): Promise<{
+		currentRevenue: number;
+		previousRevenue: number;
+		changeRate: number;
+	}>;
 }
