@@ -11,8 +11,18 @@ export class GetRevenueInCurrentMonthUseCase {
 		private transactionRepository: TransactionRepositoryPort,
 	) {}
 
-	async execute(organizerId: string): Promise<ApiResponse<number>> {
-		return new ApiResponse<number>(
+	async execute(organizerId: string): Promise<
+		ApiResponse<{
+			currentRevenue: number;
+			previousRevenue: number;
+			changeRate: number;
+		}>
+	> {
+		return new ApiResponse<{
+			currentRevenue: number;
+			previousRevenue: number;
+			changeRate: number;
+		}>(
 			HttpStatus.OK,
 			"Get revenue in current month successfully",
 			await this.transactionRepository.getRevenueInCurrentMonth(organizerId),

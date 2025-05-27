@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../services/prisma.service";
 import { TournamentParticipantsRepositoryPort } from "../../domain/repositories/tournament-participant.repository.port";
 import {
+	MatchStatus,
 	TournamentParticipants,
 	TournamentRegistrationRole,
 	TournamentRegistrationStatus,
@@ -168,5 +169,68 @@ export class PrismaTournamentParticipantRepositoryAdapter
 			});
 
 		return;
+	}
+
+	async banParticipant(
+		participantId: string,
+		tournamentId: string,
+	): Promise<void> {
+		await this.prismaService.tournamentParticipants.update({
+			where: {
+				id: participantId,
+			},
+
+			data: {
+				isBanned: true,
+			},
+		});
+
+		const matches = await this.prismaService.match.findMany({
+			where: {
+				OR: [
+					{ leftCompetitorId: participantId },
+					{ rightCompetitorId: participantId },
+				],
+				tournamentEvent: {
+					tournament: {
+						id: tournamentId,
+					},
+				},
+			},
+		});
+
+		for (const match of matches) {
+			const hasPlayed = match.timeEnd !== null;
+
+			const fullPlayer =
+				match.leftCompetitorId !== null && match.rightCompetitorId !== null;
+
+			if (!hasPlayed && !fullPlayer) {
+				await this.prismaService.match.update({
+					where: { id: match.id },
+					data: {
+						forfeitCompetitorId: participantId,
+					},
+				});
+			}
+
+			if (!hasPlayed && fullPlayer) {
+				const winnerId =
+					match.leftCompetitorId !== participantId
+						? match.leftCompetitorId
+						: match.rightCompetitorId;
+
+				await this.prismaService.match.update({
+					where: { id: match.id },
+					data: {
+						forfeitCompetitorId: participantId,
+						matchWonByCompetitorId: winnerId,
+						matchStatus: MatchStatus.ENDED,
+					},
+				});
+			}
+		}
+
+		return
 	}
 }

@@ -201,11 +201,20 @@ export class PrismaTransactionRepositoryAdapter
 		}
 	}
 
-	async getRevenueInCurrentMonth(organizerId: string): Promise<number> {
+	async getRevenueInCurrentMonth(organizerId: string): Promise<{
+		currentRevenue: number;
+		previousRevenue: number;
+		changeRate: number;
+	}> {
 		try {
 			const now = new Date();
-			const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-			const endOfMonth = new Date(
+
+			const startOfCurrentMonth = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				1,
+			);
+			const endOfCurrentMonth = new Date(
 				now.getFullYear(),
 				now.getMonth() + 1,
 				0,
@@ -215,27 +224,73 @@ export class PrismaTransactionRepositoryAdapter
 				999,
 			);
 
-			const result = await this.prisma.transaction.aggregate({
-				_sum: {
-					value: true,
-				},
-				where: {
-					tournamentRegistration: {
-						tournament: {
-							organizerId,
+			const startOfPreviousMonth = new Date(
+				now.getFullYear(),
+				now.getMonth() - 1,
+				1,
+			);
+			const endOfPreviousMonth = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				0,
+				23,
+				59,
+				59,
+				999,
+			);
+
+			const whereClause = (start: Date, end: Date) => ({
+				OR: [
+					{
+						tournamentRegistration: {
+							tournament: {
+								organizerId,
+							},
 						},
 					},
-					status: TransactionStatus.SUCCESSFUL,
-					createdAt: {
-						gte: startOfMonth,
-						lte: endOfMonth,
+					{
+						report: {
+							tournament: {
+								organizerId,
+							},
+						},
 					},
+				],
+				status: TransactionStatus.SUCCESSFUL,
+				createdAt: {
+					gte: start,
+					lte: end,
 				},
 			});
 
-			console.log(organizerId, result);
+			const [currentResult, previousResult] = await Promise.all([
+				this.prisma.transaction.aggregate({
+					_sum: { value: true },
+					where: whereClause(startOfCurrentMonth, endOfCurrentMonth),
+				}),
+				this.prisma.transaction.aggregate({
+					_sum: { value: true },
+					where: whereClause(startOfPreviousMonth, endOfPreviousMonth),
+				}),
+			]);
 
-			return result._sum.value || 0;
+			const currentRevenue = currentResult._sum.value || 0;
+			const previousRevenue = previousResult._sum.value || 0;
+
+			let changeRate = 0;
+
+			if (previousRevenue !== 0) {
+				changeRate =
+					((currentRevenue - previousRevenue) / previousRevenue) * 100;
+			} else if (currentRevenue !== 0) {
+				changeRate = 100;
+			}
+
+			return {
+				currentRevenue,
+				previousRevenue,
+				changeRate: parseFloat(changeRate.toFixed(2)),
+			};
 		} catch (e) {
 			console.error("getRevenueInCurrentMonth failed", e);
 			throw e;

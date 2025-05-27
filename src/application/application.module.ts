@@ -227,6 +227,7 @@ import { CountRegistrationInCurrentMonthUseCase } from "./usecases/organizers/co
 import { DeleteUmpireDegreeUseCase } from "./usecases/umpires/delete-umpire-degree.usecase";
 import { GetPersonalUmpireDegreesUseCase } from "./usecases/umpires/get-personal-umpire-degrees.usecase";
 import { UpdateUmpireDegreeUseCase } from "./usecases/umpires/update-umpire-degree.usecase";
+import { BanUserUseCase } from "./usecases/organizers/ban-user.usecase";
 
 @Module({
 	imports: [
@@ -525,6 +526,7 @@ import { UpdateUmpireDegreeUseCase } from "./usecases/umpires/update-umpire-degr
 		RejectReportUseCase,
 		ReportPlayerUseCase,
 		GetReportByUserUseCase,
+		BanUserUseCase,
 		//Tournament Series Use Case
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,
@@ -758,6 +760,7 @@ import { UpdateUmpireDegreeUseCase } from "./usecases/umpires/update-umpire-degr
 		RejectReportUseCase,
 		ReportPlayerUseCase,
 		GetReportByUserUseCase,
+		BanUserUseCase,
 		//Tournament Serie Use Case,
 		ModifyTournamentSerieUseCase,
 		GetAllTournamentSeriesUseCase,

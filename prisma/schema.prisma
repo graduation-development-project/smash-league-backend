@@ -570,6 +570,7 @@ model TournamentParticipants {
   tournament        Tournament        @relation(name: "FK_TournamentParticipants_Tournament", fields: [tournamentId], references: [id], onDelete: Cascade)
   fromTeamId        String?
   fromTeam          Team?             @relation(name: "FK_TournamentParticipants_Team", fields: [fromTeamId], references: [id], onDelete: Cascade)
+  isBanned          Boolean           @default(false)
   matches           Match[]           @relation(name: "FK_Match_TournamentParticipants")
   matchesWon        Match[]           @relation(name: "FK_Match_MatchWonByCompetitor")
   leftCompetitors   Match[]           @relation(name: "FK_Match_LeftCompetitor")

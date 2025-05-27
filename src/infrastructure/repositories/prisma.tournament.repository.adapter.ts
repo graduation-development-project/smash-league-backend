@@ -1025,8 +1025,14 @@ export class PrismaTournamentRepositoryAdapter
 
 			const changeRate = currentCount - previousCount;
 
+			const allTour = await this.prisma.tournament.count({
+				where: {
+					organizerId,
+				},
+			});
+
 			return {
-				currentCount,
+				currentCount: allTour,
 				previousCount,
 				changeRate,
 			};

@@ -412,8 +412,19 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 				changeRate = ((currentCount - previousCount) / previousCount) * 100;
 			}
 
+			const allRegistration =
+				await this.prismaService.tournamentRegistration.count({
+					where: {
+						tournament: {
+							organizerId,
+						},
+
+						status: TournamentRegistrationStatus.APPROVED,
+					},
+				});
+
 			return {
-				currentCount,
+				currentCount: allRegistration,
 				previousCount,
 				changeRate: parseFloat(changeRate.toFixed(2)),
 			};
