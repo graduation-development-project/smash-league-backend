@@ -40,11 +40,12 @@ export class UpdateAttendanceUseCase {
 
 	async updateCompetitorForNextMatch(currentMatch: Match, nextMatch: Match, winningCompetitorId: string): Promise<Match> {
 		const matchesPrevious = await this.matchRepository.getMatchesPrevious(nextMatch.id);
+		console.log(matchesPrevious);
 		if (currentMatch.id === matchesPrevious[0].id) {
-			const updatedNextMatch = await this.matchRepository.assignAthleteIntoMatch(nextMatch.id, winningCompetitorId, null);
+			const updatedNextMatch = await this.matchRepository.assignAthleteIntoMatch(nextMatch.id, winningCompetitorId, nextMatch.rightCompetitorId);
 			return updatedNextMatch;
 		} else if (currentMatch.id === matchesPrevious[1].id) {
-			const updatedNextMatch = await this.matchRepository.assignAthleteIntoMatch(nextMatch.id, null, winningCompetitorId);
+			const updatedNextMatch = await this.matchRepository.assignAthleteIntoMatch(nextMatch.id, nextMatch.leftCompetitorId, winningCompetitorId);
 			return updatedNextMatch;
 		}
 		return;
