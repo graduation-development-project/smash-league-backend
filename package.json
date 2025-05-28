@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "copy-email-template": "cp -R /usr/src/app/src/infrastructure/templates /usr/src/app/dist/src/infrastructure/templates/ && echo \"Script executed from: ${PWD}\"",
+    "build:local": "npx nest build",
     "build": "npx nest build && node moving-templates.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start --watch",
