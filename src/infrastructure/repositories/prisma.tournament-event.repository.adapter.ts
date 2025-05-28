@@ -163,7 +163,7 @@ export class PrismaTournamentEventRepositoryAdapter
 		return {
 			numberOfParticipants: numberOfParticipants,
 			listParticipants: listParticipants,
-		};
+		}; 
 	}
 
 	async createMultipleTournamentEvent(
