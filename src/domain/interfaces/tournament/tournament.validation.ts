@@ -112,14 +112,8 @@ export class CreateTournamentEvent {
 	})
 	tournamentEvent: BadmintonParticipantType;
 
-	@IsNotEmpty({
-		message: "Championship prize must exist!",
-	})
-	championshipPrize: string;
-	@IsNotEmpty({
-		message: "Runner-up prize must exist!",
-	})
-	runnerUpPrize: string;
+	championshipPrize?: string;
+	runnerUpPrize?: string;
 	thirdPlacePrize?: string;	
 	createPrizes: CreatePrizes;
 	createTournamentRequirements: CreateTournamentRequirements;
