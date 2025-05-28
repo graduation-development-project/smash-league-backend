@@ -130,6 +130,7 @@ export class PrismaTournamentEventRepositoryAdapter
 					tournamentEventId: tournamentEventId,
 				},
 				select: {
+					id: true,
 					user: {
 						select: {
 							id: true,
