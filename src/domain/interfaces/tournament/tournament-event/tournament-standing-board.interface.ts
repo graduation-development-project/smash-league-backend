@@ -12,7 +12,7 @@ export interface ITournamentStandingBoardInterface {
 	thirdPlace: {
 		user: ITournamentStandingBoardUserInterface;
 		partner: ITournamentStandingBoardUserInterface;
-	};
+	}[];
 }
 
 interface ITournamentStandingBoardUserInterface {

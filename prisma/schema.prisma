@@ -101,7 +101,6 @@ model UserVerification {
 model Role {
   id              String           @id @default(uuid())
   roleName        String
-  rolePermissions RolePermission[] @relation("FK_Role_RolePermission")
   userRoles       UserRole[]       @relation("FK_Role_UserRole")
 }
 
@@ -114,20 +113,6 @@ model UserRole {
   @@id([userId, roleId])
 }
 
-model Permission {
-  id              String           @id @default(uuid())
-  name            String
-  rolePermissions RolePermission[] @relation("FK_Permission_RolePermission")
-}
-
-model RolePermission {
-  roleId       String
-  permissionId String
-  permission   Permission @relation("FK_Permission_RolePermission", fields: [permissionId], references: [id], onDelete: Cascade)
-  role         Role       @relation("FK_Role_RolePermission", fields: [roleId], references: [id], onDelete: Cascade)
-
-  @@id([roleId, permissionId])
-}
 
 model Team {
   id                     String                   @id @default(uuid())
@@ -353,15 +338,6 @@ model TournamentEvent {
   minimumAthlete         Int
   maximumAthlete         Int?
   tournamentEventStatus  TournamentEventStatus    @default(CREATED)
-  championshipPrize      String
-  runnerUpPrize          String
-  thirdPlacePrize        String?
-  championshipId         String?
-  championship           TournamentParticipants?  @relation(name: "FK_Championship_TournamentParticipants", fields: [championshipId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  runnerUpId             String?
-  runnerUp               TournamentParticipants?  @relation(name: "FK_RunnerUp_TournamentParticipants", fields: [runnerUpId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  thirdPlaceId           String?
-  thirdPlace             TournamentParticipants?  @relation(name: "FK_ThirdPlace_TournamentParticipants", fields: [thirdPlaceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tournamentId           String
   tournament             Tournament               @relation(name: "FK_Tournament_TournamentEvent", fields: [tournamentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stages                 Stage[]                  @relation(name: "FK_Stage_TournamentEvent")
@@ -578,9 +554,6 @@ model TournamentParticipants {
   gamesWon          Game[]            @relation(name: "FK_Game_GameWonByCompetitor")
   serverInGame      Game[]            @relation(name: "FK_Game_CurrentServer")
   lastServers       Game[]            @relation(name: "FK_Game_LastServer")
-  championships     TournamentEvent[] @relation(name: "FK_Championship_TournamentParticipants")
-  runnerUps         TournamentEvent[] @relation(name: "FK_RunnerUp_TournamentParticipants")
-  thirdPlaces       TournamentEvent[] @relation(name: "FK_ThirdPlace_TournamentParticipants")
   winningPrizes     EventPrize[]      @relation(name: "FK_EventPrize_TournamentEvent")
 }
 

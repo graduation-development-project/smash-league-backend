@@ -1,4 +1,4 @@
-import { BadmintonParticipantType, Prisma, PrismaClient, TournamentEventStatus } from "@prisma/client";
+import { BadmintonParticipantType, Prisma, PrismaClient, PrizeType, TournamentEventStatus } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -62,10 +62,34 @@ async function addParticipantForTournamentEvent1() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
@@ -128,10 +152,35 @@ async function addParticipantForTournamentEvent2() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 }
@@ -186,10 +235,35 @@ async function addParticipantForTournamentEvent3() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 }
@@ -233,10 +307,35 @@ async function addParticipantForTournamentEvent4() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
@@ -299,10 +398,35 @@ async function addParticipantForTournamentEvent5() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 }
@@ -357,10 +481,35 @@ async function addParticipantForTournamentEvent6() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 }
@@ -463,10 +612,35 @@ async function addParticipantForTournamentEvent7() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
@@ -529,10 +703,35 @@ async function addParticipantForTournamentEvent8() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 }
@@ -587,10 +786,35 @@ async function addParticipantForTournamentEvent9() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 }
@@ -634,10 +858,35 @@ async function addParticipantForTournamentEvent10() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 	// const tournamentEvent2 = await prisma.tournamentEvent.findFirst({
@@ -700,10 +949,35 @@ async function addParticipantForTournamentEvent11() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
+		}
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
 		}
 	});
 }
@@ -758,11 +1032,36 @@ async function addParticipantForTournamentEvent12() {
 			id: tournamentEvent.id
 		},
 		data: {
-			championshipId: tournamentParticipants[0].id,
-			runnerUpId: tournamentParticipants[1].id,
-			thirdPlaceId: tournamentParticipants[2].id,
 			tournamentEventStatus: TournamentEventStatus.ENDED
 		}		
+	});
+
+	const championshipPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[0].id
+		}
+	});
+	const runnerUpPrizeUpdated = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[1].id
+		}
+	});
+	const thirdPlacePrizes = await prisma.eventPrize.updateMany({
+		where: {
+			tournamentEventId: tournamentEvent.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+		data: {
+			winningParticipantId: tournamentParticipants[2].id
+		}
 	});
 }
 
