@@ -22,9 +22,11 @@ export class UpdateAttendanceUseCase {
 		if (leftCompetitorAttendance === true && rightCompetitorAttendance === false) {
 			const matchWinnerUpdated = await this.matchRepository.updateMatchWinner(match.id, match.leftCompetitorId);
 			const updatedMatch = await this.updateCompetitorForNextMatch(match, nextMatch, match.leftCompetitorId);
+			const updatedEndMatch = await this.matchRepository.updateMatchEnd(match.id);
 		} else if (leftCompetitorAttendance === false && rightCompetitorAttendance === true) {
 			const matchWinnerUpdated = await this.matchRepository.updateMatchWinner(matchId, match.rightCompetitorId);
 			const updatedMatch = await this.updateCompetitorForNextMatch(match, nextMatch, match.rightCompetitorId);
+			const updatedEndMatch = await this.matchRepository.updateMatchEnd(match.id);
 		} else if (leftCompetitorAttendance === false && rightCompetitorAttendance === false) {
 			const updatedByeMatch = await this.matchRepository.updateByeMatch(match.nextMatchId, true);
 			const updatedMatchEnded = await this.matchRepository.updateMatchEnd(match.id);
