@@ -29,55 +29,58 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
+
 	async updateMatchEnd(matchId: string): Promise<Match> {
 		const match = await this.prisma.match.findUnique({
 			where: {
-				id: matchId
+				id: matchId,
 			},
 			select: {
 				umpire: {
 					select: {
-						id: true
-					}
+						id: true,
+					},
 				},
 				courtId: true,
 				tournamentEvent: {
 					select: {
 						tournament: {
 							select: {
-								id: true
-							}
-						}
-					}
-				}
-			}
-		});
-		const updateUmpireAvailable = await this.prisma.tournamentUmpires.updateMany({
-			where: {
-				userId: match.umpire.id,
-				tournamentId: match.tournamentEvent.tournament.id
+								id: true,
+							},
+						},
+					},
+				},
 			},
-			data: {
-				isAvailable: true
-			}
 		});
+		const updateUmpireAvailable =
+			await this.prisma.tournamentUmpires.updateMany({
+				where: {
+					userId: match.umpire.id,
+					tournamentId: match.tournamentEvent.tournament.id,
+				},
+				data: {
+					isAvailable: true,
+				},
+			});
 		const updateCourtAvailable = await this.prisma.court.update({
 			where: {
-				id: match.courtId
+				id: match.courtId,
 			},
 			data: {
-				courtAvailable: true
-			}
+				courtAvailable: true,
+			},
 		});
 		return await this.prisma.match.update({
 			where: {
-				id: matchId
+				id: matchId,
 			},
 			data: {
-				matchStatus: MatchStatus.ENDED
-			}
+				matchStatus: MatchStatus.ENDED,
+			},
 		});
 	}
+
 	async getMatchesPrevious(matchId: string): Promise<Match[]> {
 		const match = await this.prisma.match.findUnique({
 			where: {
@@ -118,6 +121,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			},
 		});
 	}
+
 	async updateByeMatch(matchId: string, isByeMatch: boolean): Promise<Match> {
 		return await this.prisma.match.update({
 			where: {
@@ -1286,22 +1290,25 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		const thirdPlacePrizes = await this.prisma.eventPrize.findMany({
 			where: {
 				tournamentEventId: match.tournamentEventId,
-				prizeType: PrizeType.ThirdPlacePrize
-			}
+				prizeType: PrizeType.ThirdPlacePrize,
+			},
 		});
 		if (thirdPlacePrizes.length === 1) {
 			const thirdPlaceMatch = await this.getThirdPlaceMatch(tournamentEvent.id);
-			const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(thirdPlaceMatch.id, loseCompetitorId);
+			const updatedThirdPlaceMatch = await this.updateThirdPlaceMatch(
+				thirdPlaceMatch.id,
+				loseCompetitorId,
+			);
 		} else if (thirdPlacePrizes.length === 2) {
-			for(let i = 0; i < thirdPlacePrizes.length; i++) {
+			for (let i = 0; i < thirdPlacePrizes.length; i++) {
 				if (thirdPlacePrizes[i].winningParticipantId === null) {
 					const thirdPlacePrizeUpdated = await this.prisma.eventPrize.update({
 						where: {
-							id: thirdPlacePrizes[i].id
+							id: thirdPlacePrizes[i].id,
 						},
 						data: {
-							winningParticipantId: loseCompetitorId
-						}
+							winningParticipantId: loseCompetitorId,
+						},
 					});
 					break;
 				}
@@ -1349,16 +1356,16 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		const thirdPlacePrizes = await this.prisma.eventPrize.findFirst({
 			where: {
 				tournamentEventId: currentMatch.tournamentEventId,
-				prizeType: PrizeType.ThirdPlacePrize
-			}
+				prizeType: PrizeType.ThirdPlacePrize,
+			},
 		});
 		const thirdPlacePrizeUpdated = await this.prisma.eventPrize.update({
 			where: {
-				id: thirdPlacePrizes.id
+				id: thirdPlacePrizes.id,
 			},
 			data: {
-				winningParticipantId: currentMatch.matchWonByCompetitorId
-			}
+				winningParticipantId: currentMatch.matchWonByCompetitorId,
+			},
 		});
 	}
 
@@ -1409,11 +1416,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			if (runnerUpPrize !== null) {
 				const runnerUpPrizeUpdated = await this.prisma.eventPrize.update({
 					where: {
-						id: runnerUpPrize.id
+						id: runnerUpPrize.id,
 					},
 					data: {
-						winningParticipantId: match.leftCompetitorId
-					}
+						winningParticipantId: match.leftCompetitorId,
+					},
 				});
 			}
 		}
@@ -2283,7 +2290,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				this.prisma.match.count({
 					where: {
 						timeStart: {
-							gte: startOfCurrentWeek,
+							// gte: startOfCurrentWeek,
 							lte: endOfCurrentWeek,
 						},
 						tournamentEvent: {
@@ -2296,7 +2303,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				this.prisma.match.count({
 					where: {
 						timeStart: {
-							gte: startOfPreviousWeek,
+							// gte: startOfPreviousWeek,
 							lte: endOfPreviousWeek,
 						},
 						tournamentEvent: {
@@ -2310,18 +2317,18 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 			let changeRate = currentCount - previousCount;
 
-			const allMatches = await this.prisma.match.count({
-				where: {
-					tournamentEvent: {
-						tournament: {
-							organizerId,
-						},
-					},
-				},
-			});
+			// const allMatches = await this.prisma.match.count({
+			// 	where: {
+			// 		tournamentEvent: {
+			// 			tournament: {
+			// 				organizerId,
+			// 			},
+			// 		},
+			// 	},
+			// });
 
 			return {
-				currentCount: allMatches,
+				currentCount,
 				previousCount,
 				changeRate,
 			};

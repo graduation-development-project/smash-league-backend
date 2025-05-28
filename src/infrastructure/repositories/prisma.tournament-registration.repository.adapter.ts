@@ -380,7 +380,7 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 				this.prismaService.tournamentRegistration.count({
 					where: {
 						createdAt: {
-							gte: startOfCurrentMonth,
+							// gte: startOfCurrentMonth,
 							lte: endOfCurrentMonth,
 						},
 						tournament: {
@@ -393,7 +393,7 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 				this.prismaService.tournamentRegistration.count({
 					where: {
 						createdAt: {
-							gte: startOfPreviousMonth,
+							// gte: startOfPreviousMonth,
 							lte: endOfPreviousMonth,
 						},
 						status: TournamentRegistrationStatus.APPROVED,
@@ -406,25 +406,21 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 			]);
 
 			let changeRate = 0;
-			if (previousCount === 0) {
-				changeRate = currentCount > 0 ? 100 : 0;
-			} else {
-				changeRate = ((currentCount - previousCount) / previousCount) * 100;
-			}
+			changeRate = currentCount - previousCount;
 
-			const allRegistration =
-				await this.prismaService.tournamentRegistration.count({
-					where: {
-						tournament: {
-							organizerId,
-						},
-
-						status: TournamentRegistrationStatus.APPROVED,
-					},
-				});
+			// const allRegistration =
+			// 	await this.prismaService.tournamentRegistration.count({
+			// 		where: {
+			// 			tournament: {
+			// 				organizerId,
+			// 			},
+			//
+			// 			status: TournamentRegistrationStatus.APPROVED,
+			// 		},
+			// 	});
 
 			return {
-				currentCount: allRegistration,
+				currentCount,
 				previousCount,
 				changeRate: parseFloat(changeRate.toFixed(2)),
 			};

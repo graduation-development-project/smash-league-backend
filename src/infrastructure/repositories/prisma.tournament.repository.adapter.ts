@@ -926,7 +926,7 @@ export class PrismaTournamentRepositoryAdapter
 					where: {
 						organizerId,
 						startDate: {
-							gte: startOfCurrentMonth,
+							// gte: startOfCurrentMonth,
 							lte: endOfCurrentMonth,
 						},
 					},
@@ -935,7 +935,7 @@ export class PrismaTournamentRepositoryAdapter
 					where: {
 						organizerId,
 						startDate: {
-							gte: startOfPreviousMonth,
+							// gte: startOfPreviousMonth,
 							lte: endOfPreviousMonth,
 						},
 					},
@@ -944,14 +944,8 @@ export class PrismaTournamentRepositoryAdapter
 
 			const changeRate = currentCount - previousCount;
 
-			const allTour = await this.prisma.tournament.count({
-				where: {
-					organizerId,
-				},
-			});
-
 			return {
-				currentCount: allTour,
+				currentCount,
 				previousCount,
 				changeRate,
 			};
