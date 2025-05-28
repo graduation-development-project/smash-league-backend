@@ -1,4 +1,5 @@
 export interface IParticipantsResponse {
+	id: string;
 	user: IAthleteResponse;
 	partner?: IAthleteResponse;
 }
