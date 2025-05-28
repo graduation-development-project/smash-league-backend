@@ -1,8 +1,11 @@
 import { create } from 'domain';
 import { Injectable } from "@nestjs/common";
-import { PrismaClient, PrizeType, Tournament, TournamentEvent } from "@prisma/client";
+import { EventPrize, PrismaClient, PrizeType, Requirement, Tournament, TournamentEvent } from "@prisma/client";
 import {
+	IConditionResponse,
 	IParticipantsOfTournamentEvent,
+	IPrizeResponse,
+	ITournamentEventDetailWithPrizeAndConditionResponse,
 	ITournamentEventParticipants,
 } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
@@ -242,17 +245,74 @@ export class PrismaTournamentEventRepositoryAdapter
 
 	async getTournamentEventOfTournament(
 		tournamentId: string,
-	): Promise<TournamentEvent[]> {
+	): Promise<ITournamentEventDetailWithPrizeAndConditionResponse[]> {
 		try {
-			return await this.prisma.tournamentEvent.findMany({
+			var responses: ITournamentEventDetailWithPrizeAndConditionResponse[] = [];
+			const tournamentEvents = await this.prisma.tournamentEvent.findMany({
 				where: {
-					tournamentId,
-				},
+					tournamentId: tournamentId
+				}
 			});
+			for (let i = 0; i < tournamentEvents.length; i++) {
+				const prizes = await this.prisma.eventPrize.findMany({
+					where: {
+						tournamentEventId: tournamentEvents[i].id
+					}
+				});
+				const requirements = await this.prisma.requirement.findMany({
+					where: {
+						tournamentEventId: tournamentEvents[i].id
+					}
+				});
+				const tournamentEvent: ITournamentEventDetailWithPrizeAndConditionResponse = {
+					id: tournamentEvents[i].id,
+					fromAge: tournamentEvents[i].fromAge,
+					toAge: tournamentEvents[i].toAge,
+					minimumAthlete: tournamentEvents[i].minimumAthlete,
+					maximumAthlete: tournamentEvents[i].maximumAthlete,
+					winningPoint: tournamentEvents[i].winningPoint,
+					lastPoint: tournamentEvents[i].lastPoint,
+					tournamentEvent: tournamentEvents[i].tournamentEvent,
+					tournamentEventStatus: tournamentEvents[i].tournamentEvent,
+					typeOfFormat: tournamentEvents[i].typeOfFormat,
+					conditions: await this.formatConditionResponse(requirements),
+					prizes: await this.formatPrizeResponse(prizes)
+				};
+				responses.push(tournamentEvent);
+			}
+			return responses;
 		} catch (e) {
 			console.error("getTournamentEventOfTournament faield", e);
 			throw e;
 		}
+	}
+
+	async formatPrizeResponse(prizes: EventPrize[]): Promise<IPrizeResponse[]> {
+		var prizeResponses: IPrizeResponse[] = [];
+		for(let i = 0; i < prizes.length; i++) {
+			const prizeResponse: IPrizeResponse = {
+				id: prizes[i].id,
+				prizeDetail: prizes[i].prize,
+				prizeName: prizes[i].prizeName,
+				prizeType: prizes[i].prizeType
+			};
+			prizeResponses.push(prizeResponse);
+		}
+		return prizeResponses;
+	}
+
+	async formatConditionResponse(requirements: Requirement[]): Promise<IConditionResponse[]> {
+		var conditionResponses: IConditionResponse[] = [];
+		for (let i = 0; i < requirements.length; i++) {
+			const conditionResponse: IConditionResponse = {
+				id: requirements[i].id,
+				conditionName: requirements[i].requirementName,
+				conditionDescription: requirements[i].requirementDescription,
+				conditionType: requirements[i].requirementType
+			};
+			conditionResponses.push(conditionResponse);
+		}
+		return conditionResponses;
 	}
 
 	async getTournamentEventStandingBoard(

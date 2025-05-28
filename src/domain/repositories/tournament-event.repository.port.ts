@@ -1,6 +1,6 @@
 import { Tournament, TournamentEvent } from "@prisma/client";
 import { ICreateTournamentEvent } from "../interfaces/tournament/tournament.interface";
-import { IParticipantsOfTournamentEvent, ITournamentEventParticipants } from "../interfaces/tournament/tournament-event/tournament-event.interface";
+import { IConditionResponse, IParticipantsOfTournamentEvent, ITournamentEventDetailWithPrizeAndConditionResponse, ITournamentEventParticipants } from "../interfaces/tournament/tournament-event/tournament-event.interface";
 import {
 	ITournamentStandingBoardInterface
 } from "../interfaces/tournament/tournament-event/tournament-standing-board.interface";
@@ -13,7 +13,7 @@ export interface TournamentEventRepositoryPort {
 	getParticipantsOfTournamentEvent(tournamentEventId: string): Promise<ITournamentEventParticipants>;
 	getParticipantsByTournamentEvent(tournamentEventId: string): Promise<IParticipantsOfTournamentEvent>;
 
-	getTournamentEventOfTournament(tournamentId: string): Promise<TournamentEvent[]>;
+	getTournamentEventOfTournament(tournamentId: string): Promise<ITournamentEventDetailWithPrizeAndConditionResponse[]>;
 	getTournamentEventStandingBoard(tournamentEventId: string): Promise<ITournamentStandingBoardInterface>
 	getTournamentEventById(tournamentEventId: string): Promise<TournamentEvent>;
 	getTournamentOfTournamentEvent(tournamentEventId: string): Promise<Tournament>;
