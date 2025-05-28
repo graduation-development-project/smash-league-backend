@@ -87,6 +87,7 @@ import { ITournamentSerieResponse } from "src/domain/interfaces/tournament-serie
 import { UpdateTournamentUseCase } from "src/application/usecases/tournament/update-tournament.usecase";
 import {
 	IParticipantsOfTournamentEvent,
+	ITournamentEventDetailWithPrizeAndConditionResponse,
 	ITournamentEventParticipants,
 } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { GetParticipantsOfTournamentEventUseCase } from "src/application/usecases/tournament/tournament-event/get-participants-of-tournament-event.usecase";
@@ -421,7 +422,7 @@ export class TournamentController {
 	@Get("/get-tournament-event/:tournamentId")
 	async getTournamentEventByTournamentId(
 		@Param("tournamentId") tournamentId: string,
-	): Promise<ApiResponse<TournamentEvent[]>> {
+	): Promise<ApiResponse<ITournamentEventDetailWithPrizeAndConditionResponse[]>> {
 		return await this.getTournamentEventsByTournamentIdUseCase.execute(
 			tournamentId,
 		);

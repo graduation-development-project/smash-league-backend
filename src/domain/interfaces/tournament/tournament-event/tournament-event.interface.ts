@@ -19,3 +19,32 @@ export interface ITournamentEventDetailResponse {
 	toAge: number;
 	typeOfFormat: string;
 }
+
+export interface ITournamentEventDetailWithPrizeAndConditionResponse {
+	id: string;
+	tournamentEvent: string;
+	fromAge: number;
+	toAge: number;
+	typeOfFormat: string;
+	minimumAthlete: number;
+	maximumAthlete: number;
+	tournamentEventStatus: string;
+	winningPoint: number;
+	lastPoint: number;
+	prizes: IPrizeResponse[];
+	conditions: IConditionResponse[];
+}
+
+export interface IPrizeResponse {
+	id: string;
+	prizeName: string;
+	prizeDetail: string;
+	prizeType: string;
+}
+
+export interface IConditionResponse {
+	id: string;
+	conditionName: string;
+	conditionDescription: string;
+	conditionType: string;
+} 
