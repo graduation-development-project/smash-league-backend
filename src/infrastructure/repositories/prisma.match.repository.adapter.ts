@@ -101,6 +101,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		matchId: string,
 		winningCompetitorId: string,
 	): Promise<Match> {
+		
 		const match = await this.prisma.match.findUnique({
 			where: {
 				id: matchId,
