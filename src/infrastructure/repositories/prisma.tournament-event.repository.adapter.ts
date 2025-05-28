@@ -173,6 +173,11 @@ export class PrismaTournamentEventRepositoryAdapter
 			...event,
 			tournamentId: tournamentId,
 		}));
+		events.forEach((item) => {
+			delete item.championshipPrize;
+			delete item.runnerUpPrize;
+			delete item.thirdPlacePrize;
+		})
 		console.log(events);
 		for (let i = 0; i < events.length; i++) {
 			const prizesToCreate = events[i].createPrizes.createPrizes;
