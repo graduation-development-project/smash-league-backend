@@ -1,4 +1,4 @@
-import { BadmintonParticipantType, Prisma, PrismaClient, TournamentEventStatus, TournamentStatus, TypeOfFormat } from "@prisma/client";
+import { BadmintonParticipantType, Prisma, PrismaClient, PrizeType, TournamentEventStatus, TournamentStatus, TypeOfFormat } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -1127,9 +1127,9 @@ async function createTournamentEventForHochiminh() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventMenDouble = {
@@ -1143,9 +1143,9 @@ async function createTournamentEventForHochiminh() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventWomanSingle = {
@@ -1159,9 +1159,9 @@ async function createTournamentEventForHochiminh() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventWomanDouble = {
@@ -1175,9 +1175,9 @@ async function createTournamentEventForHochiminh() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventMixedDouble = {
@@ -1191,9 +1191,9 @@ async function createTournamentEventForHochiminh() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
-    runnerUpPrize: "Silver Medal, 6,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+    // championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+    // runnerUpPrize: "Silver Medal, 6,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
 	};
 
 	const tournamentEvents: Prisma.TournamentEventCreateManyInput[] = [
@@ -1218,6 +1218,69 @@ async function createTournamentEventForHochiminh() {
 		await prisma.tournamentEvent.createManyAndReturn({
 			data: tournamentEvents,
 		});
+
+	const eventPrizes: Prisma.EventPrizeCreateManyInput[] = [
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 10,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 2,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+	];
+
+	const eventPrizeCreated = await prisma.eventPrize.createManyAndReturn({
+		data: eventPrizes
+	});
 
 	for(let i = 1; i <= tournament.numberOfCourt; i++) {
 		const createCourt = await prisma.court.create({
@@ -1248,9 +1311,9 @@ async function createTournamentEventForDaNang() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventMenDouble = {
@@ -1264,9 +1327,9 @@ async function createTournamentEventForDaNang() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventWomanSingle = {
@@ -1280,9 +1343,9 @@ async function createTournamentEventForDaNang() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventWomanDouble = {
@@ -1296,9 +1359,9 @@ async function createTournamentEventForDaNang() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventMixedDouble = {
@@ -1312,9 +1375,9 @@ async function createTournamentEventForDaNang() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
-    runnerUpPrize: "Silver Medal, 6,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+    // championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+    // runnerUpPrize: "Silver Medal, 6,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
 	};
 
 	const danangEvents: Prisma.TournamentEventCreateManyInput[] = [
@@ -1336,6 +1399,69 @@ async function createTournamentEventForDaNang() {
 		await prisma.tournamentEvent.createManyAndReturn({
 			data: danangEvents,
 		});
+
+		const eventPrizes: Prisma.EventPrizeCreateManyInput[] = [
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 10,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 2,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+	];
+
+	const eventPrizeCreated = await prisma.eventPrize.createManyAndReturn({
+		data: eventPrizes
+	});	
 
 	for(let i = 1; i <= tournament.numberOfCourt; i++) {
 		const createCourt = await prisma.court.create({
@@ -1366,9 +1492,9 @@ async function createTournamentEventForVietnam() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventMenDouble = {
@@ -1382,9 +1508,9 @@ async function createTournamentEventForVietnam() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventWomanSingle = {
@@ -1398,9 +1524,9 @@ async function createTournamentEventForVietnam() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventWomanDouble = {
@@ -1414,9 +1540,9 @@ async function createTournamentEventForVietnam() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventMixedDouble = {
@@ -1430,9 +1556,9 @@ async function createTournamentEventForVietnam() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
-    runnerUpPrize: "Silver Medal, 6,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+    // championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+    // runnerUpPrize: "Silver Medal, 6,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
 	};
 
 	const tournamentEvents: Prisma.TournamentEventCreateManyInput[] = [
@@ -1454,6 +1580,70 @@ async function createTournamentEventForVietnam() {
 		await prisma.tournamentEvent.createManyAndReturn({
 			data: tournamentEvents,
 		});
+
+		const eventPrizes: Prisma.EventPrizeCreateManyInput[] = [
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 10,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 2,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+	];
+
+	const eventPrizeCreated = await prisma.eventPrize.createManyAndReturn({
+		data: eventPrizes
+	});
+
 	for(let i = 1; i <= tournament.numberOfCourt; i++) {
 		const createCourt = await prisma.court.create({
 			data: {
@@ -1483,9 +1673,9 @@ async function createTournamentEventForHanoi() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventMenDouble = {
@@ -1499,9 +1689,9 @@ async function createTournamentEventForHanoi() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventWomanSingle = {
@@ -1515,9 +1705,9 @@ async function createTournamentEventForHanoi() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventWomanDouble = {
@@ -1531,9 +1721,9 @@ async function createTournamentEventForHanoi() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventMixedDouble = {
@@ -1547,9 +1737,9 @@ async function createTournamentEventForHanoi() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
-    runnerUpPrize: "Silver Medal, 6,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+    // championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+    // runnerUpPrize: "Silver Medal, 6,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
 	};
 
 	const tournamentEvents: Prisma.TournamentEventCreateManyInput[] = [
@@ -1571,6 +1761,68 @@ async function createTournamentEventForHanoi() {
 		await prisma.tournamentEvent.createManyAndReturn({
 			data: tournamentEvents,
 		});
+		const eventPrizes: Prisma.EventPrizeCreateManyInput[] = [
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 10,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 2,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+	];
+
+	const eventPrizeCreated = await prisma.eventPrize.createManyAndReturn({
+		data: eventPrizes
+	});	
 
 	for(let i = 1; i <= tournament.numberOfCourt; i++) {
 		const createCourt = await prisma.court.create({
@@ -1600,9 +1852,9 @@ async function createTournamentEventForVungtau() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventMenDouble = {
@@ -1616,9 +1868,9 @@ async function createTournamentEventForVungtau() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventWomanSingle = {
@@ -1632,9 +1884,9 @@ async function createTournamentEventForVungtau() {
     ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
     minimumAthlete: 4,
     maximumAthlete: 32,
-    championshipPrize: "Gold Medal, 10,000,000 VND",
-    runnerUpPrize: "Silver Medal, 5,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+    // championshipPrize: "Gold Medal, 10,000,000 VND",
+    // runnerUpPrize: "Silver Medal, 5,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
 	};
 
 	const eventWomanDouble = {
@@ -1648,9 +1900,9 @@ async function createTournamentEventForVungtau() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
-    runnerUpPrize: "Silver Medal, 7,500,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+    // championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+    // runnerUpPrize: "Silver Medal, 7,500,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
 	};
 
 	const eventMixedDouble = {
@@ -1664,9 +1916,9 @@ async function createTournamentEventForVungtau() {
     ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
     minimumAthlete: 4, // Minimum 4 pairs
     maximumAthlete: 32, // Maximum 32 pairs
-    championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
-    runnerUpPrize: "Silver Medal, 6,000,000 VND",
-    thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+    // championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+    // runnerUpPrize: "Silver Medal, 6,000,000 VND",
+    // thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
 	};
 
 	const tournamentEvents: Prisma.TournamentEventCreateManyInput[] = [
@@ -1688,6 +1940,69 @@ async function createTournamentEventForVungtau() {
 		await prisma.tournamentEvent.createManyAndReturn({
 			data: tournamentEvents,
 		});
+	
+		const eventPrizes: Prisma.EventPrizeCreateManyInput[] = [
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 10,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_SINGLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 2,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MENS_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Championship Prize",
+			prize: "Gold Medal, 15,000,000 VND",
+			prizeType: PrizeType.ChampionshipPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Runner Up Prize",
+			prize: "Silver Medal, 7,500,000 VND",
+			prizeType: PrizeType.RunnerUpPrize
+		},
+		{
+			tournamentEventId: tournamentEventCreates.filter((item) => item.tournamentEvent === "MIXED_DOUBLE")[0].id,
+			prizeName: "Third Place Prize",
+			prize: "Bronze Medal, 3,500,000 VND",
+			prizeType: PrizeType.ThirdPlacePrize
+		},
+	];
+
+	const eventPrizeCreated = await prisma.eventPrize.createManyAndReturn({
+		data: eventPrizes
+	});	
 
 	for(let i = 1; i <= tournament.numberOfCourt; i++) {
 		const createCourt = await prisma.court.create({

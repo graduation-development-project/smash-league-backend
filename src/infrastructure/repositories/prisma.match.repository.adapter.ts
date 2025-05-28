@@ -1397,15 +1397,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					winningParticipantId: match.rightCompetitorId,
 				},
 			});
-			const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
-				where: {
-					id: match.tournamentEventId,
-				},
-				data: {
-					championshipId: match.leftCompetitorId,
-					runnerUpId: match.rightCompetitorId,
-				},
-			});
 		} else {
 			const finalPrizeUpdated = await this.prisma.eventPrize.update({
 				where: {
@@ -1425,15 +1416,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					}
 				});
 			}
-			const tournamentEventUpdated = await this.prisma.tournamentEvent.update({
-				where: {
-					id: match.tournamentEventId,
-				},
-				data: {
-					championshipId: match.rightCompetitorId,
-					runnerUpId: match.leftCompetitorId,
-				},
-			});
 		}
 	}
 

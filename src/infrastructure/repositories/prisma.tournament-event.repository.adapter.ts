@@ -253,12 +253,13 @@ export class PrismaTournamentEventRepositoryAdapter
 		tournamentEventId: string,
 	): Promise<ITournamentStandingBoardInterface> {
 		try {
-			return this.prisma.tournamentEvent.findUnique({
+			const championshipPrize = await this.prisma.eventPrize.findFirst({
 				where: {
-					id: tournamentEventId,
+					tournamentEventId: tournamentEventId,
+					prizeType: PrizeType.ChampionshipPrize
 				},
 				select: {
-					championship: {
+					winningParticipant: {
 						select: {
 							user: {
 								select: {
@@ -267,10 +268,9 @@ export class PrismaTournamentEventRepositoryAdapter
 									gender: true,
 									dateOfBirth: true,
 									height: true,
-									avatarURL: true,
-								},
+									avatarURL: true
+								}
 							},
-
 							partner: {
 								select: {
 									id: true,
@@ -278,63 +278,82 @@ export class PrismaTournamentEventRepositoryAdapter
 									gender: true,
 									dateOfBirth: true,
 									height: true,
-									avatarURL: true,
-								},
-							},
-						},
-					},
-					runnerUp: {
-						select: {
-							user: {
-								select: {
-									id: true,
-									name: true,
-									gender: true,
-									dateOfBirth: true,
-									height: true,
-									avatarURL: true,
-								},
-							},
-
-							partner: {
-								select: {
-									id: true,
-									name: true,
-									gender: true,
-									dateOfBirth: true,
-									height: true,
-									avatarURL: true,
-								},
-							},
-						},
-					},
-					thirdPlace: {
-						select: {
-							user: {
-								select: {
-									id: true,
-									name: true,
-									gender: true,
-									dateOfBirth: true,
-									height: true,
-									avatarURL: true,
-								},
-							},
-
-							partner: {
-								select: {
-									id: true,
-									name: true,
-									gender: true,
-									dateOfBirth: true,
-									height: true,
-									avatarURL: true,
-								},
-							},
-						},
-					},
-				},
+									avatarURL: true
+								}
+							}
+						}
+					}
+				}
 			});
+			const runnerUpPrize = await this.prisma.eventPrize.findFirst({
+				where: {
+					tournamentEventId: tournamentEventId,
+					prizeType: PrizeType.RunnerUpPrize
+				},
+				select: {
+					winningParticipant: {
+						select: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true
+								}
+							},
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true
+								}
+							}
+						}
+					}
+				}
+			});
+			const thirdPlacePrizes = await this.prisma.eventPrize.findMany({
+				where: {
+					tournamentEventId: tournamentEventId,
+					prizeType: PrizeType.RunnerUpPrize
+				},
+				select: {
+					winningParticipant: {
+						select: {
+							user: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true
+								}
+							},
+							partner: {
+								select: {
+									id: true,
+									name: true,
+									gender: true,
+									dateOfBirth: true,
+									height: true,
+									avatarURL: true
+								}
+							}
+						}
+					}
+				}
+			});
+			return {
+				championship: championshipPrize.winningParticipant,
+				runnerUp: runnerUpPrize.winningParticipant,
+				thirdPlace: thirdPlacePrizes.map((item) => item.winningParticipant)
+			};
 		} catch (e) {
 			console.error("getTournamentEventStandingBoard failed", e);
 			throw e;
