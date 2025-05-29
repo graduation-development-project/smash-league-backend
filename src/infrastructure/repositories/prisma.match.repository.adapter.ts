@@ -30,6 +30,29 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
 
+	async processNextMatchToByeMatch(nextMatchId: string): Promise<boolean> {
+		if (nextMatchId === null) return true;
+		const nextMatch: Match = await this.prisma.match.findUnique({
+			where: {
+				id: nextMatchId
+			}
+		});
+		if (nextMatch === null) return false;
+		if (nextMatch.isByeMatch === true && (nextMatch.leftCompetitorId !== null || nextMatch.rightCompetitorId !== null)) {
+			const winningParticipantId = nextMatch.leftCompetitorId !== null? nextMatch.leftCompetitorId : nextMatch.rightCompetitorId;
+			const nextMatchUpdated: Match = await this.prisma.match.update({
+				where: {
+					id: nextMatchId,
+				},
+				data: {
+					matchWonByCompetitorId: winningParticipantId
+				}
+			});
+			await this.assignCompetitorForNextMatch(winningParticipantId, nextMatch.nextMatchId, nextMatch.id);
+			return await this.processNextMatchToByeMatch(nextMatch.nextMatchId);
+		}
+	}
+
 	async updateMatchEnd(matchId: string): Promise<Match> {
 		const match = await this.prisma.match.findUnique({
 			where: {
@@ -51,26 +74,28 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						},
 					},
 				},
+				nextMatchId: true
 			},
 		});
-		const updateUmpireAvailable =
-			await this.prisma.tournamentUmpires.updateMany({
-				where: {
-					userId: match.umpire.id,
-					tournamentId: match.tournamentEvent.tournament.id,
-				},
-				data: {
-					isAvailable: true,
-				},
-			});
-		const updateCourtAvailable = await this.prisma.court.update({
-			where: {
-				id: match.courtId,
-			},
-			data: {
-				courtAvailable: true,
-			},
-		});
+		// const updateUmpireAvailable =
+		// 	await this.prisma.tournamentUmpires.updateMany({
+		// 		where: {
+		// 			userId: match.umpire.id,
+		// 			tournamentId: match.tournamentEvent.tournament.id,
+		// 		},
+		// 		data: {
+		// 			isAvailable: true,
+		// 		},
+		// 	});
+		// const updateCourtAvailable = await this.prisma.court.update({
+		// 	where: {
+		// 		id: match.courtId,
+		// 	},
+		// 	data: {
+		// 		courtAvailable: true,
+		// 	},
+		// });
+		const processByeMatchForNextMatch = await this.processNextMatchToByeMatch(match.nextMatchId);
 		return await this.prisma.match.update({
 			where: {
 				id: matchId,
