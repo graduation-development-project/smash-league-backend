@@ -1651,6 +1651,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.leftCompetitor.id,
 							resultText: "Win",
+							isWinner: match.leftCompetitorId === match.matchWonByCompetitorId? true: false,
 							player1: {
 								id: match.leftCompetitor.user.id,
 								name: match.leftCompetitor.user.name,
@@ -1669,6 +1670,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.rightCompetitor.id,
 							resultText: "Lose",
+							isWinner: match.rightCompetitorId === match.matchWonByCompetitorId? true: false,
 							player1: {
 								id: match.rightCompetitor.user.id,
 								name: match.rightCompetitor.user.name,

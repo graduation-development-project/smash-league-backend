@@ -354,3 +354,4 @@ export interface IUpdateTournamentScheduleInformation {
 	checkInBeforeStart: Date;
 	umpirePerMatch: number;
 }
+
