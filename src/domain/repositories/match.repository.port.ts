@@ -79,4 +79,5 @@ export interface MatchRepositoryPort {
 	updateMatchWinner(matchId: string, winningCompetitorId: string): Promise<Match>;
 	getMatchesPrevious(matchId: string): Promise<Match[]>;
 	updateMatchEnd(matchId: string): Promise<Match>;
+	processNextMatchToByeMatch(nextMatchId: string): Promise<boolean>;
 }
