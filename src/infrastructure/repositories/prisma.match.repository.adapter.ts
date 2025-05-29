@@ -1102,13 +1102,15 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					matchUpdated,
 					loseCompetitorId,
 				);
-			} else
+			} else{
 				await this.assignCompetitorForNextMatch(
 					winningId,
 					match.nextMatchId,
 					match.id,
 				);
-			console.log("Won matches!");
+				const updatedProcessByeMatch = await this.processNextMatchToByeMatch(match.nextMatchId);
+				console.log("Won matches!");
+			}
 			return {
 				currentGameNumber: 0,
 				currentPoint: await this.getAllGamesOfMatch(match.id),
