@@ -145,6 +145,7 @@ import { CreateRequirement } from "src/domain/interfaces/tournament/tournament-r
 import { GetRequirementsOfTournamentEventUseCase } from "src/application/usecases/tournament/requirements/get-requirements-of-tournament-event.usecase";
 import { CountNumberTourInCurrentMonthUseCase } from "../../application/usecases/tournament/count-number-tour-in-current-month.usecase";
 import { UpdateEventPrizeWinnerUseCase } from "src/application/usecases/tournament/tournament-event/update-event-prize-winner.usecase";
+import { GetBracketUseCase } from "src/application/usecases/tournament/tournament-event/get-bracket.usecase";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -206,7 +207,8 @@ export class TournamentController {
 		private readonly createRequirementUseCase: CreateRequirementUseCase,
 		private readonly getRequirementsOfTournamentEventUseCase: GetRequirementsOfTournamentEventUseCase,
 		private readonly countNumberTourInCurrentMonthUseCase: CountNumberTourInCurrentMonthUseCase,
-		private readonly updateEventPrizeWinnerUseCase: UpdateEventPrizeWinnerUseCase
+		private readonly updateEventPrizeWinnerUseCase: UpdateEventPrizeWinnerUseCase,
+		private readonly getBracketUseCase: GetBracketUseCase
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -787,5 +789,14 @@ export class TournamentController {
 	async updateEventPrizeWinner(@Param("prizeId") prizeId: string,
 	@Query("participantId") participantId: string): Promise<ApiResponse<EventPrize>> {
 		return await this.updateEventPrizeWinnerUseCase.execute(prizeId, participantId);
+	}
+
+	@Get("/get-bracket/:tournamentEventId")
+	async getBracket(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<any>> {
+		return await this.getBracketUseCase.execute(
+			tournamentEventId,
+		);
 	}
 }

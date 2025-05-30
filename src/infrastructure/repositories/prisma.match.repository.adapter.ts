@@ -29,6 +29,106 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
+	async getBracketOfTournamentEvent(tournamentEventId: string): Promise<any[]> {
+		const thirdPlaceStage = await this.prisma.stage.findFirst({
+			where: {
+				tournamentEventId: tournamentEventId,
+				stageName: StageOfMatch.ThirdPlaceMatch
+			}
+		});
+		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
+			where: {
+				id: tournamentEventId,
+			},
+			select: {
+				stages: {
+					select: {
+						matches: {
+							select: {
+								id: true,
+								games: true,
+								leftCompetitor: {
+									select: {
+										id: true,
+										user: {
+											select: {
+												id: true,
+												name: true,
+												avatarURL: true,
+												gender: true,
+												height: true,
+												hands: true,
+											},
+										},
+										partner: {
+											select: {
+												id: true,
+												name: true,
+												avatarURL: true,
+												gender: true,
+												height: true,
+												hands: true,
+											},
+										},
+									},
+								},
+								rightCompetitor: {
+									select: {
+										id: true,
+										user: {
+											select: {
+												id: true,
+												name: true,
+												avatarURL: true,
+												gender: true,
+												height: true,
+												hands: true,
+											},
+										},
+										partner: {
+											select: {
+												id: true,
+												name: true,
+												avatarURL: true,
+												gender: true,
+												height: true,
+												hands: true,
+											},
+										},
+									},
+								},
+								matchStatus: true,
+								stage: {
+									select: {
+										stageName: true,
+										id: true,
+									},
+								},
+								matchNumber: true,
+								nextMatchId: true,
+								startedWhen: true,
+								umpire: {
+									select: {
+										id: true,
+										name: true,
+									},
+								},
+							},
+							orderBy: {
+								matchNumber: "desc",
+							},
+						},
+					},
+				},
+			},
+		});
+		let matchesBeforeFormat = [];
+		tournamentEvent.stages.forEach((item) => {
+			matchesBeforeFormat.push(...item.matches);
+		});
+		const matches = matchesBeforeFormat.map(this.transformMatchData);
+		return matches.filter((item) => item.tournamentRoundText !== thirdPlaceStage?.stageName);
+	}
 
 	async processNextMatchToByeMatch(nextMatchId: string): Promise<boolean> {
 		if (nextMatchId === null) return true;
@@ -1584,6 +1684,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 							select: {
 								id: true,
 								games: true,
+								matchWonByCompetitorId: true,
 								leftCompetitor: {
 									select: {
 										id: true,
@@ -1678,7 +1779,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.leftCompetitor.id,
 							resultText: "Win",
-							isWinner: match.leftCompetitorId === match.matchWonByCompetitorId && match.matchWonByCompetitorId !== null? true: false,
+							isWinner: match.leftCompetitor.id === match.matchWonByCompetitorId && match.matchWonByCompetitorId !== null? true: false,
 							player1: {
 								id: match.leftCompetitor.user.id,
 								name: match.leftCompetitor.user.name,

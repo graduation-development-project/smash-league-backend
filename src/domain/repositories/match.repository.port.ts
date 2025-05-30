@@ -21,6 +21,7 @@ export interface MatchRepositoryPort {
 	getMatchesOfStage(stageId: string): Promise<Match[]>;
 
 	getAllMatchesOfTournamentEvent(tournamentEventId: string): Promise<any[]>;
+	getBracketOfTournamentEvent(tournamentEventId: string): Promise<any[]>;
 
 	updateMatch(matchId: string, updateMatchDTO: UpdateMatchDTO): Promise<any>;
 

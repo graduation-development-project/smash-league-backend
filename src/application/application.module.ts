@@ -228,6 +228,7 @@ import { DeleteUmpireDegreeUseCase } from "./usecases/umpires/delete-umpire-degr
 import { GetPersonalUmpireDegreesUseCase } from "./usecases/umpires/get-personal-umpire-degrees.usecase";
 import { UpdateUmpireDegreeUseCase } from "./usecases/umpires/update-umpire-degree.usecase";
 import { BanUserUseCase } from "./usecases/organizers/ban-user.usecase";
+import { GetBracketUseCase } from "./usecases/tournament/tournament-event/get-bracket.usecase";
 
 @Module({
 	imports: [
@@ -506,6 +507,7 @@ import { BanUserUseCase } from "./usecases/organizers/ban-user.usecase";
 		UpdateTournamentRecruitmentUseCase,
 		UpdateTournamentStatusUseCase,
 		GetAllDegreeTypeUseCase,
+		GetBracketUseCase,
 		//Requirement use case
 		GetRequirementsOfTournamentUseCase,
 		CreateRequirementUseCase,
@@ -740,6 +742,7 @@ import { BanUserUseCase } from "./usecases/organizers/ban-user.usecase";
 		UpdateTournamentRecruitmentUseCase,
 		UpdateTournamentStatusUseCase,
 		GetAllDegreeTypeUseCase,
+		GetBracketUseCase,
 		//Requirement use case
 		GetRequirementsOfTournamentUseCase,
 		CreateRequirementUseCase,
