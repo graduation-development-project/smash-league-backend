@@ -233,6 +233,7 @@ model Ward {
 enum RequirementType {
   Selection
   FillIn
+  None
 }
 
 // model DemoJsonType {
