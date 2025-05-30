@@ -76,26 +76,29 @@ enum TypeOfUmpireDegree {
 }
 
 model UmpireDegree {
-  id           String             @id @default(uuid())
-  typeOfDegree TypeOfUmpireDegree
-  degreeTitle  String
-  degree       String[]
-  description  String?
-  userId       String
-  user         User               @relation(name: "FK_UmpireDegree_User", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  id                 String             @id @default(uuid())
+  typeOfDegree       TypeOfUmpireDegree
+  degreeTitle        String
+  degree             String[]
+  description        String?
+  userId             String
+  user               User               @relation(name: "FK_UmpireDegree_User", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userVerificationId String?
+  UserVerification   UserVerification?  @relation("FK_UserVerification_UmpireDegree", fields: [userVerificationId], references: [id])
 }
 
 model UserVerification {
-  id           String           @id @default(uuid())
-  userId       String
-  user         User             @relation("FK_User_UserVerification", fields: [userId], references: [id])
-  IDCardFront  String?
-  IDCardBack   String?
-  cardPhoto    String?
-  role         String
-  status       InvitationStatus @default(PENDING)
-  createdAt    DateTime         @default(now())
-  rejectReason Reason?          @relation(name: "FK_UserVerification_Reason")
+  id            String           @id @default(uuid())
+  userId        String
+  user          User             @relation("FK_User_UserVerification", fields: [userId], references: [id])
+  IDCardFront   String?
+  IDCardBack    String?
+  cardPhoto     String?
+  role          String
+  status        InvitationStatus @default(PENDING)
+  createdAt     DateTime         @default(now())
+  rejectReason  Reason?          @relation(name: "FK_UserVerification_Reason")
+  umpireDegrees UmpireDegree[]   @relation("FK_UserVerification_UmpireDegree")
 }
 
 model Role {

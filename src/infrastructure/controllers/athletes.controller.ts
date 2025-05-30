@@ -53,6 +53,7 @@ import { RemoveManyTournamentRegistrationsUseCase } from "../../application/usec
 import { CreateFeedbackUseCase } from "../../application/usecases/feedback/create-feedback.usecase";
 import { CreateFeedbackDTO } from "../../domain/dtos/feedback/createFeedback.dto";
 import { GetFeedbacksByUserUseCase } from "../../application/usecases/feedback/get-feedbacks-by-user.usecase";
+import { RegisterNewRoleWithDegreeUseCase } from "../../application/usecases/athletes/register-new-role-with-degree.usecase";
 
 @Controller("/athletes")
 @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -62,6 +63,7 @@ export class AthletesController {
 		private registerTournamentUseCase: RegisterTournamentUseCase,
 		private getParticipatedTournamentsUseCase: GetParticipatedTournamentsUseCase,
 		private registerNewRoleUseCase: RegisterNewRoleUseCase,
+		private registerNewRoleWithDegreeUseCase: RegisterNewRoleWithDegreeUseCase,
 		private responseToTeamInvitationUseCase: ResponseToTeamInvitationUseCase,
 		private leaveTeamUseCase: LeaveTeamUseCase,
 		private requestJoinTeamUseCase: RequestJoinTeamUseCase,
@@ -157,6 +159,17 @@ export class AthletesController {
 			...registerNewRoleDTO,
 			userId: user.id,
 			files,
+		});
+	}
+
+	@Post("register-role-umpire")
+	registerNewRoleWithDegree(
+		@Req() { user }: IRequestUser,
+		@Body() registerNewRoleDTO: RegisterNewRoleDTO,
+	): Promise<ApiResponse<UserVerification>> {
+		return this.registerNewRoleWithDegreeUseCase.execute({
+			...registerNewRoleDTO,
+			userId: user.id,
 		});
 	}
 

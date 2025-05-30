@@ -229,6 +229,7 @@ import { GetPersonalUmpireDegreesUseCase } from "./usecases/umpires/get-personal
 import { UpdateUmpireDegreeUseCase } from "./usecases/umpires/update-umpire-degree.usecase";
 import { BanUserUseCase } from "./usecases/organizers/ban-user.usecase";
 import { GetBracketUseCase } from "./usecases/tournament/tournament-event/get-bracket.usecase";
+import { RegisterNewRoleWithDegreeUseCase } from "./usecases/athletes/register-new-role-with-degree.usecase";
 
 @Module({
 	imports: [
@@ -417,6 +418,8 @@ import { GetBracketUseCase } from "./usecases/tournament/tournament-event/get-br
 		GetUserByRoleUseCase,
 		GetLatestMatchesUseCase,
 		GetAllUserUseCase,
+		RegisterNewRoleWithDegreeUseCase,
+
 		//Umpire degree use case
 		CreateUmpireDegreeUseCase,
 		GetAllUmpireDegreesUseCase,
@@ -645,6 +648,7 @@ import { GetBracketUseCase } from "./usecases/tournament/tournament-event/get-br
 		GetUserByRoleUseCase,
 		GetLatestMatchesUseCase,
 		GetAllUserUseCase,
+		RegisterNewRoleWithDegreeUseCase,
 
 		//AuthenticationUseCase
 		GetAuthenticatedUserUseCase,

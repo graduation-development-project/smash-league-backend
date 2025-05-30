@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import {
+	IsArray,
+	IsEnum,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+} from "class-validator";
+import { TypeOfUmpireDegree } from "@prisma/client";
 
 export class RegisterNewRoleDTO {
 	@IsOptional()
@@ -11,4 +18,24 @@ export class RegisterNewRoleDTO {
 
 	@IsOptional()
 	files: Express.Multer.File[];
+
+	@IsOptional()
+	registerUmpire: RegisterUmpireDegree[];
+}
+
+export class RegisterUmpireDegree {
+	@IsOptional()
+	@IsEnum(TypeOfUmpireDegree)
+	typeOfDegree: TypeOfUmpireDegree;
+
+	@IsOptional()
+	@IsString()
+	degreeTitle: string;
+
+	@IsOptional()
+	degree: string[];
+
+	@IsOptional()
+	@IsString()
+	description: string;
 }

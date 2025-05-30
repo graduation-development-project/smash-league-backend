@@ -460,6 +460,73 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		}
 	}
 
+	async registerNewRoleWithDegree(
+		registerNewRoleDTO: RegisterNewRoleDTO,
+	): Promise<UserVerification> {
+		try {
+			console.log(registerNewRoleDTO);
+			const { role, userId } = registerNewRoleDTO;
+
+			const roleId: string = RoleMap[role].id;
+
+			console.log(roleId);
+
+			const roleExisted: UserRole = await this.prisma.userRole.findUnique({
+				where: {
+					userId_roleId: {
+						userId,
+						roleId,
+					},
+				},
+			});
+
+			if (roleExisted) {
+				throw new BadRequestException("This role is already registered");
+			}
+
+			const verificationExisted = await this.prisma.userVerification.findFirst({
+				where: {
+					userId,
+					role,
+				},
+			});
+
+			if (verificationExisted) {
+				throw new BadRequestException("You already registered this role");
+			}
+
+			const userIdFromDto = registerNewRoleDTO.userId;
+			const umpireDegreesData = [];
+
+			if (
+				registerNewRoleDTO.registerUmpire &&
+				registerNewRoleDTO.registerUmpire.length > 0
+			) {
+				for (const degreeData of registerNewRoleDTO.registerUmpire) {
+					umpireDegreesData.push({
+						typeOfDegree: degreeData.typeOfDegree,
+						degreeTitle: degreeData.degreeTitle,
+						degree: degreeData.degree,
+						description: degreeData.description,
+						userId: userIdFromDto,
+					});
+				}
+			}
+
+			return this.prisma.userVerification.create({
+				data: {
+					userId,
+					role,
+					umpireDegrees: {
+						create: umpireDegreesData,
+					},
+				},
+			});
+		} catch (e) {
+			throw e;
+		}
+	}
+
 	async responseToTeamInvitation(
 		responseToTeamInvitationDTO: ResponseToTeamInvitationDTO,
 	): Promise<string> {
