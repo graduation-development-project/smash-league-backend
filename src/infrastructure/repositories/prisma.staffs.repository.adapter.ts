@@ -102,6 +102,8 @@ export class PrismaStaffsRepositoryAdapter implements StaffsRepositoryPort {
 								name: true,
 							},
 						},
+
+						umpireDegrees: true,
 					},
 				});
 

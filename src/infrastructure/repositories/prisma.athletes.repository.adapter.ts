@@ -487,7 +487,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			const verificationExisted = await this.prisma.userVerification.findFirst({
 				where: {
 					userId,
-					role: roleId,
+					role,
 				},
 			});
 
