@@ -77,24 +77,24 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				nextMatchId: true
 			},
 		});
-		// const updateUmpireAvailable =
-		// 	await this.prisma.tournamentUmpires.updateMany({
-		// 		where: {
-		// 			userId: match.umpire.id,
-		// 			tournamentId: match.tournamentEvent.tournament.id,
-		// 		},
-		// 		data: {
-		// 			isAvailable: true,
-		// 		},
-		// 	});
-		// const updateCourtAvailable = await this.prisma.court.update({
-		// 	where: {
-		// 		id: match.courtId,
-		// 	},
-		// 	data: {
-		// 		courtAvailable: true,
-		// 	},
-		// });
+		const updateUmpireAvailable =
+			await this.prisma.tournamentUmpires.updateMany({
+				where: {
+					userId: match.umpire.id,
+					tournamentId: match.tournamentEvent.tournament.id,
+				},
+				data: {
+					isAvailable: true,
+				},
+			});
+		const updateCourtAvailable = await this.prisma.court.update({
+			where: {
+				id: match.courtId,
+			},
+			data: {
+				courtAvailable: true,
+			},
+		});
 		const processByeMatchForNextMatch = await this.processNextMatchToByeMatch(match.nextMatchId);
 		return await this.prisma.match.update({
 			where: {
@@ -1678,7 +1678,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.leftCompetitor.id,
 							resultText: "Win",
-							isWinner: match.leftCompetitorId === match.matchWonByCompetitorId? true: false,
+							isWinner: match.leftCompetitorId === match.matchWonByCompetitorId && match.matchWonByCompetitorId !== null? true: false,
 							player1: {
 								id: match.leftCompetitor.user.id,
 								name: match.leftCompetitor.user.name,
@@ -1697,7 +1697,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.rightCompetitor.id,
 							resultText: "Lose",
-							isWinner: match.rightCompetitorId === match.matchWonByCompetitorId? true: false,
+							isWinner: match.rightCompetitorId === match.matchWonByCompetitorId && match.matchWonByCompetitorId !== null? true: false,
 							player1: {
 								id: match.rightCompetitor.user.id,
 								name: match.rightCompetitor.user.name,
