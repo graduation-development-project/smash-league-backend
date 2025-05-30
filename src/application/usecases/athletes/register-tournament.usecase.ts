@@ -56,6 +56,8 @@ export class RegisterTournamentUseCase {
 			submittedAnswerForEvent
 		} = registerTournamentDTO;
 
+		console.log("Hehe");
+
 		const isUmpire = registrationRole === TournamentRegistrationRole.UMPIRE;
 		const isAthlete =
 			registrationRole.toUpperCase() === TournamentRegistrationRole.ATHLETE;

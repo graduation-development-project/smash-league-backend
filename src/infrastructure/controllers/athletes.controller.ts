@@ -82,8 +82,12 @@ export class AthletesController {
 		@Req() { user }: IRequestUser,
 		@UploadedFiles() files: Express.Multer.File[],
 	): Promise<ApiResponse<TournamentRegistration>> {
-		registerTournamentDTO.submittedAnswerForEvent = JSON.parse(registerTournamentDTO.submittedAnswerForEvent);
-		registerTournamentDTO.submittedAnswerForTournament = JSON.parse(registerTournamentDTO.submittedAnswerForTournament);
+		// console.log(registerTournamentDTO.submittedAnswerForEvent === "");
+		// if (registerTournamentDTO.submittedAnswerForTournament === "")
+		registerTournamentDTO.submittedAnswerForTournament = 
+			registerTournamentDTO.submittedAnswerForTournament === "" || registerTournamentDTO.submittedAnswerForTournament === null? []: JSON.parse(registerTournamentDTO.submittedAnswerForTournament);
+		registerTournamentDTO.submittedAnswerForEvent = 
+			registerTournamentDTO.submittedAnswerForEvent === "" || registerTournamentDTO.submittedAnswerForEvent === null? []: JSON.parse(registerTournamentDTO.submittedAnswerForEvent);
 		return this.registerTournamentUseCase.execute({
 			...registerTournamentDTO,
 			user,
