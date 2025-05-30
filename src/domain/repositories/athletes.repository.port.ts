@@ -1,7 +1,8 @@
 import { RegisterTournamentDTO } from "../dtos/athletes/register-tournament.dto";
 import {
 	Tournament,
-	TournamentRegistration, TournamentStatus,
+	TournamentRegistration,
+	TournamentStatus,
 	UserVerification,
 } from "@prisma/client";
 import { RegisterNewRoleDTO } from "../dtos/athletes/register-new-role.dto";
@@ -29,6 +30,10 @@ export interface AthletesRepositoryPort {
 	// ): Promise<TCloudinaryResponse[]>;
 
 	registerNewRole(
+		registerNewRoleDTO: RegisterNewRoleDTO,
+	): Promise<UserVerification>;
+
+	registerNewRoleWithDegree(
 		registerNewRoleDTO: RegisterNewRoleDTO,
 	): Promise<UserVerification>;
 
