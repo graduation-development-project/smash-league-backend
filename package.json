@@ -27,6 +27,7 @@
     "team-seed": "ts-node prisma/team-seed.ts",
     "umpire-seed": "ts-node prisma/umpire-seed.ts",
     "staff-seed": "ts-node prisma/staff-seed.ts",
+    "registration-seed": "ts-node prisma/registration-seed.ts",
     "redis-commander": "redis-commander --host redis.smashit.com.vn --port 6380 --redis-host redis.smashit.com.vn --redis-port 6380"
   },
   "dependencies": {

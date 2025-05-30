@@ -42,7 +42,7 @@ export class RegisterTournamentDTO {
 	@IsOptional()
 	files: Express.Multer.File[];
 	@IsOptional()
-	submittedAnswerForTournament: any;
+	submittedAnswerForTournament?: any;
 	@IsOptional()
-	submittedAnswerForEvent: any;
+	submittedAnswerForEvent?: any;
 }
