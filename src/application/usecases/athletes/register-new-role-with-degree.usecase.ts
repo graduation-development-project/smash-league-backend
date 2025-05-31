@@ -1,7 +1,10 @@
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { AthletesRepositoryPort } from "../../../domain/repositories/athletes.repository.port";
 import { UserVerification } from "@prisma/client";
-import { RegisterNewRoleDTO } from "../../../domain/dtos/athletes/register-new-role.dto";
+import {
+	RegisterNewRoleDTO,
+	RegisterNewRoleWithDegreeDTO,
+} from "../../../domain/dtos/athletes/register-new-role.dto";
 import { ApiResponse } from "../../../domain/dtos/api-response";
 
 @Injectable()
@@ -12,7 +15,7 @@ export class RegisterNewRoleWithDegreeUseCase {
 	) {}
 
 	async execute(
-		registerNewRoleDTO: RegisterNewRoleDTO,
+		registerNewRoleDTO: RegisterNewRoleWithDegreeDTO,
 	): Promise<ApiResponse<UserVerification>> {
 		return new ApiResponse<UserVerification>(
 			HttpStatus.CREATED,

@@ -18,7 +18,10 @@ import {
 } from "@prisma/client";
 import { AthletesRepositoryPort } from "../../domain/repositories/athletes.repository.port";
 import { RegisterTournamentDTO } from "../../domain/dtos/athletes/register-tournament.dto";
-import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
+import {
+	RegisterNewRoleDTO,
+	RegisterNewRoleWithDegreeDTO,
+} from "../../domain/dtos/athletes/register-new-role.dto";
 import { PrismaService } from "../services/prisma.service";
 import { TournamentStatusEnum } from "../enums/tournament-status.enum";
 import { UploadService } from "../services/upload.service";
@@ -461,11 +464,12 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 	}
 
 	async registerNewRoleWithDegree(
-		registerNewRoleDTO: RegisterNewRoleDTO,
+		registerNewRoleDTO: RegisterNewRoleWithDegreeDTO,
 	): Promise<UserVerification> {
 		try {
 			console.log(registerNewRoleDTO);
-			const { role, userId } = registerNewRoleDTO;
+			const { role, userId, IDCardFront, cardPhoto, IDCardBack } =
+				registerNewRoleDTO;
 
 			const roleId: string = RoleMap[role].id;
 
@@ -517,6 +521,9 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 				data: {
 					userId,
 					role,
+					IDCardFront,
+					IDCardBack,
+					cardPhoto,
 					umpireDegrees: {
 						create: umpireDegreesData,
 					},

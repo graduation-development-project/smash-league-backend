@@ -23,6 +23,31 @@ export class RegisterNewRoleDTO {
 	registerUmpire: RegisterUmpireDegree[];
 }
 
+export class RegisterNewRoleWithDegreeDTO {
+	@IsOptional()
+	@IsString()
+	userId: string;
+
+	@IsNotEmpty()
+	@IsString()
+	role: string;
+
+	@IsOptional()
+	@IsString()
+	IDCardFront: string;
+
+	@IsOptional()
+	@IsString()
+	IDCardBack: string;
+
+	@IsOptional()
+	@IsString()
+	cardPhoto: string;
+
+	@IsOptional()
+	registerUmpire: RegisterUmpireDegree[];
+}
+
 export class RegisterUmpireDegree {
 	@IsOptional()
 	@IsEnum(TypeOfUmpireDegree)

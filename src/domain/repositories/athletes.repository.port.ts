@@ -5,7 +5,7 @@ import {
 	TournamentStatus,
 	UserVerification,
 } from "@prisma/client";
-import { RegisterNewRoleDTO } from "../dtos/athletes/register-new-role.dto";
+import { RegisterNewRoleDTO, RegisterNewRoleWithDegreeDTO } from "../dtos/athletes/register-new-role.dto";
 import { ResponseToTeamInvitationDTO } from "../dtos/athletes/response-to-team-invitation.dto";
 import { LeaveTeamDTO } from "../dtos/athletes/leave-team.dto";
 import { RequestJoinTeamDTO } from "../dtos/athletes/request-join-team.dto";
@@ -34,7 +34,7 @@ export interface AthletesRepositoryPort {
 	): Promise<UserVerification>;
 
 	registerNewRoleWithDegree(
-		registerNewRoleDTO: RegisterNewRoleDTO,
+		registerNewRoleDTO: RegisterNewRoleWithDegreeDTO,
 	): Promise<UserVerification>;
 
 	responseToTeamInvitation(
