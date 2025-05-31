@@ -32,7 +32,7 @@ import {
 	IRequestUser,
 } from "../../domain/interfaces/interfaces";
 import { RegisterNewRoleUseCase } from "../../application/usecases/athletes/register-new-role.usecase";
-import { RegisterNewRoleDTO } from "../../domain/dtos/athletes/register-new-role.dto";
+import { RegisterNewRoleDTO, RegisterNewRoleWithDegreeDTO } from "../../domain/dtos/athletes/register-new-role.dto";
 import { TUserWithRole } from "../types/users.type";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 // import { UploadVerificationImagesUseCase } from "../../application/usecases/athletes/upload-verification-images.usecase";
@@ -165,7 +165,7 @@ export class AthletesController {
 	@Post("register-role-umpire")
 	registerNewRoleWithDegree(
 		@Req() { user }: IRequestUser,
-		@Body() registerNewRoleDTO: RegisterNewRoleDTO,
+		@Body() registerNewRoleDTO: RegisterNewRoleWithDegreeDTO,
 	): Promise<ApiResponse<UserVerification>> {
 		return this.registerNewRoleWithDegreeUseCase.execute({
 			...registerNewRoleDTO,
