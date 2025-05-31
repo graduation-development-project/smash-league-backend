@@ -467,7 +467,6 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 		registerNewRoleDTO: RegisterNewRoleWithDegreeDTO,
 	): Promise<UserVerification> {
 		try {
-			console.log(registerNewRoleDTO);
 			const { role, userId, IDCardFront, cardPhoto, IDCardBack } =
 				registerNewRoleDTO;
 
@@ -520,7 +519,7 @@ export class PrismaAthletesRepositoryAdapter implements AthletesRepositoryPort {
 			return this.prisma.userVerification.create({
 				data: {
 					userId,
-					role,
+					role: roleId,
 					IDCardFront,
 					IDCardBack,
 					cardPhoto,
