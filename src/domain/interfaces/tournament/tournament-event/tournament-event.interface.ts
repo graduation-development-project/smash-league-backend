@@ -1,6 +1,7 @@
 import { KeyValueType } from "src/domain/dtos/key-value-type.type";
 import { IParticipantsByTournamentEventResponse, IParticipantsResponse } from "../../user/athlete.interface";
 import { IUserDefaultResponse } from "../../user/user.interface";
+import { TournamentEventStatus } from "@prisma/client";
 
 export interface ITournamentEventParticipants {
 	numberOfParticipants: number;
@@ -33,6 +34,7 @@ export interface ITournamentEventDetailWithPrizeAndConditionResponse {
 	lastPoint: number;
 	prizes: IPrizeResponse[];
 	conditions: IConditionResponse[];
+	needToUpdatePrize: boolean;
 }
 
 export interface IPrizeResponse {

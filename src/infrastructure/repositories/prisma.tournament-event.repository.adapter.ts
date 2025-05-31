@@ -1,6 +1,6 @@
 import { create } from 'domain';
 import { Injectable } from "@nestjs/common";
-import { EventPrize, PrismaClient, PrizeType, Requirement, Tournament, TournamentEvent } from "@prisma/client";
+import { EventPrize, PrismaClient, PrizeType, Requirement, Tournament, TournamentEvent, TournamentEventStatus } from "@prisma/client";
 import {
 	IConditionResponse,
 	IParticipantsOfTournamentEvent,
@@ -273,18 +273,31 @@ export class PrismaTournamentEventRepositoryAdapter
 					winningPoint: tournamentEvents[i].winningPoint,
 					lastPoint: tournamentEvents[i].lastPoint,
 					tournamentEvent: tournamentEvents[i].tournamentEvent,
-					tournamentEventStatus: tournamentEvents[i].tournamentEvent,
+					tournamentEventStatus: tournamentEvents[i].tournamentEventStatus,
 					typeOfFormat: tournamentEvents[i].typeOfFormat,
+
 					conditions: await this.formatConditionResponse(requirements),
-					prizes: await this.formatPrizeResponse(prizes)
+					prizes: await this.formatPrizeResponse(prizes),
+					needToUpdatePrize: await this.checkIsNeedToUpdateOtherPrize(prizes, tournamentEvents[i].tournamentEventStatus)
 				};
 				responses.push(tournamentEvent);
 			}
 			return responses;
 		} catch (e) {
-			console.error("getTournamentEventOfTournament faield", e);
+			console.error("getTournamentEventOfTournament failed", e);
 			throw e;
 		}
+	}
+
+	async checkIsNeedToUpdateOtherPrize(prizes: EventPrize[], 
+		tournamentEventStatus: TournamentEventStatus): Promise<boolean> {
+		if (prizes.length === 0) return false;
+		for (let i = 0; i < prizes.length; i++) {
+			console.log(prizes[i].prizeType, " ", prizes[i].winningParticipantId);
+			if (prizes[i].prizeType === PrizeType.Others && prizes[i].winningParticipantId === null)
+				return true;
+		}
+		return false;
 	}
 
 	async formatPrizeResponse(prizes: EventPrize[]): Promise<IPrizeResponse[]> {
