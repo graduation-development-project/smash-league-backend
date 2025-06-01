@@ -230,6 +230,7 @@ import { UpdateUmpireDegreeUseCase } from "./usecases/umpires/update-umpire-degr
 import { BanUserUseCase } from "./usecases/organizers/ban-user.usecase";
 import { GetBracketUseCase } from "./usecases/tournament/tournament-event/get-bracket.usecase";
 import { RegisterNewRoleWithDegreeUseCase } from "./usecases/athletes/register-new-role-with-degree.usecase";
+import { GetOthersPrizesUseCase } from "./usecases/tournament/tournament-event/get-others-prizes.usecase";
 
 @Module({
 	imports: [
@@ -522,6 +523,7 @@ import { RegisterNewRoleWithDegreeUseCase } from "./usecases/athletes/register-n
 		GetThirdPlacePrizesOfEventUseCase,
 		CreateEventPrizeUseCase,
 		UpdateEventPrizeWinnerUseCase,
+		GetOthersPrizesUseCase,
 		//Report use case
 		CreateReportUseCase,
 		GetAllReportUseCase,
@@ -758,6 +760,7 @@ import { RegisterNewRoleWithDegreeUseCase } from "./usecases/athletes/register-n
 		GetThirdPlacePrizesOfEventUseCase,
 		CreateEventPrizeUseCase,
 		UpdateEventPrizeWinnerUseCase,
+		GetOthersPrizesUseCase,
 		//Report usecase
 		CreateReportUseCase,
 		GetAllReportUseCase,
