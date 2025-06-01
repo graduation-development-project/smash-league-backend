@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EventPrize, PrismaClient, PrizeType } from "@prisma/client";
-import { ICreateEventPrize } from "src/domain/dtos/event-prize/event-prize.interface";
+import { ICreateEventPrize, IEventPrizeResponse } from "src/domain/dtos/event-prize/event-prize.interface";
 import { EventPrizeRepositoryPort } from "src/domain/repositories/event-prize.repository.port";
 import { convertStringToEnum } from "../util/enum-convert.util";
 
@@ -9,6 +9,14 @@ export class PrismaEventPrizeRepositoryAdapter implements EventPrizeRepositoryPo
 	constructor(
 		private readonly prisma: PrismaClient
 	) {
+	}
+	async getOtherPrizesOfTournamentEvent(tournamentEventId: string): Promise<IEventPrizeResponse[] | null> {
+		return await this.prisma.eventPrize.findMany({
+			where: {
+				tournamentEventId: tournamentEventId,
+				prizeType: PrizeType.Others
+			}
+		});
 	}
 	async getPrize(prizeId: string): Promise<EventPrize> {
 		return await this.prisma.eventPrize.findUnique({

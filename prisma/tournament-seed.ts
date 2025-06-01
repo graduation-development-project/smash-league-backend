@@ -266,7 +266,46 @@ async function main() {
 			requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
 			isRecruit: true,
 			tournamentSerieId: tournamentSerie.id
-		}
+		},
+		// Các bản ghi bổ sung từ tháng 09/2024 đến tháng 06/2025
+  ...Array.from({ length: 14 }, (_, i) => {
+    const month = (i + 9) % 12 + 1;
+    const year = month >= 8 ? 2024 : 2025;
+    const paddedMonth = month.toString().padStart(2, '0');
+    return {
+      id: `giai-${paddedMonth}01`,
+      name: `Giải Cầu Lông Tháng ${paddedMonth}/${year}`,
+      shortName: `GCL ${paddedMonth}/${year.toString().slice(2)}`,
+      description: `Giải tháng ${paddedMonth}/${year}`,
+      organizerId: user.id,
+      contactPhone: "+84 987654321",
+      contactEmail: `gcl${paddedMonth}${year}@gmail.com`,
+      mainColor: ["#3498DB", "#1ABC9C", "#2ECC71", "#F1C40F", "#E67E22"][i % 5],
+      backgroundTournament: `https://example.com/image${i + 2}.jpg`,
+      location: "Nhà thi đấu đa năng",
+      registrationOpeningDate: `${year}-${paddedMonth}-01T00:00:00Z`,
+      registrationClosingDate: `${year}-${paddedMonth}-17T23:59:59Z`,
+      drawDate: `${year}-${paddedMonth}-18T13:30:00Z`,
+      startDateFirstTime: `${year}-${paddedMonth}-19T08:30:00Z`,
+      endDateFirstTime: `${year}-${paddedMonth}-20T19:00:00Z`,
+      countUpdateOccurTime: 0,
+      startDate: `${year}-${paddedMonth}-19T08:30:00Z`,
+      endDate: `${year}-${paddedMonth}-20T19:00:00Z`,
+      checkInBeforeStart: `${year}-${paddedMonth}-20T07:30:00Z`,
+      numberOfCourt: 4 + (i % 3),
+      registrationFeePerPerson: 100000,
+      registrationFeePerPair: 120000,
+      maxEventPerPerson: 2,
+      status: TournamentStatus.CREATED,
+      protestFeePerTime: 65000,
+      prizePool: 20000000,
+      hasMerchandise: false,
+      numberOfMerchandise: 0,
+      merchandiseImages: [],
+      requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
+      isRecruit: true,
+      tournamentSerieId: tournamentSerie.id
+    }})
 	]; 
 	const tournamentCreated = await prisma.tournament.createManyAndReturn({
 		data: tournamentCreate
