@@ -12,8 +12,8 @@ export interface OrganizersRepositoryPort {
 		responseTournamentRegistrationDTO: ResponseTournamentRegistrationDTO,
 	): Promise<string>;
 
-	getTournamentRegistrationByTournamentId(
-		tournamentId: string,
+	getTournamentRegistrationByTournamentEventId(
+		tournamentEventId: string,
 		organizerId: string,
 	): Promise<TournamentRegistration[]>;
 

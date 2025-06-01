@@ -63,13 +63,13 @@ export class OrganizerController {
 		private banUserUseCase: BanUserUseCase,
 	) {}
 
-	@Get("/tournament-registration/:tournamentId")
-	getTournamentRegistrationByTournamentId(
-		@Param("tournamentId") tournamentId: string,
+	@Get("/tournament-registration/:tournamentEventId")
+	getTournamentRegistrationByTournamentEventId(
+		@Param("tournamentEventId") tournamentEventId: string,
 		@Req() { user }: IRequestUser,
 	): Promise<ApiResponse<TournamentRegistration[]>> {
 		return this.getTournamentRegistrationByTournamentIdUseCase.execute(
-			tournamentId,
+			tournamentEventId,
 			user.id,
 		);
 	}

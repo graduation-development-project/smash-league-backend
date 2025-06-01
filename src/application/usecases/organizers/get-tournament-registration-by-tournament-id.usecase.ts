@@ -12,11 +12,11 @@ export class GetTournamentRegistrationByTournamentIdUseCase {
 	) {}
 
 	async execute(
-		tournamentId: string,
+		tournamentEvenId: string,
 		organizerId: string,
 	): Promise<ApiResponse<TournamentRegistration[]>> {
-		const tournamentRegistrations = await this.organizerRepository.getTournamentRegistrationByTournamentId(
-			tournamentId,
+		const tournamentRegistrations = await this.organizerRepository.getTournamentRegistrationByTournamentEventId(
+			tournamentEvenId,
 			organizerId
 		);
 		console.log(tournamentRegistrations[0].submittedAnswersForEvent);

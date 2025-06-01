@@ -172,23 +172,29 @@ export class PrismaOrganizersRepositoryAdapter
 		}
 	}
 
-	async getTournamentRegistrationByTournamentId(
-		tournamentId: string,
+	async getTournamentRegistrationByTournamentEventId(
+		tournamentEventId: string,
 		organizerId: string,
 	): Promise<TournamentRegistration[]> {
 		try {
+			console.log(tournamentEventId);
+
 			const isTournamentOrganizer =
-				await this.prismaService.tournament.findUnique({
+				await this.prismaService.tournamentEvent.findUnique({
 					where: {
-						id: tournamentId,
+						id: tournamentEventId,
 					},
 
 					select: {
-						organizerId: true
-					}
+						tournament: {
+							select: {
+								organizerId: true,
+							},
+						},
+					},
 				});
 
-			if (isTournamentOrganizer?.organizerId !== organizerId) {
+			if (isTournamentOrganizer?.tournament?.organizerId !== organizerId) {
 				throw new BadRequestException(
 					"You are not organizer of this tournament",
 				);
@@ -196,7 +202,7 @@ export class PrismaOrganizersRepositoryAdapter
 
 			return await this.prismaService.tournamentRegistration.findMany({
 				where: {
-					tournamentId,
+					tournamentEventId,
 					isDeleted: false,
 				},
 
