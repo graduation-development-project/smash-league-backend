@@ -147,6 +147,8 @@ import { CountNumberTourInCurrentMonthUseCase } from "../../application/usecases
 import { UpdateEventPrizeWinnerUseCase } from "src/application/usecases/tournament/tournament-event/update-event-prize-winner.usecase";
 import { GetBracketUseCase } from "src/application/usecases/tournament/tournament-event/get-bracket.usecase";
 import { GetOthersPrizesUseCase } from "src/application/usecases/tournament/tournament-event/get-others-prizes.usecase";
+import { GetAllOnGoingTournamentUseCase } from "../../application/usecases/tournament/get-all-on-going-tournament.usecase";
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller("/tournaments")
 export class TournamentController {
@@ -210,7 +212,8 @@ export class TournamentController {
 		private readonly countNumberTourInCurrentMonthUseCase: CountNumberTourInCurrentMonthUseCase,
 		private readonly updateEventPrizeWinnerUseCase: UpdateEventPrizeWinnerUseCase,
 		private readonly getBracketUseCase: GetBracketUseCase,
-		private readonly getOtherPrizesUseCase: GetOthersPrizesUseCase
+		private readonly getOtherPrizesUseCase: GetOthersPrizesUseCase,
+		private readonly getAllOnGoingTournamentUseCase: GetAllOnGoingTournamentUseCase,
 	) {}
 
 	@Put("/modify-tournament-serie")
@@ -426,7 +429,9 @@ export class TournamentController {
 	@Get("/get-tournament-event/:tournamentId")
 	async getTournamentEventByTournamentId(
 		@Param("tournamentId") tournamentId: string,
-	): Promise<ApiResponse<ITournamentEventDetailWithPrizeAndConditionResponse[]>> {
+	): Promise<
+		ApiResponse<ITournamentEventDetailWithPrizeAndConditionResponse[]>
+	> {
 		return await this.getTournamentEventsByTournamentIdUseCase.execute(
 			tournamentId,
 		);
@@ -735,7 +740,9 @@ export class TournamentController {
 	}
 
 	@Get("/get-other-prizes-of-event/:tournamentEventId")
-	async getOtherPrizesOfEvent(@Param("tournamentEventId") tournamentEventId: string): Promise<ApiResponse<IEventPrizeResponse[]>> {
+	async getOtherPrizesOfEvent(
+		@Param("tournamentEventId") tournamentEventId: string,
+	): Promise<ApiResponse<IEventPrizeResponse[]>> {
 		return await this.getOtherPrizesUseCase.execute(tournamentEventId);
 	}
 
@@ -793,17 +800,29 @@ export class TournamentController {
 	@Put("/update-event-prize-winner/:prizeId")
 	@UseGuards(JwtAccessTokenGuard, RolesGuard)
 	@Roles(RoleMap.Organizer.name)
-	async updateEventPrizeWinner(@Param("prizeId") prizeId: string,
-	@Query("participantId") participantId: string): Promise<ApiResponse<EventPrize>> {
-		return await this.updateEventPrizeWinnerUseCase.execute(prizeId, participantId);
+	async updateEventPrizeWinner(
+		@Param("prizeId") prizeId: string,
+		@Query("participantId") participantId: string,
+	): Promise<ApiResponse<EventPrize>> {
+		return await this.updateEventPrizeWinnerUseCase.execute(
+			prizeId,
+			participantId,
+		);
 	}
 
 	@Get("/get-bracket/:tournamentEventId")
 	async getBracket(
 		@Param("tournamentEventId") tournamentEventId: string,
 	): Promise<ApiResponse<any>> {
-		return await this.getBracketUseCase.execute(
-			tournamentEventId,
-		);
+		return await this.getBracketUseCase.execute(tournamentEventId);
+	}
+
+	@Get("/get-all-ongoing-tournament")
+	@UseGuards(JwtAccessTokenGuard, RolesGuard)
+	@Roles(RoleMap.Staff.name, RoleMap.Admin.name)
+	async getAllOnGoingTournament(): Promise<
+		ApiResponse<{ all: number; thisWeek: number }>
+	> {
+		return await this.getAllOnGoingTournamentUseCase.execute();
 	}
 }

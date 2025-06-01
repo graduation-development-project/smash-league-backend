@@ -113,4 +113,9 @@ export interface TournamentRepositoryPort {
 		previousCount: number;
 		changeRate: number;
 	}>;
+
+	getAllOnGoingTournament(): Promise<{
+		all: number;
+		thisWeek: number;
+	}>;
 }

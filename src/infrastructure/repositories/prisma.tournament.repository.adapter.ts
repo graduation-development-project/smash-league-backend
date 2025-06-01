@@ -957,4 +957,46 @@ export class PrismaTournamentRepositoryAdapter
 			throw error;
 		}
 	}
+
+	async getAllOnGoingTournament(): Promise<{ all: number; thisWeek: number }> {
+		try {
+			const now = new Date();
+
+			const currentDay = now.getDay() === 0 ? 7 : now.getDay();
+			const startOfCurrentWeek = new Date(now);
+
+			startOfCurrentWeek.setDate(now.getDate() - currentDay + 1);
+			startOfCurrentWeek.setHours(0, 0, 0, 0);
+
+			console.log(startOfCurrentWeek);
+
+			const endOfCurrentWeek = new Date(startOfCurrentWeek);
+			endOfCurrentWeek.setDate(startOfCurrentWeek.getDate() + 6);
+			endOfCurrentWeek.setHours(23, 59, 59, 999);
+
+			console.log(endOfCurrentWeek);
+
+			const [allTour, thisWeekTour] = await Promise.all([
+				this.prisma.tournament.count({
+					where: {
+						status: TournamentStatus.ON_GOING,
+					},
+				}),
+				this.prisma.tournament.count({
+					where: {
+						status: TournamentStatus.ON_GOING,
+						startDate: { gte: startOfCurrentWeek, lte: endOfCurrentWeek },
+					},
+				}),
+			]);
+
+			return {
+				all: allTour,
+				thisWeek: thisWeekTour,
+			};
+		} catch (error) {
+			console.error("getAllOnGoingTournament failed", error);
+			throw error;
+		}
+	}
 }
