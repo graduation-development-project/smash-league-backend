@@ -1,11 +1,15 @@
-import { Gender, Prisma, PrismaClient, TeamStatus, Tournament, TournamentRegistrationRole, TournamentStatus } from "@prisma/client";
+import { BadmintonParticipantType, Gender, Prisma, PrismaClient, TeamStatus, Tournament, TournamentRegistrationRole, TournamentStatus, TypeOfFormat } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
-	
+	// await tournamentSeeding();
+	await tournamentEventSeeding();
+}
+
+async function tournamentSeeding() {
 	// const tournamentSerie = await prisma.tournamentSerie.findFirst();
 	const user = await prisma.user.create({
 		data: {
@@ -15,6 +19,17 @@ async function main() {
 			phoneNumber: "0862767232"
 		}
 	});
+	// const user = await prisma.user.findFirst({
+	// 	where: {
+	// 		email: "nguyenhoangbao@gmail.com"
+	// 	}
+	// });
+	// const tournamentSerie = await prisma.tournamentSerie.findFirst({
+	// 	where: {
+	// 		belongsToUserId: user.id,
+	// 		tournamentSerieName: "2024"
+	// 	}
+	// });
 	const tournamentSerie = await prisma.tournamentSerie.create({
 		data: {
 			serieBackgroundImageURL: "",
@@ -268,49 +283,155 @@ async function main() {
 			tournamentSerieId: tournamentSerie.id
 		},
 		// Các bản ghi bổ sung từ tháng 09/2024 đến tháng 06/2025
-  ...Array.from({ length: 14 }, (_, i) => {
-    const month = (i + 9) % 12 + 1;
-    const year = month >= 8 ? 2024 : 2025;
-    const paddedMonth = month.toString().padStart(2, '0');
-    return {
-      id: `giai-${paddedMonth}01`,
-      name: `Giải Cầu Lông Tháng ${paddedMonth}/${year}`,
-      shortName: `GCL ${paddedMonth}/${year.toString().slice(2)}`,
-      description: `Giải tháng ${paddedMonth}/${year}`,
-      organizerId: user.id,
-      contactPhone: "+84 987654321",
-      contactEmail: `gcl${paddedMonth}${year}@gmail.com`,
-      mainColor: ["#3498DB", "#1ABC9C", "#2ECC71", "#F1C40F", "#E67E22"][i % 5],
-      backgroundTournament: `https://example.com/image${i + 2}.jpg`,
-      location: "Nhà thi đấu đa năng",
-      registrationOpeningDate: `${year}-${paddedMonth}-01T00:00:00Z`,
-      registrationClosingDate: `${year}-${paddedMonth}-17T23:59:59Z`,
-      drawDate: `${year}-${paddedMonth}-18T13:30:00Z`,
-      startDateFirstTime: `${year}-${paddedMonth}-19T08:30:00Z`,
-      endDateFirstTime: `${year}-${paddedMonth}-20T19:00:00Z`,
-      countUpdateOccurTime: 0,
-      startDate: `${year}-${paddedMonth}-19T08:30:00Z`,
-      endDate: `${year}-${paddedMonth}-20T19:00:00Z`,
-      checkInBeforeStart: `${year}-${paddedMonth}-20T07:30:00Z`,
-      numberOfCourt: 4 + (i % 3),
-      registrationFeePerPerson: 100000,
-      registrationFeePerPair: 120000,
-      maxEventPerPerson: 2,
-      status: TournamentStatus.CREATED,
-      protestFeePerTime: 65000,
-      prizePool: 20000000,
-      hasMerchandise: false,
-      numberOfMerchandise: 0,
-      merchandiseImages: [],
-      requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
-      isRecruit: true,
-      tournamentSerieId: tournamentSerie.id
-    }})
+		...Array.from({ length: 12 }, (_, i) => {
+			const month = (i + 9) % 12 + 1;
+			const year = month >= 8 ? 2024 : 2025;
+			const paddedMonth = month.toString().padStart(2, '0');
+			return {
+				id: `giai-${paddedMonth}01`,
+				name: `Giải Cầu Lông Tháng ${paddedMonth}/${year}`,
+				shortName: `GCL ${paddedMonth}/${year.toString().slice(2)}`,
+				description: `Giải tháng ${paddedMonth}/${year}`,
+				organizerId: user.id,
+				contactPhone: "+84 987654321",
+				contactEmail: `gcl${paddedMonth}${year}@gmail.com`,
+				mainColor: ["#3498DB", "#1ABC9C", "#2ECC71", "#F1C40F", "#E67E22"][i % 5],
+				backgroundTournament: `https://example.com/image${i + 2}.jpg`,
+				location: "Nhà thi đấu đa năng",
+				registrationOpeningDate: `${year}-${paddedMonth}-01T00:00:00Z`,
+				registrationClosingDate: `${year}-${paddedMonth}-17T23:59:59Z`,
+				drawDate: `${year}-${paddedMonth}-18T13:30:00Z`,
+				startDateFirstTime: `${year}-${paddedMonth}-19T08:30:00Z`,
+				endDateFirstTime: `${year}-${paddedMonth}-20T19:00:00Z`,
+				countUpdateOccurTime: 0,
+				startDate: `${year}-${paddedMonth}-19T08:30:00Z`,
+				endDate: `${year}-${paddedMonth}-20T19:00:00Z`,
+				checkInBeforeStart: `${year}-${paddedMonth}-20T07:30:00Z`,
+				numberOfCourt: 4 + (i % 3),
+				registrationFeePerPerson: 100000,
+				registrationFeePerPair: 120000,
+				maxEventPerPerson: 2,
+				status: TournamentStatus.CREATED,
+				protestFeePerTime: 65000,
+				prizePool: 20000000,
+				hasMerchandise: false,
+				numberOfMerchandise: 0,
+				merchandiseImages: [],
+				requiredAttachment: ["IDENTIFICATION_CARD", "PORTRAIT_PHOTO"],
+				isRecruit: true,
+				tournamentSerieId: tournamentSerie.id
+			}})
 	]; 
-	const tournamentCreated = await prisma.tournament.createManyAndReturn({
+	console.log(tournamentCreate);
+		const tournamentCreated = await prisma.tournament.createManyAndReturn({
 		data: tournamentCreate
 	});
 	console.log(tournamentCreated);
+}
+
+async function tournamentEventSeeding() {
+	const tournaments = await prisma.tournament.findMany({
+		where: {
+			id: { 
+				in: [
+					"hue-heritage-cup-2024",
+					"cantho-delta-open-2024",
+					"ha-noi-grand-prix-2024",
+					"hcm-spring-smash-2024",
+					"vung-tau-beach-smash-2024",
+					"giai-1001",
+					"giai-1101",
+					"giai-1201",
+					"giai-0101",
+					"giai-0201",
+					"giai-0301",
+					"giai-0401",
+					"giai-0501"
+				]
+			}
+		}
+	});
+	console.log(tournaments.map((item) => item.id));
+
+const eventMenSingle = {
+		tournamentEvent: BadmintonParticipantType.MENS_SINGLE,
+		fromAge: 18,
+		toAge: 30,
+		winningPoint: 21,
+		lastPoint: 30,
+		numberOfGames: 3,
+		typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+		ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
+		minimumAthlete: 4,
+		maximumAthlete: 32,
+		// championshipPrize: "Gold Medal, 10,000,000 VND",
+		// runnerUpPrize: "Silver Medal, 5,000,000 VND",
+		// thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+	};
+
+	const eventMenDouble = {
+		tournamentEvent: BadmintonParticipantType.MENS_DOUBLE,
+		fromAge: 18,
+		toAge: 30,
+		winningPoint: 21,
+		lastPoint: 30,
+		numberOfGames: 3,
+		typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+		ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+		minimumAthlete: 4, // Minimum 4 pairs
+		maximumAthlete: 32, // Maximum 32 pairs
+		// championshipPrize: "Gold Medal, 15,000,000 VND", // Slightly higher prize for doubles
+		// runnerUpPrize: "Silver Medal, 7,500,000 VND",
+		// thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+	};
+
+	const eventWomanSingle = {
+		tournamentEvent: BadmintonParticipantType.WOMENS_SINGLE,
+		fromAge: 18,
+		toAge: 30,
+		winningPoint: 21,
+		lastPoint: 30,
+		numberOfGames: 3,
+		typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+		ruleOfEventExtension: "Players must win 2 out of 3 games to advance.",
+		minimumAthlete: 4,
+		maximumAthlete: 32,
+		// championshipPrize: "Gold Medal, 10,000,000 VND",
+		// runnerUpPrize: "Silver Medal, 5,000,000 VND",
+		// thirdPlacePrize: "Bronze Medal, 2,500,000 VND"
+	};
+
+	const eventWomanDouble = {
+		tournamentEvent: BadmintonParticipantType.WOMENS_DOUBLE,
+		fromAge: 18,
+		toAge: 30,
+		winningPoint: 21,
+		lastPoint: 30,
+		numberOfGames: 3,
+		typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+		ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+		minimumAthlete: 4, // Minimum 4 pairs
+		maximumAthlete: 32, // Maximum 32 pairs
+		// championshipPrize: "Gold Medal, 15,000,000 VND", // Same as Men's Doubles
+		// runnerUpPrize: "Silver Medal, 7,500,000 VND",
+		// thirdPlacePrize: "Bronze Medal, 3,500,000 VND"
+	};
+
+	const eventMixedDouble = {
+		tournamentEvent: BadmintonParticipantType.MIXED_DOUBLE,
+		fromAge: 18,
+		toAge: 30,
+		winningPoint: 21,
+		lastPoint: 30,
+		numberOfGames: 3,
+		typeOfFormat: TypeOfFormat.SINGLE_ELIMINATION,
+		ruleOfEventExtension: "Pairs must win 2 out of 3 games to advance.", // Changed Players to Pairs
+		minimumAthlete: 4, // Minimum 4 pairs
+		maximumAthlete: 32, // Maximum 32 pairs
+		// championshipPrize: "Gold Medal, 12,000,000 VND", // Prize between Singles and Doubles
+		// runnerUpPrize: "Silver Medal, 6,000,000 VND",
+		// thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
+	};	
 }
 
 
