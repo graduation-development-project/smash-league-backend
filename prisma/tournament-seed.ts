@@ -1,4 +1,4 @@
-import { BadmintonParticipantType, Gender, Prisma, PrismaClient, Role, TeamStatus, Tournament, TournamentRegistrationRole, TournamentStatus, TypeOfFormat, User } from "@prisma/client";
+import { BadmintonParticipantType, Gender, Prisma, PrismaClient, Role, TeamStatus, Tournament, TournamentRegistrationRole, TournamentRegistrationStatus, TournamentStatus, TypeOfFormat, User } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -10,6 +10,7 @@ async function main() {
 	await tournamentRegistrationSeeding();
 	// await getAllRoles();
 	// await getAthletes();
+	await umpireTournamentSeeding();
 }
 
 async function getAllRoles() {
@@ -562,6 +563,131 @@ async function getRandomDate(startDate: Date, endDate: Date): Promise<Date> {
 	return new Date(randomTime);
 }
 
+async function umpireTournamentSeeding() {
+	const tournaments = await prisma.tournament.findMany({
+		where: {
+			id: { 
+				in: [
+					"hue-heritage-cup-2024",
+					"cantho-delta-open-2024",
+					"ha-noi-grand-prix-2024",
+					"hcm-spring-smash-2024",
+					"vung-tau-beach-smash-2024",
+					"giai-1001",
+					"giai-1101",
+					"giai-1201",
+					"giai-0101",
+					"giai-0201",
+					"giai-0301",
+					"giai-0401",
+					"giai-0501"
+				]
+			}
+		},
+		select: {
+			id: true,
+			registrationOpeningDate: true,
+			registrationClosingDate: true,
+			tournamentEvents: {
+				select: {
+					id: true
+				}
+			}
+		}
+	});
+	var umpires: Prisma.UserCreateManyInput[] = [
+	];
+	const names = [
+		"Nguyễn Văn A", "Lê Thị B", "Phạm Quốc Cường", "Đỗ Thanh Hằng",
+		"Vũ Minh Tuấn", "Ngô Nhật Linh", "Trịnh Hoàng Nam", "Hoàng Mỹ Linh", "Bùi Tuấn Kiệt"
+	];
+
+	const emails = [
+		"nguyenvana@gmail.com", "lethib@gmail.com", "phamcuong@gmail.com",
+		"dohang@gmail.com", "vuminhtuan@gmail.com", "ngonhatlinh@gmail.com", "trinhnam@gmail.com",
+		"hoanglinh@gmail.com", "buituankiet@gmail.com"
+	];
+
+	const password = await bcrypt.hash("12345678", 10);
+
+
+	const data = names.map((name, index) => ({
+    name: name,
+    email: emails[index],
+    password: password,
+    phoneNumber: getRandomPhone(index),
+    isVerified: true,
+    gender: getRandomGender(),
+    dateOfBirth: getRandomDOB(),
+  }));
+	umpires.push(...data);
+
+	console.log(umpires);
+	const umpiresCreated = await prisma.user.createManyAndReturn({
+		data: umpires
+	});
+	console.log(umpiresCreated);
+	const umpireRole = await getRole("Umpire");
+	const athleteRole = await getRole("Athlete");
+	var userRoleCreate: Prisma.UserRoleCreateManyInput[] = [];
+	for (let i = 0; i < umpiresCreated.length; i++) {
+		userRoleCreate.push({
+				userId: umpiresCreated[i].id,
+				roleId: athleteRole.id
+			},
+			{
+				userId: umpiresCreated[i].id,
+				roleId: umpireRole.id
+			}
+		);
+	}
+	const userRoleCreated = await prisma.userRole.createManyAndReturn({
+		data: userRoleCreate
+	});
+	var tournamentUmpiresCreate: Prisma.TournamentUmpiresCreateManyInput[] = [];
+	var tournamentUmpiresRegistrationCreate: Prisma.TournamentRegistrationCreateManyInput[] = [];
+	for (let i = 0; i < tournaments.length; i++) {
+		umpiresCreated.forEach(async (item) => {
+			tournamentUmpiresCreate.push({
+				tournamentId: tournaments[i].id,
+				userId: item.id,
+				isAvailable: true
+			});
+			tournamentUmpiresRegistrationCreate.push({
+				userId: item.id,
+				tournamentId: tournaments[i].id,
+				registrationRole: TournamentRegistrationRole.UMPIRE,
+				createdAt: await getRandomDate(tournaments[i].registrationOpeningDate, tournaments[i].registrationClosingDate),
+				status: TournamentRegistrationStatus.APPROVED
+			});
+		});
+	}
+	const tournamentUmpiresCreated = await prisma.tournamentUmpires.createManyAndReturn({
+		data: tournamentUmpiresCreate
+	});
+	const tournamentUmpiresRegistrationCreated = await prisma.tournamentRegistration.createManyAndReturn({
+		data: tournamentUmpiresRegistrationCreate
+	});
+}
+
+function getRandomGender(): "MALE" | "FEMALE" {
+  return Math.random() < 0.5 ? "MALE" : "FEMALE";
+}
+
+function getRandomPhone(index: number): string {
+  // Example: +84 9122792308 + index
+  const base = 912279230;
+  return `+84 ${base + index}`;
+}
+
+function getRandomDOB(): Date {
+  const now = new Date();
+  const latestYear = now.getFullYear() - 18;
+  const year = Math.floor(Math.random() * 10) + (latestYear - 10); // Age 18–28
+  const month = Math.floor(Math.random() * 12);
+  const day = Math.floor(Math.random() * 28) + 1;
+  return new Date(year, month, day);
+}
 
 
 main()
