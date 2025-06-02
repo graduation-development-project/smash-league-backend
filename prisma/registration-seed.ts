@@ -5,7 +5,7 @@ import * as bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-	// await createAthleteTransaction();
+	await createAthleteTransaction();
 }
 
 
@@ -44,14 +44,14 @@ async function createAthleteTransaction() {
 			registrationClosingDate: true
 		}
 	});
-
+	console.log(tournaments.map((item) => item.id));
 	const tournamentRegistrations = await prisma.tournamentRegistration.findMany({
 		where: {
 			tournamentId: {
 				in: tournaments.map((item) => item.id)
 			},
 			registrationRole: TournamentRegistrationRole.ATHLETE,
-			status: TournamentRegistrationStatus.PENDING
+			status: TournamentRegistrationStatus.APPROVED
 		},
 		select: {
 			id: true,

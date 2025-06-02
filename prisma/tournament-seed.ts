@@ -522,6 +522,7 @@ async function tournamentRegistrationSeeding() {
 
 	// const umpireCreate: Prisma.UserCreate
 	var tournamentRegistrationCreate: Prisma.TournamentRegistrationCreateManyInput[] = [];
+	var tournamentParticipantsCreate: Prisma.TournamentParticipantsCreateManyInput[] = [];
 	for (let i = 0; i < tournaments.length; i++) {
 		for (let j = 0; j < tournaments[i].tournamentEvents.length; j++) {
 			for (let k = 0; k < athletes.length; k++) {
@@ -531,14 +532,22 @@ async function tournamentRegistrationSeeding() {
 					tournamentId: tournaments[i].id,
 					userId: athletes[k].id,
 					createdAt: await getRandomDate(tournaments[i].registrationOpeningDate, tournaments[i].registrationClosingDate),
-					status: TournamentRegistrationStatus.PENDING
+					status: TournamentRegistrationStatus.APPROVED
 				});
+				tournamentParticipantsCreate.push({
+					tournamentEventId: tournaments[i].tournamentEvents[j].id,
+					tournamentId: tournaments[i].id,
+					userId: athletes[k].id,
+				})
 			}
 		}
 	}
 	console.log(tournamentRegistrationCreate);
 	const tournamentRegistrationCreated = await prisma.tournamentRegistration.createManyAndReturn({
 		data: tournamentRegistrationCreate
+	});
+	const tournamentParticipantsCreated = await prisma.tournamentParticipants.createMany({
+		data: tournamentParticipantsCreate
 	});
 }
 
