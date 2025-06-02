@@ -171,8 +171,11 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 				filterFromDate = startOfWeek(baseDate, { weekStartsOn: 1 }); // Monday
 				filterToDate = endOfWeek(baseDate, { weekStartsOn: 1 }); // Sunday
 			} else {
-				filterFromDate = fromDate ? fromDate : undefined;
-				filterToDate = toDate;
+				const baseYear = fromDate
+					? fromDate.getFullYear()
+					: new Date().getFullYear();
+				filterFromDate = new Date(baseYear, 0, 1);
+				filterToDate = new Date(baseYear, 11, 31, 23, 59, 59, 999);
 			}
 
 			const registrations =
@@ -262,8 +265,11 @@ export class PrismaTournamentRegistrationRepositoryAdapter
 				filterFromDate = startOfWeek(baseDate, { weekStartsOn: 1 }); // Monday
 				filterToDate = endOfWeek(baseDate, { weekStartsOn: 1 }); // Sunday
 			} else {
-				filterFromDate = fromDate ? fromDate : undefined;
-				filterToDate = toDate;
+				const baseYear = fromDate
+					? fromDate.getFullYear()
+					: new Date().getFullYear();
+				filterFromDate = new Date(baseYear, 0, 1);
+				filterToDate = new Date(baseYear, 11, 31, 23, 59, 59, 999);
 			}
 
 			console.log(organizerId);
