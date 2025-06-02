@@ -5,7 +5,7 @@ import * as bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-	// await tournamentSeeding();
+	await tournamentSeeding();
 	await tournamentEventSeeding();
 }
 
@@ -353,7 +353,7 @@ async function tournamentEventSeeding() {
 	});
 	console.log(tournaments.map((item) => item.id));
 
-const eventMenSingle = {
+	const eventMenSingle = {
 		tournamentEvent: BadmintonParticipantType.MENS_SINGLE,
 		fromAge: 18,
 		toAge: 30,
@@ -432,6 +432,26 @@ const eventMenSingle = {
 		// runnerUpPrize: "Silver Medal, 6,000,000 VND",
 		// thirdPlacePrize: "Bronze Medal, 3,000,000 VND"
 	};	
+
+	var tournamentEventCreate: Prisma.TournamentEventCreateManyInput[] = [];
+	for (let i = 0; i < tournaments.length; i++) {
+		tournamentEventCreate.push({
+			...eventMenSingle,
+			tournamentId: tournaments[i].id
+		});
+		tournamentEventCreate.push({
+			...eventMenDouble,
+			tournamentId: tournaments[i].id
+		});
+		tournamentEventCreate.push({
+			...eventMixedDouble,
+			tournamentId: tournaments[i].id
+		});
+	}
+	console.log(tournamentEventCreate);
+	const tournamentEventCreated = await prisma.tournamentEvent.createManyAndReturn({
+		data: tournamentEventCreate
+	});
 }
 
 
