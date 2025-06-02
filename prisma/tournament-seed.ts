@@ -1,4 +1,4 @@
-import { BadmintonParticipantType, Gender, Prisma, PrismaClient, TeamStatus, Tournament, TournamentRegistrationRole, TournamentStatus, TypeOfFormat } from "@prisma/client";
+import { BadmintonParticipantType, Gender, Prisma, PrismaClient, Role, TeamStatus, Tournament, TournamentRegistrationRole, TournamentStatus, TypeOfFormat, User } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -7,6 +7,23 @@ const prisma = new PrismaClient();
 async function main() {
 	await tournamentSeeding();
 	await tournamentEventSeeding();
+	await tournamentRegistrationSeeding();
+	// await getAllRoles();
+	// await getAthletes();
+}
+
+async function getAllRoles() {
+	const roles = await prisma.role.findMany();
+	console.log(roles.filter((item) => item.roleName === "Umpire")[0]);
+}
+
+async function getRole(roleName: string): Promise<Role> {
+	const role = await prisma.role.findFirst({
+		where: {
+			roleName: roleName
+		}
+	});
+	return role;
 }
 
 async function tournamentSeeding() {
@@ -18,6 +35,20 @@ async function tournamentSeeding() {
 			password: "12345678",
 			phoneNumber: "0862767232"
 		}
+	});
+	const organizerRole = await getRole("Organizer");
+	const athleteRole = await getRole("Athlete");
+	const userRoleCreated = await prisma.userRole.createManyAndReturn({
+		data: [
+			{
+				userId: user.id,
+				roleId: organizerRole.id
+			},
+			{
+				userId: user.id,
+				roleId: athleteRole.id
+			}
+		]
 	});
 	// const user = await prisma.user.findFirst({
 	// 	where: {
@@ -452,6 +483,83 @@ async function tournamentEventSeeding() {
 	const tournamentEventCreated = await prisma.tournamentEvent.createManyAndReturn({
 		data: tournamentEventCreate
 	});
+}
+
+async function tournamentRegistrationSeeding() {
+	const tournaments = await prisma.tournament.findMany({
+		where: {
+			id: { 
+				in: [
+					"hue-heritage-cup-2024",
+					"cantho-delta-open-2024",
+					"ha-noi-grand-prix-2024",
+					"hcm-spring-smash-2024",
+					"vung-tau-beach-smash-2024",
+					"giai-1001",
+					"giai-1101",
+					"giai-1201",
+					"giai-0101",
+					"giai-0201",
+					"giai-0301",
+					"giai-0401",
+					"giai-0501"
+				]
+			}
+		},
+		select: {
+			id: true,
+			registrationOpeningDate: true,
+			registrationClosingDate: true,
+			tournamentEvents: {
+				select: {
+					id: true
+				}
+			}
+		}
+	});
+	const athletes: User[] = await getAthletes();
+
+	// const umpireCreate: Prisma.UserCreate
+	var tournamentRegistrationCreate: Prisma.TournamentRegistrationCreateManyInput[] = [];
+	for (let i = 0; i < tournaments.length; i++) {
+		for (let j = 0; j < tournaments[i].tournamentEvents.length; j++) {
+			for (let k = 0; k < athletes.length; k++) {
+				tournamentRegistrationCreate.push({
+					registrationRole: TournamentRegistrationRole.ATHLETE,
+					tournamentEventId: tournaments[i].tournamentEvents[j].id,
+					tournamentId: tournaments[i].id,
+					userId: athletes[k].id,
+					createdAt: await getRandomDate(tournaments[i].registrationOpeningDate, tournaments[i].registrationClosingDate)
+				});
+			}
+		}
+	}
+	console.log(tournamentRegistrationCreate);
+	const tournamentRegistrationCreated = await prisma.tournamentRegistration.createManyAndReturn({
+		data: tournamentRegistrationCreate
+	});
+}
+
+async function getAthletes(): Promise<any[]> {
+	const athleteRole = await getRole("Athlete");
+	const users = await prisma.user.findMany({
+		where: {
+			userRoles: {
+				some: {
+					roleId: athleteRole.id
+				}
+			}
+		},
+		take: 20
+	});
+	return users;
+}
+
+async function getRandomDate(startDate: Date, endDate: Date): Promise<Date> {
+	const startTime = startDate.getTime();
+	const endTime = endDate.getTime();
+	const randomTime = startTime + Math.random() * (endTime - startTime);
+	return new Date(randomTime);
 }
 
 
