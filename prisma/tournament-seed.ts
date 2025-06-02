@@ -33,7 +33,7 @@ async function tournamentSeeding() {
 		data: {
 			email: "nguyenhoangbao@gmail.com",
 			name: "Nguyễn Hoàng Bảo",
-			password: "12345678",
+			password: await bcrypt.hash("12345678", 10),
 			phoneNumber: "0862767232"
 		}
 	});
@@ -530,7 +530,8 @@ async function tournamentRegistrationSeeding() {
 					tournamentEventId: tournaments[i].tournamentEvents[j].id,
 					tournamentId: tournaments[i].id,
 					userId: athletes[k].id,
-					createdAt: await getRandomDate(tournaments[i].registrationOpeningDate, tournaments[i].registrationClosingDate)
+					createdAt: await getRandomDate(tournaments[i].registrationOpeningDate, tournaments[i].registrationClosingDate),
+					status: TournamentRegistrationStatus.PENDING
 				});
 			}
 		}
