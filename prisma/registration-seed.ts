@@ -5,8 +5,10 @@ import * as bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-	await createAthleteTransaction();
+	// await createAthleteTransaction();
 }
+
+
 
 async function createAthleteTransaction() {
 	const tournaments = await prisma.tournament.findMany({
