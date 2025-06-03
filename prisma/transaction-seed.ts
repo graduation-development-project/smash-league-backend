@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, TeamStatus, TransactionStatus, TransactionType } from "@prisma/client";
+import { OrderStatus, Prisma, PrismaClient, TeamStatus, TransactionStatus, TransactionType } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
@@ -23,28 +23,38 @@ async function createOrganizerTransaction() {
 	});
 	var transactionsCreate: Prisma.TransactionCreateManyInput[] = [];
 	for (let i = 0; i < organizers.length; i++) {
+		const orderCreated = await prisma.order.create({
+			data: {
+				packageId: packages[1].id,
+				orderStatus: OrderStatus.PAID,
+				total: packages[1].price,
+				userId: organizers[i].id
+			}
+		});
 		transactionsCreate.push({
 			userId: organizers[i].id,
 			transactionType: TransactionType.BUYING_PAKCKAGE,
 			createdAt: new Date(2024, 4, 31),
 			status: TransactionStatus.SUCCESSFUL,
-			value: packages[0].price,
-			transactionDetail: ""
+			value: packages[1].price,
+			transactionDetail: "",
+			orderId: orderCreated.id
 		},
 		{
 			userId: organizers[i].id,
 			transactionType: TransactionType.BUYING_PAKCKAGE,
 			createdAt: new Date(2024, 4, 32),
 			status: TransactionStatus.SUCCESSFUL,
-			value: packages[0].price,
-			transactionDetail: ""
+			value: packages[1].price,
+			transactionDetail: "",
+			orderId: orderCreated.id
 		});
 		await prisma.user.update({
 			where: {
 				id: organizers[i].id
 			},
 			data: {
-				creditsRemain: packages[0].credits * 2
+				creditsRemain: packages[1].credits * 2
 			}
 		});
 	}

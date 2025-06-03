@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient, TeamStatus } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
+import { create } from "domain";
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
@@ -40,7 +41,11 @@ async function createBrackets() {
 			}
 		}
 	});
-	await createBracket(tournaments[0].tournamentEvents[0].id);
+	for (let i = 0; i < tournaments.length; i++) {
+		for (let j = 0; j < tournaments[i].tournamentEvents.length; j++) {
+			await createBracket(tournaments[i].tournamentEvents[j].id);
+		}
+	}
 }
 
 async function createBracket(tournamentEventId: string) {
