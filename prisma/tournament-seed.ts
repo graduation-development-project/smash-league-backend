@@ -1,16 +1,44 @@
-import { BadmintonParticipantType, Gender, Prisma, PrismaClient, Role, TeamStatus, Tournament, TournamentRegistrationRole, TournamentRegistrationStatus, TournamentStatus, TypeOfFormat, User } from "@prisma/client";
+import { BadmintonParticipantType, Gender, InvitationStatus, Prisma, PrismaClient, Role, TeamStatus, Tournament, TournamentRegistrationRole, TournamentRegistrationStatus, TournamentStatus, TypeOfFormat, User } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
-	await tournamentSeeding();
-	await tournamentEventSeeding();
-	await tournamentRegistrationSeeding();
-	// await getAllRoles();
-	// await getAthletes();
-	await umpireTournamentSeeding();
+	// await tournamentSeeding();
+	// await tournamentEventSeeding();
+	// await tournamentRegistrationSeeding();
+	// // await getAllRoles();
+	// // await getAthletes();
+	// await umpireTournamentSeeding();
+	await createOrganizerVerifications();
+}
+
+async function createOrganizerVerifications() {
+	const organizers = await prisma.user.findMany({
+		where: {
+			userRoles: {
+				some: {
+					role: {
+						roleName: "Organizer"
+					}
+				}
+			}
+		}
+	});
+	console.log(organizers);
+	var verifications: Prisma.UserVerificationCreateManyInput[] = [];
+	for (let i = 0; i < organizers.length; i++) {
+		verifications.push({
+			userId: organizers[i].id,
+			role: "Organizer",
+			createdAt: new Date(2024, 2, 30),
+			status: InvitationStatus.ACCEPTED,			
+		});
+	}
+	const verificationsCreated = await prisma.userVerification.createManyAndReturn({
+		data: verifications
+	});
 }
 
 async function getAllRoles() {
@@ -640,7 +668,14 @@ async function umpireTournamentSeeding() {
 	const umpireRole = await getRole("Umpire");
 	const athleteRole = await getRole("Athlete");
 	var userRoleCreate: Prisma.UserRoleCreateManyInput[] = [];
+	var verifications: Prisma.UserVerificationCreateManyInput[] = [];
 	for (let i = 0; i < umpiresCreated.length; i++) {
+		verifications.push({
+			userId: umpiresCreated[i].id,
+			role: "Umpire",
+			createdAt: new Date(2024, 2, 30),
+			status: InvitationStatus.ACCEPTED,
+		});
 		userRoleCreate.push({
 				userId: umpiresCreated[i].id,
 				roleId: athleteRole.id
@@ -653,6 +688,9 @@ async function umpireTournamentSeeding() {
 	}
 	const userRoleCreated = await prisma.userRole.createManyAndReturn({
 		data: userRoleCreate
+	});
+	const verificationsCreated = await prisma.userVerification.createManyAndReturn({
+		data: verifications
 	});
 	var tournamentUmpiresCreate: Prisma.TournamentUmpiresCreateManyInput[] = [];
 	var tournamentUmpiresRegistrationCreate: Prisma.TournamentRegistrationCreateManyInput[] = [];
