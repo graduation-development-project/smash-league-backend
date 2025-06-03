@@ -1,4 +1,5 @@
-import { Prisma, PrismaClient, TeamStatus } from "@prisma/client";
+import { match } from 'assert';
+import { Match, MatchStatus, Prisma, PrismaClient, PrizeType, TeamStatus } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 import { create } from "domain";
 
@@ -54,7 +55,156 @@ async function createBracket(tournamentEventId: string) {
 			tournamentEventId: tournamentEventId
 		}
 	});
-	console.log(tournamentParticipants);
+	const tournamentEvent = await prisma.tournamentEvent.findUnique({
+		where: {
+			id: tournamentEventId
+		}
+	});
+	let numberOfBracket = getTheNearestNumberOfFullParticipants(tournamentParticipants.length, 1) - 1;
+	const numberOfByeParticipants = getTheNearestNumberOfFullParticipants(tournamentParticipants.length, 1) - tournamentParticipants.length;
+	const numberOfRounds = calculateTheNumberOfRound(tournamentParticipants.length);
+	const numberOfFullParticipants = getTheNearestNumberOfFullParticipants(tournamentParticipants.length, 1);
+	let countableRound = 1;
+	//Set up thirdPlacePrize
+	const thirdPlacePrizes = await prisma.eventPrize.findMany({
+		where: {
+			tournamentEventId: tournamentEventId,
+			prizeType: PrizeType.ThirdPlacePrize,
+
+		}
+	});
+	if (thirdPlacePrizes.length == 2) {
+		const thirdPlaceStage = await prisma.stage.create({
+			data: {
+				stageName: "Third place match",
+				tournamentEventId: tournamentEventId
+			}
+		})
+		const thirdPlaceMatchCreated = await prisma.match.create({
+			data: {
+				isByeMatch: false,
+				matchNumber: numberOfBracket + 1,
+				stageId: thirdPlaceStage.id,
+				matchStatus: MatchStatus.NOT_STARTED,
+				nextMatchId: null,
+				tournamentEventId: tournamentEventId
+			}
+		});
+	}
+	//seed matches
+	let numberOfMatchPerRound = 1;
+	let check = 0;
+	let nextMatches: Match[] = [];
+	do {
+		console.log(nextMatches);
+		countableRound *= 2;
+		check += 1;
+		const stageCreate = await createStage(
+			getRoundOfBracket(countableRound),
+			tournamentEvent.id);
+		let matchesCreate: Match[] = [];
+		if (check === 1) {
+			const matchCreate = await prisma.match.create({
+				data: {
+					matchStatus: MatchStatus.NOT_STARTED,
+					nextMatchId: null,
+					stageId: stageCreate.id,
+					isByeMatch: false,
+					matchNumber: numberOfBracket,
+					tournamentEventId: tournamentEvent.id
+				}
+			});
+			matchesCreate.push(matchCreate);
+			numberOfBracket -= 1;
+		} else if (check === numberOfRounds) {
+			const range = createRangeNumberArray(((numberOfByeParticipants / 2) + 1), Math.ceil(((numberOfFullParticipants - 2) / 2) - Math.ceil(numberOfByeParticipants / 2) + 1));
+			for (let i = 2; i <= nextMatches.length * 2; i+=2) {
+				// console.log(numberOfBracket, " ", this.checkNumberIsInRange(i, range));
+				if (!checkNumberIsInRange(i, range)) {
+					const matchCreate = await prisma.match.create({
+						data: {
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: nextMatches[i/2-1].id,
+							stageId: stageCreate.id,
+							isByeMatch: true,
+							matchNumber: numberOfBracket,
+							tournamentEventId: tournamentEvent.id
+						}
+					});
+					matchesCreate.push(matchCreate);
+					numberOfBracket -= 1;
+				} else {
+					const matchCreate = await prisma.match.create({
+						data: {
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: nextMatches[i/2-1].id,
+							stageId: stageCreate.id,
+							isByeMatch: false,
+							matchNumber: numberOfBracket,
+							tournamentEventId: tournamentEvent.id
+						}
+					});
+					matchesCreate.push(matchCreate);
+					numberOfBracket -= 1;
+				}
+				if (!checkNumberIsInRange(i - 1, range)) {
+					const matchCreate = await prisma.match.create({
+						data: {
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: nextMatches[i/2-1].id,
+							stageId: stageCreate.id,
+							isByeMatch: true,
+							matchNumber: numberOfBracket,
+							tournamentEventId: tournamentEvent.id
+						}
+					});
+					matchesCreate.push(matchCreate);
+					numberOfBracket -= 1;
+				} else {
+					const matchCreate = await prisma.match.create({
+						data: {
+							matchStatus: MatchStatus.NOT_STARTED,
+							nextMatchId: nextMatches[i/2-1].id,
+							stageId: stageCreate.id,
+							isByeMatch: false,
+							matchNumber: numberOfBracket,
+							tournamentEventId: tournamentEvent.id
+						}
+					});
+					matchesCreate.push(matchCreate);
+					numberOfBracket -= 1;
+				}
+			}
+		} else {
+			for (let i = 0; i < nextMatches.length; i++) {
+				const matchCreate = await prisma.match.create({
+					data: {
+						matchStatus: MatchStatus.NOT_STARTED,
+						nextMatchId: nextMatches[i].id,
+						stageId: stageCreate.id,
+						isByeMatch: false,
+						matchNumber: numberOfBracket,
+						tournamentEventId: tournamentEvent.id
+					}
+				});
+				matchesCreate.push(matchCreate);
+				numberOfBracket -= 1;
+				const matchCreate1 = await prisma.match.create({
+					data: {
+						matchStatus: MatchStatus.NOT_STARTED,
+						nextMatchId: nextMatches[i].id,
+						stageId: stageCreate.id,
+						isByeMatch: false,
+						matchNumber: numberOfBracket,
+						tournamentEventId: tournamentEvent.id
+					}
+				});
+				matchesCreate.push(matchCreate1);
+				numberOfBracket -= 1;
+			}
+		}
+		nextMatches = matchesCreate;
+	} while (check < numberOfRounds);
 }
 
 
