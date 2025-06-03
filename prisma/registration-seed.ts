@@ -75,7 +75,8 @@ async function createAthleteTransaction() {
 			createdAt: await getRandomDate(tournamentRegistrations[i].createdAt, tournamentRegistrations[i].tournament.registrationClosingDate),
 			status: TransactionStatus.SUCCESSFUL,
 			value: tournamentRegistrations[i].tournament.registrationFeePerPerson,
-			transactionDetail: ""
+			transactionDetail: "",
+			tournamentRegistrationId: tournamentRegistrations[i].id
 		});
 	}
 	const userTransactionCreated = await prisma.transaction.createManyAndReturn({
