@@ -5,12 +5,12 @@ import * as bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-	// await tournamentSeeding();
-	// await tournamentEventSeeding();
-	// await tournamentRegistrationSeeding();
-	// // await getAllRoles();
-	// // await getAthletes();
-	// await umpireTournamentSeeding();
+	await tournamentSeeding();
+	await tournamentEventSeeding();
+	await tournamentRegistrationSeeding();
+	// await getAllRoles();
+	// await getAthletes();
+	await umpireTournamentSeeding();
 	await createOrganizerVerifications();
 }
 
