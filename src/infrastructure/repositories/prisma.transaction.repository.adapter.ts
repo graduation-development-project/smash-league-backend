@@ -77,11 +77,17 @@ export class PrismaTransactionRepositoryAdapter
 	async createTransactionForBuyingPackage(
 		createTransaction: ICreateTransactionRequest,
 	): Promise<Transaction> {
+		const lastTransaction = await this.prisma.transaction.findFirst({
+			orderBy: {
+				id: "desc"
+			}
+		});
 		return await this.prisma.transaction.create({
 			data: {
+				id: lastTransaction.id + 1,
 				...createTransaction,
 				transactionType: TransactionType.BUYING_PAKCKAGE,
-				status: TransactionStatus.PENDING,
+				status: TransactionStatus.PENDING
 			},
 		});
 	}
@@ -89,8 +95,14 @@ export class PrismaTransactionRepositoryAdapter
 	async createTransactionForRegistrationFee(
 		createTransaction: ICreateTransactionRequest,
 	): Promise<Transaction> {
+		const lastTransaction = await this.prisma.transaction.findFirst({
+			orderBy: {
+				id: "desc"
+			}
+		});
 		return await this.prisma.transaction.create({
 			data: {
+				id: lastTransaction.id,
 				...createTransaction,
 				transactionType: TransactionType.PAY_REGISTRATION_FEE,
 				status: TransactionStatus.PENDING,

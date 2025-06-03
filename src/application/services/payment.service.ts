@@ -29,7 +29,7 @@ export class PaymentPayOSService {
 			this.configService.get<string>("PAYOS_CHECKSUM_KEY"),
 		);
 		const body = {
-			orderCode: transactionId + 2000,
+			orderCode: transactionId,
 			amount: value,
 			description: "Pay tournament fee",
 			items: [
