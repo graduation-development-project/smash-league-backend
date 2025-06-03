@@ -113,6 +113,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 										name: true,
 									},
 								},
+								matchWonByCompetitorId: true
 							},
 							orderBy: {
 								matchNumber: "desc",
