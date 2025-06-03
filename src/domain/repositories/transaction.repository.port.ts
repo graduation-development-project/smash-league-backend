@@ -46,4 +46,9 @@ export interface TransactionRepositoryPort {
 		previousRevenue: number;
 		changeRate: number;
 	}>;
+
+	countAllTransactions(): Promise<{
+		count: number;
+		total: number;
+	}>;
 }

@@ -14,9 +14,9 @@ import { TransactionRepositoryPort } from "src/domain/repositories/transaction.r
 
 @Injectable()
 export class PrismaTransactionRepositoryAdapter
-	implements TransactionRepositoryPort
-{
-	constructor(private readonly prisma: PrismaClient) {}
+	implements TransactionRepositoryPort {
+	constructor(private readonly prisma: PrismaClient) {
+	}
 
 	async updatePaymentForTransaction(
 		transactionId: number,
@@ -79,15 +79,15 @@ export class PrismaTransactionRepositoryAdapter
 	): Promise<Transaction> {
 		const lastTransaction = await this.prisma.transaction.findFirst({
 			orderBy: {
-				id: "desc"
-			}
+				id: "desc",
+			},
 		});
 		return await this.prisma.transaction.create({
 			data: {
 				id: lastTransaction.id + 1,
 				...createTransaction,
 				transactionType: TransactionType.BUYING_PAKCKAGE,
-				status: TransactionStatus.PENDING
+				status: TransactionStatus.PENDING,
 			},
 		});
 	}
@@ -97,8 +97,8 @@ export class PrismaTransactionRepositoryAdapter
 	): Promise<Transaction> {
 		const lastTransaction = await this.prisma.transaction.findFirst({
 			orderBy: {
-				id: "desc"
-			}
+				id: "desc",
+			},
 		});
 		return await this.prisma.transaction.create({
 			data: {
@@ -270,7 +270,7 @@ export class PrismaTransactionRepositoryAdapter
 				],
 				status: TransactionStatus.SUCCESSFUL,
 				createdAt: {
-					gte: start,
+					// gte: start,
 					lte: end,
 				},
 			});
@@ -278,7 +278,7 @@ export class PrismaTransactionRepositoryAdapter
 			const [currentResult, previousResult] = await Promise.all([
 				this.prisma.transaction.aggregate({
 					_sum: { value: true },
-					where: whereClause(startOfCurrentMonth, endOfCurrentMonth),
+					where: whereClause(startOfCurrentMonth, new Date()),
 				}),
 				this.prisma.transaction.aggregate({
 					_sum: { value: true },
@@ -305,6 +305,44 @@ export class PrismaTransactionRepositoryAdapter
 			};
 		} catch (e) {
 			console.error("getRevenueInCurrentMonth failed", e);
+			throw e;
+		}
+	}
+
+	async countAllTransactions(): Promise<{ count: number; total: number }> {
+		try {
+			const [allTransactionsCount, allTransactionsSum] = await Promise.all([
+				this.prisma.transaction.count({
+					where: {
+						status: TransactionStatus.SUCCESSFUL,
+						transactionType: TransactionType.BUYING_PAKCKAGE,
+						createdAt: {
+							lte: new Date(),
+						},
+					},
+				}),
+				this.prisma.transaction.aggregate({
+					_sum: {
+						value: true,
+					},
+					where: {
+						status: TransactionStatus.SUCCESSFUL,
+						transactionType: TransactionType.BUYING_PAKCKAGE,
+						createdAt: {
+							lte: new Date(),
+						},
+					},
+				}),
+			]);
+
+			const totalValue = allTransactionsSum._sum.value || 0;
+
+			return {
+				count: allTransactionsCount,
+				total: totalValue,
+			};
+		} catch (e) {
+			console.error("countAllTransactions failed", e);
 			throw e;
 		}
 	}

@@ -232,6 +232,7 @@ import { GetBracketUseCase } from "./usecases/tournament/tournament-event/get-br
 import { RegisterNewRoleWithDegreeUseCase } from "./usecases/athletes/register-new-role-with-degree.usecase";
 import { GetOthersPrizesUseCase } from "./usecases/tournament/tournament-event/get-others-prizes.usecase";
 import { GetAllOnGoingTournamentUseCase } from "./usecases/tournament/get-all-on-going-tournament.usecase";
+import { CountAllTransactionUseCase } from "./usecases/payment/count-all-transaction.usecase";
 
 @Module({
 	imports: [
@@ -591,6 +592,7 @@ import { GetAllOnGoingTournamentUseCase } from "./usecases/tournament/get-all-on
 		AssignUmpireUseCase,
 		GetOwnedTournamentUseCase,
 		GetUmpireRegistrationUseCase,
+		CountAllTransactionUseCase,
 
 		//Staff Use Case
 		VerifyUserInformationUseCase,
@@ -827,6 +829,7 @@ import { GetAllOnGoingTournamentUseCase } from "./usecases/tournament/get-all-on
 		AssignUmpireUseCase,
 		GetOwnedTournamentUseCase,
 		GetUmpireRegistrationUseCase,
+		CountAllTransactionUseCase,
 
 		//Staff Use Case
 		VerifyUserInformationUseCase,

@@ -31,6 +31,7 @@ import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { GetTransactionsByDayUseCase } from "../../application/usecases/payment/get-transactions-by-day.usecase";
 import { GetAllTransactionsUseCase } from "../../application/usecases/payment/get-all-transactions.usecase";
 import { PayReportFeeUseCase } from "../../application/usecases/payment/pay-report-fee.usecase";
+import { CountAllTransactionUseCase } from "../../application/usecases/payment/count-all-transaction.usecase";
 
 @Controller("/payment")
 export class PaymentController {
@@ -45,6 +46,7 @@ export class PaymentController {
 		private readonly getTransactionsByDayUseCase: GetTransactionsByDayUseCase,
 		private readonly getAllTransactionsUseCase: GetAllTransactionsUseCase,
 		private readonly payReportFeeUseCase: PayReportFeeUseCase,
+		private readonly countAllTransactionUseCase: CountAllTransactionUseCase,
 	) {}
 
 	@Get("/get-all-transactions")
@@ -134,6 +136,15 @@ export class PaymentController {
 		ApiResponse<{ date: string; total: number }[]>
 	> {
 		return await this.getTransactionsByDayUseCase.execute();
+	}
+
+	@Get("/count-all-transactions")
+	@UseGuards(JwtAccessTokenGuard)
+	@Roles(RoleMap.Admin.name, RoleMap.Staff.name)
+	async countAllTransaction(): Promise<
+		ApiResponse<{ count: number; total: number }>
+	> {
+		return await this.countAllTransactionUseCase.execute();
 	}
 
 	@UseInterceptors(AnyFilesInterceptor())
