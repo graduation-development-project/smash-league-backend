@@ -28,6 +28,9 @@ export class PaymentPayOSService {
 			this.configService.get<string>("PAYOS_API_KEY"),
 			this.configService.get<string>("PAYOS_CHECKSUM_KEY"),
 		);
+		console.log(tournamentEvent);
+		console.log(transactionId);
+		console.log(value);
 		const body = {
 			orderCode: transactionId,
 			amount: value,
