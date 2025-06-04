@@ -41,7 +41,7 @@ export class PrismaTransactionRepositoryAdapter
 			},
 			data: {
 				status: TransactionStatus.SUCCESSFUL,
-			},
+			}
 		});
 	}
 
@@ -318,8 +318,8 @@ export class PrismaTransactionRepositoryAdapter
 						transactionType: TransactionType.BUYING_PAKCKAGE,
 						createdAt: {
 							lte: new Date(),
-						},
-					},
+						}
+					}
 				}),
 				this.prisma.transaction.aggregate({
 					_sum: {
