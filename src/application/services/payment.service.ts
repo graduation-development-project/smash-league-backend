@@ -22,7 +22,7 @@ export class PaymentPayOSService {
 		tournamentEvent: TournamentEvent,
 		transactionId: number,
 		value: number,
-	): Promise<any> {
+	): Promise<IPayOSPaymentResponse> {
 		const payOS = new PayOS(
 			this.configService.get<string>("PAYOS_CLIENT_ID"),
 			this.configService.get<string>("PAYOS_API_KEY"),
@@ -53,7 +53,7 @@ export class PaymentPayOSService {
 			return {
 				checkoutDataResponse: data,
 				paymentImagePaymentLinkResponse: await QRCode.toDataURL(
-					data.checkoutUrl,
+					data.checkoutUrl
 				),
 			};
 		} catch (ex) {
@@ -65,7 +65,7 @@ export class PaymentPayOSService {
 	async createPaymentLinkForReportFee(
 		transactionId: number,
 		value: number,
-	): Promise<any> {
+	): Promise<IPayOSPaymentResponse> {
 		const payOS = new PayOS(
 			this.configService.get<string>("PAYOS_CLIENT_ID"),
 			this.configService.get<string>("PAYOS_API_KEY"),
