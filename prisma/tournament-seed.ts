@@ -62,7 +62,9 @@ async function tournamentSeeding() {
 			email: "nguyenhoangbao@gmail.com",
 			name: "Nguyễn Hoàng Bảo",
 			password: await bcrypt.hash("12345678", 10),
-			phoneNumber: "0862767232"
+			phoneNumber: "0862767232",
+			isVerified: true,
+			gender: "MALE"
 		}
 	});
 	const organizerRole = await getRole("Organizer");
