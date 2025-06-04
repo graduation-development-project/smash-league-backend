@@ -6,7 +6,7 @@ import { PackageRepositoryPort } from "src/domain/repositories/package.repositor
 import { TransactionRepositoryPort } from "src/domain/repositories/transaction.repository.port";
 import { PaymentPayOSService } from "src/application/services/payment.service";
 import { PrismaService } from "../../../infrastructure/services/prisma.service";
-import { TournamentRegistrationStatus } from "@prisma/client";
+import { BadmintonParticipantType, TournamentRegistrationStatus } from "@prisma/client";
 
 @Injectable()
 export class PayRegistrationFeeUseCase {
@@ -30,12 +30,16 @@ export class PayRegistrationFeeUseCase {
 				},
 			});
 
-		let value = tournamentRegistration.tournamentEvent.tournamentEvent.includes(
-			"DOUBLE",
-		)
-			? tournamentRegistration.tournament.registrationFeePerPair
-			: tournamentRegistration.tournament.registrationFeePerPerson;
+		// let value = tournamentRegistration.tournamentEvent.tournamentEvent.includes(
+		// 	"DOUBLE"
+		// )
+		// 	? tournamentRegistration.tournament.registrationFeePerPair
+		// 	: tournamentRegistration.tournament.registrationFeePerPerson;
 
+		const value = tournamentRegistration.tournamentEvent.tournamentEvent === BadmintonParticipantType.MENS_DOUBLE ||
+			tournamentRegistration.tournamentEvent.tournamentEvent === BadmintonParticipantType.MIXED_DOUBLE ||
+			tournamentRegistration.tournamentEvent.tournamentEvent === BadmintonParticipantType.WOMENS_DOUBLE ? 
+				tournamentRegistration.tournament.registrationFeePerPair : tournamentRegistration.tournament.registrationFeePerPerson;
 		const transaction =
 			await this.transactionRepository.createTransactionForRegistrationFee({
 				userId: userId,
