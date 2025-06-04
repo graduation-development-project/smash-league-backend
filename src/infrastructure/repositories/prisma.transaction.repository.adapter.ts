@@ -102,7 +102,7 @@ export class PrismaTransactionRepositoryAdapter
 		});
 		return await this.prisma.transaction.create({
 			data: {
-				id: lastTransaction.id,
+				id: lastTransaction.id + 1,
 				...createTransaction,
 				transactionType: TransactionType.PAY_REGISTRATION_FEE,
 				status: TransactionStatus.PENDING,
