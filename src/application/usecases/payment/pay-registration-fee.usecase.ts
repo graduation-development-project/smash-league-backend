@@ -55,7 +55,7 @@ export class PayRegistrationFeeUseCase {
 		const updateTransaction =
 			await this.transactionRepository.updatePaymentForTransaction(
 				transaction.id,
-				payment.paymentImagePaymentLinkResponse,
+				"",
 				payment.checkoutDataResponse.checkoutUrl,
 			);
 

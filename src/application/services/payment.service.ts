@@ -95,9 +95,7 @@ export class PaymentPayOSService {
 			const data = await payOS.createPaymentLink(body);
 			return {
 				checkoutDataResponse: data,
-				paymentImagePaymentLinkResponse: await QRCode.toDataURL(
-					data.checkoutUrl,
-				),
+				paymentImagePaymentLinkResponse: "",
 			};
 		} catch (ex) {
 			console.log(ex);
