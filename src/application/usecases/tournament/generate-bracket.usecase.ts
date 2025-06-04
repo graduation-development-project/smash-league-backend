@@ -81,12 +81,14 @@ export class GenerateBracketUseCase {
 					});
 				let matchesCreate: Match[] = [];
 				if (check === 1) {
+					if (numberOfBracket === 0) numberOfBracket = 1;
+					const isByeMatch = (listParticipants.numberOfParticipants === 1)? true: false;
 					const matchCreate = await this.matchRepository.createMatch(
 						{
 							matchStatus: MatchStatus.NOT_STARTED,
 							nextMatchId: null,
 							stageId: stageCreate.id,
-							isByeMatch: false,
+							isByeMatch: isByeMatch,
 							matchNumber: numberOfBracket,
 							tournamentEventId: tournamentEvent.id
 						}

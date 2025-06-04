@@ -46,7 +46,7 @@ export class PayRegistrationFeeUseCase {
 				transactionDetail: "Pay tournament fee",
 				tournamentRegistrationId,
 				value,
-			});
+			}); 
 
 		const payment =
 			await this.payosPaymentService.createPaymentLinkForRegistrationFee(
