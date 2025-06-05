@@ -2281,10 +2281,10 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				tournamentEventId: tournamentEventId,
 				user: {
 					email: {
-						not: "admin@gmail.com"
+						not: "admin@smashleague.com"
 					},
 					userRoles: {
-						none: {
+						some: {
 							role: {
 								roleName: {
 									notIn: [
