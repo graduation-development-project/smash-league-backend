@@ -28,9 +28,24 @@ async function createOrganizerTransaction() {
 						}
 					}
 				}
-			}
+			},
+		},
+		select: {
+			id: true,
+			userRoles: {
+				select: {
+					role: {
+						select: {
+							roleName: true
+						}
+					}
+				}
+			},
 		}
 	});
+	for (let i = 0; i < participants.length; i++) {
+		console.log(participants[i].id + " " + participants[i].userRoles[0].role.roleName);
+	}
 	console.log(participants.length);
 }
 

@@ -575,6 +575,87 @@ async function main() {
 			isVerified: true,
 			gender: "FEMALE",
 			dateOfBirth: new Date("1993-11-16")
+		},
+		{
+			name: "Phan Gia Hưng",
+			email: "giahung.phan96@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000013",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1996-07-08")
+		},
+		{
+			name: "Lê Khánh Vy",
+			email: "khanhvy.le@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000014",
+			isVerified: true,
+			gender: "FEMALE",
+			dateOfBirth: new Date("1999-10-21")
+		},
+		{
+			name: "Đặng Quốc Hùng",
+			email: "quochung.dang1992@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000015",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1992-06-30")
+		},
+		{
+			name: "Trịnh Bảo Ngọc",
+			email: "baongoc.trinh91@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000016",
+			isVerified: true,
+			gender: "FEMALE",
+			dateOfBirth: new Date("1991-04-11")
+		},
+		{
+			name: "Võ Minh Quân",
+			email: "minhquan.vo@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000017",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1990-10-03")
+		},
+		{
+			name: "Mai Tuấn Anh",
+			email: "tuananh.mai1994@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000019",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1994-03-29")
+		},
+		{
+			name: "Trần Quang Khải",
+			email: "quangkhai.tran@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000020",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1991-08-05")
+		},
+		{
+			name: "Đinh Quốc Tuấn",
+			email: "quoctuan.dinh@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000021",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1993-09-12")
+		},
+		{
+			name: "Nguyễn Trọng Nghĩa",
+			email: "trongnghia.nguyen1990@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000022",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1990-02-18")
 		}
 	];
 

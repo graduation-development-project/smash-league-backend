@@ -520,10 +520,24 @@ async function addParticipantIntoTournamentEventSingle() {
 			gender: "MALE",
 			email: {
 				not: "admin@smashleague.com"
-			}
+			},
+			userRoles: {
+				some: {
+					role: {
+						roleName: {
+							notIn: [
+								"Umpire",
+								"Organizer",
+								"Staff",
+								"Admin"
+							]
+						}
+					}
+				}
+			},
 		},
 		skip: 3,
-		take: 17
+		take: 29
 	});
 	console.log(participants.length);
 	const tournamentEvent = await prisma.tournamentEvent.findFirst({
@@ -549,7 +563,21 @@ async function addParticipantIntoTournamentEventDouble() {
 			gender: "MALE",
 			email: {
 				not: "admin@smashleague.com"
-			}
+			},
+			userRoles: {
+				some: {
+					role: {
+						roleName: {
+							notIn: [
+								"Umpire",
+								"Organizer",
+								"Staff",
+								"Admin"
+							]
+						}
+					}
+				}
+			},
 		},
 		skip: 6,
 		take: 34
