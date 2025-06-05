@@ -29,12 +29,13 @@ import { UpdateMatchDTO } from "../../domain/dtos/match/update-match.dto";
 @Injectable()
 export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 	constructor(private readonly prisma: PrismaClient) {}
+
 	async getBracketOfTournamentEvent(tournamentEventId: string): Promise<any[]> {
 		const thirdPlaceStage = await this.prisma.stage.findFirst({
 			where: {
 				tournamentEventId: tournamentEventId,
-				stageName: StageOfMatch.ThirdPlaceMatch
-			}
+				stageName: StageOfMatch.ThirdPlaceMatch,
+			},
 		});
 		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
 			where: {
@@ -113,7 +114,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 										name: true,
 									},
 								},
-								matchWonByCompetitorId: true
+								matchWonByCompetitorId: true,
 							},
 							orderBy: {
 								matchNumber: "desc",
@@ -128,28 +129,41 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			matchesBeforeFormat.push(...item.matches);
 		});
 		const matches = matchesBeforeFormat.map(this.transformMatchData);
-		return matches.filter((item) => item.tournamentRoundText !== thirdPlaceStage?.stageName);
+		return matches.filter(
+			(item) => item.tournamentRoundText !== thirdPlaceStage?.stageName,
+		);
 	}
 
 	async processNextMatchToByeMatch(nextMatchId: string): Promise<boolean> {
 		if (nextMatchId === null) return true;
 		const nextMatch: Match = await this.prisma.match.findUnique({
 			where: {
-				id: nextMatchId
-			}
+				id: nextMatchId,
+			},
 		});
 		if (nextMatch === null) return false;
-		if (nextMatch.isByeMatch === true && (nextMatch.leftCompetitorId !== null || nextMatch.rightCompetitorId !== null)) {
-			const winningParticipantId = nextMatch.leftCompetitorId !== null? nextMatch.leftCompetitorId : nextMatch.rightCompetitorId;
+		if (
+			nextMatch.isByeMatch === true &&
+			(nextMatch.leftCompetitorId !== null ||
+				nextMatch.rightCompetitorId !== null)
+		) {
+			const winningParticipantId =
+				nextMatch.leftCompetitorId !== null
+					? nextMatch.leftCompetitorId
+					: nextMatch.rightCompetitorId;
 			const nextMatchUpdated: Match = await this.prisma.match.update({
 				where: {
 					id: nextMatchId,
 				},
 				data: {
-					matchWonByCompetitorId: winningParticipantId
-				}
+					matchWonByCompetitorId: winningParticipantId,
+				},
 			});
-			await this.assignCompetitorForNextMatch(winningParticipantId, nextMatch.nextMatchId, nextMatch.id);
+			await this.assignCompetitorForNextMatch(
+				winningParticipantId,
+				nextMatch.nextMatchId,
+				nextMatch.id,
+			);
 			return await this.processNextMatchToByeMatch(nextMatch.nextMatchId);
 		}
 	}
@@ -175,7 +189,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 						},
 					},
 				},
-				nextMatchId: true
+				nextMatchId: true,
 			},
 		});
 		const updateUmpireAvailable =
@@ -196,7 +210,9 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				courtAvailable: true,
 			},
 		});
-		const processByeMatchForNextMatch = await this.processNextMatchToByeMatch(match.nextMatchId);
+		const processByeMatchForNextMatch = await this.processNextMatchToByeMatch(
+			match.nextMatchId,
+		);
 		return await this.prisma.match.update({
 			where: {
 				id: matchId,
@@ -227,7 +243,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		matchId: string,
 		winningCompetitorId: string,
 	): Promise<Match> {
-		
 		const match = await this.prisma.match.findUnique({
 			where: {
 				id: matchId,
@@ -1203,13 +1218,15 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					matchUpdated,
 					loseCompetitorId,
 				);
-			} else{
+			} else {
 				await this.assignCompetitorForNextMatch(
 					winningId,
 					match.nextMatchId,
 					match.id,
 				);
-				const updatedProcessByeMatch = await this.processNextMatchToByeMatch(match.nextMatchId);
+				const updatedProcessByeMatch = await this.processNextMatchToByeMatch(
+					match.nextMatchId,
+				);
 				console.log("Won matches!");
 			}
 			return {
@@ -1780,7 +1797,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.leftCompetitor.id,
 							resultText: "Win",
-							isWinner: match.leftCompetitor.id === match.matchWonByCompetitorId && match.matchWonByCompetitorId !== null? true: false,
+							isWinner:
+								match.leftCompetitor.id === match.matchWonByCompetitorId &&
+								match.matchWonByCompetitorId !== null
+									? true
+									: false,
 							player1: {
 								id: match.leftCompetitor.user.id,
 								name: match.leftCompetitor.user.name,
@@ -1799,7 +1820,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.rightCompetitor.id,
 							resultText: "Lose",
-							isWinner: match.rightCompetitor.id === match.matchWonByCompetitorId && match.matchWonByCompetitorId !== null? true: false,
+							isWinner:
+								match.rightCompetitor.id === match.matchWonByCompetitorId &&
+								match.matchWonByCompetitorId !== null
+									? true
+									: false,
 							player1: {
 								id: match.rightCompetitor.user.id,
 								name: match.rightCompetitor.user.name,
@@ -2209,6 +2234,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		};
 
 		// Bắt đầu từ các trận ở vòng đầu tiên (trừ trận đầu tiên)
+		console.log("firstRoundMatches", firstRoundMatches);
 		for (const match of firstRoundMatches) {
 			if (match.id !== firstMatchId) {
 				skipRecursive(match);
@@ -2277,27 +2303,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 	async assignPlayersToFirstRoundMatches(tournamentEventId: string) {
 		const participants = await this.prisma.tournamentParticipants.findMany({
-			where: { 
+			where: {
 				tournamentEventId: tournamentEventId,
-				user: {
-					email: {
-						not: "admin@smashleague.com"
-					},
-					userRoles: {
-						some: {
-							role: {
-								roleName: {
-									notIn: [
-										"Staff",
-										"Organizer",
-										"Admin",
-										"Umpire",
-									]
-								}
-							}
-						}
-					}
-				},
 			},
 			orderBy: { id: "asc" }, // Sắp xếp để đảm bảo thứ tự nhất quán
 		});
@@ -2329,15 +2336,17 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 		const matchesToAssign = firstRoundMatches.slice(1);
 
+		console.log(participants, participantsToAssign.length);
+
 		const updates = [];
 		for (
 			let i = 0, matchIndex = 0;
 			i < participantsToAssign.length && matchIndex < matchesToAssign.length;
 			matchIndex++
 		) {
-			const match = firstRoundMatches[matchIndex];
-			const left = participants[i];
-			const right = participants[i + 1];
+			const match = matchesToAssign[matchIndex];
+			const left = participantsToAssign[i];
+			const right = participantsToAssign[i + 1];
 
 			if (right) {
 				// Gán đủ 2 người

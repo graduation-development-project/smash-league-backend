@@ -132,7 +132,7 @@ export class PrismaTournamentParticipantRepositoryAdapter
 				userRoles: {
 					none: {
 						role: {
-							roleName: { in: ["Staff", "Admin"] },
+							roleName: { in: ["Staff", "Admin", "Umpire"] },
 						},
 					},
 				},
