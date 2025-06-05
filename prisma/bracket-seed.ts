@@ -1,4 +1,4 @@
-import { Match, MatchStatus, Prisma, PrismaClient, TournamentParticipants } from "@prisma/client";
+import { Match, MatchStatus, Prisma, PrismaClient, PrizeType, TournamentParticipants } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 import { ICreateMatch } from "src/domain/interfaces/tournament/match/match.interface";
 import { StageOfMatch } from "src/infrastructure/enums/tournament/tournament-match.enum";
@@ -11,6 +11,10 @@ async function main() {
 		where: {
 			tournamentEvent: "MENS_SINGLE",
 			tournamentId: "hcmc-open-2025"
+		},
+		select: {
+			id: true,
+			tournament: true
 		}
 	});
 	const tournamentParticipants1 = await prisma.tournamentParticipants.findMany({
@@ -22,6 +26,10 @@ async function main() {
 		where: {
 			tournamentEvent: "MENS_DOUBLE",
 			tournamentId: "hcmc-open-2025"
+		},
+		select: {
+			id: true,
+			tournament: true
 		}
 	});
 
@@ -95,12 +103,38 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 }
 
 async function createBracketFunction1(tournamentEvent1: any, tournamentParticipants1: any) {
+	
 	let numberOfBracket = getTheNearestNumberOfFullParticipants(tournamentParticipants1.length, 1) - 1;
 	const numberOfByeParticipants = getTheNearestNumberOfFullParticipants(tournamentParticipants1.length, 1) - tournamentParticipants1.length;
 	const numberOfRounds = calculateTheNumberOfRound(tournamentParticipants1.length);
 	const numberOfFullParticipants = getTheNearestNumberOfFullParticipants(tournamentParticipants1.length, 1);
 
 	let countableRound = 1;
+	const thirdPlacePrizes = await prisma.eventPrize.findMany({
+		where: {
+			tournamentEventId: tournamentEvent1.id,
+			prizeType: PrizeType.ThirdPlacePrize
+		}
+	});
+	if (thirdPlacePrizes.length === 1) {
+		const stageOfMatch = await prisma.stage.create({
+			data: {
+				stageName: "Third place match",
+				tournamentEventId: tournamentEvent1.id
+			}
+		});
+		const thirdPlaceMatch = await prisma.match.create({
+			data: {
+				isByeMatch: false,
+				matchNumber: numberOfBracket + 1,
+				stageId: stageOfMatch.id,
+				matchStatus: MatchStatus.NOT_STARTED,
+				nextMatchId: null,
+				tournamentEventId: tournamentEvent1.id,
+				startedWhen: await getRandomDate(await getStartOfWeekAsync(new Date()), new Date())
+			}
+		}); 
+	}
 	// const stageOfMatch = await prisma.stage.create({
 	// 	data: {
 	// 		stageName: "Third place match",
@@ -137,7 +171,8 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 							stageId: stageCreate.id,
 							isByeMatch: false,
 							matchNumber: numberOfBracket,
-							tournamentEventId: tournamentEvent1.id
+							tournamentEventId: tournamentEvent1.id,
+							startedWhen: await getRandomDate(await getStartOfWeekAsync(new Date()), new Date())
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -163,7 +198,8 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 									stageId: stageCreate.id,
 									isByeMatch: true,
 									matchNumber: numberOfBracket,
-									tournamentEventId: tournamentEvent1.id
+									tournamentEventId: tournamentEvent1.id,
+									startedWhen: await getRandomDate(await getStartOfWeekAsync(new Date()), new Date())
 								}
 							});
 							matchesCreate.push(matchCreate);
@@ -184,7 +220,8 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 									stageId: stageCreate.id,
 									isByeMatch: false,
 									matchNumber: numberOfBracket,
-									tournamentEventId: tournamentEvent1.id
+									tournamentEventId: tournamentEvent1.id,
+									startedWhen: await getRandomDate(await getStartOfWeekAsync(new Date()), new Date())
 								}
 							});
 							matchesCreate.push(matchCreate);
@@ -199,7 +236,8 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 									stageId: stageCreate.id,
 									isByeMatch: true,
 									matchNumber: numberOfBracket,
-									tournamentEventId: tournamentEvent1.id
+									tournamentEventId: tournamentEvent1.id,
+									startedWhen: await getRandomDate(await getStartOfWeekAsync(new Date()), new Date())
 								}
 							});
 							matchesCreate.push(matchCreate);
@@ -212,7 +250,8 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 									stageId: stageCreate.id,
 									isByeMatch: false,
 									matchNumber: numberOfBracket,
-									tournamentEventId: tournamentEvent1.id
+									tournamentEventId: tournamentEvent1.id,
+									startedWhen: await getRandomDate(await getStartOfWeekAsync(new Date()), new Date())
 								}
 							});
 							matchesCreate.push(matchCreate);
@@ -228,7 +267,8 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 								stageId: stageCreate.id,
 								isByeMatch: false,
 								matchNumber: numberOfBracket,
-								tournamentEventId: tournamentEvent1.id
+								tournamentEventId: tournamentEvent1.id,
+								startedWhen: await getRandomDate(await getStartOfWeekAsync(new Date()), new Date())
 							}
 						});
 						matchesCreate.push(matchCreate);
@@ -240,7 +280,8 @@ async function createBracketFunction1(tournamentEvent1: any, tournamentParticipa
 								stageId: stageCreate.id,
 								isByeMatch: false,
 								matchNumber: numberOfBracket,
-								tournamentEventId: tournamentEvent1.id
+								tournamentEventId: tournamentEvent1.id,
+								startedWhen: await getRandomDate(await getStartOfWeekAsync(new Date()), new Date())
 							}
 						});
 						matchesCreate.push(matchCreate1);
@@ -300,6 +341,22 @@ async function createStage(stageName: string, tournamentEventId: string) {
 			tournamentEventId: tournamentEventId
 		}
 	});
+}
+
+async function getRandomDate(startDate: Date, endDate: Date): Promise<Date> {
+	const startTime = startDate.getTime();
+	const endTime = endDate.getTime();
+	const randomTime = startTime + Math.random() * (endTime - startTime);
+	return new Date(randomTime);
+}
+
+async function getStartOfWeekAsync(date: Date): Promise<Date> {
+  const given = new Date(date);
+  const day = given.getDay();
+  const diff = (day === 0 ? -6 : 1) - day;
+  given.setDate(given.getDate() + diff + 1);
+  given.setHours(0, 0, 0, 0);
+  return given;
 }
 
 main()
