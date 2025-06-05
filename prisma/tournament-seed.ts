@@ -64,7 +64,8 @@ async function tournamentSeeding() {
 			password: await bcrypt.hash("12345678", 10),
 			phoneNumber: "0862767232",
 			isVerified: true,
-			gender: "MALE"
+			gender: "MALE",
+			avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
 		}
 	});
 	const organizerRole = await getRole("Organizer");
@@ -358,7 +359,7 @@ async function tournamentSeeding() {
 				contactPhone: "+84 987654321",
 				contactEmail: `gcl${paddedMonth}${year}@gmail.com`,
 				mainColor: ["#3498DB", "#1ABC9C", "#2ECC71", "#F1C40F", "#E67E22"][i % 5],
-				backgroundTournament: `https://example.com/image${i + 2}.jpg`,
+				backgroundTournament: "https://www.shutterstock.com/image-vector/abstract-silhouette-badminton-player-on-260nw-2224936785.jpg",
 				location: "Nhà thi đấu đa năng",
 				registrationOpeningDate: `${year}-${paddedMonth}-01T00:00:00Z`,
 				registrationClosingDate: `${year}-${paddedMonth}-17T23:59:59Z`,
@@ -635,8 +636,7 @@ async function umpireTournamentSeeding() {
 			}
 		}
 	});
-	var umpires: Prisma.UserCreateManyInput[] = [
-	];
+	var umpires: Prisma.UserCreateManyInput[] = [];
 	const names = [
 		"Nguyễn Văn A", "Lê Thị B", "Phạm Quốc Cường", "Đỗ Thanh Hằng",
 		"Vũ Minh Tuấn", "Ngô Nhật Linh", "Trịnh Hoàng Nam", "Hoàng Mỹ Linh", "Bùi Tuấn Kiệt"
@@ -659,6 +659,7 @@ async function umpireTournamentSeeding() {
     isVerified: true,
     gender: getRandomGender(),
     dateOfBirth: getRandomDOB(),
+		avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
   }));
 	umpires.push(...data);
 
