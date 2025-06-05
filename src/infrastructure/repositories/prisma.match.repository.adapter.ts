@@ -2449,7 +2449,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			const [currentCount, previousCount] = await Promise.all([
 				this.prisma.match.count({
 					where: {
-						timeStart: {
+						startedWhen: {
 							// gte: startOfCurrentWeek,
 							lte: endOfCurrentWeek,
 						},
@@ -2462,7 +2462,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				}),
 				this.prisma.match.count({
 					where: {
-						timeStart: {
+						startedWhen: {
 							// gte: startOfPreviousWeek,
 							lte: endOfPreviousWeek,
 						},
