@@ -9,44 +9,17 @@ async function main() {
 }
 
 async function createOrganizerTransaction() {
-	const participants = await prisma.user.findMany({
-		where: {
-			gender: "MALE",
-			email: {
-				not: "admin@smashleague.com"
-			},
-			userRoles: {
-				some: {
-					role: {
-						roleName: {
-							notIn: [
-								"Umpire",
-								"Organizer",
-								"Staff",
-								"Admin"
-							]
-						}
-					}
-				}
-			},
-		},
-		select: {
-			id: true,
-			userRoles: {
-				select: {
-					role: {
-						select: {
-							roleName: true
-						}
-					}
-				}
-			},
-		}
-	});
-	for (let i = 0; i < participants.length; i++) {
-		console.log(participants[i].id + " " + participants[i].userRoles[0].role.roleName);
-	}
-	console.log(participants.length);
+	const getStartOfWeek = await getStartOfWeekAsync(new Date());
+	console.log(new Date());
+}
+
+async function getStartOfWeekAsync(date: Date): Promise<Date> {
+  const given = new Date(date);
+  const day = given.getDay();
+  const diff = (day === 0 ? -6 : 1) - day;
+  given.setDate(given.getDate() + diff + 1);
+  given.setHours(0, 0, 0, 0);
+  return given;
 }
 
 main()

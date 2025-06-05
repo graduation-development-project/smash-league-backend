@@ -35,6 +35,8 @@ async function createBrackets() {
 			id: true,
 			registrationOpeningDate: true,
 			registrationClosingDate: true,
+			startDate: true,
+			endDate: true,
 			tournamentEvents: {
 				select: {
 					id: true
@@ -58,6 +60,10 @@ async function createBracket(tournamentEventId: string) {
 	const tournamentEvent = await prisma.tournamentEvent.findUnique({
 		where: {
 			id: tournamentEventId
+		},
+		select: {
+			id: true,
+			tournament: true
 		}
 	});
 	let numberOfBracket = getTheNearestNumberOfFullParticipants(tournamentParticipants.length, 1) - 1;
@@ -87,7 +93,8 @@ async function createBracket(tournamentEventId: string) {
 				stageId: thirdPlaceStage.id,
 				matchStatus: MatchStatus.NOT_STARTED,
 				nextMatchId: null,
-				tournamentEventId: tournamentEventId
+				tournamentEventId: tournamentEventId,
+				startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
 			}
 		});
 	}
@@ -111,7 +118,8 @@ async function createBracket(tournamentEventId: string) {
 					stageId: stageCreate.id,
 					isByeMatch: false,
 					matchNumber: numberOfBracket,
-					tournamentEventId: tournamentEvent.id
+					tournamentEventId: tournamentEvent.id,
+					startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)					
 				}
 			});
 			matchesCreate.push(matchCreate);
@@ -128,7 +136,8 @@ async function createBracket(tournamentEventId: string) {
 							stageId: stageCreate.id,
 							isByeMatch: true,
 							matchNumber: numberOfBracket,
-							tournamentEventId: tournamentEvent.id
+							tournamentEventId: tournamentEvent.id,
+							startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -141,7 +150,8 @@ async function createBracket(tournamentEventId: string) {
 							stageId: stageCreate.id,
 							isByeMatch: false,
 							matchNumber: numberOfBracket,
-							tournamentEventId: tournamentEvent.id
+							tournamentEventId: tournamentEvent.id,
+							startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -155,7 +165,8 @@ async function createBracket(tournamentEventId: string) {
 							stageId: stageCreate.id,
 							isByeMatch: true,
 							matchNumber: numberOfBracket,
-							tournamentEventId: tournamentEvent.id
+							tournamentEventId: tournamentEvent.id,
+							startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -168,7 +179,8 @@ async function createBracket(tournamentEventId: string) {
 							stageId: stageCreate.id,
 							isByeMatch: false,
 							matchNumber: numberOfBracket,
-							tournamentEventId: tournamentEvent.id
+							tournamentEventId: tournamentEvent.id,
+							startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -184,7 +196,8 @@ async function createBracket(tournamentEventId: string) {
 						stageId: stageCreate.id,
 						isByeMatch: false,
 						matchNumber: numberOfBracket,
-						tournamentEventId: tournamentEvent.id
+						tournamentEventId: tournamentEvent.id,
+						startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
 					}
 				});
 				matchesCreate.push(matchCreate);
@@ -196,7 +209,8 @@ async function createBracket(tournamentEventId: string) {
 						stageId: stageCreate.id,
 						isByeMatch: false,
 						matchNumber: numberOfBracket,
-						tournamentEventId: tournamentEvent.id
+						tournamentEventId: tournamentEvent.id,
+						startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
 					}
 				});
 				matchesCreate.push(matchCreate1);
@@ -251,6 +265,13 @@ async function createStage(stageName: string, tournamentEventId: string) {
 			tournamentEventId: tournamentEventId
 		}
 	});
+}
+
+async function getRandomDate(startDate: Date, endDate: Date): Promise<Date> {
+	const startTime = startDate.getTime();
+	const endTime = endDate.getTime();
+	const randomTime = startTime + Math.random() * (endTime - startTime);
+	return new Date(randomTime);
 }
 
 main()
