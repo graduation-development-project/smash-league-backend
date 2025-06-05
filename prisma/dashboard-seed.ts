@@ -44,14 +44,17 @@ async function createBrackets() {
 			}
 		}
 	});
-	for (let i = 0; i < tournaments.length; i++) {
+	for (let i = 0; i < tournaments[0].tournamentEvents.length; i++) {
+		await createBracket(tournaments[0].tournamentEvents[i].id, await getStartOfWeekAsync(new Date()), new Date());
+	}
+	for (let i = 1; i < tournaments.length; i++) {
 		for (let j = 0; j < tournaments[i].tournamentEvents.length; j++) {
-			await createBracket(tournaments[i].tournamentEvents[j].id);
+			await createBracket(tournaments[i].tournamentEvents[j].id, tournaments[i].startDate, tournaments[i].endDate);
 		}
 	}
 }
 
-async function createBracket(tournamentEventId: string) {
+async function createBracket(tournamentEventId: string, startDate: Date, endDate: Date) {
 	const tournamentParticipants = await prisma.tournamentParticipants.findMany({
 		where: {
 			tournamentEventId: tournamentEventId
@@ -94,7 +97,7 @@ async function createBracket(tournamentEventId: string) {
 				matchStatus: MatchStatus.NOT_STARTED,
 				nextMatchId: null,
 				tournamentEventId: tournamentEventId,
-				startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
+				startedWhen: await getRandomDate(startDate, endDate)
 			}
 		});
 	}
@@ -119,7 +122,7 @@ async function createBracket(tournamentEventId: string) {
 					isByeMatch: false,
 					matchNumber: numberOfBracket,
 					tournamentEventId: tournamentEvent.id,
-					startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)					
+					startedWhen: await getRandomDate(startDate, endDate)					
 				}
 			});
 			matchesCreate.push(matchCreate);
@@ -137,7 +140,7 @@ async function createBracket(tournamentEventId: string) {
 							isByeMatch: true,
 							matchNumber: numberOfBracket,
 							tournamentEventId: tournamentEvent.id,
-							startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
+							startedWhen: await getRandomDate(startDate, endDate)
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -151,7 +154,7 @@ async function createBracket(tournamentEventId: string) {
 							isByeMatch: false,
 							matchNumber: numberOfBracket,
 							tournamentEventId: tournamentEvent.id,
-							startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
+							startedWhen: await getRandomDate(startDate, endDate)
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -166,7 +169,7 @@ async function createBracket(tournamentEventId: string) {
 							isByeMatch: true,
 							matchNumber: numberOfBracket,
 							tournamentEventId: tournamentEvent.id,
-							startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
+							startedWhen: await getRandomDate(startDate, endDate)
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -180,7 +183,7 @@ async function createBracket(tournamentEventId: string) {
 							isByeMatch: false,
 							matchNumber: numberOfBracket,
 							tournamentEventId: tournamentEvent.id,
-							startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
+							startedWhen: await getRandomDate(startDate, endDate)
 						}
 					});
 					matchesCreate.push(matchCreate);
@@ -197,7 +200,7 @@ async function createBracket(tournamentEventId: string) {
 						isByeMatch: false,
 						matchNumber: numberOfBracket,
 						tournamentEventId: tournamentEvent.id,
-						startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
+						startedWhen: await getRandomDate(startDate, endDate)
 					}
 				});
 				matchesCreate.push(matchCreate);
@@ -210,7 +213,7 @@ async function createBracket(tournamentEventId: string) {
 						isByeMatch: false,
 						matchNumber: numberOfBracket,
 						tournamentEventId: tournamentEvent.id,
-						startedWhen: await getRandomDate(tournamentEvent.tournament.startDate, tournamentEvent.tournament.endDate)
+						startedWhen: await getRandomDate(startDate, endDate)
 					}
 				});
 				matchesCreate.push(matchCreate1);
@@ -272,6 +275,15 @@ async function getRandomDate(startDate: Date, endDate: Date): Promise<Date> {
 	const endTime = endDate.getTime();
 	const randomTime = startTime + Math.random() * (endTime - startTime);
 	return new Date(randomTime);
+}
+
+async function getStartOfWeekAsync(date: Date): Promise<Date> {
+  const given = new Date(date);
+  const day = given.getDay();
+  const diff = (day === 0 ? -6 : 1) - day;
+  given.setDate(given.getDate() + diff + 1);
+  given.setHours(0, 0, 0, 0);
+  return given;
 }
 
 main()

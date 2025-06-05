@@ -13,6 +13,7 @@ async function main() {
 			phoneNumber: "0923747283",
 			isVerified: true,
 			gender: "MALE",
+			avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
 		},				
 		{
 			name: "Đỗ Đăng Thanh Nhựt",
@@ -21,6 +22,7 @@ async function main() {
 			phoneNumber: "0932745273",
 			isVerified: true,
 			gender: "MALE",
+			avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
 		},
 	];
 

@@ -601,7 +601,8 @@ async function main() {
 			phoneNumber: "+84 912000015",
 			isVerified: true,
 			gender: "MALE",
-			dateOfBirth: new Date("1992-06-30")
+			dateOfBirth: new Date("1992-06-30"),
+			avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
 		},
 		{
 			name: "Trịnh Bảo Ngọc",
@@ -679,7 +680,10 @@ async function main() {
 	var accountCreates = [];
 	for (const account of accounts) {
 		const accountCreate = await prisma.user.create({
-			data: account,
+			data: {
+				...account, 
+				avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.pnghttps://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
+			},
 		});
 		accountCreates.push(accountCreate);
 		if (accountCreate.name === "Admin") {
