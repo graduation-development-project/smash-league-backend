@@ -2277,23 +2277,43 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 
 	async assignPlayersToFirstRoundMatches(tournamentEventId: string) {
 		const participants = await this.prisma.tournamentParticipants.findMany({
-			where: { tournamentEventId },
+			where: { 
+				tournamentEventId: tournamentEventId,
+				user: {
+					email: {
+						not: "admin@gmail.com"
+					},
+					userRoles: {
+						none: {
+							role: {
+								roleName: {
+									notIn: [
+										"Staff",
+										"Organizer",
+										"Admin",
+										"Umpire",
+									]
+								}
+							}
+						}
+					}
+				},
+			},
 			orderBy: { id: "asc" }, // Sắp xếp để đảm bảo thứ tự nhất quán
 		});
 
 		const countMatches = await this.prisma.match.count({
 			where: {
-				tournamentEventId,
+				tournamentEventId: tournamentEventId,
 			},
 		});
 
 		const firstRoundMatches = await this.prisma.match.findMany({
 			where: {
-				tournamentEventId,
+				tournamentEventId: tournamentEventId,
 				matchesPrevious: {
 					none: {}, // Chỉ vòng đầu
 				},
-
 				matchNumber: { not: countMatches },
 			},
 			orderBy: { matchNumber: "asc" },
@@ -2348,7 +2368,6 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		}
 
 		await this.prisma.$transaction(updates);
-
 		return;
 	}
 
