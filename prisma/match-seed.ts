@@ -40,7 +40,7 @@ async function addParticipantForTournamentEvent1() {
 			gender: "MALE",
 			email: {
 				not: "admin@smashleague.com"
-			}
+			},
 		},
 		skip: 0,
 		take: 3

@@ -1,5 +1,10 @@
 import { Gender, User } from "@prisma/client";
 
+export interface ITournamentPrizesWithWinner {
+	prizes: ITournamentStandingBoardInterface;
+	otherPrizes: ITournamentOtherPrizeWinner[];
+}
+
 export interface ITournamentStandingBoardInterface {
 	championship: {
 		user: ITournamentStandingBoardUserInterface;
@@ -22,4 +27,12 @@ interface ITournamentStandingBoardUserInterface {
 	dateOfBirth: Date;
 	height: number;
 	avatarURL: string;
+}
+
+export interface ITournamentOtherPrizeWinner {
+	prizeName: string;
+	winner: {
+		user: ITournamentStandingBoardUserInterface;
+		partner: ITournamentStandingBoardUserInterface;
+	};
 }

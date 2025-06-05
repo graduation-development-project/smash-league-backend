@@ -467,6 +467,114 @@ async function main() {
 			phoneNumber: "0921222324",
 			isVerified: false,
 			gender: "FEMALE",
+		},
+		{
+			name: "Nguyễn Văn Huy",
+			email: "nguyenvanhuy01@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000001",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1999-05-12")
+		},
+		{
+			name: "Lê Thị Kim Ngân",
+			email: "lekimngan92@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000002",
+			isVerified: true,
+			gender: "FEMALE",
+			dateOfBirth: new Date("1996-11-03")
+		},
+		{
+			name: "Phạm Nhật Hào",
+			email: "phamnhathao23@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000003",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1995-08-19")
+		},
+		{
+			name: "Trịnh Thuỳ Dương",
+			email: "thuyduongduong@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000004",
+			isVerified: true,
+			gender: "FEMALE",
+			dateOfBirth: new Date("1998-03-22")
+		},
+		{
+			name: "Đỗ Hữu Thành",
+			email: "thanhdo1994@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000005",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1994-12-09")
+		},
+		{
+			name: "Ngô Bảo Châu",
+			email: "baochau2020@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000006",
+			isVerified: true,
+			gender: "FEMALE",
+			dateOfBirth: new Date("1990-07-14")
+		},
+		{
+			name: "Trần Hoàng Phúc",
+			email: "phuctranh@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000007",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1997-02-28")
+		},
+		{
+			name: "Vũ Thị Lan",
+			email: "lanvu011@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000008",
+			isVerified: true,
+			gender: "FEMALE",
+			dateOfBirth: new Date("1993-06-10")
+		},
+		{
+			name: "Hoàng Minh Phát",
+			email: "minhphat98@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000009",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1998-09-17")
+		},
+		{
+			name: "Bùi Ngọc Diệp",
+			email: "ngocdiepbuinguyen@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000010",
+			isVerified: true,
+			gender: "FEMALE",
+			dateOfBirth: new Date("1992-01-05")
+		},
+		{
+			name: "Lâm Đức Tài",
+			email: "taiduc.lam@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000011",
+			isVerified: true,
+			gender: "MALE",
+			dateOfBirth: new Date("1995-04-25")
+		},
+		{
+			name: "Nguyễn Hoài Thương",
+			email: "hoaithuong1993@gmail.com",
+			password: await bcrypt.hash("12345678", 10),
+			phoneNumber: "+84 912000012",
+			isVerified: true,
+			gender: "FEMALE",
+			dateOfBirth: new Date("1993-11-16")
 		}
 	];
 
