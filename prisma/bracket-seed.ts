@@ -44,6 +44,7 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 			tournamentEventId: tournamentEventId
 		}
 	});
+	console.log(tournamentParticipants.length);
 	const numberOfMatch = getTheNearestNumberOfFullParticipants(tournamentParticipants.length, 1) / 2;
 	const matches = await prisma.match.findMany({
 		where: {
@@ -60,9 +61,7 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 	var currentMatch = 0;
 	var check = 0;
 	while (check < tournamentParticipants.length) {
-		console.log(matches);
 		if (matches[currentMatch].isByeMatch) {
-			console.log(check);
 			matches[currentMatch].leftCompetitorId = tournamentParticipants[check].id;
 			await prisma.match.update({
 				where: {
@@ -93,7 +92,6 @@ async function addParticipantsToBracket(tournamentEventId: string) {
 			// console.log("current match: ", currentMatch);
 		}
 	}
-	console.log(matches);
 }
 
 async function createBracketFunction1(tournamentEvent1: any, tournamentParticipants1: any) {
