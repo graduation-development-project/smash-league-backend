@@ -6,21 +6,21 @@ export interface ITournamentPrizesWithWinner {
 }
 
 export interface ITournamentStandingBoardInterface {
-	championship: {
+	championship?: {
 		user: ITournamentStandingBoardUserInterface;
 		partner: ITournamentStandingBoardUserInterface;
 	};
-	runnerUp: {
+	runnerUp?: {
 		user: ITournamentStandingBoardUserInterface;
 		partner: ITournamentStandingBoardUserInterface;
-	};
-	thirdPlace: {
+	} | undefined;
+	thirdPlace?: {
 		user: ITournamentStandingBoardUserInterface;
 		partner: ITournamentStandingBoardUserInterface;
 	}[];
 }
 
-interface ITournamentStandingBoardUserInterface {
+export interface ITournamentStandingBoardUserInterface {
 	id: string;
 	name: string;
 	gender: Gender;
@@ -35,4 +35,12 @@ export interface ITournamentOtherPrizeWinner {
 		user: ITournamentStandingBoardUserInterface;
 		partner: ITournamentStandingBoardUserInterface;
 	};
+}
+
+function pick<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+  const result = {} as Pick<T, K>;
+  keys.forEach((key) => {
+    result[key] = obj[key];
+  });
+  return result;
 }

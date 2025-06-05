@@ -10,7 +10,7 @@ import {
 } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
-import { ITournamentOtherPrizeWinner, ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
+import { ITournamentOtherPrizeWinner, ITournamentStandingBoardInterface, ITournamentStandingBoardUserInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
 import { convertStringToEnum } from '../util/enum-convert.util';
 
 @Injectable()
@@ -381,6 +381,14 @@ export class PrismaTournamentEventRepositoryAdapter
 		return conditionResponses;
 	}
 
+	pick<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+		const result = {} as Pick<T, K>;
+		keys.forEach((key) => {
+			result[key] = obj[key];
+		});
+		return result;
+	}
+
 	async getTournamentEventStandingBoard(
 		tournamentEventId: string,
 	): Promise<ITournamentStandingBoardInterface> {
@@ -452,7 +460,7 @@ export class PrismaTournamentEventRepositoryAdapter
 			const thirdPlacePrizes = await this.prisma.eventPrize.findMany({
 				where: {
 					tournamentEventId: tournamentEventId,
-					prizeType: PrizeType.RunnerUpPrize
+					prizeType: PrizeType.ThirdPlacePrize
 				},
 				select: {
 					winningParticipant: {
@@ -481,11 +489,33 @@ export class PrismaTournamentEventRepositoryAdapter
 					}
 				}
 			});
-			return {
+			var thirdPlacePrizesResponse: {
+				user: ITournamentStandingBoardUserInterface;
+				partner: ITournamentStandingBoardUserInterface;
+			}[] = [];
+			if (thirdPlacePrizes.length >= 1) {
+				for (let i = 0; i < thirdPlacePrizes.length; i++) {
+					if (thirdPlacePrizes[i].winningParticipant !== null) thirdPlacePrizesResponse.push({
+						user: thirdPlacePrizes[i].winningParticipant.user,
+						partner: thirdPlacePrizes[i].winningParticipant.partner === null? null: thirdPlacePrizes[i].winningParticipant.partner
+					});
+				}
+			}
+			console.log(thirdPlacePrizes[0]);
+			var prizes: ITournamentStandingBoardInterface = {
 				championship: championshipPrize.winningParticipant,
 				runnerUp: runnerUpPrize.winningParticipant,
-				thirdPlace: thirdPlacePrizes.map((item) => item.winningParticipant)
+				thirdPlace: thirdPlacePrizesResponse
 			};
+			var elementToGet: string[] = [];
+			if (championshipPrize.winningParticipant === null && runnerUpPrize.winningParticipant === null && thirdPlacePrizesResponse.length === 0) 
+				return null;
+			else {
+				if (championshipPrize.winningParticipant !== null) elementToGet.push("championship");
+				if (runnerUpPrize.winningParticipant !== null) elementToGet.push("runnerUp");
+				if(thirdPlacePrizesResponse.length !== 0) elementToGet.push("thirdPlace");
+			}
+			return this.pick(prizes, elementToGet as (keyof ITournamentStandingBoardInterface)[]);
 		} catch (e) {
 			console.error("getTournamentEventStandingBoard failed", e);
 			throw e;
