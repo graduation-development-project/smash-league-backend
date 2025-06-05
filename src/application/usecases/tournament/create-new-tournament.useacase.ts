@@ -87,6 +87,12 @@ export class CreateNewTournamentUseCase {
 				"Error in creating prizes for events: " + checkValidPrize.message,
 				null
 			);
+			for (let j = 0; j < transformedData[i].createPrizes.createPrizes.length; j++) {
+				if (transformedData[i].createPrizes.createPrizes[j].prizeName === "JointThirdPlacePrize") {
+					transformedData[i].createPrizes.createPrizes[j].prizeName = "ThirdPlacePrize";
+					break;
+				}
+			}
 			const checkValidRequirements = await this.checkValidRequirements(transformedData[i].createTournamentRequirements ?? null);
 			if (!checkValidRequirements.isValid) return new ApiResponse<null | undefined>(
 				HttpStatus.BAD_REQUEST,
@@ -238,6 +244,7 @@ export class CreateNewTournamentUseCase {
 		const runnerUpPrizes = prizes.filter((item) => "runnerupprize" === this.normalizePrizeName(item.prizeName));
 		const thirdPlacePrizes = prizes.filter((item) => "thirdplaceprize" === this.normalizePrizeName(item.prizeName));
 		//Joint third place prize
+		const jointThirdPlacePrize = prizes.filter((item) => "jointthirdplaceprize" === this.normalizePrizeName(item.prizeName));
 		if (championshipPrizes.length > 1) return {
 			isValid: false,
 			message: "Championship prize must be one!",
@@ -246,10 +253,14 @@ export class CreateNewTournamentUseCase {
 			isValid: false,
 			message: "Runner Up prize must be one!"
 		};
-		if (thirdPlacePrizes.length > 2) return {
+		if (thirdPlacePrizes.length > 1) return {
 			isValid: false,
-			message: "Third place prize must not be larger than 2!"
+			message: "Third place prize must be one!"
 		};
+		if (jointThirdPlacePrize.length > 1) return {
+			isValid: false,
+			message: "Joint third place prize must be one!"
+		}
 		return {
 			isValid: true,
 			message: ""
