@@ -10,7 +10,7 @@ import {
 } from "src/domain/interfaces/tournament/tournament-event/tournament-event.interface";
 import { ICreateTournamentEvent } from "src/domain/interfaces/tournament/tournament.interface";
 import { TournamentEventRepositoryPort } from "src/domain/repositories/tournament-event.repository.port";
-import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
+import { ITournamentOtherPrizeWinner, ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
 import { convertStringToEnum } from '../util/enum-convert.util';
 
 @Injectable()
@@ -18,6 +18,59 @@ export class PrismaTournamentEventRepositoryAdapter
 	implements TournamentEventRepositoryPort
 {
 	constructor(private prisma: PrismaClient) {}
+	async isExistNotOthersPrize(tournamentEventId: string): Promise<EventPrize[]> {
+		return await this.prisma.eventPrize.findMany({
+			where: {
+				tournamentEventId: tournamentEventId,
+				prizeType: {
+					not: PrizeType.Others
+				}
+			}
+		});
+	}
+	async getTournamentEventAwardsWithWinner(tournamentEventId: string): Promise<ITournamentOtherPrizeWinner[]> {
+		const otherPrizes = await this.prisma.eventPrize.findMany({
+			where: {
+				tournamentEventId: tournamentEventId,
+				prizeType: PrizeType.Others
+			},
+			select: {
+				prizeName: true,
+				winningParticipant: {
+					select: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+								gender: true,
+								dateOfBirth: true,
+								height: true,
+								avatarURL: true
+							}
+						},
+						partner: {
+							select: {
+								id: true,
+								name: true,
+								gender: true,
+								dateOfBirth: true,
+								height: true,
+								avatarURL: true
+							}
+						}
+					}
+				}
+			}
+		});
+		var otherPrizesDto: ITournamentOtherPrizeWinner[] = [];
+		for (let i = 0; i < otherPrizes.length; i++) {
+			otherPrizesDto.push({
+				prizeName: otherPrizes[i].prizeName,
+				winner: otherPrizes[i].winningParticipant
+			})
+		}
+		return otherPrizesDto;
+	}
 
 	async updateManyTournamentEvent(
 		tournamentEvents: TournamentEvent[],

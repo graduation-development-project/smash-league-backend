@@ -103,7 +103,7 @@ import { UpdateAttendanceUseCase } from "src/application/usecases/tournament/mat
 import { UpdateForfeitCompetitorUseCase } from "src/application/usecases/tournament/match/update-forfeit-competitor.usecase,";
 import { GetTournamentsByUserIdUseCase } from "../../application/usecases/tournament/get-tournaments-by-user-id.usecase";
 import { GetTournamentEventStandingBoardUseCase } from "../../application/usecases/tournament/tournament-event/get-tournament-event-standing-board.usecase";
-import { ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
+import { ITournamentPrizesWithWinner, ITournamentStandingBoardInterface } from "../../domain/interfaces/tournament/tournament-event/tournament-standing-board.interface";
 import { GetFeatureTournamentsUseCase } from "../../application/usecases/tournament/get-feature-tournaments.usecase";
 import { GetTournamentsByOrganizerIdUseCase } from "../../application/usecases/tournament/get-tournaments-by-organizer-id.usecase";
 import { IParticipantsByTournamentEventResponse } from "src/domain/interfaces/user/athlete.interface";
@@ -471,7 +471,7 @@ export class TournamentController {
 	@Get("/get-tournaments-event-standing-board/:tournamentEventId")
 	async getTournamentsEventStandingBoard(
 		@Param("tournamentEventId") tournamentEventId: string,
-	): Promise<ApiResponse<ITournamentStandingBoardInterface>> {
+	): Promise<ApiResponse<ITournamentPrizesWithWinner>> {
 		return await this.getTournamentEventStandingBoardUseCase.execute(
 			tournamentEventId,
 		);

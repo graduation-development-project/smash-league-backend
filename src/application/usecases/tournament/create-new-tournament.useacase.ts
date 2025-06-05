@@ -237,6 +237,7 @@ export class CreateNewTournamentUseCase {
 		const championshipPrizes = prizes.filter((item) => "championshipprize" === this.normalizePrizeName(item.prizeName));
 		const runnerUpPrizes = prizes.filter((item) => "runnerupprize" === this.normalizePrizeName(item.prizeName));
 		const thirdPlacePrizes = prizes.filter((item) => "thirdplaceprize" === this.normalizePrizeName(item.prizeName));
+		//Joint third place prize
 		if (championshipPrizes.length > 1) return {
 			isValid: false,
 			message: "Championship prize must be one!",
@@ -248,7 +249,7 @@ export class CreateNewTournamentUseCase {
 		if (thirdPlacePrizes.length > 2) return {
 			isValid: false,
 			message: "Third place prize must not be larger than 2!"
-		}
+		};
 		return {
 			isValid: true,
 			message: ""
