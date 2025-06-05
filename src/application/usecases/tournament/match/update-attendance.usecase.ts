@@ -3,11 +3,15 @@ import { Match } from "@prisma/client";
 import { match } from "assert";
 import { ApiResponse } from "src/domain/dtos/api-response";
 import { MatchRepositoryPort } from "src/domain/repositories/match.repository.port";
+import { StageRepositoryPort } from "src/domain/repositories/stage.repository.port";
+import { StageOfMatch } from "src/infrastructure/enums/tournament/tournament-match.enum";
 
 export class UpdateAttendanceUseCase {
 	constructor(
 		@Inject("MatchRepository")
-		private readonly matchRepository: MatchRepositoryPort
+		private readonly matchRepository: MatchRepositoryPort,
+		@Inject("StageRepository")
+		private readonly stageRepository: StageRepositoryPort
 	) {
 	}
 
@@ -18,6 +22,15 @@ export class UpdateAttendanceUseCase {
 			"No match found!",
 			null
 		);
+		const stage = await this.stageRepository.getStageById(match.stageId);
+		if (stage.stageName === StageOfMatch.Final || stage.stageName === StageOfMatch.ThirdPlaceMatch) {
+			const matchUpdated = await this.matchRepository.updateAttendance(matchId, leftCompetitorAttendance, rightCompetitorAttendance);
+			return new ApiResponse<Match>(
+				HttpStatus.NO_CONTENT,
+				"Update attendance successful!",
+				matchUpdated
+			);
+		}
 		const nextMatch = await this.matchRepository.getMatchDetail(match.nextMatchId);
 		if (leftCompetitorAttendance === true && rightCompetitorAttendance === false) {
 			const matchWinnerUpdated = await this.matchRepository.updateMatchWinner(match.id, match.leftCompetitorId);

@@ -182,6 +182,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 				courtId: true,
 				tournamentEvent: {
 					select: {
+						id: true,
 						tournament: {
 							select: {
 								id: true,
@@ -190,6 +191,10 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					},
 				},
 				nextMatchId: true,
+				stage: true,
+				leftCompetitorId: true,
+				rightCompetitorId: true,
+				matchWonByCompetitorId: true
 			},
 		});
 		const updateUmpireAvailable =
@@ -213,6 +218,41 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 		const processByeMatchForNextMatch = await this.processNextMatchToByeMatch(
 			match.nextMatchId,
 		);
+		// if (match.nextMatchId !== null) {
+		// 	const processByeMatchForNextMatch = await this.processNextMatchToByeMatch(match.nextMatchId);
+		// }
+		// if (match.stage.stageName === StageOfMatch.Final) {
+		// 	const championship = match.matchWonByCompetitorId;
+		// 	const runnerUp = match.matchWonByCompetitorId !== match.leftCompetitorId? match.leftCompetitorId: match.rightCompetitorId;
+		// 	const championshipUpdated = await this.prisma.eventPrize.updateMany({
+		// 		where: {
+		// 			tournamentEventId: match.tournamentEvent.id,
+		// 			prizeType: PrizeType.ChampionshipPrize
+		// 		},
+		// 		data: {
+		// 			winningParticipantId: championship
+		// 		}
+		// 	});
+		// 	const runnerUpUpdated = await this.prisma.eventPrize.updateMany({
+		// 		where: {
+		// 			tournamentEventId: match.tournamentEvent.id,
+		// 			prizeType: PrizeType.RunnerUpPrize
+		// 		},
+		// 		data: {
+		// 			winningParticipantId: runnerUp
+		// 		}
+		// 	});
+		// } else if (match.stage.stageName === StageOfMatch.ThirdPlaceMatch) {
+		// 	const thirdPlaceUpdated = await this.prisma.eventPrize.updateMany({
+		// 		where: {
+		// 			tournamentEventId: match.tournamentEvent.id,
+		// 			prizeType: PrizeType.ThirdPlacePrize
+		// 		},
+		// 		data: {
+		// 			winningParticipantId: match.matchWonByCompetitorId
+		// 		}
+		// 	});
+		// }
 		return await this.prisma.match.update({
 			where: {
 				id: matchId,
