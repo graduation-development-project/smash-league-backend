@@ -140,6 +140,7 @@ export class PrismaTournamentParticipantRepositoryAdapter
 			take: takeNumber,
 		});
 
+		console.log(existingUsers.map((item) => item.name));
 		const registrationsToCreate = existingUsers.map((userId) => ({
 			tournamentId,
 			tournamentEventId,

@@ -2362,6 +2362,11 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					none: {}, // Chỉ vòng đầu
 				},
 				matchNumber: { not: countMatches },
+				stage: {
+					stageName: {
+						notIn: [StageOfMatch.Final, StageOfMatch.ThirdPlaceMatch]
+					}
+				}
 			},
 			orderBy: { matchNumber: "asc" },
 		});
