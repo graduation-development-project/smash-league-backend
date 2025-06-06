@@ -62,6 +62,8 @@ export class ResponseTournamentRegistrationUseCase {
 			throw new BadRequestException("You are not organizer of this tournament");
 		}
 
+		console.log(existedRegistration);
+
 		try {
 			// * Check if Athlete update status: ON_WAITING_REGISTRATION_FEE
 			// * If Umpire update status: APPROVED
@@ -134,19 +136,21 @@ export class ResponseTournamentRegistrationUseCase {
 
 						console.log("filteredIds", filteredIds);
 
-						await this.tournamentRegistrationRepository.cancelManyTournamentRegistration(
-							filteredIds,
-						);
+						if (filteredIds.length > 0 && filteredUserIds.length > 0) {
+							await this.tournamentRegistrationRepository.cancelManyTournamentRegistration(
+								filteredIds,
+							);
 
-						const notification: CreateNotificationDTO = {
-							message: `Your registration for tournament ${tournament.name} has been cancelled because the tournament is full umpires`,
-							title: "Your registration is cancelled",
-						};
+							const notification: CreateNotificationDTO = {
+								message: `Your registration for tournament ${tournament.name} has been cancelled because the tournament is full umpires`,
+								title: "Your registration is cancelled",
+							};
 
-						await this.notificationRepository.createNotification(
-							notification,
-							filteredUserIds,
-						);
+							await this.notificationRepository.createNotification(
+								notification,
+								filteredUserIds,
+							);
+						}
 					}
 
 					await this.tournamentUmpireRepository.createTournamentUmpire(

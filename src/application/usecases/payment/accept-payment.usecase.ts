@@ -126,19 +126,21 @@ export class AcceptPaymentUseCase {
 					})
 					.map((item) => item.userId);
 
-				await this.tournamentRegistrationRepository.cancelManyTournamentRegistration(
-					filteredIds,
-				);
+				if (filteredIds.length > 0 && filteredUserIds.length > 0) {
+					await this.tournamentRegistrationRepository.cancelManyTournamentRegistration(
+						filteredIds,
+					);
 
-				const notification: CreateNotificationDTO = {
-					message: `Your registration for event ${tournamentEvent.tournamentEvent} of tournament ${tournamentEvent.tournament.name} has been cancelled because the event is full participants`,
-					title: "Your registration is cancelled",
-				};
+					const notification: CreateNotificationDTO = {
+						message: `Your registration for event ${tournamentEvent.tournamentEvent} of tournament ${tournamentEvent.tournament.name} has been cancelled because the event is full participants`,
+						title: "Your registration is cancelled",
+					};
 
-				await this.notificationsRepository.createNotification(
-					notification,
-					filteredUserIds,
-				);
+					await this.notificationsRepository.createNotification(
+						notification,
+						filteredUserIds,
+					);
+				}
 			}
 
 			await this.tournamentParticipantsRepository.addTournamentParticipant(

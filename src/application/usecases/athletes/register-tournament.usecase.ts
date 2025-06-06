@@ -380,7 +380,7 @@ export class RegisterTournamentUseCase {
 		label: string,
 	): string[] {
 		const selected = files.slice(from, to).map((f) => f.secure_url);
-		if (selected.length < 3) {
+	if (selected.length < 3) {
 			throw new BadRequestException(
 				`You must submit 3 verification documents for ${label}`,
 			);
