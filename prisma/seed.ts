@@ -682,7 +682,8 @@ async function main() {
 		const accountCreate = await prisma.user.create({
 			data: {
 				...account, 
-				avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.pnghttps://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
+				avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.pnghttps://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png",
+				dateOfBirth: "2003-11-17T10:30:00.000Z",
 			},
 		});
 		accountCreates.push(accountCreate);
