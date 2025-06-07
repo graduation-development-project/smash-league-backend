@@ -57,7 +57,7 @@ async function main() {
 		const staffAccount = await prisma.user.create({
 			data: {
 				...staffAccounts[i],
-				avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
+				avatarURL: "https://i.pinimg.com/736x/09/80/62/098062ede8791dc791c3110250d2a413.jpg"
 			}
 		});
 		const staffRole = await prisma.userRole.create({

@@ -602,7 +602,7 @@ async function main() {
 			isVerified: true,
 			gender: "MALE",
 			dateOfBirth: new Date("1992-06-30"),
-			avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
+			avatarURL: "https://i.pinimg.com/736x/09/80/62/098062ede8791dc791c3110250d2a413.jpg"
 		},
 		{
 			name: "Trịnh Bảo Ngọc",
@@ -682,7 +682,8 @@ async function main() {
 		const accountCreate = await prisma.user.create({
 			data: {
 				...account, 
-				avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.pnghttps://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
+				avatarURL: "https://i.pinimg.com/736x/09/80/62/098062ede8791dc791c3110250d2a413.jpg",
+				dateOfBirth: "2003-11-17T10:30:00.000Z",
 			},
 		});
 		accountCreates.push(accountCreate);
