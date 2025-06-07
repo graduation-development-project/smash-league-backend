@@ -1841,8 +1841,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.leftCompetitor.id,
 							resultText: "Win",
-							isPresent: (match.rightCompetitorAttendance === false && ![MatchStatus.ENDED, MatchStatus.INTERVAL, MatchStatus.ON_GOING].includes(match.matchStatus))? false: 
-								(match.rightCompetitorAttendance === false && match.matchStatus === MatchStatus.NOT_STARTED)? false: true,
+							isPresent: (match.leftCompetitorAttendance === false && ![MatchStatus.ENDED, MatchStatus.INTERVAL, MatchStatus.ON_GOING].includes(match.matchStatus))? false: 
+								(match.leftCompetitorAttendance === false && match.matchStatus === MatchStatus.NOT_STARTED && match.matchWonByCompetitorId !== null)? null: true,
 							isWinner:
 								match.leftCompetitor.id === match.matchWonByCompetitorId &&
 								match.matchWonByCompetitorId !== null
