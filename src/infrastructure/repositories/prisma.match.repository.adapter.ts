@@ -35,7 +35,7 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 			where: {
 				tournamentEventId: tournamentEventId,
 				stageName: StageOfMatch.ThirdPlaceMatch,
-			},
+			}
 		});
 		const tournamentEvent = await this.prisma.tournamentEvent.findUnique({
 			where: {
@@ -48,6 +48,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 							select: {
 								id: true,
 								games: true,
+								leftCompetitorAttendance: true,
+								rightCompetitorAttendance: true,
 								leftCompetitor: {
 									select: {
 										id: true,
@@ -1793,7 +1795,9 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 										},
 									},
 								},
-								matchStatus: true,
+								matchStatus: true,	
+								leftCompetitorAttendance: true,
+								rightCompetitorAttendance: true,
 								stage: {
 									select: {
 										stageName: true,
@@ -1837,6 +1841,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.leftCompetitor.id,
 							resultText: "Win",
+							isPresent: (match.rightCompetitorAttendance === false && ![MatchStatus.ENDED, MatchStatus.INTERVAL, MatchStatus.ON_GOING].includes(match.matchStatus))? false: 
+								(match.rightCompetitorAttendance === false && match.matchStatus === MatchStatus.NOT_STARTED)? false: true,
 							isWinner:
 								match.leftCompetitor.id === match.matchWonByCompetitorId &&
 								match.matchWonByCompetitorId !== null
@@ -1860,6 +1866,8 @@ export class PrismaMatchRepositoryAdapter implements MatchRepositoryPort {
 					? {
 							id: match.rightCompetitor.id,
 							resultText: "Lose",
+							isPresent: (match.rightCompetitorAttendance === false && ![MatchStatus.ENDED, MatchStatus.INTERVAL, MatchStatus.ON_GOING].includes(match.matchStatus))? false: 
+								(match.rightCompetitorAttendance === false && match.matchStatus === MatchStatus.NOT_STARTED)? false: true,
 							isWinner:
 								match.rightCompetitor.id === match.matchWonByCompetitorId &&
 								match.matchWonByCompetitorId !== null
