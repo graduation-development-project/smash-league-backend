@@ -65,7 +65,7 @@ async function tournamentSeeding() {
 			phoneNumber: "0862767232",
 			isVerified: true,
 			gender: "MALE",
-			avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
+			avatarURL: "https://i.pinimg.com/736x/09/80/62/098062ede8791dc791c3110250d2a413.jpg"
 		}
 	});
 	const organizerRole = await getRole("Organizer");
@@ -659,7 +659,7 @@ async function umpireTournamentSeeding() {
     isVerified: true,
     gender: getRandomGender(),
     dateOfBirth: getRandomDOB(),
-		avatarURL: "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png"
+		avatarURL: "https://i.pinimg.com/736x/09/80/62/098062ede8791dc791c3110250d2a413.jpg"
   }));
 	umpires.push(...data);
 
